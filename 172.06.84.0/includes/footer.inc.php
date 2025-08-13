@@ -1,4 +1,23 @@
-  <!-- FOOTER -->
+		</main>
+
+		<!-- JAVASCRIPT -->
+		<!-- Vendor JS -->
+		<script src="<?= PROOT; ?>assets/js/vendor.bundle.js"></script>
+		
+		<!-- Theme JS -->
+		<script src="<?= PROOT; ?>assets/js/theme.bundle.js"></script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+	
+	<!-- FOOTER -->
     <script type="text/javascript" src="<?= PROOT; ?>172.06.84.0/media/files/jquery-3.3.1.min.js"></script>
     <script type="text/javascript" src="<?= PROOT; ?>172.06.84.0/media/files/popper-1.14.6.min.js"></script>
     <script type="text/javascript" src="<?= PROOT; ?>172.06.84.0/media/files/bootstrap.min.js"></script>

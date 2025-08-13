@@ -2865,17 +2865,7 @@ include ('includes/main-topbar.inc.php');
           </div>
         </div>
       </div>
-    </main>
-
-    <!-- JAVASCRIPT -->
-    <!-- Vendor JS -->
-    <script src="./assets/js/vendor.bundle.js"></script>
     
-    <!-- Theme JS -->
-    <script src="./assets/js/theme.bundle.js"></script>
-  </body>
-</html>
-
 
 
 

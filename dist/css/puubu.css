@@ -1,0 +1,16 @@
+* {
+	font-family: 'Trebuchet MS';
+}
+
+.text-color {
+	color: #FF9800;
+}
+
+.bg-color {
+	background-color: #FF9800;
+}
+
+.py-20.5 {
+    padding-top: 10rem !important;
+    padding-bottom: 0;
+}

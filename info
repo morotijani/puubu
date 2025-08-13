@@ -1,0 +1,84 @@
+#FF9800
+#4CAF50
+style="filter: drop-shadow(2px 4px 6px black);"
+
+voter status 1 is voted
+voter status 0 is not voted
+
+election session 0 not started
+election session 1 started
+election session 2 ended
+
+login_details
+	- status 2 = logged in
+	- status 1 = logged out
+
+report
+	- election session 1 = cannot generate pdf report
+	- election session 2 = can generate pdf report
+
+
+
+9. “There’s no such thing as a vote that doesn’t matter. It all matters.”
+— Barack Obama, 44th President of the United States from 2009 to 2017
+10. "We have the power to make a difference. But we need to VOTE." 
+— Kylie Jenner, media personality and entrepreneur
+
+•
+
+
+//////////////// To do. ////////////////
+- Automatic end election script ================= DONE
+- Email notification with user details on login
+- Record user login and logout details
+- Logs for every single input
+- Send voted for details to users through email
+- Display and download login / logout details
+- Download voted for in excel form
+- Allow view of ongoing election details
+- send email to contestants about their details and ballot number *******
+- work on manual end election 
+- start two or more election
+- delete position should also delete contestant and their pictures
+- delete election should also delete position and contestant and their pictures
+
+//////////////// About The App. ////////////////
+
+//  FRONT SIDE
+
+Security
+	- user can not login until election is being started
+	- user cannot login to vote until the election he/she is to vote under has been started
+	- user can only vote once
+	- users are kicked out if tried to vote twice
+	- passwords and time of voting are being sent to voters to vote
+	- after vote a warm thanks with voted positions are being sent to voters through their email
+	- automatic password is been generated for each user and is being sent to them through their email for voting.
+	- your is being kicked out whist voting if election time is over.
+
+................................................................................
+
+User Friendly
+	- Eazy to use.
+	- Perfect UI and graphics
+	- funny phrases.
+	- eazy to navigate
+	- simple, eazy and fast voting
+	- user receive email after voting on a particular election
+	- motivational quotes from great leader from the world to bost user to vote
+	- timer for users to notice when election is about to end.
+
+
+//   BACK SIDE
+	- Create an election
+	- Create, Edit, Delete Positions
+	- Create, Edit, Delete, Restore Contestants
+	- Add, Edit, Delete voters
+	- Able to upload voters details files (excel file) into the system
+	- Generate report after election
+	- Little written documentation on how to startup an election
+	- Fast and eazy search in Contestants and Voters
+	- Delete multiple Voters
+	- Send bulk or individual password email to voters
+
+

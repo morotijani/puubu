@@ -75,15 +75,47 @@
                             <input type="email" autocomplete="off" autofocus name="admin_email" id="admin_email" class="form-control form-control-sm form-control-dark" placeholder="Email" required value="<?= $email; ?>">
                         </div>
                         <div class="form-group">
-                            <input type="password" name="admin_pass" id="admin_pass" class="form-control form-control-sm form-control-dark" placeholder="Password" required value="<?= $pswd; ?>">
+                            <input type="password" name="admin_pass" id="admin_pass" class="form-control form-control-sm form-control-dark" placeholder="Password" required >
                         </div>
                         <div class="form-group">
-                            <input type="submit" name="submitAdmin" id="submitAdmin" value="Crush it!" class="btn btn-sm btn-outline-secondary">
+                            <input type="submit"  value="Crush it!" class="btn btn-sm btn-outline-secondary">
                         </div>
                     </form>
                 </div>
             </div>
         </div>
+    </div>
+
+    <body class="d-flex align-items-center">
+    <div class="container">
+      <div class="row justify-content-center">
+        <div class="col-12" style="max-width: 25rem">
+          <!-- Heading -->
+          <h1 class="fs-1 text-center">Sign in</h1>
+
+          <!-- Subheading -->
+          <p class="lead text-center text-body-secondary">Access our dashboard and start tracking your tasks.</p>
+
+          <!-- Form -->
+          <form class="mb-5">
+            <div class="text-center mb-4">
+                            <code id="displayErrors"><?= $errorsMsg; ?></code>
+                        </div>
+            <div class="mb-4">
+              <label class="visually-hidden" for="email">Email Address</label>
+              <input class="form-control" autocomplete="off" autofocus id="admin_email" name="admin_email" type="email" placeholder="Enter your email address..." />
+            </div>
+             <div class="mb-4">
+              <label class="visually-hidden" for="email">Email Address</label>
+              <input class="form-control" id="admin_pass" name="admin_pass" type="email" placeholder="Enter your password..." value="<?= $pswd; ?>" />
+            </div>
+            <button class="btn btn-secondary w-100" name="submitAdmin" id="submitAdmin" type="submit">Sign in</button>
+          </form>
+
+          <!-- Text -->
+          <p class="text-center text-body-secondary mb-0">Don't have an account yet? <a href="./sign-up.html">Sign up</a>.</p>
+        </div>
+      </div>
     </div>
      
     

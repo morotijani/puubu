@@ -212,7 +212,7 @@
     <link rel="stylesheet" href="<?= PROOT; ?>assets/css/theme.bundle.css" />
     
     <!-- Title -->
-    <title>Dashbrd</title>
+    <title>Dashboard • Puubu</title>
 </head>
 
 <body>

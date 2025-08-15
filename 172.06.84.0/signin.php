@@ -1,6 +1,9 @@
 <?php 
 
     require_once("../connection/conn.php");
+
+    include ("includes/header.inc.php");
+
     $errorsMsg = '';
 
     $email = ((isset($_POST['admin_email']))? sanitize($_POST['admin_email']): '');
@@ -53,33 +56,6 @@
     }
 
  ?>
-
-<!DOCTYPE html>
-<html lang="en" dir="ltr">
-  <head>
-    <meta charset="utf-8">
-    <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0, shrink-to-fit=no'>
-    <title>Dashboard • Puubu</title>
-    <link rel="stylesheet" href="media/files/bootstrap.css">
-    <link rel="stylesheet" href="media/files/admin.css">
-    <link rel="stylesheet" href="media/files/dashboard.css">
-
-<style type="text/css">
-html, body {
-  height: 100%;
-  overflow: hidden;
-}
-
-body {
-  padding-top: 40px;
-  padding-bottom: 40px;
-  background-color: rgb(70, 60, 54);
-  margin-top: 10rem;
-}
-
-</style>
-</head>
-<body>
 
     <!-- MAIN -->
     <div class="row">

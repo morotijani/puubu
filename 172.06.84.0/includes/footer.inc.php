@@ -6,10 +6,8 @@
 		
 		<!-- Theme JS -->
 		<script src="<?= PROOT; ?>assets/js/theme.bundle.js"></script>
-</body>
-</html>
-
-
+<!-- </body>
+</html> -->
 
 
 

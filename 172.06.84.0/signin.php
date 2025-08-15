@@ -86,8 +86,8 @@
 
                     <!-- Text -->
                     <p class="text-center text-body-secondary mb-0">Want to visit site? <a href="../index"> visit site</a>.</p>
-                    </div>
                 </div>
+            </div>
         </div>
      
     
@@ -95,8 +95,13 @@
     <!-- FOOTER -->
     <script type="text/javascript" src="media/files/jquery-3.3.1.min.js"></script>
     <script type="text/javascript" src="media/files/feather.min.js"></script>
+    <script src="<?= PROOT; ?>assets/js/vendor.bundle.js"></script>
+    <!-- Theme JS -->
+    <script src="<?= PROOT; ?>assets/js/theme.bundle.js"></script>
+
     <script type="text/javascript">
         feather.replace();
         $("#temporary").fadeOut(5000);
     </script>
-
+</body>
+</html>

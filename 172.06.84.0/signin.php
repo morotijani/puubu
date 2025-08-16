@@ -76,7 +76,7 @@
                             <input class="form-control" autocomplete="off" autofocus id="admin_email" name="admin_email" type="email" placeholder="Enter your email address..." value="<?= $email; ?>" required />
                         </div>
                         <div class="mb-4">
-                            <label class="visually-hidden" for="email">Email Address</label>
+                            <label class="visually-hidden" for="email">Password</label>
                             <input class="form-control" id="admin_pass" name="admin_pass" type="password" placeholder="..." value="<?= $pswd; ?>" required />
                         </div>
                         <button class="btn btn-secondary w-100" name="submitAdmin" id="submitAdmin" type="submit">Sign in</button>

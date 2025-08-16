@@ -1,11 +1,294 @@
 <?php 
 
+	
+
 	// Make Date Redable
 	function pretty_date($date){
 		return date("M d, Y h:i A", strtotime($date));
 	}
 	
 
+
+// print out results for development usages
+function dnd($data) {
+	echo "<pre>";
+	print_r($data);
+	echo "</pre>";
+    die;
+}
+
+// Make Date Readable
+function pretty_date($date) {
+	if ($date != null ||$date != '') 
+		return date("M d, Y h:i A", strtotime($date));
+
+	return false;
+}
+
+// get only date from full datetime
+function pretty_date_only($date) {
+	if ($date != null ||$date != '') 
+		return date("F j, Y", strtotime($date));
+
+	return false;
+}
+
+// extract time from full date
+function time_from_date($date) {
+	$dt = new DateTime($date);
+
+	$date = $dt->format('d-m-Y');
+	$time = $dt->format('h:i:s A');
+
+	return $time;
+}
+
+// Display money in a readable way
+function money($number) {
+	$output = '0.00';
+	if ($number != NULL || $number != '') 
+		$output = number_format($number, 2);
+
+	return '₵' . $output;
+}
+
+// Check For Incorrect Input Of Data
+function sanitize($dirty) {
+    $clean = htmlentities($dirty, ENT_QUOTES, "UTF-8");
+    return trim($clean);
+}
+
+function cleanPost($post) {
+    $clean = [];
+    foreach ($post as $key => $value) {
+      	if (is_array($value)) {
+        	$ary = [];
+        	foreach($value as $val) {
+          		$ary[] = sanitize($val);
+        	}
+        	$clean[$key] = $ary;
+      	} else {
+        	$clean[$key] = sanitize($value);
+      	}
+    }
+    return $clean;
+}
+
+//
+function php_url_slug($string) {
+ 	$slug = preg_replace('/[^a-z0-9-]+/', '-', trim(strtolower($string)));
+ 	return $slug;
+}
+
+// REDIRECT PAGE
+function redirect($url) {
+    if(!headers_sent()) {
+      	header("Location: {$url}");
+    } else {
+      	echo '<script>window.location.href="' . $url . '"</script>';
+    }
+    exit;
+}
+
+function issetElse($array, $key, $default = "") {
+    if(!isset($array[$key]) || empty($array[$key])) {
+      return $default;
+    }
+    return $array[$key];
+}
+
+
+// Email VALIDATION
+function isEmail($email) {
+	return (!preg_match("/^([a-z0-9\+_\-]+)(\.[a-z0-9\+_\-]+)*@([a-z0-9\-]+\.)+[a-z]{2,6}$/ix", $email)) ? FALSE : TRUE;
+}
+
+// GET USER IP ADDRESS
+function getIPAddress() {  
+    //whether ip is from the share internet  
+    if (!empty($_SERVER['HTTP_CLIENT_IP'])) {  
+        $ip = $_SERVER['HTTP_CLIENT_IP'];  
+    } elseif (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {  // whether ip is from the proxy
+       $ip = $_SERVER['HTTP_X_FORWARDED_FOR'];  
+     } else {  // whether ip is from the remote address 
+        $ip = $_SERVER['REMOTE_ADDR'];  
+    }  
+    return $ip;  
+}
+
+// PRINT OUT RANDAM NUMBERS
+function digit_random($digits) {
+  	return rand(pow(10, $digits - 1) - 1, pow(10, $digits) - 1);
+}
+
+function js_alert($msg) {
+	return '<script>alert("' . $msg . '");</script>';
+}
+
+
+// 
+function sms_otp($msg, $phone) {
+	$sender = urlencode("Inqoins VER");
+    $api_url = "https://api.innotechdev.com/sendmessage.php?key=".SMS_API_KEY."&message={$msg}&senderid={$sender}&phone={$phone}";
+    $json_data = file_get_contents($api_url);
+    $response_data = json_decode($json_data);
+    // Can be use for checks on finished / unfinished balance
+    $fromAPI = 'insufficient balance, kindly credit your account';  
+    if ($api_url)
+    	return 1;
+	else
+		return 0;
+}
+
+//
+// function send_email($name, $to, $subject, $body) {
+// 	$mail = new PHPMailer(true);
+// 	try {
+//         $fn = $name;
+//         $to = $to;
+//         $from = MAIL_MAIL;
+//         $from_name = 'Garypie, Shop.';
+//         $subject = $subject;
+//         $body = $body;
+
+//         //Create an instance; passing `true` enables exceptions
+//         $mail = new PHPMailer(true);
+
+//         $mail->IsSMTP();
+//         $mail->SMTPAuth = true;
+
+//         $mail->SMTPSecure = 'ssl'; 
+//         $mail->Host = 'smtp.garypie.com';
+//         $mail->Port = 465;  
+//         $mail->Username = $from;
+//         $mail->Password = MAIL_KEY; 
+
+//         $mail->IsHTML(true);
+//         $mail->WordWrap = 50;
+//         $mail->From = $from;
+//         $mail->FromName = $from_name;
+//         $mail->Sender = $from;
+//         $mail->AddReplyTo($from, $from_name);
+//         $mail->Subject = $subject;
+//         $mail->Body = $body;
+//         $mail->AddAddress($to);
+//         $mail->send();
+//         return true;
+//     } catch (Exception $e) {
+//     	//return "Message could not be sent. Mailer Error: {$mail->ErrorInfo}";
+//     	return false;
+//         //$message = "Please check your internet connection well...";
+//     }
+// }
+
+// Generate UUID VERSION 4
+function guidv4($data = null) {
+    // Generate 16 bytes (128 bits) of random data or use the data passed into the function.
+    $data = $data ?? random_bytes(16);
+    assert(strlen($data) == 16);
+
+    // Set version to 0100
+    $data[6] = chr(ord($data[6]) & 0x0f | 0x40);
+    // Set bits 6-7 to 10
+    $data[8] = chr(ord($data[8]) & 0x3f | 0x80);
+
+    // Output the 36 character UUID.
+    return vsprintf('%s%s-%s-%s-%s-%s%s%s', str_split(bin2hex($data), 4));
+}
+
+/// find user agent
+function getBrowserAndOs() {
+
+    $user_agent = $_SERVER['HTTP_USER_AGENT'];
+    $browser = "N/A";
+
+    $browsers = array(
+        '/msie/i' => 'Internet explorer',
+        '/firefox/i' => 'Firefox',
+        '/safari/i' => 'Safari',
+        '/chrome/i' => 'Chrome',
+        '/edge/i' => 'Edge',
+        '/opera/i' => 'Opera',
+        '/mobile/i' => 'Mobile browser'
+    );
+
+    foreach ($browsers as $regex => $value) {
+        if (preg_match($regex, $user_agent)) { $browser = $value; }
+    }
+
+    $visitor_agent_division = explode("(", $user_agent)[1];
+    list($os, $division_two) = explode(")", $visitor_agent_division);
+
+    $refferer = isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '';
+
+    $visitor_broswer_os = array(
+        'browser' => $browser,
+        'operatingSystem' => $os,
+        'refferer' => $refferer
+    );
+
+   	$output = json_encode($visitor_broswer_os);
+
+    return $output;
+}
+
+// get user/visitor device
+function getDeviceType() {
+    $userAgent = $_SERVER['HTTP_USER_AGENT'];
+
+    // Check if it's a mobile device
+    if (preg_match('/mobile/i', $userAgent)) {
+        if (preg_match('/android/i', $userAgent)) {
+            return "Mobile (Android)";
+        } elseif (preg_match('/iphone|ipad|ipod/i', $userAgent)) {
+            return "Mobile (iOS)";
+        } else {
+            return "Mobile (Other)";
+        }
+    }
+
+    // Check if it's a tablet
+    if (preg_match('/tablet|ipad/i', $userAgent)) {
+        return "Tablet";
+    }
+
+    // Default to desktop
+    return "Desktop";
+} 
+
+function goBack() {
+	$previous = "javascript:history.go(-1)";
+	if (isset($_SERVER['HTTP_REFERER'])) {
+	    $previous = $_SERVER['HTTP_REFERER'];
+	}
+	return $previous;
+}
+
+
+function idle_user() {
+
+    // Check the last activity time
+    if (isset($_SESSION['last_activity'])) {
+        $idleTime = time() - $_SESSION['last_activity'];
+
+        // If the idle time exceeds the timeout period
+        if ($idleTime > IDLE_TIMEOUT) {
+            // Destroy the session and log out the user
+            //session_unset();
+            //session_destroy();
+
+            // Redirect to the login page or show a message
+			// $_SESSION['flash_error'] = 'Session expired. Please log in again!';
+			//redirect(PROOT . 'auth/login');
+            //exit;
+			return false;
+        }
+    }
+
+    // Update the last activity timestamp
+    $_SESSION['last_activity'] = time();
+	return true;
+}
 
 
 

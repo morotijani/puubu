@@ -314,7 +314,7 @@ function goBack() {
 		}
 	}
 
-	function cadminIsLoggedIn(){
+	function cadminIsLoggedIn() {
 		if (isset($_SESSION['crAdmin']) && $_SESSION['crAdmin'] > 0) {
 			return true;
 		}

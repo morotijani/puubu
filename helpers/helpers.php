@@ -1,49 +1,41 @@
 <?php 
 
-	
 
-	// Make Date Redable
-	function pretty_date($date){
-		return date("M d, Y h:i A", strtotime($date));
+	// print out results for development usages
+	function dnd($data) {
+		echo "<pre>";
+		print_r($data);
+		echo "</pre>";
+		die;
 	}
-	
 
+	// Make Date Readable
+	function pretty_date($date) {
+		if ($date != null ||$date != '') 
+			return date("M d, Y h:i A", strtotime($date));
 
-// print out results for development usages
-function dnd($data) {
-	echo "<pre>";
-	print_r($data);
-	echo "</pre>";
-    die;
-}
+		return false;
+	}
 
-// Make Date Readable
-function pretty_date($date) {
-	if ($date != null ||$date != '') 
-		return date("M d, Y h:i A", strtotime($date));
+	// get only date from full datetime
+	function pretty_date_only($date) {
+		if ($date != null ||$date != '') 
+			return date("F j, Y", strtotime($date));
 
-	return false;
-}
+		return false;
+	}
 
-// get only date from full datetime
-function pretty_date_only($date) {
-	if ($date != null ||$date != '') 
-		return date("F j, Y", strtotime($date));
+	// extract time from full date
+	function time_from_date($date) {
+		$dt = new DateTime($date);
 
-	return false;
-}
+		$date = $dt->format('d-m-Y');
+		$time = $dt->format('h:i:s A');
 
-// extract time from full date
-function time_from_date($date) {
-	$dt = new DateTime($date);
+		return $time;
+	}
 
-	$date = $dt->format('d-m-Y');
-	$time = $dt->format('h:i:s A');
-
-	return $time;
-}
-
-// Display money in a readable way
+	// Display money in a readable way
 function money($number) {
 	$output = '0.00';
 	if ($number != NULL || $number != '') 
@@ -265,30 +257,30 @@ function goBack() {
 }
 
 
-function idle_user() {
+	function idle_user() {
 
-    // Check the last activity time
-    if (isset($_SESSION['last_activity'])) {
-        $idleTime = time() - $_SESSION['last_activity'];
+		// Check the last activity time
+		if (isset($_SESSION['last_activity'])) {
+			$idleTime = time() - $_SESSION['last_activity'];
 
-        // If the idle time exceeds the timeout period
-        if ($idleTime > IDLE_TIMEOUT) {
-            // Destroy the session and log out the user
-            //session_unset();
-            //session_destroy();
+			// If the idle time exceeds the timeout period
+			if ($idleTime > IDLE_TIMEOUT) {
+				// Destroy the session and log out the user
+				//session_unset();
+				//session_destroy();
 
-            // Redirect to the login page or show a message
-			// $_SESSION['flash_error'] = 'Session expired. Please log in again!';
-			//redirect(PROOT . 'auth/login');
-            //exit;
-			return false;
-        }
-    }
+				// Redirect to the login page or show a message
+				// $_SESSION['flash_error'] = 'Session expired. Please log in again!';
+				//redirect(PROOT . 'auth/login');
+				//exit;
+				return false;
+			}
+		}
 
-    // Update the last activity timestamp
-    $_SESSION['last_activity'] = time();
-	return true;
-}
+		// Update the last activity timestamp
+		$_SESSION['last_activity'] = time();
+		return true;
+	}
 
 
 
@@ -318,7 +310,7 @@ function idle_user() {
 		$result = $statement->execute($data);
 		if (isset($result)) {
 			$_SESSION['flash_success'] = '<div class="text-center" id="temporary">You are now logged in!</div>';
-			header('Location: index');
+			redirect(PROOT . 'index');
 		}
 	}
 
@@ -332,12 +324,12 @@ function idle_user() {
 	// Redirect If not Logged in
 	function cadminLoginErrorRedirect($url = 'signin') {
 		$_SESSION['flash_error'] = '<div class="text-center" id="temporary" style="margin-top: 60px;">Oops... you must be logged in to access that page.</div>';
-		header('Location: '.$url);
+		redirect(PROOT . '172.06.84.0/' . $url);
 	}
 
 	function admin_permission_error_redirect($url = 'signin'){
 		$_SESSION['error_flash'] = '<div class="text-center" style="margin-top: 60px;">You do not have permission to that page.</div>';
-		header('Location: '.$url);
+		redirect(PROOT . '172.06.84.0/' . $url);
 	}
 
 	// GET ADMIN PROFILE DETAILS

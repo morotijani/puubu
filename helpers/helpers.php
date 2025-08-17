@@ -119,18 +119,18 @@ function js_alert($msg) {
 
 
 // 
-function sms_otp($msg, $phone) {
-	$sender = urlencode("Inqoins VER");
-    $api_url = "https://api.innotechdev.com/sendmessage.php?key=".SMS_API_KEY."&message={$msg}&senderid={$sender}&phone={$phone}";
-    $json_data = file_get_contents($api_url);
-    $response_data = json_decode($json_data);
-    // Can be use for checks on finished / unfinished balance
-    $fromAPI = 'insufficient balance, kindly credit your account';  
-    if ($api_url)
-    	return 1;
-	else
-		return 0;
-}
+// function sms_otp($msg, $phone) {
+// 	$sender = urlencode("Inqoins VER");
+//     $api_url = "https://api.innotechdev.com/sendmessage.php?key=".SMS_API_KEY."&message={$msg}&senderid={$sender}&phone={$phone}";
+//     $json_data = file_get_contents($api_url);
+//     $response_data = json_decode($json_data);
+//     // Can be use for checks on finished / unfinished balance
+//     $fromAPI = 'insufficient balance, kindly credit your account';  
+//     if ($api_url)
+//     	return 1;
+// 	else
+// 		return 0;
+// }
 
 //
 // function send_email($name, $to, $subject, $body) {
@@ -310,7 +310,7 @@ function goBack() {
 		$result = $statement->execute($data);
 		if (isset($result)) {
 			$_SESSION['flash_success'] = '<div class="text-center" id="temporary">You are now logged in!</div>';
-			redirect(PROOT . 'index');
+			redirect(PROOT . '172.06.84.0/index');
 		}
 	}
 

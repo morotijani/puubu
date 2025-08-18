@@ -1,41 +1,41 @@
-<!-- Toggler -->
-          <button
-            class="navbar-toggler ms-3"
-            type="button"
-            data-bs-toggle="collapse"
-            data-bs-target="#sidenavSmallCollapse"
-            aria-controls="sidenavSmallCollapse"
-            aria-expanded="false"
-            aria-label="Toggle navigation"
-          >
-            <span class="navbar-toggler-icon"></span>
-          </button>
+    <!-- Toggler -->
+    <button
+        class="navbar-toggler ms-3"
+        type="button"
+        data-bs-toggle="collapse"
+        data-bs-target="#sidenavSmallCollapse"
+        aria-controls="sidenavSmallCollapse"
+        aria-expanded="false"
+        aria-label="Toggle navigation"
+    >
+        <span class="navbar-toggler-icon"></span>
+    </button>
     
-          <!-- Collapse -->
-          <div class="collapse navbar-collapse" id="sidenavSmallCollapse">
-            <!-- Search -->
-            <div class="input-group d-xl-none my-4 my-xl-0">
-              <input class="form-control" type="search" placeholder="Search" aria-label="Search" aria-describedby="sidenavSmallSearchMobile" />
-              <span class="input-group-text" id="sidenavSmallSearchMobile">
+    <!-- Collapse -->
+    <div class="collapse navbar-collapse" id="sidenavSmallCollapse">
+        <!-- Search -->
+        <div class="input-group d-xl-none my-4 my-xl-0">
+            <input class="form-control" type="search" placeholder="Search" aria-label="Search" aria-describedby="sidenavSmallSearchMobile" />
+            <span class="input-group-text" id="sidenavSmallSearchMobile">
                 <span class="material-symbols-outlined">search</span>
-              </span>
-            </div>
+            </span>
+        </div>
     
-            <!-- Nav -->
-            <nav class="navbar-nav nav-pills">
-              <div class="nav-item dropend">
+        <!-- Nav -->
+        <nav class="navbar-nav nav-pills">
+            <div class="nav-item dropend">
                 <a class="nav-link active" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                  <span class="material-symbols-outlined">space_dashboard</span>
-                  <span class="ms-3 d-xl-none">Home</span>
+                    <span class="material-symbols-outlined">space_dashboard</span>
+                    <span class="ms-3 d-xl-none">Home</span>
                 </a>
                 <div class="dropdown-menu ms-xl-3">
-                  <h6 class="dropdown-header d-none d-xl-block">Dashboards</h6>
-                  <a class="dropdown-item active" href="./index.html">Default</a>
-                  <a class="dropdown-item " href="./dashboards/crypto.html">Crypto</a>
-                  <a class="dropdown-item " href="./dashboards/saas.html">SaaS</a>
+                    <h6 class="dropdown-header d-none d-xl-block">Dashboards</h6>
+                    <a class="dropdown-item active" href="<?= PROOT; ?>172.06.84.0/index">Default</a>
+                    <a class="dropdown-item " href="<?= PROOT; ?>172.06.84.0/election">Elections</a>
+                    <a class="dropdown-item " href="<?= PROOT; ?>172.06.84.0/saas.html">...</a>
                 </div>
-              </div>
-              <div class="nav-item dropend">
+            </div>
+            <div class="nav-item dropend">
                 <a
                   class="nav-link "
                   href="#"

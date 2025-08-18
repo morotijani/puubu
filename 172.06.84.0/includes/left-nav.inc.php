@@ -1,3 +1,6 @@
+    <!-- SMALL LEFT NAV BAR -->
+    <!-- SMALL LEFT NAV BAR -->
+    
     <!-- Toggler -->
     <button
         class="navbar-toggler ms-3"

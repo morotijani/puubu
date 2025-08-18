@@ -40,20 +40,20 @@
             </div>
             <div class="nav-item dropend">
                 <a
-                  class="nav-link "
-                  href="#"
-                  role="button"
-                  data-bs-toggle="dropdown"
-                  data-bs-auto-close="outside"
-                  aria-expanded="false"
+                    class="nav-link "
+                    href="#"
+                    role="button"
+                    data-bs-toggle="dropdown"
+                    data-bs-auto-close="outside"
+                    aria-expanded="false"
                 >
-                  <span class="material-symbols-outlined">auto_stories</span>
-                  <span class="ms-3 d-xl-none">Pages</span>
+                    <span class="material-symbols-outlined">auto_stories</span>
+                    <span class="ms-3 d-xl-none">Pages..</span>
                 </a>
                 <ul class="dropdown-menu ms-xl-3">
-                  <li>
-                    <h6 class="dropdown-header d-none d-xl-block">Pages</h6>
-                  </li>
+                    <li>
+                        <h6 class="dropdown-header d-none d-xl-block">Pages.</h6>
+                    </li>
                   <li class="dropend">
                     <a
                       class="dropdown-item d-flex "

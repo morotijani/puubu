@@ -40,12 +40,17 @@
  		$sql = "SELECT * FROM puubu_admin WHERE c_aid = :c_aid LIMIT 1";
  		$statement = $conn->prepare($sql);
  		$statement->execute($data);
+		$admin_dt = $statement->fetchAll();
 
- 		foreach ($statement->fetchAll() as $row) {
- 			$fullName = ucwords($row['cfname'] . ' ' . $row['clname']);
- 			$lName = ucwords($row['clname']);
- 			$fname = ucwords($row['cfname']);
- 		}
+		if ($statement->rowCount() > 0) {
+			$admin_data = $admin_dt[0];
+			$fullName = ucwords($admin_data['cfname'] . ' ' . $admin_data['clname']);
+ 			$lName = ucwords($admin_data['clname']);
+ 			$fname = ucwords($admin_data['cfname']);
+		} else {
+			redirect(PROOT);
+		}
+
  	}
 
  	if (isset($_SESSION['voter_accessed'])) {

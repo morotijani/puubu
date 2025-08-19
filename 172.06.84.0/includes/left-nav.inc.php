@@ -1,160 +1,162 @@
-    <!-- SMALL LEFT NAV BAR -->
-    <!-- SMALL LEFT NAV BAR -->
-    
-    <!-- Toggler -->
-    <button
-        class="navbar-toggler ms-3"
-        type="button"
-        data-bs-toggle="collapse"
-        data-bs-target="#sidenavSmallCollapse"
-        aria-controls="sidenavSmallCollapse"
-        aria-expanded="false"
-        aria-label="Toggle navigation"
-    >
-        <span class="navbar-toggler-icon"></span>
-    </button>
-    
-    <!-- Collapse -->
-    <div class="collapse navbar-collapse" id="sidenavSmallCollapse">
-        <!-- Search -->
-        <div class="input-group d-xl-none my-4 my-xl-0">
-            <input class="form-control" type="search" placeholder="Search" aria-label="Search" aria-describedby="sidenavSmallSearchMobile" />
-            <span class="input-group-text" id="sidenavSmallSearchMobile">
-                <span class="material-symbols-outlined">search</span>
-            </span>
-        </div>
-    
-        <!-- Nav -->
-        <nav class="navbar-nav nav-pills">
-            <div class="nav-item dropend">
-                <a class="nav-link active" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                    <span class="material-symbols-outlined">space_dashboard</span>
-                    <span class="ms-3 d-xl-none">Home</span>
-                </a>
-                <div class="dropdown-menu ms-xl-3">
-                    <h6 class="dropdown-header d-none d-xl-block">Dashboards</h6>
-                    <a class="dropdown-item active" href="<?= PROOT; ?>172.06.84.0/index">Default</a>
-                    <a class="dropdown-item " href="<?= PROOT; ?>172.06.84.0/election">Elections</a>
-                    <a class="dropdown-item " href="<?= PROOT; ?>172.06.84.0/saas.html">...</a>
-                </div>
-            </div>
-            <div class="nav-item dropend">
-                <a class="nav-link" href="<?= PROOT; ?>172.06.84.0/election">
-                    <span class="material-symbols-outlined" title="Elections">auto_stories</span>
-                    <span class="ms-3 d-xl-none">Election</span>
-                </a>
-            </div>
-            <div class="nav-item dropend">
-                <a class="nav-link" href="<?= PROOT; ?>172.06.84.0/positions">
-                    <span class="material-symbols-outlined" title="Positions">email</span>
-                    <span class="ms-3 d-xl-none">Positions</span>
-                </a>
-            </div>
-            <div class="nav-item dropend">
-                <a class="nav-link" href="<?= PROOT; ?>172.06.84.0/contestants">
-                    <span class="material-symbols-outlined" title="Contestants">tooltip</span>
-                    <span class="ms-3 d-xl-none">Contestants</span>
-                </a>
-            </div>
-            <div class="nav-item dropend">
-                <a class="nav-link" href="<?= PROOT; ?>172.06.84.0/registrar">
-                    <span class="material-symbols-outlined" title="Voters">auto_stories</span>
-                    <span class="ms-3 d-xl-none">Voters</span>
-                </a>
-            </div>
-            <div class="nav-item dropend">
-                <a class="nav-link" href="<?= PROOT; ?>172.06.84.0/election">
-                    <span class="material-symbols-outlined" title="Elections">auto_stories</span>
-                    <span class="ms-3 d-xl-none">Election</span>
-                </a>
-            </div>
-        </nav>
-    
-        <!-- Divider -->
-        <hr class="my-4" />
-
-        <!-- Nav -->
-        <nav class="navbar-nav nav-pills">
-            <div class="nav-item dropend">
-                <a class="nav-link " href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                    <span class="material-symbols-outlined">code</span>
-                    <span class="ms-3 d-xl-none">Docs</span>
-                </a>
-                <div class="dropdown-menu ms-xl-3">
-                    <h6 class="dropdown-header d-none d-xl-block">Documentation</h6>
-                    <a class="dropdown-item " href="./docs/getting-started.html">Getting started</a>
-                    <a class="dropdown-item " href="./docs/components.html">Components</a>
-                    <a class="dropdown-item d-flex " href="./docs/changelog.html"
-                    >Changelog <span class="badge text-bg-primary ms-auto">1.0.6</span></a
-                    >
-                </div>
-            </div>
-        </nav>
-    
-        <!-- Divider -->
-        <hr class="my-4 d-xl-none" />
-    
-        <!-- Nav -->
-        <nav class="navbar-nav nav-pills mt-auto">
-            <div class="nav-item">
-                <a
-                    class="nav-link"
-                    href="<?= PROOT; ?>index"
-                    target="_blank"
-                    data-bs-toggle="tooltip"
-                    data-bs-placement="right"
-                    data-bs-title="Go to website"
+                <!-- SMALL LEFT NAV BAR -->
+                <!-- SMALL LEFT NAV BAR -->
+                
+                <!-- Toggler -->
+                <button
+                    class="navbar-toggler ms-3"
+                    type="button"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#sidenavSmallCollapse"
+                    aria-controls="sidenavSmallCollapse"
+                    aria-expanded="false"
+                    aria-label="Toggle navigation"
                 >
-                    <span class="material-symbols-outlined">globe</span> <span class="d-xl-none ms-3">Go to website</span>
-                </a>
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                
+                <!-- Collapse -->
+                <div class="collapse navbar-collapse" id="sidenavSmallCollapse">
+                    <!-- Search -->
+                    <div class="input-group d-xl-none my-4 my-xl-0">
+                        <input class="form-control" type="search" placeholder="Search" aria-label="Search" aria-describedby="sidenavSmallSearchMobile" />
+                        <span class="input-group-text" id="sidenavSmallSearchMobile">
+                            <span class="material-symbols-outlined">search</span>
+                        </span>
+                    </div>
+                
+                    <!-- Nav -->
+                    <nav class="navbar-nav nav-pills">
+                        <div class="nav-item dropend">
+                            <a class="nav-link active" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <span class="material-symbols-outlined">space_dashboard</span>
+                                <span class="ms-3 d-xl-none">Home</span>
+                            </a>
+                            <div class="dropdown-menu ms-xl-3">
+                                <h6 class="dropdown-header d-none d-xl-block">Dashboards</h6>
+                                <a class="dropdown-item active" href="<?= PROOT; ?>172.06.84.0/index">Default</a>
+                                <a class="dropdown-item " href="<?= PROOT; ?>172.06.84.0/election">Elections</a>
+                                <a class="dropdown-item " href="<?= PROOT; ?>172.06.84.0/saas.html">...</a>
+                            </div>
+                        </div>
+                        <div class="nav-item dropend">
+                            <a class="nav-link" href="<?= PROOT; ?>172.06.84.0/election">
+                                <span class="material-symbols-outlined" title="Elections">auto_stories</span>
+                                <span class="ms-3 d-xl-none">Election</span>
+                            </a>
+                        </div>
+                        <div class="nav-item dropend">
+                            <a class="nav-link" href="<?= PROOT; ?>172.06.84.0/positions">
+                                <span class="material-symbols-outlined" title="Positions">email</span>
+                                <span class="ms-3 d-xl-none">Positions</span>
+                            </a>
+                        </div>
+                        <div class="nav-item dropend">
+                            <a class="nav-link" href="<?= PROOT; ?>172.06.84.0/contestants">
+                                <span class="material-symbols-outlined" title="Contestants">tooltip</span>
+                                <span class="ms-3 d-xl-none">Contestants</span>
+                            </a>
+                        </div>
+                        <div class="nav-item dropend">
+                            <a class="nav-link" href="<?= PROOT; ?>172.06.84.0/registrar">
+                                <span class="material-symbols-outlined" title="Voters">auto_stories</span>
+                                <span class="ms-3 d-xl-none">Voters</span>
+                            </a>
+                        </div>
+                        <div class="nav-item dropend">
+                            <a class="nav-link" href="<?= PROOT; ?>172.06.84.0/election">
+                                <span class="material-symbols-outlined" title="Elections">auto_stories</span>
+                                <span class="ms-3 d-xl-none">Election</span>
+                            </a>
+                        </div>
+                    </nav>
+                
+                    <!-- Divider -->
+                    <hr class="my-4" />
+
+                    <!-- Nav -->
+                    <nav class="navbar-nav nav-pills">
+                        <div class="nav-item dropend">
+                            <a class="nav-link " href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <span class="material-symbols-outlined">code</span>
+                                <span class="ms-3 d-xl-none">Docs</span>
+                            </a>
+                            <div class="dropdown-menu ms-xl-3">
+                                <h6 class="dropdown-header d-none d-xl-block">Documentation</h6>
+                                <a class="dropdown-item " href="./docs/getting-started.html">Getting started</a>
+                                <a class="dropdown-item " href="./docs/components.html">Components</a>
+                                <a class="dropdown-item d-flex " href="./docs/changelog.html"
+                                >Changelog <span class="badge text-bg-primary ms-auto">1.0.6</span></a
+                                >
+                            </div>
+                        </div>
+                    </nav>
+                
+                    <!-- Divider -->
+                    <hr class="my-4 d-xl-none" />
+                
+                    <!-- Nav -->
+                    <nav class="navbar-nav nav-pills mt-auto">
+                        <div class="nav-item">
+                            <a
+                                class="nav-link"
+                                href="<?= PROOT; ?>index"
+                                target="_blank"
+                                data-bs-toggle="tooltip"
+                                data-bs-placement="right"
+                                data-bs-title="Go to website"
+                            >
+                                <span class="material-symbols-outlined">globe</span> <span class="d-xl-none ms-3">Go to website</span>
+                            </a>
+                        </div>
+                        <div class="nav-item">
+                            <a class="nav-link" href="mailto:info@puubu.com" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="Contact us">
+                                <span class="material-symbols-outlined">alternate_email</span> <span class="d-xl-none ms-3">Contact us</span>
+                            </a>
+                        </div>
+                        <div class="nav-item dropend">
+                            <a class="nav-link" href="#" role="button" data-bs-toggle="dropdown" data-bs-settings-switcher aria-expanded="false">
+                                <span class="material-symbols-outlined">settings</span> <span class="d-xl-none ms-3">Settings</span>
+                            </a>
+                            <div class="dropdown-menu top-auto bottom-0 ms-xl-3">
+                                <!-- Color mode -->
+                                <h6 class="dropdown-header">Color mode</h6>
+                                <a class="dropdown-item d-flex" data-bs-theme-value="light" href="#" role="button"> <span class="material-symbols-outlined me-2">light_mode</span> Light </a>
+                                <a class="dropdown-item d-flex" data-bs-theme-value="dark" href="#" role="button"> <span class="material-symbols-outlined me-2">dark_mode</span> Dark </a>
+                                <a class="dropdown-item d-flex" data-bs-theme-value="auto" href="#" role="button"> <span class="material-symbols-outlined me-2">contrast</span> Auto </a>
+                        
+                                <!-- Navigation position -->
+                                <hr class="dropdown-divider" />
+                                <h6 class="dropdown-header">Navigation position</h6>
+                                <a class="dropdown-item d-flex" data-bs-navigation-position-value="sidenav" href="#" role="button">
+                                    <span class="material-symbols-outlined me-2">keyboard_tab_rtl</span> Sidenav
+                                </a>
+                                <a class="dropdown-item d-flex" data-bs-navigation-position-value="topnav" href="#" role="button">
+                                    <span class="material-symbols-outlined me-2">vertical_align_top</span> Topnav
+                                </a>
+                        
+                                <!-- Sidenav sizing -->
+                                <div class="sidenav-sizing">
+                                    <hr class="dropdown-divider" />
+                                    <h6 class="dropdown-header">Sidenav sizing</h6>
+                                    <a class="dropdown-item d-flex" data-bs-sidenav-sizing-value="base" href="#" role="button">
+                                        <span class="material-symbols-outlined me-2">density_large</span> Base
+                                    </a>
+                                    <a class="dropdown-item d-flex" data-bs-sidenav-sizing-value="md" href="#" role="button">
+                                        <span class="material-symbols-outlined me-2">density_medium</span> Medium
+                                    </a>
+                                    <a class="dropdown-item d-flex" data-bs-sidenav-sizing-value="sm" href="#" role="button">
+                                        <span class="material-symbols-outlined me-2">density_small</span> Small
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </nav>
+                </div>
             </div>
-            <div class="nav-item">
-                <a class="nav-link" href="mailto:info@puubu.com" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="Contact us">
-                    <span class="material-symbols-outlined">alternate_email</span> <span class="d-xl-none ms-3">Contact us</span>
-                    </a>
-                </div>
-                <div class="nav-item dropend">
-                    <a class="nav-link" href="#" role="button" data-bs-toggle="dropdown" data-bs-settings-switcher aria-expanded="false">
-                        <span class="material-symbols-outlined">settings</span> <span class="d-xl-none ms-3">Settings</span>
-                    </a>
-                    <div class="dropdown-menu top-auto bottom-0 ms-xl-3">
-                    <!-- Color mode -->
-                    <h6 class="dropdown-header">Color mode</h6>
-                    <a class="dropdown-item d-flex" data-bs-theme-value="light" href="#" role="button"> <span class="material-symbols-outlined me-2">light_mode</span> Light </a>
-                    <a class="dropdown-item d-flex" data-bs-theme-value="dark" href="#" role="button"> <span class="material-symbols-outlined me-2">dark_mode</span> Dark </a>
-                  <a class="dropdown-item d-flex" data-bs-theme-value="auto" href="#" role="button"> <span class="material-symbols-outlined me-2">contrast</span> Auto </a>
-                
-                  <!-- Navigation position -->
-                  <hr class="dropdown-divider" />
-                  <h6 class="dropdown-header">Navigation position</h6>
-                  <a class="dropdown-item d-flex" data-bs-navigation-position-value="sidenav" href="#" role="button">
-                    <span class="material-symbols-outlined me-2">keyboard_tab_rtl</span> Sidenav
-                  </a>
-                  <a class="dropdown-item d-flex" data-bs-navigation-position-value="topnav" href="#" role="button">
-                    <span class="material-symbols-outlined me-2">vertical_align_top</span> Topnav
-                  </a>
-                
-                  <!-- Sidenav sizing -->
-                  <div class="sidenav-sizing">
-                    <hr class="dropdown-divider" />
-                    <h6 class="dropdown-header">Sidenav sizing</h6>
-                    <a class="dropdown-item d-flex" data-bs-sidenav-sizing-value="base" href="#" role="button">
-                      <span class="material-symbols-outlined me-2">density_large</span> Base
-                    </a>
-                    <a class="dropdown-item d-flex" data-bs-sidenav-sizing-value="md" href="#" role="button">
-                      <span class="material-symbols-outlined me-2">density_medium</span> Medium
-                    </a>
-                    <a class="dropdown-item d-flex" data-bs-sidenav-sizing-value="sm" href="#" role="button">
-                      <span class="material-symbols-outlined me-2">density_small</span> Small
-                    </a>
-                  </div>
-                </div>
-              </div>
-            </nav>
-          </div>
-        </div>
-      </nav>
+        </nav>
     </aside>
+    
+
     
     <!-- Sidenav (md) -->
     <aside class="aside aside-md sidenav-md">

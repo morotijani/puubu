@@ -730,7 +730,7 @@
                             </a>
                             <div class="collapse show" id="dashboards">
                                 <nav class="nav nav-pills">
-                                    <a class="nav-link active" href="./index.html">Default</a>
+                                    <a class="nav-link active" href="./index.html">Home</a>
                                     <a class="nav-link " href="./dashboards/crypto.html">Elections</a>
                                     <a class="nav-link " href="./dashboards/saas.html">...</a>
                                 </nav>
@@ -747,145 +747,50 @@
                             </a>
                         </div>
                         <div class="nav-item">
-                            <a
-                                class="nav-link "
-                                href="#"
-                            >
+                            <a class="nav-link " href="#">
                                 <span class="material-symbols-outlined me-3">person</span> Account
                             </a>
                         </div>
                         <div class="nav-item">
-                            <a
-                            class="nav-link "
-                            href="#"
-                            data-bs-toggle="collapse"
-                            data-bs-target="#ecommerce"
-                            role="button"
-                            aria-expanded="false"
-                            aria-controls="ecommerce"
-                            >
-                            <span class="material-symbols-outlined me-3">shopping_cart</span> E-commerce
+                            <a class="nav-link" href="#">
+                                <span class="material-symbols-outlined me-3">shopping_cart</span> Contestants
                             </a>
-                            <div class="collapse " id="ecommerce">
-                            <nav class="nav nav-pills">
-                                <a class="nav-link " href="./ecommerce/products.html">Products</a>
-                                <a class="nav-link " href="./ecommerce/orders.html">Orders</a>
-                                <a class="nav-link " href="./ecommerce/invoice.html">Invoice</a>
-                                <a class="nav-link " href="./ecommerce/pricing.html">Pricing</a>
-                  </nav>
-                </div>
-              </div>
-              <div class="nav-item">
-                <a
-                  class="nav-link "
-                  href="#"
-                  data-bs-toggle="collapse"
-                  data-bs-target="#posts"
-                  role="button"
-                  aria-expanded="false"
-                  aria-controls="posts"
-                >
-                  <span class="material-symbols-outlined me-3">text_fields</span> Posts
-                </a>
-                <div class="collapse " id="posts">
-                  <nav class="nav nav-pills">
-                    <a class="nav-link " href="./posts/categories.html">Categories</a>
-                    <a class="nav-link " href="./posts/posts.html">Posts</a>
-                    <a class="nav-link " href="./posts/post-new.html">New post</a>
-                  </nav>
-                </div>
-              </div>
-              <div class="nav-item">
-                <a
-                  class="nav-link"
-                  href="#"
-                  data-bs-toggle="collapse"
-                  data-bs-target="#authentication"
-                  role="button"
-                  aria-expanded="false"
-                  aria-controls="authentication"
-                >
-                  <span class="material-symbols-outlined me-3">login</span> Authentication
-                </a>
-                <div class="collapse" id="authentication">
-                  <nav class="nav nav-pills">
-                    <a class="nav-link" href="./auth/sign-in.html" target="_blank">Sign in</a>
-                    <a class="nav-link" href="./auth/sign-up.html" target="_blank">Sign up</a>
-                    <a class="nav-link" href="./auth/password-reset.html" target="_blank">Password reset</a>
-                    <a class="nav-link" href="./auth/verification-code.html" target="_blank">Verification code</a>
-                    <a class="nav-link" href="./auth/error.html" target="_blank">Error</a>
-                  </nav>
-                </div>
-              </div>
-              <div class="nav-item">
-                <a
-                  class="nav-link "
-                  href="#"
-                  data-bs-toggle="collapse"
-                  data-bs-target="#other"
-                  role="button"
-                  aria-expanded="false"
-                  aria-controls="other"
-                >
-                  <span class="material-symbols-outlined me-3">category</span> Misc
-                </a>
-                <div class="collapse " id="other">
-                  <nav class="nav nav-pills">
-                    <a class="nav-link " href="./other/calendar.html">Calendar</a>
-                  </nav>
-                </div>
-              </div>
-              <div class="nav-item">
-                <a class="nav-link" href="#" data-bs-toggle="collapse" data-bs-target="#emails" role="button" aria-expanded="false" aria-controls="emails">
-                  <span class="material-symbols-outlined me-3">mail</span> Emails
-                </a>
-                <div class="collapse" id="emails">
-                  <nav class="nav nav-pills">
-                    <a class="nav-link" href="./emails/account-confirmation.html" target="_blank">Account confirmation</a>
-                    <a class="nav-link" href="./emails/new-post.html" target="_blank">New post</a>
-                    <a class="nav-link" href="./emails/order-confirmation.html" target="_blank">Order confirmation</a>
-                    <a class="nav-link" href="./emails/password-reset.html" target="_blank">Password reset</a>
-                    <a class="nav-link" href="./emails/product-update.html" target="_blank">Product update</a>
-                  </nav>
-                </div>
-              </div>
-              <div class="nav-item">
-                <a class="nav-link" href="#" data-bs-toggle="collapse" data-bs-target="#mdoals" role="button" aria-expanded="false" aria-controls="mdoals">
-                  <span class="material-symbols-outlined me-3">tooltip</span> Modals
-                </a>
-                <div class="collapse" id="mdoals">
-                  <nav class="nav nav-pills">
-                    <a class="nav-link" href="#productModal" data-bs-toggle="offcanvas" aria-controls="productModal">Product</a>
-                    <a class="nav-link" href="#orderModal" data-bs-toggle="offcanvas" aria-controls="orderModal">Order</a>
-                    <a class="nav-link" href="#eventModal" data-bs-toggle="modal" aria-controls="eventModal">Event</a>
-                  </nav>
-                </div>
-              </div>
-            </nav>
+                        </div>
+                        <div class="nav-item">
+                            <a class="nav-link " href="#" >
+                                <span class="material-symbols-outlined me-3">text_fields</span> Voters
+                            </a>
+                        </div>
+                        <div class="nav-item">
+                            <a class="nav-link" href="#">
+                                <span class="material-symbols-outlined me-3">login</span> Report
+                            </a>
+                        </div>
+                    </nav>
     
-            <!-- Heading -->
-            <h3 class="fs-base px-3 mb-4">Documentation</h3>
-    
-            <!-- Nav -->
-            <nav class="navbar-nav nav-pills mb-xl-7">
-              <div class="nav-item">
-                <a class="nav-link " href="./docs/getting-started.html">
-                  <span class="material-symbols-outlined me-3">sticky_note_2</span> Getting started
-                </a>
-              </div>
-              <div class="nav-item">
-                <a class="nav-link " href="./docs/components.html">
-                  <span class="material-symbols-outlined me-3">deployed_code</span> Components
-                </a>
-              </div>
-              <div class="nav-item">
-                <a class="nav-link " href="./docs/changelog.html">
-                  <span class="material-symbols-outlined me-3">list_alt</span> Changelog
-                  <span class="badge text-bg-primary ms-auto">1.0.6</span>
-                </a>
-              </div>
-            </nav>
-    
+                    <!-- Heading -->
+                    <h3 class="fs-base px-3 mb-4">Documentation</h3>
+            
+                    <!-- Nav -->
+                    <nav class="navbar-nav nav-pills mb-xl-7">
+                        <div class="nav-item">
+                            <a class="nav-link " href="<?= PROOT; ?>172.06.84.0" />
+                                <span class="material-symbols-outlined me-3">sticky_note_2</span> Getting started
+                            </a>
+                        </div>
+                        <div class="nav-item">
+                            <a class="nav-link " href="./docs/components.html">
+                                <span class="material-symbols-outlined me-3">deployed_code</span> Documentation
+                            </a>
+                        </div>
+                        <div class="nav-item">
+                            <a class="nav-link " href="javascript:;">
+                                <span class="material-symbols-outlined me-3">list_alt</span> Version
+                                <span class="badge text-bg-primary ms-auto">1.0.6</span>
+                            </a>
+                        </div>
+                    </nav>
+            
             <!-- Divider -->
             <hr class="my-4 d-xl-none" />
     

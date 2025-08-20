@@ -790,30 +790,32 @@
                             </a>
                         </div>
                     </nav>
+
+                    here
             
-            <!-- Divider -->
-            <hr class="my-4 d-xl-none" />
-    
-            <!-- Nav -->
-            <nav class="navbar-nav nav-pills d-xl-none mb-7">
-              <div class="nav-item">
-                <a class="nav-link" href="https://themes.getbootstrap.com/product/dashbrd/" target="_blank">
-                  <span class="material-symbols-outlined me-3">local_mall</span> Go to product page
-                </a>
-              </div>
-              <div class="nav-item">
-                <a class="nav-link" href="mailto:yevgenysim+simpleqode@gmail.com">
-                  <span class="material-symbols-outlined me-3">alternate_email</span> Contact us
-                </a>
-              </div>
-              <div class="nav-item dropdown">
-                <a class="nav-link" href="#" role="button" data-bs-toggle="dropdown" data-bs-settings-switcher aria-expanded="false">
-                  <span class="material-symbols-outlined me-3"> settings </span> Settings
-                </a>
-                <div class="dropdown-menu ">
-                  <!-- Color mode -->
-                  <h6 class="dropdown-header">Color mode</h6>
-                  <a class="dropdown-item d-flex" data-bs-theme-value="light" href="#" role="button"> <span class="material-symbols-outlined me-2">light_mode</span> Light </a>
+                <!-- Divider -->
+                <hr class="my-4 d-xl-none" />
+        
+                <!-- Nav -->
+                <nav class="navbar-nav nav-pills d-xl-none mb-7">
+                    <div class="nav-item">
+                        <a class="nav-link" href="https://themes.getbootstrap.com/product/dashbrd/" target="_blank">
+                        <span class="material-symbols-outlined me-3">local_mall</span> Go to website
+                        </a>
+                    </div>
+                    <div class="nav-item">
+                        <a class="nav-link" href="mailto:yevgenysim+simpleqode@gmail.com">
+                        <span class="material-symbols-outlined me-3">alternate_email</span> Contact us
+                        </a>
+                    </div>
+                    <div class="nav-item dropdown">
+                        <a class="nav-link" href="#" role="button" data-bs-toggle="dropdown" data-bs-settings-switcher aria-expanded="false">
+                    <span class="material-symbols-outlined me-3"> settings </span> Settings
+                    </a>
+                    <div class="dropdown-menu ">
+                    <!-- Color mode -->
+                    <h6 class="dropdown-header">Color mode</h6>
+                    <a class="dropdown-item d-flex" data-bs-theme-value="light" href="#" role="button"> <span class="material-symbols-outlined me-2">light_mode</span> Light </a>
                   <a class="dropdown-item d-flex" data-bs-theme-value="dark" href="#" role="button"> <span class="material-symbols-outlined me-2">dark_mode</span> Dark </a>
                   <a class="dropdown-item d-flex" data-bs-theme-value="auto" href="#" role="button"> <span class="material-symbols-outlined me-2">contrast</span> Auto </a>
                 

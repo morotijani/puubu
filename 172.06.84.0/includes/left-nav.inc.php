@@ -270,39 +270,45 @@
                     </div>
                 </div>
             </div>
+
+
+
+
+
+
         
-          <!-- Toggler -->
-          <button
-            class="navbar-toggler ms-3"
-            type="button"
-            data-bs-toggle="collapse"
-            data-bs-target="#sidenavMediumCollapse"
-            aria-controls="sidenavMediumCollapse"
-            aria-expanded="false"
-            aria-label="Toggle navigation"
-          >
-            <span class="navbar-toggler-icon"></span>
-          </button>
+            <!-- Toggler -->
+            <button
+                class="navbar-toggler ms-3"
+                type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#sidenavMediumCollapse"
+                aria-controls="sidenavMediumCollapse"
+                aria-expanded="false"
+                aria-label="Toggle navigation"
+            >
+                <span class="navbar-toggler-icon"></span>
+            </button>
     
-          <!-- Collapse -->
-          <div class="collapse navbar-collapse" id="sidenavMediumCollapse">
-            <!-- Search -->
-            <div class="input-group d-xl-none my-4 my-xl-0">
-              <input class="form-control" type="search" placeholder="Search" aria-label="Search" aria-describedby="sidenavMediumSearchMobile" />
-              <span class="input-group-text" id="sidenavMediumSearchMobile">
-                <span class="material-symbols-outlined">search</span>
-              </span>
-            </div>
-    
-            <!-- Nav -->
-            <nav class="navbar-nav nav-pills">
-              <div class="nav-item dropend">
-                <a
-                  class="nav-link flex-xl-column active"
-                  href="#"
-                  role="button"
-                  data-bs-toggle="dropdown"
-                  aria-expanded="false"
+            <!-- Collapse -->
+            <div class="collapse navbar-collapse" id="sidenavMediumCollapse">
+                <!-- Search -->
+                <div class="input-group d-xl-none my-4 my-xl-0">
+                <input class="form-control" type="search" placeholder="Search" aria-label="Search" aria-describedby="sidenavMediumSearchMobile" />
+                <span class="input-group-text" id="sidenavMediumSearchMobile">
+                    <span class="material-symbols-outlined">search</span>
+                </span>
+                </div>
+        
+                <!-- Nav -->
+                <nav class="navbar-nav nav-pills">
+                <div class="nav-item dropend">
+                    <a
+                    class="nav-link flex-xl-column active"
+                    href="#"
+                    role="button"
+                    data-bs-toggle="dropdown"
+                    aria-expanded="false"
                 >
                   <span class="material-symbols-outlined">space_dashboard</span>
                   <span class="ms-3 ms-xl-0 mt-xl-1 d-xl-block align-self-stretch fs-xl-sm text-xl-center text-truncate">Home</span>
@@ -563,241 +569,209 @@
         </div>
       </nav>
     </aside>
+
+
+
+
+
+
+
+
+    
     
     <!-- Sidenav (base) -->
     <aside class="aside aside-base sidenav-base">
-      <nav class="navbar navbar-expand-xl navbar-vertical">
-        <div class="container-lg">
-          <!-- Brand -->
-          <a class="navbar-brand d-flex align-items-center fs-5 fw-bold px-xl-3 mb-xl-4" href="./index.html">
-            <i class="fs-4 text-secondary me-2" data-duoicon="box-2"></i> Dashbrd
-          </a>
-    
-          <!-- User -->
-          <div class="d-flex ms-auto d-xl-none">
-            <div class="dropdown my-n2">
-              <a class="btn btn-link d-inline-flex align-items-center dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                <span class="avatar avatar-sm avatar-status avatar-status-success me-3">
-                  <img class="avatar-img" src="./assets/img/photos/photo-6.jpg" alt="..." />
-                </span>
-                <span class="d-none d-xl-block">John Williams</span>
-              </a>
-              <ul class="dropdown-menu dropdown-menu-end">
-                <li><a class="dropdown-item" href="./account/account.html">Account</a></li>
-                <li><a class="dropdown-item" href="./auth/password-reset.html" target="_blank">Change password</a></li>
-                <li><hr class="dropdown-divider" /></li>
-                <li><a class="dropdown-item" href="#">Sign out</a></li>
-              </ul>
-            </div>
-    
-            <!-- Divider -->
-            <div class="vr align-self-center bg-dark mx-2"></div>
-    
-            <!-- Notifications -->
-            <div class="dropdown ">
-              <button class="btn btn-link" type="button" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">
-                <span class="material-symbols-outlined scale-125">notifications</span>
-                <span class="position-absolute top-0 end-0 m-3 p-1 bg-warning rounded-circle">
-                  <span class="visually-hidden">New notifications</span>
-                </span>
-              </button>
-              <div class="dropdown-menu dropdown-menu-end" style="width: 350px">
-                <!-- Header -->
-                <div class="row">
-                  <div class="col">
-                    <h6 class="dropdown-header me-auto">Notifications</h6>
-                  </div>
-                  <div class="col-auto">
-                    <button class="btn btn-sm btn-link" type="button"><span class="material-symbols-outlined me-1">done_all</span> Mark all as read</button>
-                    <button class="btn btn-sm btn-link" type="button"><span class="material-symbols-outlined">settings</span></button>
-                  </div>
-                </div>
+        <nav class="navbar navbar-expand-xl navbar-vertical">
+            <div class="container-lg">
+                <!-- Brand -->
+                <a class="navbar-brand d-flex align-items-center fs-5 fw-bold px-xl-3 mb-xl-4" href="./index.html">
+                    <i class="fs-4 text-secondary me-2" data-duoicon="box-2"></i> Dashbrd
+                </a>
             
-                <!-- Items -->
-                <div class="list-group list-group-flush px-4">
-                  <div class="list-group-item border-style-dashed px-0">
-                    <div class="row gx-3">
-                      <div class="col-auto">
-                        <div class="avatar avatar-sm">
-                          <img class="avatar-img" src="./assets/img/photos/photo-1.jpg" alt="..." />
-                        </div>
-                      </div>
-                      <div class="col">
-                        <p class="text-body mb-2">
-                          <span class="fw-semibold">Emily T.</span> commented on your post <br /><small class="text-body-secondary">5 minutes ago</small>
-                        </p>
-                        <div class="card">
-                          <div class="card-body p-3">Love the new dashboard layout! Super clean and easy to navigate 🔥</div>
-                        </div>
-                      </div>
+                <!-- User -->
+                <div class="d-flex ms-auto d-xl-none">
+                    <div class="dropdown my-n2">
+                        <a class="btn btn-link d-inline-flex align-items-center dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <span class="avatar avatar-sm avatar-status avatar-status-success me-3">
+                                <img class="avatar-img" src="./assets/img/photos/photo-6.jpg" alt="..." />
+                                </span>
+                            <span class="d-none d-xl-block"><?= $fullName; ?></span>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li><a class="dropdown-item" href="<?= PROOT; ?>172.06.84.0/account">Account</a></li>
+                            <li><a class="dropdown-item" href="<?= PROOT; ?>172.06.84.0/password-reset" target="_blank">Change password</a></li>
+                            <li><hr class="dropdown-divider" /></li>
+                            <li><a class="dropdown-item" href="<?= PROOT; ?>172.06.84.0/logout">Sign out</a></li>
+                        </ul>
                     </div>
-                  </div>
-                  <div class="list-group-item border-style-dashed px-0">
-                    <div class="row gx-3">
-                      <div class="col-auto">
-                        <div class="avatar avatar-sm">
-                          <img class="avatar-img" src="./assets/img/photos/photo-2.jpg" alt="..." />
+            
+                    <!-- Divider -->
+                    <div class="vr align-self-center bg-dark mx-2"></div>
+            
+                        <!-- Notifications -->
+                        <div class="dropdown ">
+                            <button class="btn btn-link" type="button" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">
+                                <span class="material-symbols-outlined scale-125">notifications</span>
+                                <span class="position-absolute top-0 end-0 m-3 p-1 bg-warning rounded-circle">
+                                <span class="visually-hidden">New notifications</span>
+                                </span>
+                            </button>
+                            <div class="dropdown-menu dropdown-menu-end" style="width: 350px">
+                                <!-- Header -->
+                                <div class="row">
+                                <div class="col">
+                                    <h6 class="dropdown-header me-auto">Notifications</h6>
+                                </div>
+                                <div class="col-auto">
+                                    <button class="btn btn-sm btn-link" type="button"><span class="material-symbols-outlined me-1">done_all</span> Mark all as read</button>
+                                    <button class="btn btn-sm btn-link" type="button"><span class="material-symbols-outlined">settings</span></button>
+                                </div>
+                            </div>
+                    
+                            <!-- Items -->
+                            <div class="list-group list-group-flush px-4">
+                                <div class="list-group-item border-style-dashed px-0">
+                                    <div class="row gx-3">
+                                        <div class="col-auto">
+                                            <div class="avatar avatar-sm">
+                                                <img class="avatar-img" src="./assets/img/photos/photo-1.jpg" alt="..." />
+                                            </div>
+                                        </div>
+                                        <div class="col">
+                                            <p class="text-body mb-2">
+                                                <span class="fw-semibold">Emily T.</span> commented on your post <br /><small class="text-body-secondary">5 minutes ago</small>
+                                            </p>
+                                            <div class="card">
+                                                <div class="card-body p-3">Love the new dashboard layout! Super clean and easy to navigate 🔥</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="list-group-item border-style-dashed px-0">
+                                    <div class="row gx-3">
+                                        <div class="col-auto">
+                                            <div class="avatar avatar-sm">
+                                                <img class="avatar-img" src="./assets/img/photos/photo-2.jpg" alt="..." />
+                                            </div>
+                                        </div>
+                                        <div class="col">
+                                            <p class="text-body mb-2">
+                                                <span class="fw-semibold">Michael J.</span> requested changes on your post <br />
+                                                <small class="text-body-secondary">10 minutes ago</small>
+                                            </p>
+                                            <div class="card">
+                                                <div class="card-body p-3">
+                                                    <p class="mb-2">Could you update the revenue chart with the latest data? Thanks!</p>
+                                                    <p class="mb-0">
+                                                        <button class="btn btn-sm btn-light" type="button">Update now</button>
+                                                        <button class="btn btn-sm btn-link">Dismiss</button>
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="list-group-item border-style-dashed px-0">
+                                    <div class="row gx-3 align-items-center">
+                                        <div class="col-auto">
+                                            <div class="avatar">
+                                                <span class="material-symbols-outlined">error</span>
+                                            </div>
+                                        </div>
+                                        <div class="col">
+                                            <p class="text-body mb-0">
+                                                <span class="fw-semibold">System alert</span> - Build failed <br />
+                                                <small class="text-body-secondary">1 hour ago</small>
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                      </div>
-                      <div class="col">
-                        <p class="text-body mb-2">
-                          <span class="fw-semibold">Michael J.</span> requested changes on your post <br />
-                          <small class="text-body-secondary">10 minutes ago</small>
-                        </p>
-                        <div class="card">
-                          <div class="card-body p-3">
-                            <p class="mb-2">Could you update the revenue chart with the latest data? Thanks!</p>
-                            <p class="mb-0">
-                              <button class="btn btn-sm btn-light" type="button">Update now</button>
-                              <button class="btn btn-sm btn-link">Dismiss</button>
-                            </p>
-                          </div>
-                        </div>
-                      </div>
                     </div>
-                  </div>
-                  <div class="list-group-item border-style-dashed px-0">
-                    <div class="row gx-3 align-items-center">
-                      <div class="col-auto">
-                        <div class="avatar">
-                          <span class="material-symbols-outlined">error</span>
-                        </div>
-                      </div>
-                      <div class="col">
-                        <p class="text-body mb-0">
-                          <span class="fw-semibold">System alert</span> - Build failed <br />
-                          <small class="text-body-secondary">1 hour ago</small>
-                        </p>
-                      </div>
+                </div>
+    
+                <!-- Toggler -->
+                <button
+                    class="navbar-toggler ms-3"
+                    type="button"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#sidenavBaseCollapse"
+                    aria-controls="sidenavBaseCollapse"
+                    aria-expanded="false"
+                    aria-label="Toggle navigation"
+                >
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+            
+                <!-- Collapse -->
+                <div class="collapse navbar-collapse" id="sidenavBaseCollapse">
+                    <!-- Search -->
+                    <div class="input-group d-xl-none my-4 my-xl-0">
+                        <input class="form-control" type="search" placeholder="Search" aria-label="Search" aria-describedby="sidenavBaseSearchMobile" />
+                        <span class="input-group-text" id="sidenavBaseSearchMobile">
+                            <span class="material-symbols-outlined">search</span>
+                        </span>
                     </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-    
-          <!-- Toggler -->
-          <button
-            class="navbar-toggler ms-3"
-            type="button"
-            data-bs-toggle="collapse"
-            data-bs-target="#sidenavBaseCollapse"
-            aria-controls="sidenavBaseCollapse"
-            aria-expanded="false"
-            aria-label="Toggle navigation"
-          >
-            <span class="navbar-toggler-icon"></span>
-          </button>
-    
-          <!-- Collapse -->
-          <div class="collapse navbar-collapse" id="sidenavBaseCollapse">
-            <!-- Search -->
-            <div class="input-group d-xl-none my-4 my-xl-0">
-              <input class="form-control" type="search" placeholder="Search" aria-label="Search" aria-describedby="sidenavBaseSearchMobile" />
-              <span class="input-group-text" id="sidenavBaseSearchMobile">
-                <span class="material-symbols-outlined">search</span>
-              </span>
-            </div>
-    
-            <!-- Nav -->
-            <nav class="navbar-nav nav-pills mb-7">
-              <div class="nav-item">
-                <a
-                  class="nav-link active"
-                  href="#"
-                  data-bs-toggle="collapse"
-                  data-bs-target="#dashboards"
-                  role="button"
-                  aria-expanded="false"
-                  aria-controls="dashboards"
-                >
-                  <span class="material-symbols-outlined me-3">space_dashboard</span> Dashboards
-                </a>
-                <div class="collapse show" id="dashboards">
-                  <nav class="nav nav-pills">
-                    <a class="nav-link active" href="./index.html">Default</a>
-                    <a class="nav-link " href="./dashboards/crypto.html">Crypto</a>
-                    <a class="nav-link " href="./dashboards/saas.html">SaaS</a>
-                  </nav>
-                </div>
-              </div>
-              <div class="nav-item">
-                <a
-                  class="nav-link "
-                  href="#"
-                  data-bs-toggle="collapse"
-                  data-bs-target="#customers"
-                  role="button"
-                  aria-expanded="false"
-                  aria-controls="customers"
-                >
-                  <span class="material-symbols-outlined me-3">group</span> Customers
-                </a>
-                <div class="collapse " id="customers">
-                  <nav class="nav nav-pills">
-                    <a class="nav-link " href="./customers/customers.html">Customers</a>
-                    <a class="nav-link " href="./customers/customer.html">Customer details</a>
-                    <a class="nav-link " href="./customers/customer-new.html">New customer</a>
-                  </nav>
-                </div>
-              </div>
-              <div class="nav-item">
-                <a
-                  class="nav-link "
-                  href="#"
-                  data-bs-toggle="collapse"
-                  data-bs-target="#projects"
-                  role="button"
-                  aria-expanded="false"
-                  aria-controls="projects"
-                >
-                  <span class="material-symbols-outlined me-3">list_alt</span> Projects
-                </a>
-                <div class="collapse " id="projects">
-                  <nav class="nav nav-pills">
-                    <a class="nav-link " href="./projects/projects.html">Projects</a>
-                    <a class="nav-link " href="./projects/project.html">Project overview</a>
-                    <a class="nav-link " href="./projects/project-new.html">New project</a>
-                  </nav>
-                </div>
-              </div>
-              <div class="nav-item">
-                <a
-                  class="nav-link "
-                  href="#"
-                  data-bs-toggle="collapse"
-                  data-bs-target="#account"
-                  role="button"
-                  aria-expanded="false"
-                  aria-controls="account"
-                >
-                  <span class="material-symbols-outlined me-3">person</span> Account
-                </a>
-                <div class="collapse " id="account">
-                  <nav class="nav nav-pills">
-                    <a class="nav-link " href="./account/account.html">Account overview</a>
-                    <a class="nav-link " href="./account/account-settings.html">Account settings</a>
-                  </nav>
-                </div>
-              </div>
-              <div class="nav-item">
-                <a
-                  class="nav-link "
-                  href="#"
-                  data-bs-toggle="collapse"
-                  data-bs-target="#ecommerce"
-                  role="button"
-                  aria-expanded="false"
-                  aria-controls="ecommerce"
-                >
-                  <span class="material-symbols-outlined me-3">shopping_cart</span> E-commerce
-                </a>
-                <div class="collapse " id="ecommerce">
-                  <nav class="nav nav-pills">
-                    <a class="nav-link " href="./ecommerce/products.html">Products</a>
-                    <a class="nav-link " href="./ecommerce/orders.html">Orders</a>
-                    <a class="nav-link " href="./ecommerce/invoice.html">Invoice</a>
-                    <a class="nav-link " href="./ecommerce/pricing.html">Pricing</a>
+            
+                    <!-- Nav -->
+                    <nav class="navbar-nav nav-pills mb-7">
+                        <div class="nav-item">
+                            <a
+                                class="nav-link active"
+                                href="#"
+                                data-bs-toggle="collapse"
+                                data-bs-target="#dashboards"
+                                role="button"
+                                aria-expanded="false"
+                                aria-controls="dashboards"
+                            >
+                                <span class="material-symbols-outlined me-3">space_dashboard</span> Dashboards
+                            </a>
+                            <div class="collapse show" id="dashboards">
+                                <nav class="nav nav-pills">
+                                    <a class="nav-link active" href="./index.html">Default</a>
+                                    <a class="nav-link " href="./dashboards/crypto.html">Elections</a>
+                                    <a class="nav-link " href="./dashboards/saas.html">...</a>
+                                </nav>
+                            </div>
+                        </div>
+                        <div class="nav-item">
+                            <a class="nav-link" href="<?= PROOT; ?>172.06.84.0/positions">
+                                <span class="material-symbols-outlined me-3">group</span> Positions
+                            </a>
+                        </div>
+                        <div class="nav-item">
+                            <a class="nav-link " href="<?= PROOT; ?>172.06.84.0/elections">
+                                <span class="material-symbols-outlined me-3">list_alt</span> Elections
+                            </a>
+                        </div>
+                        <div class="nav-item">
+                            <a
+                                class="nav-link "
+                                href="#"
+                            >
+                                <span class="material-symbols-outlined me-3">person</span> Account
+                            </a>
+                        </div>
+                        <div class="nav-item">
+                            <a
+                            class="nav-link "
+                            href="#"
+                            data-bs-toggle="collapse"
+                            data-bs-target="#ecommerce"
+                            role="button"
+                            aria-expanded="false"
+                            aria-controls="ecommerce"
+                            >
+                            <span class="material-symbols-outlined me-3">shopping_cart</span> E-commerce
+                            </a>
+                            <div class="collapse " id="ecommerce">
+                            <nav class="nav nav-pills">
+                                <a class="nav-link " href="./ecommerce/products.html">Products</a>
+                                <a class="nav-link " href="./ecommerce/orders.html">Orders</a>
+                                <a class="nav-link " href="./ecommerce/invoice.html">Invoice</a>
+                                <a class="nav-link " href="./ecommerce/pricing.html">Pricing</a>
                   </nav>
                 </div>
               </div>

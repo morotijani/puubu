@@ -21,7 +21,7 @@
 
 	$access_token = IPINFO_PRIVATE_KEY;
 	$client = new IPinfo($access_token);
-	$details = $client->getDetails();
+	$details = [];//$client->getDetails();
 
 	// $page = "http://".$_SERVER['HTTP_HOST']."".$_SERVER['PHP_SELF'];
 	// $page .= iif(!empty($_SERVER['QUERY_STRING']), "?{$_SERVER['QUERY_STRING']}", "");
@@ -72,15 +72,16 @@
 
 
  	// Display on Messages on Errors And Success
+	$flash = '';
  	if (isset($_SESSION['flash_success'])) {
- 	 	echo '<div class="bg-success" id="temporary" style="margin-top: 60px; color: #fff;"><p class="text-center">'.$_SESSION['flash_success'].'</p></div>';
+ 	 	$flash = '<div class="bg-success" id="temporary" style="margin-top: 60px; color: #fff;"><p class="text-center">'.$_SESSION['flash_success'].'</p></div>';
  	 	unset($_SESSION['flash_success']);
  	 }
 
  	 if (isset($_SESSION['flash_error'])) {
- 	 	echo '<div class="bg-danger" id="temporary" style="margin-top: 60px; color: #fff;"><p class="text-center">'.$_SESSION['flash_error'].'</p></div>';
+ 	 	$flash = '<div class="bg-danger" id="temporary" style="margin-top: 60px; color: #fff;"><p class="text-center">'.$_SESSION['flash_error'].'</p></div>';
  	 	unset($_SESSION['flash_error']);
- 	 }
+ 	}
 
 
 

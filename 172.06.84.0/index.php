@@ -62,94 +62,94 @@
             </div>
             <div class="col-12 col-md-6 col-xxl-3 mb-4 mb-xxl-0">
                 <div class="card bg-body-tertiary border-transparent">
-                <div class="card-body">
-                    <div class="row align-items-center">
-                    <div class="col">
-                        <!-- Heading -->
-                        <h4 class="fs-sm fw-normal text-body-secondary mb-1">Contestants</h4>
+                    <div class="card-body">
+                        <div class="row align-items-center">
+                            <div class="col">
+                                <!-- Heading -->
+                                <h4 class="fs-sm fw-normal text-body-secondary mb-1">Contestants</h4>
 
-                    <!-- Text -->
-                    <div class="fs-4 fw-semibold"># <?= count_contestants(); ?></div>
-                  </div>
-                  <div class="col-auto">
-                    <!-- Avatar -->
-                    <div class="avatar avatar-lg bg-body text-primary">
-                      <i class="fs-4" data-duoicon="clock"></i>
+                                <!-- Text -->
+                                <div class="fs-4 fw-semibold"># <?= count_contestants(); ?></div>
+                            </div>
+                            <div class="col-auto">
+                                <!-- Avatar -->
+                                <div class="avatar avatar-lg bg-body text-primary">
+                                    <i class="fs-4" data-duoicon="clock"></i>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                  </div>
                 </div>
-              </div>
             </div>
-          </div>
-          <div class="col-12 col-md-6 col-xxl-3 mb-4 mb-md-0">
-            <div class="card bg-body-tertiary border-transparent">
-              <div class="card-body">
-                <div class="row align-items-center">
-                  <div class="col">
-                    <!-- Heading -->
-                    <h4 class="fs-sm fw-normal text-body-secondary mb-1">Positions</h4>
+            <div class="col-12 col-md-6 col-xxl-3 mb-4 mb-md-0">
+                <div class="card bg-body-tertiary border-transparent">
+                    <div class="card-body">
+                        <div class="row align-items-center">
+                            <div class="col">
+                                <!-- Heading -->
+                                <h4 class="fs-sm fw-normal text-body-secondary mb-1">Positions</h4>
 
-                    <!-- Text -->
-                    <div class="fs-4 fw-semibold"># <?= count_positions(); ?></div>
-                  </div>
-                  <div class="col-auto">
-                    <!-- Avatar -->
-                    <div class="avatar avatar-lg bg-body text-primary">
-                      <i class="fs-4" data-duoicon="slideshow"></i>
+                                <!-- Text -->
+                                <div class="fs-4 fw-semibold"># <?= count_positions(); ?></div>
+                            </div>
+                            <div class="col-auto">
+                                <!-- Avatar -->
+                                <div class="avatar avatar-lg bg-body text-primary">
+                                    <i class="fs-4" data-duoicon="slideshow"></i>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                  </div>
                 </div>
-              </div>
             </div>
-          </div>
-          <div class="col-12 col-md-6 col-xxl-3">
-            <div class="card bg-body-tertiary border-transparent">
-              <div class="card-body">
-                <div class="row align-items-center">
-                  <div class="col">
-                    <!-- Heading -->
-                    <h4 class="fs-sm fw-normal text-body-secondary mb-1">Voters</h4>
+            <div class="col-12 col-md-6 col-xxl-3">
+                <div class="card bg-body-tertiary border-transparent">
+                    <div class="card-body">
+                        <div class="row align-items-center">
+                            <div class="col">
+                                <!-- Heading -->
+                                <h4 class="fs-sm fw-normal text-body-secondary mb-1">Voters</h4>
 
-                    <!-- Text -->
-                    <div class="fs-4 fw-semibold"># <?= count_voters(); ?></div>
-                  </div>
-                  <div class="col-auto">
-                    <!-- Avatar -->
-                    <div class="avatar avatar-lg bg-body text-primary">
-                      <i class="fs-4" data-duoicon="discount"></i>
+                                <!-- Text -->
+                                <div class="fs-4 fw-semibold"># <?= count_voters(); ?></div>
+                            </div>
+                            <div class="col-auto">
+                                <!-- Avatar -->
+                                <div class="avatar avatar-lg bg-body text-primary">
+                                    <i class="fs-4" data-duoicon="discount"></i>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                  </div>
                 </div>
-              </div>
             </div>
-          </div>
         </div>
 
         <div class="row">
-          <div class="col-12 col-xxl-8">
-            <!-- Performance -->
-            <div class="card mb-6">
-              <div class="card-header">
-                <div class="row align-items-center">
-                  <div class="col">
-                    <h3 class="fs-6 mb-0">Performance</h3>
-                  </div>
-                  <div class="col-auto fs-sm me-n3">
-                    <span class="material-symbols-outlined text-primary me-1">circle</span>
-                    Total
-                  </div>
-                  <div class="col-auto fs-sm">
-                    <span class="material-symbols-outlined text-dark me-1">circle</span>
-                    Tracked
-                  </div>
+            <div class="col-12 col-xxl-8">
+                <!-- Performance -->
+                <div class="card mb-6">
+                <div class="card-header">
+                    <div class="row align-items-center">
+                    <div class="col">
+                        <h3 class="fs-6 mb-0">Performance</h3>
+                    </div>
+                    <div class="col-auto fs-sm me-n3">
+                        <span class="material-symbols-outlined text-primary me-1">circle</span>
+                        Total
+                    </div>
+                    <div class="col-auto fs-sm">
+                        <span class="material-symbols-outlined text-dark me-1">circle</span>
+                        Tracked
+                    </div>
+                    </div>
                 </div>
-              </div>
-              <div class="card-body">
-                <div class="chart">
-                  <canvas class="chart-canvas" id="userPerformanceChart"></canvas>
+                <div class="card-body">
+                    <div class="chart">
+                    <canvas class="chart-canvas" id="userPerformanceChart"></canvas>
+                    </div>
                 </div>
-              </div>
-            </div>
+                </div>
 
             <!-- Projects -->
             <div class="card mb-6 mb-xxl-0">

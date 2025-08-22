@@ -63,6 +63,7 @@
 
     <body class="d-flex align-items-center">
         <div class="container">
+            <?= $flash; ?>
             <div class="row justify-content-center">
                 <div class="col-12" style="max-width: 25rem">
                     <!-- Heading -->

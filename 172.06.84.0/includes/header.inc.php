@@ -214,8 +214,9 @@
     <!-- Title -->
     <title>Dashboard • Puubu</title>
 </head>
-
 <body>
+    <?= $flash; ?>
+
     <!-- Modals -->
     <!-- Modal: Event -->
     <div class="modal fade" id="eventModal" tabindex="-1" aria-labelledby="eventModalLabel" aria-hidden="true">

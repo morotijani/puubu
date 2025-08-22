@@ -4,6 +4,7 @@
     if (cadminIsLoggedIn()) {
         redirect(PROOT . '172.06.84.0/index');
     }
+    $flash_in = $flash;
 
     include ("includes/header.inc.php");
 
@@ -63,7 +64,7 @@
 
     <body class="d-flex align-items-center">
         <div class="container">
-            <?= $flash; ?>
+            <?= $flash_in; ?>
             <div class="row justify-content-center">
                 <div class="col-12" style="max-width: 25rem">
                     <!-- Heading -->

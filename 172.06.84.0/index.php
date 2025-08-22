@@ -23,7 +23,6 @@ include ('includes/main-topbar.inc.php');
 
     <!-- Main -->
     <main class="main px-lg-6">
-                  <?= $flash; ?>
 
       <!-- Content -->
       <div class="container-lg">

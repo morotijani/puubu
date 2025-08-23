@@ -156,6 +156,59 @@
                     </div>
                 </div> -->
 
+                
+                        <div class="card mb-6">
+                            <div class="card-header">
+                                <div class="row align-items-center">
+                                    <div class="col">
+                                        <h3 class="fs-6 mb-0">
+                                            Current elections <img src="media/election-gif.gif" class="ml-2 img-fluid">
+                                        </h3>
+                                    </div>
+                                    <div class="col-auto my-n3 me-n3">
+                                        <button class="btn btn-sm btn-link" type="button">+ Add</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="table-responsive">
+                                <table class="table align-middle mb-0">
+                                    <thead>
+                                        <th class="fs-sm">Name</th>
+                                        <th class="fs-sm">Last price (USD)</th>
+                                        <th class="fs-sm">Change</th>
+                                        <th class="fs-sm" colspan="2">Last 24hr</th>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    <div class="avatar avatar-sm me-3">
+                                                        <img class="avatar-img" src="../assets/img/crypto/btc.svg" alt="Bitcoin" />
+                                                    </div>
+                                                    <strong class="fw-semibold">Bitcoin</strong>
+                                                </div>
+                                            </td>
+                                            <td>63,879.81</td>
+                                            <td>
+                                                <span class="badge bg-success-subtle text-success">+0.53%</span>
+                                            </td>
+                                            <td>
+                                                <span class="badge bg-success-subtle text-success">+0.53%</span>
+                                            </td>
+                                            <td>
+                                                <div class="chart" style="height: 1rem; width: 3rem">
+                                                    <canvas class="chart-canvas" data-crypto-currency-success-chart></canvas>
+                                                </div>
+                                            </td>
+                                            <td class="text-end">
+                                                <button class="btn btn-sm btn-light" type="button">Trade</button>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
 
 
 

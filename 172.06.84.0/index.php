@@ -133,7 +133,7 @@
         <div class="row">
             <div class="col-12 col-xxl-8">
                 <!-- Performance -->
-                <div class="card mb-6">
+                <!-- <div class="card mb-6">
                     <div class="card-header">
                         <div class="row align-items-center">
                             <div class="col">
@@ -154,7 +154,101 @@
                             <canvas class="chart-canvas" id="userPerformanceChart"></canvas>
                         </div>
                     </div>
+                </div> -->
+
+
+
+
+                <div class="card mt-4" style='background-color: #37404a;'>
+                <div class="card-body">
+                    <h4 class='header-title mb-3 text-left' style='color:rgb(170, 184, 197);'>Current elections <img src="media/election-gif.gif" class="ml-2 img-fluid"></h4><hr>
+
+                    <?php 
+
+                $started_election_query = "SELECT * FROM election WHERE session = ? OR session = ?";
+                $statement = $conn->prepare($started_election_query);
+                $statement->execute([1, 2]);
+                $started_election_reult = $statement->fetchAll();
+                $started_election_count = $statement->rowCount();
+                echo '
+                    <table class="table table-sm table-borderless text-secondary table-hover table-striped">
+                ';
+                if ($started_election_count > 0) {
+                    echo '
+                        <thead>
+                            <tr>
+                                <th>Election Name</th>
+                                <th>Election Organizers</th>
+                                <th>Positions</th>
+                                <th>Candidates</th>
+                                <th>Vote Turnout</th>
+                                <th>Voters</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                    ';
+                    foreach ($started_election_reult as $row) {
+                        $electionStatus = '';
+                        $election_report_option = '';
+
+                        if ($row['session'] == 2) {
+                            $electionStatus = '<span class="badge badge-success">ended</span>';
+                            $election_report_option = '
+                                <span class="badge badge-dark">
+                                    <a href="'.PROOT.'172.06.84.0/report/full_election_report?election='.$row["eid"].'" class="text-secondary" target="_blank">report</a>
+                                    </span>
+                                <br>
+                                <a href="reports.voted.php?report=' . $row["eid"] . '" class="badge text-secondary nav-link" target="_blank">Voted Details</a>
+                                <a href="reports.voter.php?report=' . $row["eid"] . '" class="badge text-secondary nav-link" target="_blank">Voters Details</a>
+                                ';
+                        } else {
+                            $electionStatus = '<span class="badge badge-danger">running ...</span>';
+                            $election_report_option = '<span class="badge badge-dark"><a href="'.PROOT.'172.06.84.0/reports?report=1&election='.$row["eid"].'" class="text-secondary" target="_blank">report</a></span>';
+                        }
+                        echo '
+                            <tr>
+                                <td>' . ucwords($row["election_name"]) . ' ' . $electionStatus. '</td>
+                                <td>'.ucwords($row["election_by"]).'</td>
+                                <td>'.count_positions_on_running_election($row["eid"]).'</td>
+                                <td>'.count_contestants_on_runing_election($row["eid"]).'</td>
+                                <td>'.count_votes_on_runing_election($row["eid"]).'</td>
+                                <td>'.count_voters_on_runing_election($row['eid']).'</td>
+                                <td>'.$election_report_option.'</td>
+                            </tr>
+                        ';
+                    }
+                    echo '</tbody>';
+                } else {
+                    echo '
+                        <tr>
+                            <td colspan="7">No election running...</td>
+                        </tr>
+                    ';
+                }
+                echo '</table>';
+            ?>
                 </div>
+
+            </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
                 <!-- Industry news -->
                 <div class="card mb-6 mb-xxl-0">
@@ -220,7 +314,7 @@
                                 <div class="col">
                                     <a class="text-reset" href="#!">
                                         <h3 class="fs-base">Voters</h3>
-                                        <p class="text-body-secondary">Registrars you wish to add to allow them to vote can be managed at the <a href="<?= PROOT; ?>172.06.84.0/voters">Voters</a> tab.</p>
+                                        <p class="text-body-secondary">Registrars you wish to add to allow them to vote can be managed at the <a href="<?= PROOT; ?>172.06.84.0/registrar">Voters</a> tab.</p>
                                     </a>
                                 </div>
                             </div>
@@ -230,7 +324,7 @@
                                 <div class="col">
                                     <a class="text-reset" href="#!">
                                         <h3 class="fs-base">Password</h3>
-                                        <p class="text-body-secondary">It is highly recommended to change admin's password at the <a href="<?= PROOT; ?>172.06.84.0/change-password">Change Password</a> tab before conducting an election.</p>
+                                        <p class="text-body-secondary">It is highly recommended to change admin's password at the <a href="<?= PROOT; ?>172.06.84.0/settings.php?cp=1">Change Password</a> tab before conducting an election.</p>
                                     </a>
                                 </div>
                             </div>
@@ -238,226 +332,11 @@
                     </div>
                 </div>
             </div>
+            
+        </div>
 
 
 
-            <!-- Projects -->
-            <div class="card mb-6 mb-xxl-0">
-              <div class="card-header">
-                <div class="row align-items-center">
-                  <div class="col">
-                    <h3 class="fs-6 mb-0">Active projects</h3>
-                  </div>
-                  <div class="col-auto my-n3 me-n3">
-                    <a class="btn btn-sm btn-link" href="./projects/projects.html">
-                      Browse all
-                      <span class="material-symbols-outlined">arrow_right_alt</span>
-                    </a>
-                  </div>
-                </div>
-              </div>
-              <div class="table-responsive">
-                <table class="table table-hover align-middle mb-0">
-                  <thead>
-                    <th class="fs-sm">Title</th>
-                    <th class="fs-sm">Status</th>
-                    <th class="fs-sm">Author</th>
-                    <th class="fs-sm">Team</th>
-                  </thead>
-                  <tbody>
-                    <tr onclick="window.location.href='./projects/project.html'" role="link" tabindex="0">
-                      <td>
-                        <div class="d-flex align-items-center">
-                          <div class="avatar">
-                            <img class="avatar-img" src="./assets/img/projects/project-1.png" alt="..." />
-                          </div>
-                          <div class="ms-4">
-                            <div>Filters AI</div>
-                            <div class="fs-sm text-body-secondary">Updated on Apr 10, 2024</div>
-                          </div>
-                        </div>
-                      </td>
-                      <td>
-                        <span class="badge bg-success-subtle text-success">Ready to Ship</span>
-                      </td>
-                      <td>
-                        <div class="d-flex align-items-center text-nowrap">
-                          <div class="avatar avatar-xs me-2">
-                            <img class="avatar-img" src="./assets/img/photos/photo-2.jpg" alt="..." />
-                          </div>
-                          Michael Johnson
-                        </div>
-                      </td>
-                      <td>
-                        <div class="avatar-group">
-                          <div class="avatar avatar-xs" data-bs-toggle="tooltip" data-bs-title="Michael Johnson">
-                            <img class="avatar-img" src="./assets/img/photos/photo-2.jpg" alt="..." />
-                          </div>
-                          <div class="avatar avatar-xs" data-bs-toggle="tooltip" data-bs-title="Robert Garcia">
-                            <img class="avatar-img" src="./assets/img/photos/photo-3.jpg" alt="..." />
-                          </div>
-                          <div class="avatar avatar-xs" data-bs-toggle="tooltip" data-bs-title="Olivia Davis">
-                            <img class="avatar-img" src="./assets/img/photos/photo-4.jpg" alt="..." />
-                          </div>
-                          <div class="avatar avatar-xs" data-bs-toggle="tooltip" data-bs-title="Jessica Miller">
-                            <img class="avatar-img" src="./assets/img/photos/photo-5.jpg" alt="..." />
-                          </div>
-                        </div>
-                      </td>
-                    </tr>
-                    <tr onclick="window.location.href='./projects/project.html'" role="link" tabindex="0">
-                      <td>
-                        <div class="d-flex align-items-center">
-                          <div class="avatar">
-                            <img class="avatar-img" src="./assets/img/projects/project-2.png" alt="..." />
-                          </div>
-                          <div class="ms-4">
-                            <div>Design landing page</div>
-                            <div class="fs-sm text-body-secondary">Created on Mar 05, 2024</div>
-                          </div>
-                        </div>
-                      </td>
-                      <td>
-                        <span class="badge bg-danger-subtle text-danger">Cancelled</span>
-                      </td>
-                      <td>
-                        <div class="d-flex align-items-center text-nowrap">
-                          <div class="avatar avatar-xs me-2">
-                            <img class="avatar-img" src="./assets/img/photos/photo-1.jpg" alt="..." />
-                          </div>
-                          Emily Thompson
-                        </div>
-                      </td>
-                      <td>
-                        <div class="avatar-group">
-                          <div class="avatar avatar-xs" data-bs-toggle="tooltip" data-bs-title="Olivia Davis">
-                            <img class="avatar-img" src="./assets/img/photos/photo-4.jpg" alt="..." />
-                          </div>
-                          <div class="avatar avatar-xs" data-bs-toggle="tooltip" data-bs-title="Jessica Miller">
-                            <img class="avatar-img" src="./assets/img/photos/photo-5.jpg" alt="..." />
-                          </div>
-                        </div>
-                      </td>
-                    </tr>
-                    <tr onclick="window.location.href='./projects/project.html'" role="link" tabindex="0">
-                      <td>
-                        <div class="d-flex align-items-center">
-                          <div class="avatar text-primary">
-                            <i class="fs-4" data-duoicon="book-3"></i>
-                          </div>
-                          <div class="ms-4">
-                            <div>Update documentation</div>
-                            <div class="fs-sm text-body-secondary">Created on Jan 22, 2024</div>
-                          </div>
-                        </div>
-                      </td>
-                      <td>
-                        <span class="badge bg-secondary-subtle text-secondary">In Testing</span>
-                      </td>
-                      <td>
-                        <div class="d-flex align-items-center text-nowrap">
-                          <div class="avatar avatar-xs me-2">
-                            <img class="avatar-img" src="./assets/img/photos/photo-2.jpg" alt="..." />
-                          </div>
-                          Michael Johnson
-                        </div>
-                      </td>
-                      <td>
-                        <div class="avatar-group">
-                          <div class="avatar avatar-xs" data-bs-toggle="tooltip" data-bs-title="Emily Thompson">
-                            <img class="avatar-img" src="./assets/img/photos/photo-1.jpg" alt="..." />
-                          </div>
-                          <div class="avatar avatar-xs" data-bs-toggle="tooltip" data-bs-title="Robert Garcia">
-                            <img class="avatar-img" src="./assets/img/photos/photo-3.jpg" alt="..." />
-                          </div>
-                          <div class="avatar avatar-xs" data-bs-toggle="tooltip" data-bs-title="John Williams">
-                            <img class="avatar-img" src="./assets/img/photos/photo-6.jpg" alt="..." />
-                          </div>
-                        </div>
-                      </td>
-                    </tr>
-                    <tr onclick="window.location.href='./projects/project.html'" role="link" tabindex="0">
-                      <td>
-                        <div class="d-flex align-items-center">
-                          <div class="avatar">
-                            <img class="avatar-img" src="./assets/img/projects/project-3.png" alt="..." />
-                          </div>
-                          <div class="ms-4">
-                            <div>Update Touche</div>
-                            <div class="fs-sm text-body-secondary">Updated on Apr 14, 2024</div>
-                          </div>
-                        </div>
-                      </td>
-                      <td>
-                        <span class="badge bg-success-subtle text-success">Ready to Ship</span>
-                      </td>
-                      <td>
-                        <div class="d-flex align-items-center text-nowrap">
-                          <div class="avatar avatar-xs me-2">
-                            <img class="avatar-img" src="./assets/img/photos/photo-5.jpg" alt="..." />
-                          </div>
-                          Jessica Miller
-                        </div>
-                      </td>
-                      <td>
-                        <div class="avatar-group">
-                          <div class="avatar avatar-xs" data-bs-toggle="tooltip" data-bs-title="Robert Garcia">
-                            <img class="avatar-img" src="./assets/img/photos/photo-3.jpg" alt="..." />
-                          </div>
-                          <div class="avatar avatar-xs" data-bs-toggle="tooltip" data-bs-title="Olivia Davis">
-                            <img class="avatar-img" src="./assets/img/photos/photo-4.jpg" alt="..." />
-                          </div>
-                          <div class="avatar avatar-xs" data-bs-toggle="tooltip" data-bs-title="Jessica Miller">
-                            <img class="avatar-img" src="./assets/img/photos/photo-5.jpg" alt="..." />
-                          </div>
-                          <div class="avatar avatar-xs" data-bs-toggle="tooltip" data-bs-title="John Williams">
-                            <img class="avatar-img" src="./assets/img/photos/photo-6.jpg" alt="..." />
-                          </div>
-                        </div>
-                      </td>
-                    </tr>
-                    <tr onclick="window.location.href='./projects/project.html'" role="link" tabindex="0">
-                      <td>
-                        <div class="d-flex align-items-center">
-                          <div class="avatar text-primary">
-                            <i class="fs-4" data-duoicon="box"></i>
-                          </div>
-                          <div class="ms-4">
-                            <div>Add Transactions</div>
-                            <div class="fs-sm text-body-secondary">Created on Apr 25, 2024</div>
-                          </div>
-                        </div>
-                      </td>
-                      <td>
-                        <span class="badge bg-light text-body-secondary">Backlog</span>
-                      </td>
-                      <td>
-                        <div class="d-flex align-items-center text-nowrap">
-                          <div class="avatar avatar-xs me-2">
-                            <img class="avatar-img" src="./assets/img/photos/photo-4.jpg" alt="..." />
-                          </div>
-                          Olivia Davis
-                        </div>
-                      </td>
-                      <td>
-                        <div class="avatar-group">
-                          <div class="avatar avatar-xs" data-bs-toggle="tooltip" data-bs-title="Robert Garcia">
-                            <img class="avatar-img" src="./assets/img/photos/photo-3.jpg" alt="..." />
-                          </div>
-                          <div class="avatar avatar-xs" data-bs-toggle="tooltip" data-bs-title="John Williams">
-                            <img class="avatar-img" src="./assets/img/photos/photo-6.jpg" alt="..." />
-                          </div>
-                          <div class="avatar avatar-xs" data-bs-toggle="tooltip" data-bs-title="Emily Thompson">
-                            <img class="avatar-img" src="./assets/img/photos/photo-1.jpg" alt="..." />
-                          </div>
-                        </div>
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          </div>
           <div class="col-12 col-xxl-4">
             <!-- Goals -->
             <div class="card mb-6">
@@ -653,20 +532,6 @@
     
 
 
-
-
-
-<div class="card mt-4" style='background-color: #37404a;'>
-    <div class="card-body">  
-        <h4 class='header-title mb-3 text-left' style='color:rgb(170, 184, 197);'>General Overview</h4><hr>
-        <p>To start a fresh new election, go to the <a href="election" class="text-secondary">Add Elections</a> tab.</p>
-        <p>To setup the <u>positions</u> under their respective elections, go to the <a href="positions" class="text-secondary">Manage Positions & Elections</a> tab.</p>
-        <p>For the adding up of the <u>candidates</u>, head to the <a href="contestants" class="text-secondary">Add Contestants</a> tab. </p>
-        <p>Go to <a href="contestants" class="text-secondary">Manage Contestants</a> tab to setup the contestants.</p>
-        <p>Registrars you wish to add to allow them to vote can be managed at the <a href="registrar" class="text-secondary">Voters</a> tab.</p>
-        <p>It is highly recommended to change <b>admin</b>'s  password at the <a href="settings.php?cp=1" class="text-secondary">Change Password</a> tab before conducting an election.</p>
-    </div>
-</div>
 
 
 <div class="modal fade" id="electionModal" tabindex="-1" role="dialog" aria-labelledby="electionLabel" style="display: none;" aria-hidden="true">

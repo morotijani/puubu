@@ -179,8 +179,8 @@
                             <div class="row">
                                 <div class="col">
                                     <a class="text-reset" href="#!">
-                                        <h3 class="fs-base">Documentation</h3>
-                                        <p class="text-body-secondary">The Ethereum 2.0 upgrade promises faster transactions and reduced energy consumption.</p>
+                                        <h3 class="fs-base">Add election</h3>
+                                        <p class="text-body-secondary">To start a fresh new election, go to the <a href="<?= PROOT; ?>172.06.84.0/election">Add Elections</a> tab.</p>
                                     </a>
                                 </div>
                             </div>
@@ -189,8 +189,48 @@
                             <div class="row">
                                 <div class="col">
                                     <a class="text-reset" href="#!">
-                                        <h3 class="fs-base">Documentation</h3>
-                                        <p class="text-body-secondary">The Ethereum 2.0 upgrade promises faster transactions and reduced energy consumption.</p>
+                                        <h3 class="fs-base">Positions & Elections</h3>
+                                        <p class="text-body-secondary">To setup the positions under their respective elections, go to the <a href="<?= PROOT; ?>172.06.84.0/positions">Manage Positions & Elections tab</a>.</p>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="list-group-item px-0">
+                            <div class="row">
+                                <div class="col">
+                                    <a class="text-reset" href="#!">
+                                        <h3 class="fs-base">Add Contestants</h3>
+                                        <p class="text-body-secondary">For the adding up of the candidates, head to the <a href="<?= PROOT; ?>172.06.84.0/contestants">Add Contestants</a> tab.</p>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="list-group-item px-0">
+                            <div class="row">
+                                <div class="col">
+                                    <a class="text-reset" href="#!">
+                                        <h3 class="fs-base">Manage Contestants</h3>
+                                        <p class="text-body-secondary">Go to <a href="<?= PROOT; ?>172.06.84.0/contestants">Manage Contestants</a> tab to setup the contestants.</p>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="list-group-item px-0">
+                            <div class="row">
+                                <div class="col">
+                                    <a class="text-reset" href="#!">
+                                        <h3 class="fs-base">Voters</h3>
+                                        <p class="text-body-secondary">Registrars you wish to add to allow them to vote can be managed at the <a href="<?= PROOT; ?>172.06.84.0/voters">Voters</a> tab.</p>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="list-group-item px-0">
+                            <div class="row">
+                                <div class="col">
+                                    <a class="text-reset" href="#!">
+                                        <h3 class="fs-base">Password</h3>
+                                        <p class="text-body-secondary">It is highly recommended to change admin's password at the <a href="<?= PROOT; ?>172.06.84.0/change-password">Change Password</a> tab before conducting an election.</p>
                                     </a>
                                 </div>
                             </div>

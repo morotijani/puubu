@@ -13,6 +13,13 @@
 
     include ('includes/main-topbar.inc.php');
 
+    //
+    $started_election_query = "SELECT * FROM election WHERE session = ? OR session = ?";
+    $statement = $conn->prepare($started_election_query);
+    $statement->execute([1, 2]);
+    $started_election_reult = $statement->fetchAll();
+    $started_election_count = $statement->rowCount();
+
 ?>
 
     <!-- Main -->
@@ -173,20 +180,36 @@
                             <div class="table-responsive">
                                 <table class="table align-middle mb-0">
                                     <thead>
-                                        <th class="fs-sm">Name</th>
-                                        <th class="fs-sm">Last price (USD)</th>
-                                        <th class="fs-sm">Change</th>
-                                        <th class="fs-sm" colspan="2">Last 24hr</th>
+                                        <th class="fs-sm">Election</th>
+                                        <th class="fs-sm">Positions</th>
+                                        <th class="fs-sm">Candidates</th>
+                                        <th class="fs-sm">Voters</th>
+                                        <th class="fs-sm">Turnout</th>
                                     </thead>
                                     <tbody>
+                                        <?php if ($started_election_count > 0): ?>
+                                            <?php foreach ($started_election_reult as $row):
+                                                $electionStatus = '';
+                                                $election_report_option = '';
+
+                                                if ($row['session'] == 2) {
+                                                    $electionStatus = '<span class="badge badge-success">ended</span>';
+                                                    $election_report_option = '
+                                                        <span class="badge badge-dark">
+                                                            <a href="'.PROOT.'172.06.84.0/report/full_election_report?election='.$row["eid"].'" class="text-secondary" target="_blank">report</a>
+                                                            </span>
+                                                        <br>
+                                                        <a href="reports.voted.php?report=' . $row["eid"] . '" class="badge text-secondary nav-link" target="_blank">Voted Details</a>
+                                                        <a href="reports.voter.php?report=' . $row["eid"] . '" class="badge text-secondary nav-link" target="_blank">Voters Details</a>
+                                                        ';
+                                                } else {
+                                                    $electionStatus = '<span class="badge badge-danger">running ...</span>';
+                                                    $election_report_option = '<span class="badge badge-dark"><a href="'.PROOT.'172.06.84.0/reports?report=1&election='.$row["eid"].'" class="text-secondary" target="_blank">report</a></span>';
+                                                }
+                                                ?>
                                         <tr>
                                             <td>
-                                                <div class="d-flex align-items-center">
-                                                    <div class="avatar avatar-sm me-3">
-                                                        <img class="avatar-img" src="../assets/img/crypto/btc.svg" alt="Bitcoin" />
-                                                    </div>
-                                                    <strong class="fw-semibold">Bitcoin</strong>
-                                                </div>
+
                                             </td>
                                             <td>63,879.81</td>
                                             <td>
@@ -204,6 +227,11 @@
                                                 <button class="btn btn-sm btn-light" type="button">Trade</button>
                                             </td>
                                         </tr>
+                                        <?php else: ?>
+                                            <tr>
+                                                <td colspan="7">No election running...</td>
+                                            </tr>
+                                        <?php endif; ?>
                                     </tbody>
                                 </table>
                             </div>

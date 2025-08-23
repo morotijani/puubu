@@ -125,31 +125,83 @@
             </div>
         </div>
 
+
+
+
+
         <div class="row">
             <div class="col-12 col-xxl-8">
                 <!-- Performance -->
                 <div class="card mb-6">
-                <div class="card-header">
-                    <div class="row align-items-center">
-                    <div class="col">
-                        <h3 class="fs-6 mb-0">Performance</h3>
+                    <div class="card-header">
+                        <div class="row align-items-center">
+                            <div class="col">
+                                <h3 class="fs-6 mb-0">Performance</h3>
+                            </div>
+                            <div class="col-auto fs-sm me-n3">
+                                <span class="material-symbols-outlined text-primary me-1">circle</span>
+                                Total
+                            </div>
+                            <div class="col-auto fs-sm">
+                                <span class="material-symbols-outlined text-dark me-1">circle</span>
+                                Tracked
+                            </div>
+                        </div>
                     </div>
-                    <div class="col-auto fs-sm me-n3">
-                        <span class="material-symbols-outlined text-primary me-1">circle</span>
-                        Total
-                    </div>
-                    <div class="col-auto fs-sm">
-                        <span class="material-symbols-outlined text-dark me-1">circle</span>
-                        Tracked
-                    </div>
+                    <div class="card-body">
+                        <div class="chart">
+                            <canvas class="chart-canvas" id="userPerformanceChart"></canvas>
+                        </div>
                     </div>
                 </div>
-                <div class="card-body">
-                    <div class="chart">
-                    <canvas class="chart-canvas" id="userPerformanceChart"></canvas>
+
+
+
+                <!-- Industry news -->
+                <div class="card mb-6 mb-xxl-0">
+                    <div class="card-header">
+                        <div class="row align-items-center">
+                            <div class="col">
+                                <h3 class="fs-6 mb-0">Industry news</h3>
+                            </div>
+                            <div class="col-auto my-n3 me-n3">
+                                <a class="btn btn-sm btn-link" href="../posts/posts.html">
+                                    Browse all
+                                    <span class="material-symbols-outlined">arrow_right_alt</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body py-3">
+                        <!-- List -->
+                        <!-- <div class="list-group list-group-flush"> -->
+
+                        <div class="list-group-item px-0">
+                            <div class="row">
+                                <div class="col">
+                                    <a class="text-reset" href="#!">
+                                        <h3 class="fs-base">Ethereum Completes Major Network Upgrade</h3>
+                                        <p class="text-body-secondary">The Ethereum 2.0 upgrade promises faster transactions and reduced energy consumption.</p>
+                                    </a>
+                                    <div class="d-flex align-items-center">
+                                        <div class="fs-sm text-body-secondary me-3">Published on September 10, 2024</div>
+                                    <div class="dropdown">
+                                        <span class="text-body-tertiary" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                            <span class="material-symbols-outlined scale-125">more_horiz</span>
+                                        </span>
+                                        <ul class="dropdown-menu">
+                                            <li><a class="dropdown-item" href="#">Action</a></li>
+                                            <li><a class="dropdown-item" href="#">Another action</a></li>
+                                            <li><a class="dropdown-item" href="#">Something else here</a></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
-                </div>
+
+
 
             <!-- Projects -->
             <div class="card mb-6 mb-xxl-0">

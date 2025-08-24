@@ -33,7 +33,7 @@
                     <div class="avatar text-info me-2">
                     <i class="fs-4" data-duoicon="world"></i>
                     </div>
-                    Tamale, GH –&nbsp;<span>8:00 PM</span>
+                    Tamale, GH –&nbsp;<span><?= date('l, F jS, Y', strtotime(date("Y-m-d"))); ?></span>
                 </div>
                 <div class="col-12 col-md order-md-0 text-center text-md-start">
                     <h1>Hello, John</h1>
@@ -164,170 +164,84 @@
                 </div> -->
 
                 
-                        <div class="card mb-6">
-                            <div class="card-header">
-                                <div class="row align-items-center">
-                                    <div class="col">
-                                        <h3 class="fs-6 mb-0">
-                                            Current elections <img src="media/election-gif.gif" class="ml-2 img-fluid">
-                                        </h3>
-                                    </div>
-                                    <div class="col-auto my-n3 me-n3">
-                                        <button class="btn btn-sm btn-link" type="button">+ Add</button>
-                                    </div>
-                                </div>
+                <div class="card mb-6">
+                    <div class="card-header">
+                        <div class="row align-items-center">
+                            <div class="col">
+                                <h3 class="fs-6 mb-0">
+                                    Current elections <img src="media/election-gif.gif" class="ml-2 img-fluid">
+                                </h3>
                             </div>
-                            <div class="table-responsive">
-                                <table class="table align-middle mb-0">
-                                    <thead>
-                                        <th class="fs-sm">Election</th>
-                                        <th class="fs-sm">Positions</th>
-                                        <th class="fs-sm">Candidates</th>
-                                        <th class="fs-sm">Voters</th>
-                                        <th class="fs-sm">Turnout</th>
-                                    </thead>
-                                    <tbody>
-                                        <?php if ($started_election_count > 0): ?>
-                                            <?php foreach ($started_election_reult as $row):
-                                                $electionStatus = '';
-                                                $election_report_option = '';
-
-                                                if ($row['session'] == 2) {
-                                                    $electionStatus = '<span class="badge badge-success">ended</span>';
-                                                    $election_report_option = '
-                                                        <span class="badge badge-dark">
-                                                            <a href="'.PROOT.'172.06.84.0/report/full_election_report?election='.$row["eid"].'" class="text-secondary" target="_blank">report</a>
-                                                            </span>
-                                                        <br>
-                                                        <a href="reports.voted.php?report=' . $row["eid"] . '" class="badge text-secondary nav-link" target="_blank">Voted Details</a>
-                                                        <a href="reports.voter.php?report=' . $row["eid"] . '" class="badge text-secondary nav-link" target="_blank">Voters Details</a>
-                                                        ';
-                                                } else {
-                                                    $electionStatus = '<span class="badge badge-danger">running ...</span>';
-                                                    $election_report_option = '<span class="badge badge-dark"><a href="'.PROOT.'172.06.84.0/reports?report=1&election='.$row["eid"].'" class="text-secondary" target="_blank">report</a></span>';
-                                                }
-                                                ?>
-                                        <tr>
-                                            <td>
-
-                                            </td>
-                                            <td>63,879.81</td>
-                                            <td>
-                                                <span class="badge bg-success-subtle text-success">+0.53%</span>
-                                            </td>
-                                            <td>
-                                                <span class="badge bg-success-subtle text-success">+0.53%</span>
-                                            </td>
-                                            <td>
-                                                <div class="chart" style="height: 1rem; width: 3rem">
-                                                    <canvas class="chart-canvas" data-crypto-currency-success-chart></canvas>
-                                                </div>
-                                            </td>
-                                            <td class="text-end">
-                                                <button class="btn btn-sm btn-light" type="button">Trade</button>
-                                            </td>
-                                        </tr>
-                                        <?php else: ?>
-                                            <tr>
-                                                <td colspan="7">No election running...</td>
-                                            </tr>
-                                        <?php endif; ?>
-                                    </tbody>
-                                </table>
+                            <div class="col-auto my-n3 me-n3">
+                                <button class="btn btn-sm btn-link" type="button">+ Add</button>
                             </div>
                         </div>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table align-middle mb-0">
+                            <thead>
+                                <th class="fs-sm">Election</th>
+                                <th class="fs-sm">Positions</th>
+                                <th class="fs-sm">Candidates</th>
+                                <th class="fs-sm">Voters</th>
+                                <th class="fs-sm">Turnout</th>
+                                <th class="fs-sm"></th>
+                                <th class="fs-sm"></th>
+                            </thead>
+                            <tbody>
+                                <?php if ($started_election_count > 0): ?>
+                                    <?php foreach ($started_election_reult as $row):
+                                        $electionStatus = '';
+                                        $election_report_option = '';
 
-
-
-
-                <div class="card mt-4" style='background-color: #37404a;'>
-                <div class="card-body">
-                    <h4 class='header-title mb-3 text-left' style='color:rgb(170, 184, 197);'>Current elections <img src="media/election-gif.gif" class="ml-2 img-fluid"></h4><hr>
-
-                    <?php 
-
-                $started_election_query = "SELECT * FROM election WHERE session = ? OR session = ?";
-                $statement = $conn->prepare($started_election_query);
-                $statement->execute([1, 2]);
-                $started_election_reult = $statement->fetchAll();
-                $started_election_count = $statement->rowCount();
-                echo '
-                    <table class="table table-sm table-borderless text-secondary table-hover table-striped">
-                ';
-                if ($started_election_count > 0) {
-                    echo '
-                        <thead>
-                            <tr>
-                                <th>Election Name</th>
-                                <th>Election Organizers</th>
-                                <th>Positions</th>
-                                <th>Candidates</th>
-                                <th>Vote Turnout</th>
-                                <th>Voters</th>
-                                <th></th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                    ';
-                    foreach ($started_election_reult as $row) {
-                        $electionStatus = '';
-                        $election_report_option = '';
-
-                        if ($row['session'] == 2) {
-                            $electionStatus = '<span class="badge badge-success">ended</span>';
-                            $election_report_option = '
-                                <span class="badge badge-dark">
-                                    <a href="'.PROOT.'172.06.84.0/report/full_election_report?election='.$row["eid"].'" class="text-secondary" target="_blank">report</a>
-                                    </span>
-                                <br>
-                                <a href="reports.voted.php?report=' . $row["eid"] . '" class="badge text-secondary nav-link" target="_blank">Voted Details</a>
-                                <a href="reports.voter.php?report=' . $row["eid"] . '" class="badge text-secondary nav-link" target="_blank">Voters Details</a>
-                                ';
-                        } else {
-                            $electionStatus = '<span class="badge badge-danger">running ...</span>';
-                            $election_report_option = '<span class="badge badge-dark"><a href="'.PROOT.'172.06.84.0/reports?report=1&election='.$row["eid"].'" class="text-secondary" target="_blank">report</a></span>';
-                        }
-                        echo '
-                            <tr>
-                                <td>' . ucwords($row["election_name"]) . ' ' . $electionStatus. '</td>
-                                <td>'.ucwords($row["election_by"]).'</td>
-                                <td>'.count_positions_on_running_election($row["eid"]).'</td>
-                                <td>'.count_contestants_on_runing_election($row["eid"]).'</td>
-                                <td>'.count_votes_on_runing_election($row["eid"]).'</td>
-                                <td>'.count_voters_on_runing_election($row['eid']).'</td>
-                                <td>'.$election_report_option.'</td>
-                            </tr>
-                        ';
-                    }
-                    echo '</tbody>';
-                } else {
-                    echo '
-                        <tr>
-                            <td colspan="7">No election running...</td>
-                        </tr>
-                    ';
-                }
-                echo '</table>';
-            ?>
+                                        if ($row['session'] == 2) {
+                                            $electionStatus = '<span class="badge bg-success">ended</span>';
+                                            $election_report_option = '
+                                                <span class="badge bg-dark">
+                                                    <a href="'.PROOT.'172.06.84.0/report/full_election_report?election='.$row["eid"].'" class="text-secondary" target="_blank">report</a>
+                                                    </span>
+                                                <br>
+                                                <a href="reports.voted.php?report=' . $row["eid"] . '" class="badge bg-secondary nav-link" target="_blank">Voted Details</a>
+                                                <a href="reports.voter.php?report=' . $row["eid"] . '" class="badge bg-info nav-link" target="_blank">Voters Details</a>
+                                                ';
+                                        } else {
+                                            $electionStatus = '<span class="badge bg-danger">running ...</span>';
+                                            $election_report_option = '<span class="badge bg-dark"><a href="'.PROOT.'172.06.84.0/reports?report=1&election='.$row["eid"].'" class="text-secondary" target="_blank">report</a></span>';
+                                        }
+                                        ?>
+                                <tr>
+                                    <td>
+                                        <?= ucwords($row["election_name"]) . ' ' . $electionStatus; ?>
+                                        <br>
+                                        Org: <?= ucwords($row["election_by"]); ?>
+                                    </td>
+                                    <td><?= count_positions_on_running_election($row["eid"]); ?></td>
+                                    <td><?= count_contestants_on_runing_election($row["eid"]); ?></td>
+                                    <td>
+                                        <span class="badge bg-success-subtle text-success"><?= count_voters_on_runing_election($row['eid']); ?></span>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-success-subtle text-success"><?= count_votes_on_runing_election($row["eid"]); ?></span>
+                                    </td>
+                                    <td>
+                                        <div class="chart" style="height: 1rem; width: 3rem">
+                                            <canvas class="chart-canvas" data-crypto-currency-success-chart></canvas>
+                                        </div>
+                                    </td>
+                                    <td class="text-end">
+                                        <?= $election_report_option; ?>
+                                    </td>
+                                </tr>
+                                <?php endforeach; ?>
+                                <?php else: ?>
+                                    <tr>
+                                        <td colspan="7">No election running...</td>
+                                    </tr>
+                                <?php endif; ?>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
-
-            </div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

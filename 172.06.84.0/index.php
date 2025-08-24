@@ -11,8 +11,6 @@
     include ('includes/top-nav.inc.php');
     include ('includes/left-nav.inc.php');
 
-    include ('includes/main-topbar.inc.php');
-
     //
     $started_election_query = "SELECT * FROM election WHERE session = ? OR session = ?";
     $statement = $conn->prepare($started_election_query);

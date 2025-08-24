@@ -33,10 +33,10 @@
                     <div class="avatar text-info me-2">
                     <i class="fs-4" data-duoicon="world"></i>
                     </div>
-                    Tamale, GH –&nbsp;<span><?= date('l, F jS, Y', strtotime(date("Y-m-d"))); ?></span>
+                    Tamale, GH –&nbsp;<span><?= date('h:i A'); ?></span>
                 </div>
                 <div class="col-12 col-md order-md-0 text-center text-md-start">
-                    <h1>Hello, John</h1>
+                    <h1>Hello, <?= ucwords($fname); ?></h1>
                     <p class="fs-lg text-body-secondary mb-0">Here's a summary of your account activity for all election.</p>
                 </div>
             </div>

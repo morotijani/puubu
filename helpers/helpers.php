@@ -511,37 +511,37 @@ function goBack() {
 	}
 
 	// get logs for admins
-function get_logs($admin) {
-	global $conn;
-	$today = date("Y-m-d");
-	$output = '';
+	function get_logs($admin) {
+		global $conn;
+		$output = '';
 
-	$where = '';
-	if (!admin_has_permission()) {
-		$where = ' WHERE giltmarket_logs.log_admin = "'.$admin.'" AND CAST(giltmarket_logs.createdAt AS date) = "' . $today . '"';
-	}
+		$where = '';
+		// if (!admin_has_permission()) {
+		// 	$where = ' WHERE puubu_logs.log_person = "'.$admin.'" AND CAST(puubu_logs.createdAt AS date) = "' . $today . '"';
+		// }
 
-	$sql = "
-		SELECT * FROM giltmarket_logs 
-		INNER JOIN giltmarket_admin 
-		ON giltmarket_admin.admin_id = giltmarket_logs.log_admin
+		$sql = "
+			SELECT * FROM puubu_logs 
+			INNER JOIN puubu_admin 
+			ON puubu_admin.admin_id = puubu_logs.log_person
 		$where 
-		ORDER BY giltmarket_logs.createdAt DESC
-		LIMIT 10
-	";
-	$statement = $conn->prepare($sql);
-	$statement->execute();
-	$rows = $statement->fetchAll();
+			ORDER BY puubu_logs.createdAt DESC
+			LIMIT 10
+		";
+		$statement = $conn->prepare($sql);
+		$statement->execute();
+		$rows = $statement->fetchAll();
 
 	if ($statement->rowCount() > 0): 
 		foreach ($rows as $row) {
+			
 			$admin_name = explode(' ', $row['admin_fullname']);
 			$admin_name = ucwords($admin_name[0]);
 
 			$output .= '
 				<li data-icon="account_circle">
 					<div>
-						<h6 class="fs-base mb-1">' . (($row["log_admin"] == $admin) ? 'You': $admin_name) . ' <span class="fs-sm fw-normal text-body-secondary ms-1">' . pretty_date($row["createdAt"]) .'</span></h6>
+						<h6 class="fs-base mb-1">' . (($row["log_person"] == $admin) ? 'You': $admin_name) . ' <span class="fs-sm fw-normal text-body-secondary ms-1">' . pretty_date($row["createdAt"]) .'</span></h6>
 						<p class="mb-0">' . $row["log_message"] . '</p>
 					</div>
 				</li>
@@ -565,15 +565,15 @@ function count_logs($admin) {
 
     $where = '';
     if (!admin_has_permission()) {
-        $where = ' WHERE giltmarket_admin.admin_id = "' . $admin . '" AND CAST(giltmarket_logs.createdAt AS date) = "' . $today . '" ';
+        $where = ' WHERE puubu_admin.admin_id = "' . $admin . '" AND CAST(puubu_logs.createdAt AS date) = "' . $today . '" ';
     }
 
     $sql = "
-        SELECT * FROM giltmarket_logs 
-        INNER JOIN giltmarket_admin 
-        ON giltmarket_admin.admin_id = giltmarket_logs.log_admin
+        SELECT * FROM puubu_logs 
+        INNER JOIN puubu_admin 
+        ON puubu_admin.admin_id = puubu_logs.log_person
         $where 
-        ORDER BY giltmarket_logs.createdAt DESC
+        ORDER BY puubu_logs.createdAt DESC
     ";
     $statement = $conn->prepare($sql);
     $statement->execute();

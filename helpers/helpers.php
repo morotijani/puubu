@@ -493,17 +493,16 @@ function goBack() {
 
 	///////////////
 	// add to logs
-	function add_to_log($message, $log_person) {
+	function add_to_log($message, $person, $type) {
 		global $conn;
 
 		$log_id = guidv4();
-		$createdAt = date("Y-m-d H:i:s");
 		$sql = "
-			INSERT INTO `giltmarket_logs`(`log_id`, `log_message`, `log_person`, `log_type`, `createdAt`) 
+			INSERT INTO `giltmarket_logs`(`log_id`, `log_message`, `log_person`, `log_type`) 
 			VALUES (?, ?, ?, ?)
 		";
 		$statement = $conn->prepare($sql);
-		$result = $statement->execute([$log_id, $message, $log_person, $createdAt]);
+		$result = $statement->execute([$log_id, $message, $person, $type]);
 
 		return false;
 		if ($result) {

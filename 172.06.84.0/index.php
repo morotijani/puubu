@@ -423,30 +423,30 @@
                                 <div class="row align-items-center">
                                     <div class="col-auto">
                                         <div class="avatar">
-                                        <div
-                                            class="progress progress-circle text-success"
-                                            role="progressbar"
-                                            aria-label="Reduce response time"
-                                            aria-valuenow="100"
-                                            aria-valuemin="0"
-                                            aria-valuemax="100"
-                                            data-bs-toggle="tooltip"
-                                            data-bs-title="100%"
-                                            style="--bs-progress-circle-value: 100"
-                                        ></div>
+                                            <div
+                                                class="progress progress-circle text-success"
+                                                role="progressbar"
+                                                aria-label="Reduce response time"
+                                                aria-valuenow="100"
+                                                aria-valuemin="0"
+                                                aria-valuemax="100"
+                                                data-bs-toggle="tooltip"
+                                                data-bs-title="100%"
+                                                style="--bs-progress-circle-value: 100"
+                                            ></div>
                                         </div>
                                     </div>
-                      <div class="col ms-n2">
-                        <h6 class="fs-base fw-normal mb-0">Reduce response time</h6>
-                        <span class="fs-sm text-body-secondary">1hr</span>
-                      </div>
-                      <div class="col-auto">
-                        <span class="text-body-secondary">Jan 01</span>
-                      </div>
+                                <div class="col ms-n2">
+                                    <h6 class="fs-base fw-normal mb-0">Reduce response time</h6>
+                                    <span class="fs-sm text-body-secondary">1hr</span>
+                                </div>
+                                <div class="col-auto">
+                                    <span class="text-body-secondary">Jan 01</span>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                  </div>
                 </div>
-              </div>
             </div>
 
             <!-- Activity -->

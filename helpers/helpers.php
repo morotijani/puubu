@@ -370,6 +370,8 @@ function goBack() {
 		return $output;
 	}
 
+	
+
 
 
 
@@ -412,6 +414,7 @@ function goBack() {
 		$statement->execute();
 		return $statement->rowCount();
 	}
+
 
 	// GET THE TOTAL NUMBER OF CONTESTANTS UNDER STARTED ELECTION
 	function count_contestants() {
@@ -486,6 +489,28 @@ function goBack() {
 			return $row['all_voterhasdone'];
 		}
 	}
+
+
+	///////////////
+	// add to logs
+	function add_to_log($message, $log_person) {
+		global $conn;
+
+		$log_id = guidv4();
+		$createdAt = date("Y-m-d H:i:s");
+		$sql = "
+			INSERT INTO `giltmarket_logs`(`log_id`, `log_message`, `log_person`, `log_type`, `createdAt`) 
+			VALUES (?, ?, ?, ?)
+		";
+		$statement = $conn->prepare($sql);
+		$result = $statement->execute([$log_id, $message, $log_person, $createdAt]);
+
+		return false;
+		if ($result) {
+			return true;
+		}
+	}
+
 
 
 ?>

@@ -498,7 +498,7 @@ function goBack() {
 
 		$log_id = guidv4();
 		$sql = "
-			INSERT INTO `giltmarket_logs`(`log_id`, `log_message`, `log_person`, `log_type`) 
+			INSERT INTO `puubu_logs`(`log_id`, `log_message`, `log_person`, `log_type`) 
 			VALUES (?, ?, ?, ?)
 		";
 		$statement = $conn->prepare($sql);
@@ -509,6 +509,77 @@ function goBack() {
 			return true;
 		}
 	}
+
+	// get logs for admins
+function get_logs($admin) {
+	global $conn;
+	$today = date("Y-m-d");
+	$output = '';
+
+	$where = '';
+	if (!admin_has_permission()) {
+		$where = ' WHERE giltmarket_logs.log_admin = "'.$admin.'" AND CAST(giltmarket_logs.createdAt AS date) = "' . $today . '"';
+	}
+
+	$sql = "
+		SELECT * FROM giltmarket_logs 
+		INNER JOIN giltmarket_admin 
+		ON giltmarket_admin.admin_id = giltmarket_logs.log_admin
+		$where 
+		ORDER BY giltmarket_logs.createdAt DESC
+		LIMIT 10
+	";
+	$statement = $conn->prepare($sql);
+	$statement->execute();
+	$rows = $statement->fetchAll();
+
+	if ($statement->rowCount() > 0): 
+		foreach ($rows as $row) {
+			$admin_name = explode(' ', $row['admin_fullname']);
+			$admin_name = ucwords($admin_name[0]);
+
+			$output .= '
+				<li data-icon="account_circle">
+					<div>
+						<h6 class="fs-base mb-1">' . (($row["log_admin"] == $admin) ? 'You': $admin_name) . ' <span class="fs-sm fw-normal text-body-secondary ms-1">' . pretty_date($row["createdAt"]) .'</span></h6>
+						<p class="mb-0">' . $row["log_message"] . '</p>
+					</div>
+				</li>
+			';
+		}
+	else:
+		$output .= '
+				<div class="alert alert-info">
+					No data found!
+				</div>
+			';
+	endif;
+
+	return $output;
+}
+
+// count logs
+function count_logs($admin) {
+	global $conn;
+	$today = date("Y-m-d");
+
+    $where = '';
+    if (!admin_has_permission()) {
+        $where = ' WHERE giltmarket_admin.admin_id = "' . $admin . '" AND CAST(giltmarket_logs.createdAt AS date) = "' . $today . '" ';
+    }
+
+    $sql = "
+        SELECT * FROM giltmarket_logs 
+        INNER JOIN giltmarket_admin 
+        ON giltmarket_admin.admin_id = giltmarket_logs.log_admin
+        $where 
+        ORDER BY giltmarket_logs.createdAt DESC
+    ";
+    $statement = $conn->prepare($sql);
+    $statement->execute();
+
+    return $statement->rowCount();
+}
 
 
 

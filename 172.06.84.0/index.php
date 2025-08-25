@@ -6,7 +6,6 @@
         cadminLoginErrorRedirect();
     }
 
-
     include ('includes/header.inc.php');
     include ('includes/top-nav.inc.php');
     include ('includes/left-nav.inc.php');
@@ -241,8 +240,6 @@
                     </div>
                 </div>
 
-
-
                 <!-- Industry news -->
                 <div class="card mb-6 mb-xxl-0">
                     <div class="card-header">
@@ -325,147 +322,120 @@
                     </div>
                 </div>
             </div>
-            
         </div>
 
 
 
-          <div class="col-12 col-xxl-4">
+        <div class="col-12 col-xxl-4">
             <!-- Goals -->
             <div class="card mb-6">
-              <div class="card-header">
-                <div class="row align-items-center">
-                  <div class="col">
-                    <h3 class="fs-6 mb-0">Goals</h3>
-                  </div>
-                  <div class="col-auto my-n3 me-n3">
-                    <button class="btn btn-sm btn-link" type="button">+ Add</a>
-                  </div>
+                <div class="card-header">
+                    <div class="row align-items-center">
+                        <div class="col">
+                            <h3 class="fs-6 mb-0">Status</h3>
+                        </div>
+                        <div class="col-auto my-n3 me-n3">
+                            <button class="btn btn-sm btn-link" type="button">+ Add</a>
+                        </div>
+                    </div>
                 </div>
-              </div>
-              <div class="card-body py-3">
-                <div class="list-group list-group-flush">
-                  <div class="list-group-item px-0">
-                    <div class="row align-items-center">
-                      <div class="col-auto">
-                        <div class="avatar">
-                          <div
-                            class="progress progress-circle text-primary"
-                            role="progressbar"
-                            aria-label="Increase monthly revenue"
-                            aria-valuenow="75"
-                            aria-valuemin="0"
-                            aria-valuemax="100"
-                            data-bs-toggle="tooltip"
-                            data-bs-title="75%"
-                            style="--bs-progress-circle-value: 75"
-                          ></div>
-                        </div>
-                      </div>
-                      <div class="col ms-n2">
-                        <h6 class="fs-base fw-normal mb-0">Increase monthly revenue</h6>
-                        <span class="fs-sm text-body-secondary">$10,000</span>
-                      </div>
-                      <div class="col-auto">
-                        <span class="text-body-secondary">Mar 15</span>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="list-group-item px-0">
-                    <div class="row align-items-center">
-                      <div class="col-auto">
-                        <div class="avatar">
-                          <div
-                            class="progress progress-circle text-secondary"
-                            role="progressbar"
-                            aria-label="Launch new feature"
-                            aria-valuenow="50"
-                            aria-valuemin="0"
-                            aria-valuemax="100"
-                            data-bs-toggle="tooltip"
-                            data-bs-title="50%"
-                            style="--bs-progress-circle-value: 50"
-                          ></div>
-                        </div>
-                      </div>
-                      <div class="col ms-n2">
-                        <h6 class="fs-base fw-normal mb-0">Launch new feature</h6>
-                        <span class="fs-sm text-body-secondary">Dark mode</span>
-                      </div>
-                      <div class="col-auto">
-                        <span class="text-body-secondary">Oct 01</span>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="list-group-item px-0">
-                    <div class="row align-items-center">
-                      <div class="col-auto">
-                        <div class="avatar">
-                          <div
-                            class="progress progress-circle text-danger"
-                            role="progressbar"
-                            aria-label="Grow user base"
-                            aria-valuenow="45"
-                            aria-valuemin="0"
-                            aria-valuemax="100"
-                            data-bs-toggle="tooltip"
-                            data-bs-title="45%"
-                            style="--bs-progress-circle-value: 45"
-                          ></div>
-                        </div>
-                      </div>
-                      <div class="col ms-n2">
-                        <h6 class="fs-base fw-normal mb-0">Grow user base</h6>
-                        <span class="fs-sm text-body-secondary">75%</span>
-                      </div>
-                      <div class="col-auto">
-                        <span class="text-body-secondary">Dec 12</span>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="list-group-item px-0">
-                    <div class="row align-items-center">
-                      <div class="col-auto">
-                        <div class="avatar">
-                          <div
-                            class="progress progress-circle text-primary"
-                            role="progressbar"
-                            aria-label="Improve customer satisfaction"
-                            aria-valuenow="60"
-                            aria-valuemin="0"
-                            aria-valuemax="100"
-                            data-bs-toggle="tooltip"
-                            data-bs-title="60%"
-                            style="--bs-progress-circle-value: 60"
-                          ></div>
-                        </div>
-                      </div>
-                      <div class="col ms-n2">
-                        <h6 class="fs-base fw-normal mb-0">Improve customer satisfaction</h6>
-                        <span class="fs-sm text-body-secondary">85%</span>
-                      </div>
-                      <div class="col-auto">
-                        <span class="text-body-secondary">Dec 15</span>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="list-group-item px-0">
-                    <div class="row align-items-center">
-                      <div class="col-auto">
-                        <div class="avatar">
-                          <div
-                            class="progress progress-circle text-success"
-                            role="progressbar"
-                            aria-label="Reduce response time"
-                            aria-valuenow="100"
-                            aria-valuemin="0"
-                            aria-valuemax="100"
-                            data-bs-toggle="tooltip"
-                            data-bs-title="100%"
-                            style="--bs-progress-circle-value: 100"
-                          ></div>
-                        </div>
-                      </div>
+                <div class="card-body py-3">
+                    <div class="list-group list-group-flush">
+                        <div class="list-group-item px-0">
+                            <div class="row align-items-center">
+                                <div class="col-auto">
+                                    <div class="avatar">
+                                            <div
+                                                class="progress progress-circle text-secondary"
+                                                role="progressbar"
+                                                aria-label="Launch new feature"
+                                                aria-valuenow="50"
+                                                aria-valuemin="0"
+                                                aria-valuemax="100"
+                                                data-bs-toggle="tooltip"
+                                                data-bs-title="50%"
+                                                style="--bs-progress-circle-value: 50"
+                                            ></div>
+                                        </div>
+                                    </div>
+                                    <div class="col ms-n2">
+                                        <h6 class="fs-base fw-normal mb-0">Launch new feature</h6>
+                                        <span class="fs-sm text-body-secondary">Dark mode</span>
+                                    </div>
+                                    <div class="col-auto">
+                                        <span class="text-body-secondary">Oct 01</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="list-group-item px-0">
+                                <div class="row align-items-center">
+                                    <div class="col-auto">
+                                        <div class="avatar">
+                                            <div
+                                                class="progress progress-circle text-danger"
+                                                role="progressbar"
+                                                aria-label="Grow user base"
+                                                aria-valuenow="45"
+                                                aria-valuemin="0"
+                                                aria-valuemax="100"
+                                                data-bs-toggle="tooltip"
+                                                data-bs-title="45%"
+                                                style="--bs-progress-circle-value: 45"
+                                            ></div>
+                                        </div>
+                                    </div>
+                                    <div class="col ms-n2">
+                                        <h6 class="fs-base fw-normal mb-0">Grow user base</h6>
+                                        <span class="fs-sm text-body-secondary">75%</span>
+                                    </div>
+                                    <div class="col-auto">
+                                        <span class="text-body-secondary">Dec 12</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="list-group-item px-0">
+                                <div class="row align-items-center">
+                                    <div class="col-auto">
+                                        <div class="avatar">
+                                            <div
+                                                class="progress progress-circle text-primary"
+                                                role="progressbar"
+                                                aria-label="Improve customer satisfaction"
+                                                aria-valuenow="60"
+                                                aria-valuemin="0"
+                                                aria-valuemax="100"
+                                                data-bs-toggle="tooltip"
+                                                data-bs-title="60%"
+                                                style="--bs-progress-circle-value: 60"
+                                            ></div>
+                                        </div>
+                                    </div>
+                                    <div class="col ms-n2">
+                                        <h6 class="fs-base fw-normal mb-0">Improve customer satisfaction</h6>
+                                        <span class="fs-sm text-body-secondary">85%</span>
+                                    </div>
+                                    <div class="col-auto">
+                                        <span class="text-body-secondary">Dec 15</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="list-group-item px-0">
+                                <div class="row align-items-center">
+                                    <div class="col-auto">
+                                        <div class="avatar">
+                                        <div
+                                            class="progress progress-circle text-success"
+                                            role="progressbar"
+                                            aria-label="Reduce response time"
+                                            aria-valuenow="100"
+                                            aria-valuemin="0"
+                                            aria-valuemax="100"
+                                            data-bs-toggle="tooltip"
+                                            data-bs-title="100%"
+                                            style="--bs-progress-circle-value: 100"
+                                        ></div>
+                                        </div>
+                                    </div>
                       <div class="col ms-n2">
                         <h6 class="fs-base fw-normal mb-0">Reduce response time</h6>
                         <span class="fs-sm text-body-secondary">1hr</span>

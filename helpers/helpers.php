@@ -588,7 +588,7 @@ function goBack() {
 // count logs
 function count_logs($admin) {
 	global $conn;
-	$today = date("Y-m-d");
+	// $today = date("Y-m-d");
 
     $where = '';
     // if (!admin_has_permission()) {
@@ -597,10 +597,10 @@ function count_logs($admin) {
 
     $sql = "
         SELECT * FROM puubu_logs 
-        INNER JOIN puubu_admin 
-        ON puubu_admin.admin_id = puubu_logs.log_person
+        -- INNER JOIN puubu_admin 
+        -- ON puubu_admin.admin_id = puubu_logs.log_person
         $where 
-        ORDER BY puubu_logs.createdAt DESC
+        -- ORDER BY puubu_logs.createdAt DESC
     ";
     $statement = $conn->prepare($sql);
     $statement->execute();

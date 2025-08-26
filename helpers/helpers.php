@@ -558,6 +558,8 @@ function goBack() {
 			$admin_name = explode(' ', $row['admin_fullname']);
 			$admin_name = ucwords($admin_name[0]);
 
+			$person = get_voter_details('std_id', $row["std_id"]);
+
 			$output .= '
 				<li data-icon="account_circle">
 					<div>

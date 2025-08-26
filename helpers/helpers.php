@@ -492,6 +492,26 @@ function goBack() {
 
 
 	///////////////
+	// get user details
+	function get_voter_details($param, $person) {
+		global $conn;
+
+		$sql = "SELECT * FROM registrars WHERE ";
+		if ($param = 'id') {
+			$sql .= "voter_id = '".$person."'";
+		} else if ($param = 'email') {
+			$sql .= "std_email = '".$person."'";
+		} else if ($param = 'std_id') {
+			$sql .= "std_id = '".$person."'";
+		}
+		$sql .= " AND status = 0 LIMIT 1";
+		$statement = $conn->prepare($sql);
+		$statement->execute();
+		$results = $statement->fetchAll();
+		$result = $results[0];
+
+		return $result;
+	}
 	// add to logs
 	function add_to_log($message, $person, $type) {
 		global $conn;

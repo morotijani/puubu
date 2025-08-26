@@ -327,127 +327,56 @@
 
 
         <div class="col-12 col-xxl-4">
-            <!-- Goals -->
-            <div class="card mb-6">
-                <div class="card-header">
-                    <div class="row align-items-center">
-                        <div class="col">
-                            <h3 class="fs-6 mb-0">Status</h3>
-                        </div>
-                        <div class="col-auto my-n3 me-n3">
-                            <button class="btn btn-sm btn-link" type="button">+ Add</a>
-                        </div>
-                    </div>
+            <!-- Header -->
+            <div class="row align-items-center mb-5">
+                <div class="col">
+                    <!-- Heading -->
+                    <h2 class="fs-5 mb-0">Support tickets</h2>
                 </div>
-                <div class="card-body py-3">
-                    <div class="list-group list-group-flush">
-                        <div class="list-group-item px-0">
-                            <div class="row align-items-center">
-                                <div class="col-auto">
-                                    <div class="avatar">
-                                            <div
-                                                class="progress progress-circle text-secondary"
-                                                role="progressbar"
-                                                aria-label="Launch new feature"
-                                                aria-valuenow="50"
-                                                aria-valuemin="0"
-                                                aria-valuemax="100"
-                                                data-bs-toggle="tooltip"
-                                                data-bs-title="50%"
-                                                style="--bs-progress-circle-value: 50"
-                                            ></div>
-                                        </div>
-                                    </div>
-                                    <div class="col ms-n2">
-                                        <h6 class="fs-base fw-normal mb-0">Launch new feature</h6>
-                                        <span class="fs-sm text-body-secondary">Dark mode</span>
-                                    </div>
-                                    <div class="col-auto">
-                                        <span class="text-body-secondary">Oct 01</span>
-                                    </div>
-                                </div>
+                <div class="col-auto my-n2">
+                    <a class="btn btn-link" href="#!">
+                    Browse all
+                    <span class="material-symbols-outlined">arrow_right_alt</span>
+                    </a>
+                </div>
+            </div>
+            
+            <div class="vstack gap-2 mb-7">
+                <div class="card">
+                    <a
+                        class="card-body p-4"
+                        data-bs-toggle="collapse"
+                        href="#supportTicketThree"
+                        role="button"
+                        aria-expanded="false"
+                        aria-controls="supportTicketThree"
+                    >
+                    <div class="row align-items-center">
+                            <div class="col-auto">
+                                <div class="avatar avatar-sm fs-lg text-primary"><i data-duoicon="moon-2"></i></div>
                             </div>
-                            <div class="list-group-item px-0">
-                                <div class="row align-items-center">
-                                    <div class="col-auto">
-                                        <div class="avatar">
-                                            <div
-                                                class="progress progress-circle text-danger"
-                                                role="progressbar"
-                                                aria-label="Grow user base"
-                                                aria-valuenow="45"
-                                                aria-valuemin="0"
-                                                aria-valuemax="100"
-                                                data-bs-toggle="tooltip"
-                                                data-bs-title="45%"
-                                                style="--bs-progress-circle-value: 45"
-                                            ></div>
-                                        </div>
-                                    </div>
-                                    <div class="col ms-n2">
-                                        <h6 class="fs-base fw-normal mb-0">Grow user base</h6>
-                                        <span class="fs-sm text-body-secondary">75%</span>
-                                    </div>
-                                    <div class="col-auto">
-                                        <span class="text-body-secondary">Dec 12</span>
-                                    </div>
-                                </div>
+                            <div class="col ms-n3">
+                                <h5 class="fs-sm fw-normal text-body-secondary mb-1">#10245</h5>
+                                <h3 class="fs-base mb-0">Feature request: dark mode toggle</h3>
                             </div>
-                            <div class="list-group-item px-0">
-                                <div class="row align-items-center">
-                                    <div class="col-auto">
-                                        <div class="avatar">
-                                            <div
-                                                class="progress progress-circle text-primary"
-                                                role="progressbar"
-                                                aria-label="Improve customer satisfaction"
-                                                aria-valuenow="60"
-                                                aria-valuemin="0"
-                                                aria-valuemax="100"
-                                                data-bs-toggle="tooltip"
-                                                data-bs-title="60%"
-                                                style="--bs-progress-circle-value: 60"
-                                            ></div>
-                                        </div>
-                                    </div>
-                                    <div class="col ms-n2">
-                                        <h6 class="fs-base fw-normal mb-0">Improve customer satisfaction</h6>
-                                        <span class="fs-sm text-body-secondary">85%</span>
-                                    </div>
-                                    <div class="col-auto">
-                                        <span class="text-body-secondary">Dec 15</span>
-                                    </div>
-                                </div>
+                            <div class="col-auto">
+                                <span class="fs-sm text-body-secondary">Sep 28</span>
                             </div>
-                            <div class="list-group-item px-0">
-                                <div class="row align-items-center">
-                                    <div class="col-auto">
-                                        <div class="avatar">
-                                            <div
-                                                class="progress progress-circle text-success"
-                                                role="progressbar"
-                                                aria-label="Reduce response time"
-                                                aria-valuenow="100"
-                                                aria-valuemin="0"
-                                                aria-valuemax="100"
-                                                data-bs-toggle="tooltip"
-                                                data-bs-title="100%"
-                                                style="--bs-progress-circle-value: 100"
-                                            ></div>
-                                        </div>
-                                    </div>
-                                <div class="col ms-n2">
-                                    <h6 class="fs-base fw-normal mb-0">Reduce response time</h6>
-                                    <span class="fs-sm text-body-secondary">1hr</span>
-                                </div>
-                                <div class="col-auto">
-                                    <span class="text-body-secondary">Jan 01</span>
-                                </div>
-                            </div>
+                        </div>
+                    </a>
+                    <div class="collapse" id="supportTicketThree">
+                        <div class="card-body border-top line-clamp-2 text-body-secondary py-4 px-0 mx-4">
+                            A user has requested a toggle for dark mode in the app settings. They would like a way to switch themes without having to rely on the
+                            system’s default settings.
                         </div>
                     </div>
                 </div>
             </div>
+
+
+
+            <!-- Goals -->
+
 
             <!-- Activity -->
             <div class="card">

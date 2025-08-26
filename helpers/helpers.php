@@ -555,15 +555,20 @@ function goBack() {
 	if ($statement->rowCount() > 0): 
 		foreach ($rows as $row) {
 			
-			$admin_name = explode(' ', $row['admin_fullname']);
-			$admin_name = ucwords($admin_name[0]);
-
-			$person = get_voter_details('std_id', $row["std_id"]);
+			$persons = explode(' ', $row['admin_fullname']);
+			$person = ucwords($persons[0]);
+			if ($row['log_type'] == 'user') {
+				$person = 'voter';
+				$persons = get_voter_details('std_id', $row["std_id"]);
+				if (is_array($persons)) {
+					$person = ucwords($persons['std_fname'] . ' ' . $person['std_lname']);
+				}
+			}
 
 			$output .= '
 				<li data-icon="account_circle">
 					<div>
-						<h6 class="fs-base mb-1">' . (($row["log_person"] == $admin) ? 'You': $admin_name) . ' <span class="fs-sm fw-normal text-body-secondary ms-1">' . pretty_date($row["createdAt"]) .'</span></h6>
+						<h6 class="fs-base mb-1">' . (($row["log_person"] == $admin) ? 'You': $person) . ' <span class="fs-sm fw-normal text-body-secondary ms-1">' . pretty_date($row["createdAt"]) .'</span></h6>
 						<p class="mb-0">' . $row["log_message"] . '</p>
 					</div>
 				</li>
@@ -586,9 +591,9 @@ function count_logs($admin) {
 	$today = date("Y-m-d");
 
     $where = '';
-    if (!admin_has_permission()) {
-        $where = ' WHERE puubu_admin.admin_id = "' . $admin . '" AND CAST(puubu_logs.createdAt AS date) = "' . $today . '" ';
-    }
+    // if (!admin_has_permission()) {
+    //     $where = ' WHERE puubu_admin.admin_id = "' . $admin . '" AND CAST(puubu_logs.createdAt AS date) = "' . $today . '" ';
+    // }
 
     $sql = "
         SELECT * FROM puubu_logs 

@@ -324,14 +324,12 @@
             </div>
         </div>
 
-
-
         <div class="col-12 col-xxl-4">
             <!-- Header -->
             <div class="row align-items-center mb-5">
                 <div class="col">
                     <!-- Heading -->
-                    <h2 class="fs-5 mb-0">Support tickets</h2>
+                    <h2 class="fs-5 mb-0">Active vote logs</h2>
                 </div>
                 <div class="col-auto my-n2">
                     <a class="btn btn-link" href="#!">
@@ -441,10 +439,7 @@
     </div>
 </div>
 
-<?php 
-    include ('includes/main-footer.inc.php');
-    include ('includes/footer.inc.php');
-?>
+<?php include ('includes/footer.inc.php'); ?>
 
 <script type="text/javascript">
     feather.replace();

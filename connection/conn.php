@@ -35,9 +35,9 @@
 
  	if (isset($_SESSION['crAdmin'])) {
  		$data = array(
- 			':c_aid' => (int)$_SESSION['crAdmin']
+ 			':id' => (int)$_SESSION['crAdmin']
  		);
- 		$sql = "SELECT * FROM puubu_admin WHERE c_aid = :c_aid LIMIT 1";
+ 		$sql = "SELECT * FROM puubu_admin WHERE id = :id LIMIT 1";
  		$statement = $conn->prepare($sql);
  		$statement->execute($data);
 		$admin_dt = $statement->fetchAll();

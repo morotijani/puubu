@@ -303,9 +303,9 @@ function goBack() {
 		global $conn;
 		$data = array(
 			':last_login' => date("Y-m-d H:i:s"),
-			':c_aid' => (int)$cadmin_id
+			':id' => (int)$cadmin_id
 		);
-		$query = "UPDATE puubu_admin SET last_login = :last_login WHERE c_aid = :c_aid";
+		$query = "UPDATE puubu_admin SET last_login = :last_login WHERE id = :id";
 		$statement = $conn->prepare($query);
 		$result = $statement->execute($data);
 		if (isset($result)) {
@@ -348,7 +348,7 @@ function goBack() {
 		$result = $statement->fetchAll();
 
 		foreach ($result as $admin_row) {
-			if ($admin_row['c_aid'] == $row['c_aid']) {
+			if ($admin_row['id'] == $row['id']) {
 				$output = '
 					<h6>First Name</h6>
 				    <p class="lead text-info">'.ucwords($admin_row["cfname"]).'</p>
@@ -508,10 +508,11 @@ function goBack() {
 		$statement = $conn->prepare($sql);
 		$statement->execute();
 		$results = $statement->fetchAll();
-		$result = $results[0];
+		$result = $results[0] ?? '';
 
 		return $result;
 	}
+	
 	// add to logs
 	function add_to_log($message, $person, $type) {
 		global $conn;
@@ -542,8 +543,8 @@ function goBack() {
 
 		$sql = "
 			SELECT * FROM puubu_logs 
-			INNER JOIN puubu_admin 
-			ON puubu_admin.admin_id = puubu_logs.log_person
+			-- INNER JOIN puubu_admin 
+			-- ON puubu_admin.admin_id = puubu_logs.log_person
 		$where 
 			ORDER BY puubu_logs.createdAt DESC
 			LIMIT 10
@@ -555,11 +556,11 @@ function goBack() {
 	if ($statement->rowCount() > 0): 
 		foreach ($rows as $row) {
 			
-			$persons = explode(' ', $row['admin_fullname']);
-			$person = ucwords($persons[0]);
+			// $persons = explode(' ', $row['admin_fullname']);
+			// $person = ucwords($persons[0]);
 			if ($row['log_type'] == 'user') {
 				$person = 'voter';
-				$persons = get_voter_details('std_id', $row["std_id"]);
+				$persons = get_voter_details('std_id', $row["log_person"]);
 				if (is_array($persons)) {
 					$person = ucwords($persons['std_fname'] . ' ' . $person['std_lname']);
 				}

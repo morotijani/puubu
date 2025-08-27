@@ -373,9 +373,17 @@
                 </div>
             </div>
 
-
-
-            <!-- Goals -->
+            <!-- Activity -->
+            <div class="card">
+				<div class="card-header">
+					<h3 class="fs-6 mb-0">Recent activity</h3>
+				</div>
+				<div class="card-body">
+					<ul class="activity">
+						<?= get_logs($admin_data['admin_id']); ?>
+					</ul>
+				</div>
+			</div>
 
 
             <!-- Activity -->

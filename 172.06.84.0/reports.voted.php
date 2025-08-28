@@ -185,7 +185,6 @@ if (isset($_GET['report']) && !empty($_GET['report'])) {
     echo '<script>window.location = "index";</script>';
 }
 
-include ('includes/main-footer.inc.php');
 include ('includes/footer.inc.php');
 
 ?>

@@ -163,7 +163,7 @@
         <nav class="navbar navbar-expand-xl navbar-vertical">
             <div class="container-lg">
                 <!-- Brand -->
-                <a class="navbar-brand fs-5 fw-bold text-xl-center mb-xl-4" href="./index.html">
+                <a class="navbar-brand fs-5 fw-bold text-xl-center mb-xl-4" href="<?= PROOT; ?>172.06.84.0/index">
                     <i class="fs-4 text-secondary" data-duoicon="box-2"></i> <span class="d-xl-none ms-1">Dashbrd</span>
                 </a>
             
@@ -314,7 +314,7 @@
                   <span class="ms-3 ms-xl-0 mt-xl-1 d-xl-block align-self-stretch fs-xl-sm text-xl-center text-truncate">Home</span>
                 </a>
                 <div class="dropdown-menu ms-xl-3">
-                  <a class="dropdown-item active" href="./index.html">Default</a>
+                  <a class="dropdown-item active" href="<?= PROOT; ?>172.06.84.0/index">Default</a>
                   <a class="dropdown-item " href="./dashboards/crypto.html">Crypto</a>
                   <a class="dropdown-item " href="./dashboards/saas.html">SaaS</a>
                 </div>
@@ -584,7 +584,7 @@
         <nav class="navbar navbar-expand-xl navbar-vertical">
             <div class="container-lg">
                 <!-- Brand -->
-                <a class="navbar-brand d-flex align-items-center fs-5 fw-bold px-xl-3 mb-xl-4" href="./index.html">
+                <a class="navbar-brand d-flex align-items-center fs-5 fw-bold px-xl-3 mb-xl-4" href="<?= PROOT; ?>172.06.84.0/index">
                     <i class="fs-4 text-secondary me-2" data-duoicon="box-2"></i> Dashbrd
                 </a>
             
@@ -730,7 +730,7 @@
                             </a>
                             <div class="collapse show" id="dashboards">
                                 <nav class="nav nav-pills">
-                                    <a class="nav-link active" href="./index.html">Home</a>
+                                    <a class="nav-link active" href="<?= PROOT; ?>172.06.84.0/index">Home</a>
                                     <a class="nav-link " href="./dashboards/crypto.html">Elections</a>
                                     <a class="nav-link " href="./dashboards/saas.html">...</a>
                                 </nav>
@@ -742,7 +742,7 @@
                             </a>
                         </div>
                         <div class="nav-item">
-                            <a class="nav-link " href="<?= PROOT; ?>172.06.84.0/elections">
+                            <a class="nav-link " href="<?= PROOT; ?>172.06.84.0/election">
                                 <span class="material-symbols-outlined me-3">list_alt</span> Elections
                             </a>
                         </div>
@@ -867,7 +867,7 @@
     <nav class="navbar navbar-expand-xl topnav-base">
       <div class="container-lg">
         <!-- Brand -->
-        <a class="navbar-brand d-flex align-items-center fs-5 fw-bold" href="./index.html"
+        <a class="navbar-brand d-flex align-items-center fs-5 fw-bold" href="<?= PROOT; ?>172.06.84.0/index"
           ><i class="fs-4 text-secondary me-2" data-duoicon="box-2"></i>Dashbrd</a
         >
     
@@ -1004,7 +1004,7 @@
                 Dashboards
               </a>
               <div class="dropdown-menu">
-                <a class="dropdown-item active" href="./index.html">Default</a>
+                <a class="dropdown-item active" href="<?= PROOT; ?>172.06.84.0/index">Default</a>
                 <a class="dropdown-item " href="./dashboards/crypto.html">Crypto</a>
                 <a class="dropdown-item " href="./dashboards/saas.html">SaaS</a>
               </div>

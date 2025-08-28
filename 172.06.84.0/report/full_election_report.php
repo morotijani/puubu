@@ -154,8 +154,15 @@
 						$ContResultNO = $counts['results_no'];
 
 						$pdf->Cell(64,0,$ContID.$ContName,0,0);
+						$profile_picture = 'https://sites.local/puubu/media/uploadedprofile/' . $counts['cont_profile'];
+						if (file_exists($profile_picture)) {
+							$pdf->Cell(63,0,$pdf->Image($profile_picture,$pdf->GetX(),$pdf->GetY(),20,22.5),0,0,'R');
+						} else {
+							$pdf->Cell(63,0,'Image file not found!' . $countNumberVotes . ' (' . round(($ContResult/$countNumberVotes) * 100,0,PHP_ROUND_HALF_UP) .'%)',0,0,'R');
 
-						$pdf->Cell(63,0,$pdf->Image('https://puubu.namibra.io/media/uploadedprofile/'.$counts['cont_profile'],$pdf->GetX(),$pdf->GetY(),20,22.5),0,0,'R');
+						}
+
+						// $pdf->Cell(63,0,$pdf->Image($profile_picture,$pdf->GetX(),$pdf->GetY(),20,22.5),0,0,'R');
 						 foreach ($sql8_result as $row8) {
 						 	if ($row8['count_pc'] > 1) {
 								$pdf->Cell(63,0,$ContResult . ' out of ' . $countNumberVotes . ' (' . round(($ContResult/$countNumberVotes) * 100,0,PHP_ROUND_HALF_UP) .'%)',0,0,'R');
@@ -174,9 +181,8 @@
 				$pdf->Output();
 			}
 		} else {
-			header('Location: ../reports?report=1&election='.$_GET["election"].'');
+			redirect('../reports?report=1&election=' . $_GET["election"] . '');
 		}
 				
 	}
 	ob_end_flush();
-

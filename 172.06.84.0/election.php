@@ -163,15 +163,110 @@ if (isset($_POST['addelection'])) {
 
 ?>
 
+    <!-- Main -->
+    <main class="main px-lg-6">
+        <!-- Content -->
+        <div class="container-lg">
+            <!-- Page header -->
+            <div class="row align-items-center mb-7">
+                <div class="col-auto">
+                    <!-- Avatar -->
+                    <div class="avatar avatar-xl rounded text-primary">
+                        <i class="fs-2" data-duoicon="user"></i>
+                    </div>
+                </div>
+                <div class="col">
+                    <!-- Breadcrumb -->
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb mb-1">
+                            <li class="breadcrumb-item"><a class="text-body-secondary" href="#">Elections</a></li>
+                            <li class="breadcrumb-item active" aria-current="page">Elections</li>
+                        </ol>
+                    </nav>
 
-<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-    <h4 class="text-white" style="font-size: 18px;">Dashboard</h4>
-    <div class="btn-toolbar mb-2 mb-md-0">
-        <div class="btn-group mr-2">
-            <a href="index" class="btn btn-sm btn-warning">Go back</a>
+                    <!-- Heading -->
+                    <h1 class="fs-4 mb-0">Elections</h1>
+                </div>
+                <div class="col-12 col-sm-auto mt-4 mt-sm-0">
+                    <!-- Action -->
+                <a class="btn btn-secondary d-block" href="../customers/customer-new.html">
+                    <span class="material-symbols-outlined me-1">add</span> New customer
+                </a>
+            </div>
         </div>
-    </div>
-</div>
+
+          <!-- Page content -->
+        <div class="row">
+            <div class="col-12">
+                <!-- Filters -->
+                <div class="card card-line bg-body-tertiary border-transparent mb-7">
+                    <div class="card-body p-4">
+                        <div class="row align-items-center">
+                            <div class="col-12 col-lg-auto mb-3 mb-lg-0">
+                                <div class="row align-items-center">
+                                    <div class="col-auto">
+                                        <div class="text-body-secondary">No customers selected</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        <div>
+
+        <div class="row">
+          <div class="col-12 ">
+            <div class="card mb-6">
+              <div class="card-header">
+                <div class="row align-items-center">
+                  <div class="col">
+                    <h3 class="fs-6 mb-0">Watchlist</h3>
+                  </div>
+                  <div class="col-auto my-n3 me-n3">
+                    <button class="btn btn-sm btn-link" type="button">+ Add</button>
+                  </div>
+                </div>
+              </div>
+              <div class="table-responsive">
+                <table class="table align-middle mb-0">
+                  <thead>
+                    <th class="fs-sm">Name</th>
+                    <th class="fs-sm">Last price (USD)</th>
+                    <th class="fs-sm">Change</th>
+                    <th class="fs-sm" colspan="2">Last 24hr</th>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>
+                        <div class="d-flex align-items-center">
+                          <div class="avatar avatar-sm me-3">
+                            <img class="avatar-img" src="../assets/img/crypto/btc.svg" alt="Bitcoin" />
+                          </div>
+                          <strong class="fw-semibold">Bitcoin</strong>
+                        </div>
+                      </td>
+                      <td>63,879.81</td>
+                      <td>
+                        <span class="badge bg-success-subtle text-success">+0.53%</span>
+                      </td>
+                      <td>
+                        <div class="chart" style="height: 1rem; width: 3rem">
+                          <canvas class="chart-canvas" data-crypto-currency-success-chart></canvas>
+                        </div>
+                      </td>
+                      <td class="text-end">
+                        <button class="btn btn-sm btn-light" type="button">Trade</button>
+                      </td>
+                    </tr>
+                    </tbody>
+                </table>
+              </div>
+            </div>
+
+
+
 
 
 <div class="card">
@@ -216,8 +311,6 @@ if (isset($_POST['addelection'])) {
         </table>
     </div>
 </div>
-
-<?php include ('includes/main-footer.inc.php');?>
 
 <!-- FOOTER -->
 <script type="text/javascript" src="media/files/jquery-3.3.1.min.js"></script>

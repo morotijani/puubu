@@ -216,6 +216,45 @@ if (isset($_POST['addelection'])) {
             </div>
         <div>
 
+            
+        <!-- Billing -->
+        <section class="card bg-body-tertiary border-transparent card-line mb-5" id="billing">
+            <div class="card-body">
+                <div class="row align-items-center mb-4">
+                    <div class="col">
+                        <h2 class="fs-5 mb-1">Add election</h2>
+                        <p class="text-body-secondary mb-0">Billing information is securely stored with our payment processor and is not accessible to us.</p>
+                    </div>
+                    <div class="col-auto">
+                        <button class="btn btn-sm btn-dark" type="button">+ Export</button>
+                    </div>
+                </div>
+                <div class="card border-transparent">
+                    <div class="card-body">
+                        <div class="row gx-3">
+                            <div class="col-6 col-md">
+                                <div class="mb-4 mb-lg-0">
+                                    <label class="form-label" for="cardNumber">Election name</label>
+                                <input
+                                    class="form-control"
+                                id="cardNumber"
+                                type="text"
+                                placeholder="**** **** **** ****"
+                            />
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="mb-4 mb-lg-0">
+                            <label class="form-label" for="CVC/CVV">CVC/CVV</label>
+                            <input class="form-control" id="CVC/CVV" type="text" placeholder="****" 'placeholder': '*'" />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </section>
+
         <div class="row">
           <div class="col-12 ">
             <div class="card mb-6">

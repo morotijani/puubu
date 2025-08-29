@@ -231,29 +231,28 @@ if (isset($_POST['addelection'])) {
                 </div>
                 <div class="card border-transparent">
                     <div class="card-body">
-                        <div class="row gx-3">
-                            <div class="col-6 col-md">
-                                <div class="mb-4 mb-lg-0">
-                                    <label class="form-label" for="cardNumber">Election name</label>
-                                <input
-                                    class="form-control"
-                                id="cardNumber"
-                                type="text"
-                                placeholder="**** **** **** ****"
-                            />
+                        <form class="" action="election.php?<?= ((isset($_GET['edit_election']))?'edit_election='.$edit_election_id:'addnewposition=1'); ?>" method="post">
+
+                            <div class="row gx-3">
+                                <div class="col-6 col-md">
+                                    <div class="mb-4 mb-lg-0">
+                                        <label class="form-label" for="cardNumber">Election name</label>
+                                        <input class="form-control" name="election_name" id="election_name" type="text" placeholder="SRC" value="<?= $election_name; ?>"
+                                        />
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="mb-4 mb-lg-0">
+                                        <label class="form-label" for="CVC/CVV">Organizers</label>
+                                        <input class="form-control" name="election_by" id="election_by" type="text" placeholder="University of Ghana" value="<?= $election_by; ?> />
+                                    </div>
+                                </div>
                             </div>
-                        </div>
-                        <div class="col-6">
-                            <div class="mb-4 mb-lg-0">
-                            <label class="form-label" for="CVC/CVV">CVC/CVV</label>
-                            <input class="form-control" id="CVC/CVV" type="text" placeholder="****" 'placeholder': '*'" />
-                        </div>
-                      </div>
+                        </form>
                     </div>
-                  </div>
                 </div>
-              </div>
-            </section>
+            </div>
+        </section>
 
         <div class="row">
           <div class="col-12 ">

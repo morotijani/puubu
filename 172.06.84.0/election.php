@@ -99,8 +99,8 @@ if ($get_election_count > 0) {
                 <td>
                     '.$option1.'
                 </td>
-                <td class="text-capitalize">'.$get_election_row["election_name"].'</td>
-                <td class="text-capitalize">'.$get_election_row["election_by"].'</td>
+                <td><strong class="fw-semibold">' . $get_election_row["election_name"] . '</strong></td>
+                <td"> ' . $get_election_row["election_by"] . '</td>
                 <td>
                     '.$option2.'
                 </td>
@@ -227,7 +227,7 @@ if (isset($_POST['addelection'])) {
                             <p class="text-body-secondary mb-0">Billing information is securely stored with our payment processor and is not accessible to us.</p>
                         </div>
                         <div class="col-auto">
-                            <button class="btn btn-sm btn-dark" type="button" name="addelection"><?= ((isset($_GET["edit_election"]))? ' - Edit' : '+ Add'); ?></button>
+                            <button class="btn btn-sm btn-dark" type="submit" name="addelection"><?= ((isset($_GET["edit_election"]))? '- Edit' : '+ Add'); ?></button>
                             <?php if(isset($_GET['edit_election'])): ?>&nbsp;
                                 <a href="election" class="btn btn-sm btn-secondary btn-lg">Cancel</a>
                             <?php endif; ?>
@@ -235,6 +235,7 @@ if (isset($_POST['addelection'])) {
                     </div>
                     <div class="card border-transparent">
                         <div class="card-body">
+                            <span><?= $message; ?></span>
                             <div class="row gx-3">
                                 <div class="col-6 col-md">
                                     <div class="mb-4 mb-lg-0">
@@ -257,53 +258,48 @@ if (isset($_POST['addelection'])) {
         </section>
 
         <div class="row">
-          <div class="col-12 ">
-            <div class="card mb-6">
-              <div class="card-header">
-                <div class="row align-items-center">
-                  <div class="col">
-                    <h3 class="fs-6 mb-0">Watchlist</h3>
-                  </div>
-                  <div class="col-auto my-n3 me-n3">
-                    <button class="btn btn-sm btn-link" type="button">+ Add</button>
-                  </div>
+            <div class="col-12 ">
+                <div class="card mb-6">
+                    <div class="card-header">
+                        <div class="row align-items-center">
+                            <div class="col">
+                                <h3 class="fs-6 mb-0">Watchlist</h3>
+                            </div>
+                            <div class="col-auto my-n3 me-n3">
+                                <button class="btn btn-sm btn-link" type="button">+ Add</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table align-middle mb-0">
+                            <thead>
+                                <th class="fs-sm">Status</th>
+                                <th class="fs-sm">Name</th>
+                                <th class="fs-sm">Organizer</th>
+                                <th class="fs-sm" colspan="2"></th>
+                            </thead>
+                            <tbody>
+                                                <?= $listElection; ?>
+
+                                <tr>
+                                    <td></td>
+                                    <td><strong class="fw-semibold">Bitcoin</strong></td>
+                                    <td>
+                                        <span class="badge bg-success-subtle text-success">+0.53%</span>
+                                    </td>
+                                    <td>
+                                        <div class="chart" style="height: 1rem; width: 3rem">
+                                        <canvas class="chart-canvas" data-crypto-currency-success-chart></canvas>
+                                        </div>
+                                    </td>
+                                    <td class="text-end">
+                                        <button class="btn btn-sm btn-light" type="button">Trade</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
-              </div>
-              <div class="table-responsive">
-                <table class="table align-middle mb-0">
-                  <thead>
-                    <th class="fs-sm">Name</th>
-                    <th class="fs-sm">Last price (USD)</th>
-                    <th class="fs-sm">Change</th>
-                    <th class="fs-sm" colspan="2">Last 24hr</th>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <td>
-                        <div class="d-flex align-items-center">
-                          <div class="avatar avatar-sm me-3">
-                            <img class="avatar-img" src="../assets/img/crypto/btc.svg" alt="Bitcoin" />
-                          </div>
-                          <strong class="fw-semibold">Bitcoin</strong>
-                        </div>
-                      </td>
-                      <td>63,879.81</td>
-                      <td>
-                        <span class="badge bg-success-subtle text-success">+0.53%</span>
-                      </td>
-                      <td>
-                        <div class="chart" style="height: 1rem; width: 3rem">
-                          <canvas class="chart-canvas" data-crypto-currency-success-chart></canvas>
-                        </div>
-                      </td>
-                      <td class="text-end">
-                        <button class="btn btn-sm btn-light" type="button">Trade</button>
-                      </td>
-                    </tr>
-                    </tbody>
-                </table>
-              </div>
-            </div>
 
 
 
@@ -334,23 +330,7 @@ if (isset($_POST['addelection'])) {
             </form>
         </div>
 
-        <hr>
-
-        <table class="table table-hover table-dark table-bordered table-sm">
-            <thead>
-                <tr>
-                    <th></th>
-                    <th class="text-center">Election Name</th>
-                    <th class="text-center">Election By</th>
-                    <th></th>
-                </tr>
-            </thead>
-            <tbody>
-                <?= $listElection; ?>
-            </tbody>
-        </table>
-    </div>
-</div>
+    
 
 <!-- FOOTER -->
 <script type="text/javascript" src="media/files/jquery-3.3.1.min.js"></script>

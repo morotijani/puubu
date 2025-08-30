@@ -77,21 +77,35 @@ if ($get_election_count > 0) {
         if ($get_election_row['session'] == 1) {
             $option1 = "<span class='badge badge-success' title='Election is on going.'>running ...</span>";
             $option2 = "
-                <span class='badge badge-secondary'><a href='reports?report=1&election=".$get_election_row["eid"]."' class='text-dark' title='View Runing Election Details'><i data-feather='eye'></i></a></span>
+                <span class='badge badge-secondary'>
+                    <a href='reports?report=1&election=".$get_election_row["eid"]."' class='text-dark' title='View Runing Election Details'>
+                        <i data-feather='eye'></i>
+                    </a>
+                </span>
             ";
         } else if ($get_election_row['session'] == 2) {
             $option1 = "<span class='badge badge-warning'>ended</span>";
             $option2 = "
-                <span class='badge badge-secondary'><a href='report/full_election_report?election=".$get_election_row["eid"]."' class='text-dark' title='View Ended Election Details'><i data-feather='eye'></i></a></span>
+                <span class='badge badge-secondary'>
+                    <a href='report/full_election_report?election=".$get_election_row["eid"]."' class='text-dark' title='View Ended Election Details'>
+                        <i data-feather='eye'></i>
+                    </a>
+                </span>
                 ";
         } else {
             $option1 = '
-                <span class="badge badge-dark shadow" title="Edit Election"><a href="election.php?edit_election='.$get_election_row["eid"].'" class="text-warning"><i data-feather="edit"></i>
-                </a></span>
+                <span class="badge badge-dark shadow" title="Edit Election">
+                    <a href="election.php?edit_election='.$get_election_row["eid"].'" class="text-warning">
+                        <i data-feather="edit"></i>
+                    </a>
+                </span>
             ';
             $option2 = '
-                <span class="badge badge-dark shadow delete-election" title="Delete Election" id="'.$get_election_row["eid"].'"><a href="javascript:;" class="text-danger"><i data-feather="trash"></i>
-                </a></span>
+                <span class="badge badge-dark shadow delete-election" title="Delete Election" id="'.$get_election_row["eid"].'">
+                    <a href="javascript:;" class="text-danger">
+                        <i data-feather="trash"></i>
+                    </a>
+                </span>
             ';
         }
         $listElection .= '

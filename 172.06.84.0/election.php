@@ -190,7 +190,7 @@ if (isset($_POST['addelection'])) {
                 <div class="col-12 col-sm-auto mt-4 mt-sm-0">
                     <!-- Action -->
                 <a class="btn btn-secondary d-block" href="../customers/customer-new.html">
-                    <span class="material-symbols-outlined me-1">add</span> New customer
+                    <span class="material-symbols-outlined me-1">add</span> Export
                 </a>
             </div>
         </div>
@@ -220,37 +220,39 @@ if (isset($_POST['addelection'])) {
         <!-- Billing -->
         <section class="card bg-body-tertiary border-transparent card-line mb-5" id="billing">
             <div class="card-body">
-                <div class="row align-items-center mb-4">
-                    <div class="col">
-                        <h2 class="fs-5 mb-1">Add election</h2>
-                        <p class="text-body-secondary mb-0">Billing information is securely stored with our payment processor and is not accessible to us.</p>
+                <form class="" action="election.php?<?= ((isset($_GET['edit_election']))?'edit_election='.$edit_election_id:'addnewposition=1'); ?>" method="post">
+                    <div class="row align-items-center mb-4">
+                        <div class="col">
+                            <h2 class="fs-5 mb-1">Add election</h2>
+                            <p class="text-body-secondary mb-0">Billing information is securely stored with our payment processor and is not accessible to us.</p>
+                        </div>
+                        <div class="col-auto">
+                            <button class="btn btn-sm btn-dark" type="button" name="addelection"><?= ((isset($_GET["edit_election"]))? ' - Edit' : '+ Add'); ?></button>
+                            <?php if(isset($_GET['edit_election'])): ?>&nbsp;
+                                <a href="election" class="btn btn-sm btn-secondary btn-lg">Cancel</a>
+                            <?php endif; ?>
+                        </div>
                     </div>
-                    <div class="col-auto">
-                        <button class="btn btn-sm btn-dark" type="button">+ Export</button>
-                    </div>
-                </div>
-                <div class="card border-transparent">
-                    <div class="card-body">
-                        <form class="" action="election.php?<?= ((isset($_GET['edit_election']))?'edit_election='.$edit_election_id:'addnewposition=1'); ?>" method="post">
-
+                    <div class="card border-transparent">
+                        <div class="card-body">
                             <div class="row gx-3">
                                 <div class="col-6 col-md">
                                     <div class="mb-4 mb-lg-0">
-                                        <label class="form-label" for="cardNumber">Election name</label>
+                                        <label class="form-label" for="election_name">Election name</label>
                                         <input class="form-control" name="election_name" id="election_name" type="text" placeholder="SRC" value="<?= $election_name; ?>"
                                         />
                                     </div>
                                 </div>
                                 <div class="col-6">
                                     <div class="mb-4 mb-lg-0">
-                                        <label class="form-label" for="CVC/CVV">Organizers</label>
-                                        <input class="form-control" name="election_by" id="election_by" type="text" placeholder="University of Ghana" value="<?= $election_by; ?> />
+                                        <label class="form-label" for="election_by">Organizers</label>
+                                        <input class="form-control" name="election_by" id="election_by" type="text" placeholder="University of Ghana" value="<?= $election_by; ?>" />
                                     </div>
                                 </div>
                             </div>
-                        </form>
+                        </div>
                     </div>
-                </div>
+                </form>
             </div>
         </section>
 

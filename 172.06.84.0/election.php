@@ -296,12 +296,6 @@ if (isset($_POST['addelection'])) {
     
     <?php include ('includes/footer.inc.php'); ?>
 
-<!-- FOOTER -->
-<!-- <script type="text/javascript" src="media/files/jquery-3.3.1.min.js"></script>
-<script type="text/javascript" src="media/files/popper-1.14.6.min.js"></script>
-<script type="text/javascript" src="media/files/bootstrap.min.js"></script>
-<script type="text/javascript" src="media/files/feather.min.js"></script> -->
-
     <script>
         $(document).ready(function() {
             $("#temporary").fadeOut(5000);

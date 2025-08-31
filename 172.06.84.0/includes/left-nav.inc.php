@@ -315,8 +315,8 @@
                 </a>
                 <div class="dropdown-menu ms-xl-3">
                   <a class="dropdown-item active" href="<?= PROOT; ?>172.06.84.0/index">Default</a>
-                  <a class="dropdown-item " href="./dashboards/crypto.html">Crypto</a>
-                  <a class="dropdown-item " href="./dashboards/saas.html">SaaS</a>
+                  <a class="dropdown-item " href="<?= PROOT; ?>172.06.84.0/election">Election</a>
+                  <a class="dropdown-item " href="javascript:;">SaaS</a>
                 </div>
               </div>
               <div class="nav-item dropend">
@@ -731,8 +731,8 @@
                             <div class="collapse show" id="dashboards">
                                 <nav class="nav nav-pills">
                                     <a class="nav-link active" href="<?= PROOT; ?>172.06.84.0/index">Home</a>
-                                    <a class="nav-link " href="./dashboards/crypto.html">Elections</a>
-                                    <a class="nav-link " href="./dashboards/saas.html">...</a>
+                                    <a class="nav-link " href="<?= PROOT; ?>172.06.84.0/election">Elections</a>
+                                    <a class="nav-link " href="javascript:;">...</a>
                                 </nav>
                             </div>
                         </div>
@@ -1005,8 +1005,8 @@
               </a>
               <div class="dropdown-menu">
                 <a class="dropdown-item active" href="<?= PROOT; ?>172.06.84.0/index">Default</a>
-                <a class="dropdown-item " href="./dashboards/crypto.html">Crypto</a>
-                <a class="dropdown-item " href="./dashboards/saas.html">SaaS</a>
+                <a class="dropdown-item " href="<?= PROOT; ?>172.06.84.0/election">Election</a>
+                <a class="dropdown-item " href="javascript:;">...</a>
               </div>
             </div>
             <div class="nav-item dropdown">

@@ -77,31 +77,27 @@ if ($get_election_count > 0) {
         if ($get_election_row['session'] == 1) {
             $option1 = "<span class='badge badge-success' title='Election is on going.'>running ...</span>";
             $option2 = "
-                <span class='badge badge-secondary'>
+                <span class='badge bg-success-subtle text-secondary'>
                     <a href='reports?report=1&election=".$get_election_row["eid"]."' class='text-dark' title='View Runing Election Details'>
                         <i data-feather='eye'></i>
                     </a>
                 </span>
             ";
         } else if ($get_election_row['session'] == 2) {
-            $option1 = "<span class='badge badge-warning'>ended</span>";
+            $option1 = "<span class='badge bg-danger-subtle text-danger'>ended</span>";
             $option2 = "
-                <span class='badge badge-secondary'>
-                    <a href='report/full_election_report?election=".$get_election_row["eid"]."' class='text-dark' title='View Ended Election Details'>
-                        <i data-feather='eye'></i>
-                    </a>
-                </span>
+                <a href='report/full_election_report?election=" . $get_election_row["eid"] . "' class='btn btn-sm btn-secondary' title='View Ended Election Details'>
+                    <i data-feather='eye'></i>
+                </a>
                 ";
         } else {
             $option1 = '
-                <span class="badge badge-dark shadow" title="Edit Election">
-                    <a href="election.php?edit_election='.$get_election_row["eid"].'" class="text-warning">
-                        <i data-feather="edit"></i>
-                    </a>
-                </span>
+                <a href="election.php?edit_election='.$get_election_row["eid"].'" class='btn btn-sm btn-warning' title="Edit Election">
+                    <i data-feather="edit"></i>
+                </a>
             ';
             $option2 = '
-                <span class="badge badge-dark shadow delete-election" title="Delete Election" id="'.$get_election_row["eid"].'">
+                <span class="badge bg-success-subtle text-success delete-election" title="Delete Election" id="'.$get_election_row["eid"].'">
                     <a href="javascript:;" class="text-danger">
                         <i data-feather="trash"></i>
                     </a>
@@ -109,14 +105,14 @@ if ($get_election_count > 0) {
             ';
         }
         $listElection .= '
-            <tr class="text-center">
+            <tr>
                 <td>
-                    '.$option1.'
+                    ' . $option1 . '
                 </td>
-                <td><strong class="fw-semibold">' . $get_election_row["election_name"] . '</strong></td>
-                <td"> ' . $get_election_row["election_by"] . '</td>
+                <td><strong class="fw-semibold">' . ucwords($get_election_row["election_name"]) . '</strong></td>
+                <td> ' . ucwords($get_election_row["election_by"]) . '</td>
                 <td>
-                    '.$option2.'
+                    ' . $option2 . '
                 </td>
              </tr>';
     }
@@ -295,21 +291,11 @@ if (isset($_POST['addelection'])) {
                             <tbody>
                                                 <?= $listElection; ?>
 
-                                <tr>
-                                    <td></td>
-                                    <td><strong class="fw-semibold">Bitcoin</strong></td>
-                                    <td>
-                                        <span class="badge bg-success-subtle text-success">+0.53%</span>
-                                    </td>
-                                    <td>
-                                        <div class="chart" style="height: 1rem; width: 3rem">
-                                        <canvas class="chart-canvas" data-crypto-currency-success-chart></canvas>
-                                        </div>
-                                    </td>
+                                <!-- <tr>
                                     <td class="text-end">
                                         <button class="btn btn-sm btn-light" type="button">Trade</button>
                                     </td>
-                                </tr>
+                                </tr> -->
                             </tbody>
                         </table>
                     </div>

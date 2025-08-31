@@ -46,7 +46,7 @@
                         </div>
                         <div class="nav-item dropend">
                             <a class="nav-link" href="<?= PROOT; ?>172.06.84.0/positions">
-                                <span class="material-symbols-outlined" title="Positions">email</span>
+                                <span class="material-symbols-outlined" title="Positions">move_selection_up</span>
                                 <span class="ms-3 d-xl-none">Positions</span>
                             </a>
                         </div>
@@ -738,7 +738,7 @@
                         </div>
                         <div class="nav-item">
                             <a class="nav-link" href="<?= PROOT; ?>172.06.84.0/positions">
-                                <span class="material-symbols-outlined me-3">group</span> Positions
+                                <span class="material-symbols-outlined me-3">move_selection_up</span> Positions
                             </a>
                         </div>
                         <div class="nav-item">

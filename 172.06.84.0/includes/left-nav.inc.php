@@ -878,7 +878,7 @@
               <span class="avatar avatar-sm avatar-status avatar-status-success me-3">
                 <img class="avatar-img" src="./assets/img/photos/photo-6.jpg" alt="..." />
               </span>
-              <span class="d-none d-xl-block">John Williams</span>
+              <span class="d-none d-xl-block"><?= $fullName; ?></span>
             </a>
             <ul class="dropdown-menu dropdown-menu-end">
               <li><a class="dropdown-item" href="./account/account.html">Account</a></li>
@@ -1251,7 +1251,7 @@
                 <span class="avatar avatar-sm avatar-status avatar-status-success me-3">
                   <img class="avatar-img" src="./assets/img/photos/photo-6.jpg" alt="..." />
                 </span>
-                <span class="d-none d-xl-block">John Williams</span>
+                <span class="d-none d-xl-block"><?= $fullName; ?></span>
               </a>
               <ul class="dropdown-menu dropdown-menu-end">
                 <li><a class="dropdown-item" href="./account/account.html">Account</a></li>

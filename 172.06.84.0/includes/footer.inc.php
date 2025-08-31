@@ -23,6 +23,7 @@
 
     <script type="text/javascript">
       
+            feather.replace();
 
       $(document).ready(function() {
 

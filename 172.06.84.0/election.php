@@ -288,68 +288,30 @@ if (isset($_POST['addelection'])) {
                                 <th class="fs-sm" colspan="2"></th>
                             </thead>
                             <tbody>
-                                                <?= $listElection; ?>
-
-                                <!-- <tr>
-                                    <td class="text-end">
-                                        <button class="btn btn-sm btn-light" type="button">Trade</button>
-                                    </td>
-                                </tr> -->
+                                <?= $listElection; ?>
                             </tbody>
                         </table>
                     </div>
                 </div>
-
-
-
-
-
-<div class="card">
-    <div class="card-body">
-        <a href="javascript:;" class="btn btn-sm btn-link float-right mb-3">Export <span data-feather="download-cloud" class="ml-1"></span></a>
-        <h4 class="header-title mt-2" style="color: rgb(170, 184, 197);"><?= ((isset($_GET['edit_election']))?'Edit':'Add') ?> Election Name</h4>
-
-        <div class="container">
-            <form class="" action="election.php?<?= ((isset($_GET['edit_election']))?'edit_election='.$edit_election_id:'addnewposition=1'); ?>" method="post">
-                <span><?= $message; ?></span>
-                <div class="row justify-content-center">
-                    <div class="col-md-6">
-                        <input type="text" name="election_name" value="<?= $election_name; ?>" placeholder="<?= ((isset($_GET["edit_election"]))?'Edit':'Add'); ?> Election Name" class="form-control form-control-sm form-control-dark">
-                    </div>
-                    <div class="col-md-6">
-                        <input type="text" name="election_by" value="<?= $election_by; ?>" placeholder="<?= ((isset($_GET["edit_election"]))?'Edit':'Add'); ?> Election By" class="form-control form-control-sm form-control-dark">
-                    </div>
-                    <div class="col mt-2">
-                        <button type="submit" class="btn btn-sm btn-dark" name="addelection"><?= ((isset($_GET["edit_election"]))?'Edit ':'Add '); ?>Election</button>
-                        <?php if(isset($_GET['edit_election'])): ?>&nbsp;
-                            <a href="election" class="btn btn-sm btn-secondary btn-lg">Cancel</a>
-                        <?php endif; ?>
-                    </div>
-                </div>
-            </form>
-        </div>
-
     
+    <?php include ('includes/footer.inc.php'); ?>
 
 <!-- FOOTER -->
-<script type="text/javascript" src="media/files/jquery-3.3.1.min.js"></script>
+<!-- <script type="text/javascript" src="media/files/jquery-3.3.1.min.js"></script>
 <script type="text/javascript" src="media/files/popper-1.14.6.min.js"></script>
 <script type="text/javascript" src="media/files/bootstrap.min.js"></script>
-<script type="text/javascript" src="media/files/feather.min.js"></script>
+<script type="text/javascript" src="media/files/feather.min.js"></script> -->
 
-<script>
-  feather.replace();
-  $(document).ready(function() {
-        $("#temporary").fadeOut(5000);
+    <script>
+        $(document).ready(function() {
+            $("#temporary").fadeOut(5000);
 
-        // DELETE ELECTION TEMPORARY
-        $(document).on('click', '.delete-election', function() {
-            var election_id = $(this).attr('id');
-            if (confirm("Election will be deleted TEMPORARY")) {
-                window.location = '<?= PROOT ?>172.06.84.0/election?delete_election='+election_id+'';
-            }
+            // DELETE ELECTION TEMPORARY
+            $(document).on('click', '.delete-election', function() {
+                var election_id = $(this).attr('id');
+                if (confirm("Election will be deleted TEMPORARY")) {
+                    window.location = '<?= PROOT ?>172.06.84.0/election?delete_election=' + election_id + '';
+                }
+            });
         });
-    });
-</script>
-</body>
-</html>
+    </script>

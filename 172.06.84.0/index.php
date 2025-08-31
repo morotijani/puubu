@@ -440,7 +440,3 @@
 </div>
 
 <?php include ('includes/footer.inc.php'); ?>
-
-<script type="text/javascript">
-    feather.replace();
-</script>

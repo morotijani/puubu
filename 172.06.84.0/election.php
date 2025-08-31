@@ -78,7 +78,7 @@ if ($get_election_count > 0) {
             $option1 = "<span class='badge badge-success' title='Election is on going.'>running ...</span>";
             $option2 = "
                 <span class='badge bg-success-subtle text-secondary'>
-                    <a href='reports?report=1&election=".$get_election_row["eid"]."' class='text-dark' title='View Runing Election Details'>
+                    <a href='reports?report=1&election=" . $get_election_row["eid"] . "' class='text-dark' title='View Runing Election Details' target='_blank'>
                         <i data-feather='eye'></i>
                     </a>
                 </span>
@@ -92,16 +92,14 @@ if ($get_election_count > 0) {
                 ";
         } else {
             $option1 = '
-                <a href="election.php?edit_election='.$get_election_row["eid"].'" class='btn btn-sm btn-warning' title="Edit Election">
+                <a href="election.php?edit_election='.$get_election_row["eid"].'" class="btn btn-sm btn-warning" title="Edit Election">
                     <i data-feather="edit"></i>
                 </a>
             ';
             $option2 = '
-                <span class="badge bg-success-subtle text-success delete-election" title="Delete Election" id="'.$get_election_row["eid"].'">
-                    <a href="javascript:;" class="text-danger">
-                        <i data-feather="trash"></i>
-                    </a>
-                </span>
+                <a href="javascript:;" class="btn btn-sm btn-danger delete-election" title="Delete Election" id="'.$get_election_row["eid"].'">
+                    <i data-feather="trash"></i>
+                </a>
             ';
         }
         $listElection .= '
@@ -114,7 +112,8 @@ if ($get_election_count > 0) {
                 <td>
                     ' . $option2 . '
                 </td>
-             </tr>';
+            </tr>
+        ';
     }
 } else {
         $listElection .= '

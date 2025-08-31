@@ -74,12 +74,12 @@
  	// Display on Messages on Errors And Success
 	$flash = '';
  	if (isset($_SESSION['flash_success'])) {
- 	 	$flash = '<div class="bg-success" id="temporary" style="margin-top: 60px; color: #fff;"><p class="text-center">'.$_SESSION['flash_success'].'</p></div>';
+ 	 	$flash = '<div class="bg-success" id="temporary" style="color: #fff;"><p class="text-center">'.$_SESSION['flash_success'].'</p></div>';
  	 	unset($_SESSION['flash_success']);
  	 }
 
  	 if (isset($_SESSION['flash_error'])) {
- 	 	$flash = '<div class="bg-danger" id="temporary" style="margin-top: 60px; color: #fff;"><p class="text-center">'.$_SESSION['flash_error'].'</p></div>';
+ 	 	$flash = '<div class="bg-danger" id="temporary" style="color: #fff;"><p class="text-center">'.$_SESSION['flash_error'].'</p></div>';
  	 	unset($_SESSION['flash_error']);
  	}
 

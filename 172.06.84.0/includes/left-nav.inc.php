@@ -35,12 +35,12 @@
                                 <h6 class="dropdown-header d-none d-xl-block">Dashboards</h6>
                                 <a class="dropdown-item active" href="<?= PROOT; ?>172.06.84.0/index">Default</a>
                                 <a class="dropdown-item " href="<?= PROOT; ?>172.06.84.0/election">Elections</a>
-                                <a class="dropdown-item " href="<?= PROOT; ?>172.06.84.0/saas.html">...</a>
+                                <a class="dropdown-item " href="<?= PROOT; ?>172.06.84.0/">...</a>
                             </div>
                         </div>
                         <div class="nav-item dropend">
                             <a class="nav-link" href="<?= PROOT; ?>172.06.84.0/election">
-                                <span class="material-symbols-outlined" title="Elections">auto_stories</span>
+                                <span class="material-symbols-outlined" title="Elections">how_to_vote</span>
                                 <span class="ms-3 d-xl-none">Election</span>
                             </a>
                         </div>
@@ -64,7 +64,7 @@
                         </div>
                         <div class="nav-item dropend">
                             <a class="nav-link" href="<?= PROOT; ?>172.06.84.0/election">
-                                <span class="material-symbols-outlined" title="Elections">auto_stories</span>
+                                <span class="material-symbols-outlined" title="Elections">how_to_vote</span>
                                 <span class="ms-3 d-xl-none">Election</span>
                             </a>
                         </div>
@@ -316,7 +316,7 @@
                 <div class="dropdown-menu ms-xl-3">
                   <a class="dropdown-item active" href="<?= PROOT; ?>172.06.84.0/index">Default</a>
                   <a class="dropdown-item " href="<?= PROOT; ?>172.06.84.0/election">Election</a>
-                  <a class="dropdown-item " href="javascript:;">SaaS</a>
+                  <a class="dropdown-item " href="javascript:;">...</a>
                 </div>
               </div>
               <div class="nav-item dropend">
@@ -743,7 +743,7 @@
                         </div>
                         <div class="nav-item">
                             <a class="nav-link " href="<?= PROOT; ?>172.06.84.0/election">
-                                <span class="material-symbols-outlined me-3">list_alt</span> Elections
+                                <span class="material-symbols-outlined me-3">how_to_vote</span> Elections
                             </a>
                         </div>
                         <div class="nav-item">
@@ -752,8 +752,8 @@
                             </a>
                         </div>
                         <div class="nav-item">
-                            <a class="nav-link" href="#">
-                                <span class="material-symbols-outlined me-3">shopping_cart</span> Contestants
+                            <a class="nav-link" href="<?= PROOT; ?>172.06.84.0/contestants">
+                                <span class="material-symbols-outlined me-3">groups_2</span> Contestants
                             </a>
                         </div>
                         <div class="nav-item">

@@ -129,51 +129,98 @@ if (isset($_POST['addposition'])) {
 
 ?>
 
+    <!-- Main -->
+    <main class="main px-lg-6">
+        <!-- Content -->
+        <div class="container-lg">
+            <!-- Page header -->
+            <div class="row align-items-center mb-7">
+                <div class="col-auto">
+                    <!-- Avatar -->
+                    <div class="avatar avatar-xl rounded text-primary">
+                        <i class="fs-2" data-duoicon="app"></i>
+                    </div>
+                </div>
+                <div class="col">
+                    <!-- Breadcrumb -->
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb mb-1">
+                            <li class="breadcrumb-item"><a class="text-body-secondary" href="#">Positions</a></li>
+                            <li class="breadcrumb-item active" aria-current="page">Positions</li>
+                        </ol>
+                    </nav>
 
-    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-        <h4 class="text-white" style="font-size: 18px;">Dashboard</h4>
-        <div class="btn-toolbar mb-2 mb-md-0">
-            <div class="btn-group mr-2">
-                <a href="index" class="btn btn-sm btn-outline-secondary">Go Back</a>
+                    <!-- Heading -->
+                    <h1 class="fs-4 mb-0">Positions</h1>
+                </div>
+                <div class="col-12 col-sm-auto mt-4 mt-sm-0">
+                    <!-- Action -->
+                <a class="btn btn-secondary d-block" href="../customers/customer-new.html">
+                    <span class="material-symbols-outlined me-1">export_notes</span> Export
+                </a>
             </div>
-            <a href="contestants" class="btn btn-sm btn-dark">Contestants</a>
         </div>
-    </div>
 
-
-    <div class="card">
-        
-        <div class="card-body">
-            <a href="javascript:;" class="btn btn-sm btn-link float-right mb-3">Export <span data-feather="download-cloud" class="ml-1"></span></a>
-            <h4 class="header-title mt-2" style="color: rgb(170, 184, 197);"><?= ((isset($_GET['editposition'])?'Edit':'Add')); ?> Position Name</h4>
-            <form action="positions?<?= ((isset($_GET['editposition']))?'editposition='.$edit_id:'addnewposition=1'); ?>" method="post">
-                <div class="container">
-                    <span><?= $message; ?></span>
-                    <div class="form-row">
-                        <div class="col-md-6">
-                            <div class="form-row">
-                                <div class="col-md">
-                                    <select class="form-control form-control-sm form-control-dark" name="sel_election" id="sel_election">
-                                        <option value=""<?=(($sel_election == '')?' selected':'');?>>Select Election Name</option>
-                                        <?php foreach ($electionQuery as $election_row): ?>
-                                            <option value="<?=$election_row['eid'];?>"<?= (($sel_election == $election_row['eid']) ? ' selected' : ''); ?>><?= ucwords($election_row['election_name']); ?> ~ <?= ucwords($election_row['election_by']); ?></option>
-                                        <?php endforeach; ?>
-                                    </select>
-                                </div>
-                                <div class="col-md">
-                                    <input type="text" name="position_name" value="<?= $position_name; ?>" placeholder="<?= ((isset($_GET["editposition"]))?'Edit':'Add'); ?> Position Name" class="form-control form-control-sm form-control-dark">
+         <!-- Page content -->
+        <div class="row">
+            <div class="col-12">
+                <!-- Filters -->
+                <div class="card card-line bg-body-tertiary border-transparent mb-7">
+                    <div class="card-body p-4">
+                        <div class="row align-items-center">
+                            <div class="col-12 col-lg-auto mb-3 mb-lg-0">
+                                <div class="row align-items-center">
+                                    <div class="col-auto">
+                                        <div class="text-body-secondary">No customers selected</div>
+                                    </div>
                                 </div>
                             </div>
+
                         </div>
-                        <div class="col-md-6">
-                            <button type="submit" class="btn btn-dark btn-sm" name="addposition"><?= ((isset($_GET["editposition"]))?'Edit':'Add'); ?> Position</button>
+                    </div>
+                </div>
+            </div>
+        <div>
+
+        <section class="card bg-body-tertiary border-transparent card-line mb-5" id="billing">
+            <div class="card-body">
+                <form action="positions?<?= ((isset($_GET['editposition']))?'editposition='.$edit_id:'addnewposition=1'); ?>" method="post">
+                    <div class="row align-items-center mb-4">
+                        <div class="col">
+                            <h2 class="fs-5 mb-1">Add position</h2>
+                            <p class="text-body-secondary mb-0">Billing information is securely stored with our payment processor and is not accessible to us.</p>
+                        </div>
+                        <div class="col-auto">
+                            <button class="btn btn-sm btn-dark" type="submit" name="addposition"><?= ((isset($_GET["editposition"]))? 'Edit' : 'Add'); ?></button>
                             <?php if(isset($_GET['editposition'])): ?>
                                 <a href="positions" class="btn btn-danger btn-sm">Cancel</a>
                             <?php endif; ?>
                         </div>
                     </div>
-                </div>
-            </form>
+                    <div class="card border-transparent">
+                        <div class="card-body">
+                            <span><?= $message; ?></span>
+                            <div class="mb-4">
+                                <select class="form-control" name="sel_election" id="sel_election">
+                                    <option value=""<?=(($sel_election == '')?' selected':'');?>>Select Election Name</option>
+                                    <?php foreach ($electionQuery as $election_row): ?>
+                                        <option value="<?=$election_row['eid'];?>"<?= (($sel_election == $election_row['eid']) ? ' selected' : ''); ?>><?= ucwords($election_row['election_name']); ?> ~ <?= ucwords($election_row['election_by']); ?></option>
+                                    <?php endforeach; ?>
+                                </select>
+                            </div>
+                            <div class="mb-4 mb-lg-0">
+                                <label class="form-label" for="election_by">Organizers</label>
+                                <input type="text" name="position_name" value="<?= $position_name; ?>" placeholder="<?= ((isset($_GET["editposition"]))?'Edit':'Add'); ?> Position Name" class="form-control">
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </section>
+
+
+ 
+
             <hr>
             <div class="container">
                 <table class="table table-hover table-dark table-bordered table-sm">
@@ -194,18 +241,4 @@ if (isset($_POST['addposition'])) {
     </div>
 
 
-     <!-- FOOTER -->
-    <script type="text/javascript" src="<?= PROOT; ?>172.06.84.0/media/files/jquery-3.3.1.min.js"></script>
-    <script type="text/javascript" src="<?= PROOT; ?>172.06.84.0/media/files/popper-1.14.6.min.js"></script>
-    <script type="text/javascript" src="<?= PROOT; ?>172.06.84.0/media/files/bootstrap.min.js"></script>
-    <script type="text/javascript" src="<?= PROOT; ?>172.06.84.0/media/files/feather.min.js"></script>
-    <script>
-        feather.replace();
-
-        $(document).ready(function() {
-            $("#temporary").fadeOut(3000);
-        });
-    </script>
-</body>
-</html>
 

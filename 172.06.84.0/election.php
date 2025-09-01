@@ -202,7 +202,7 @@
             </div>
         </div>
 
-          <!-- Page content -->
+        <!-- Page content -->
         <div class="row">
             <div class="col-12">
                 <!-- Filters -->
@@ -223,8 +223,6 @@
             </div>
         <div>
 
-            
-        <!-- Billing -->
         <section class="card bg-body-tertiary border-transparent card-line mb-5" id="billing">
             <div class="card-body">
                 <form class="" action="election.php?<?= ((isset($_GET['edit_election']))?'edit_election='.$edit_election_id:'addnewposition=1'); ?>" method="post">

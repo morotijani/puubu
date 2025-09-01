@@ -65,13 +65,17 @@ if ($total_data > 0) {
 		$optionStatus = '';
 		if ($row["session"] == 0) {
 			$option = '
-				<span class="badge badge-dark"><a href="contestants.php?deletecontestant='.$row["cont_id"].'&del='.(($row["del_cont"] == 'yes')?'no':'yes').'" class="text-danger"><span data-feather="trash"></span></a></span>&nbsp;
-                <span class="badge badge-dark"><a href="contestants.php?editcontestant='.$row["cont_id"].'" class="text-success"><span data-feather="edit-3"></span></a></span>
+				<a href="contestants.php?deletecontestant='.$row["cont_id"].'&del='.(($row["del_cont"] == 'yes')?'no':'yes').'" class="btn btn-danger btn-sm">
+					<span class="material-symbols-outlined me-1">delete</span> Delete
+				</a>&nbsp;
+				<a href="contestants.php?editcontestant='.$row["cont_id"].'" class="btn btn-sm btn-success">
+					<span class="material-symbols-outlined me-1">stylus_note</span> Edit
+				</a>
 			';
 		} else if ($row["session"] == 1) {
-			$optionStatus = '<span class="badge badge-dark text-warning">running ...</span>';
+			$optionStatus = '<span class="badge bg-warning-subtle text-warning">running ...</span>';
 		} else if ($row["session"] == 2) {
-			$optionStatus = '<span class="badge badge-dark text-info">ended</span>';
+			$optionStatus = '<span class="badge bg-danger-subtle text-danger">ended</span>';
 		}
 		$output .= '
 			<tr class="text-center">
@@ -149,7 +153,7 @@ if ($total_data > 0) {
 		if ($page == $page_array[$count]) {
 			$page_link .= '
 				<li class="page-item active">
-					<a class="page-link" href="javascript:;">'.$page_array[$count].' <span class="sr-only">(current)</span></a>
+					<a class="page-link" href="javascript:;">'.$page_array[$count].' <span class="d-none">(current)</span></a>
 				</li>
 			';
 
@@ -210,8 +214,3 @@ echo $output;
 
 
 ?>
-
-<script type="text/javascript" src="<?= PROOT; ?>172.06.84.0/media/files/feather.min.js"></script>
-<script type="text/javascript">
-  feather.replace();
-</script>

@@ -75,7 +75,7 @@
     if ($get_election_count > 0) {
         foreach ($get_election_result as $get_election_row) {
             if ($get_election_row['session'] == 1) {
-                $option1 = "<span class='badge badge-success' title='Election is on going.'>running ...</span>";
+                $option1 = "<span class='badge bg-success-subtle text-success' title='Election is on going.'>running ...</span>";
                 $option2 = "
                     <a href='reports?report=1&election=" . $get_election_row["eid"] . "' class='btn btn-sm btn-primary' title='View Runing Election Details' target='_blank'>
                         <span class='material-symbols-outlined me-1'>visibility</span> View
@@ -268,7 +268,7 @@
                     <div class="card-header">
                         <div class="row align-items-center">
                             <div class="col">
-                                <h3 class="fs-6 mb-0">Watchlist</h3>
+                                <h3 class="fs-6 mb-0">List</h3>
                             </div>
                             <div class="col-auto my-n3 me-n3">
                                 <button class="btn btn-sm btn-link" type="button">+ Add</button>
@@ -281,7 +281,7 @@
                                 <th class="fs-sm">Status</th>
                                 <th class="fs-sm">Name</th>
                                 <th class="fs-sm">Organizer</th>
-                                <th class="fs-sm" colspan="2"></th>
+                                <th class="fs-sm"></th>
                             </thead>
                             <tbody>
                                 <?= $listElection; ?>
@@ -289,6 +289,8 @@
                         </table>
                     </div>
                 </div>
+            </div>
+        </div>
     
     <?php include ('includes/footer.inc.php'); ?>
 

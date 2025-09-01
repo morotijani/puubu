@@ -61,22 +61,26 @@ foreach ($conn->query("SELECT * FROM positions INNER JOIN election WHERE positio
     $deleteOption = '';
     if ($row["session"] == 0) {
         $editOption = '
-            <span class="badge badge-secondary"><a href="?editposition='.$row["position_id"].'" class="text-primary"><i data-feather="edit"></i></a></span>
+            <a href="?editposition=' . $row["position_id"] . '" class="btn btn-secondary btn-sm">
+                <span class="material-symbols-outlined me-1">stylus_note</span> Edit
+            </a>
         ';
         $deleteOption = '
-            <span class="badge badge-secondary"><a href="?deleteposition='.$row["position_id"].'&election='.$row["election_id"].'" class="text-warning"><i data-feather="trash"></i></a></span>&nbsp; 
+            <a href="?deleteposition='.$row["position_id"].'&election='.$row["election_id"].'" class="btn btn-sm btn-warning">
+                <span class="material-symbols-outlined me-1">delete</span> Delete
+            </a>&nbsp; 
         ';
     } else if ($row["session"] == 1) {
-        $editOption = ' <span class="badge badge-danger">running ...</span>';
+        $editOption = ' <span class="badge bg-danger-subtle text-warning">running ...</span>';
     } else if ($row["session"] == 2) {
-        $editOption = ' <span class="badge badge-danger">ended</span>';
+        $editOption = ' <span class="badge bg-danger-subtle text-danger">ended</span>';
     }
     $positionsList .= '
         <tr class="text-center">
             <td>
                 ' .$editOption. '
             </td>
-            <td>'.ucwords($row["position_name"]).'</td>
+            <td><strong class="fw-semibold">' . ucwords($row["position_name"]) . '</strong></td>
             <td>'.ucwords($row["election_name"]).' ~ '.ucwords($row["election_by"]).'</td>
             <td>
                 ' .$deleteOption. '
@@ -219,26 +223,35 @@ if (isset($_POST['addposition'])) {
         </section>
 
 
- 
-
-            <hr>
-            <div class="container">
-                <table class="table table-hover table-dark table-bordered table-sm">
-                    <thead>
-                        <tr>
-                            <th></th>
-                            <th class="text-center">Position</th>
-                            <th class="text-center">Election</th>
-                            <th></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?= $positionsList; ?>
-                    </tbody>
-                </table>
+        <div class="row">
+            <div class="col-12 ">
+                <div class="card mb-6">
+                    <div class="card-header">
+                        <div class="row align-items-center">
+                            <div class="col">
+                                <h3 class="fs-6 mb-0">List</h3>
+                            </div>
+                            <div class="col-auto my-n3 me-n3">
+                                <button class="btn btn-sm btn-link" type="button">+ Add</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table align-middle mb-0">
+                            <thead>
+                                <th class="fs-sm"></th>
+                                <th class="fs-sm">Position</th>
+                                <th class="fs-sm">Election</th>
+                                <th class="fs-sm"></th>
+                            </thead>
+                            <tbody>
+                                <?= $positionsList; ?>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
         </div>
-    </div>
 
 
-
+    <?php include ('includes/footer.inc.php'); ?>

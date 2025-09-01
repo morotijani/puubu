@@ -272,6 +272,64 @@ if (isset($_POST['createcont'])) {
 if (isset($_GET['createcontestant']) || isset($_GET['editcontestant']) && !empty($_GET['editcontestant'])):
 ?>
 
+<!-- Main -->
+    <main class="main px-lg-6">
+        <!-- Content -->
+        <div class="container-lg">
+            <!-- Page header -->
+            <div class="row align-items-center mb-7">
+                <div class="col-auto">
+                    <!-- Avatar -->
+                    <div class="avatar avatar-xl rounded text-primary">
+                        <i class="fs-2" data-duoicon="app"></i>
+                    </div>
+                </div>
+                <div class="col">
+                    <!-- Breadcrumb -->
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb mb-1">
+                            <li class="breadcrumb-item"><a class="text-body-secondary" href="#">Elections</a></li>
+                            <li class="breadcrumb-item active" aria-current="page">Elections</li>
+                        </ol>
+                    </nav>
+
+                    <!-- Heading -->
+                    <h1 class="fs-4 mb-0">Elections</h1>
+                </div>
+                <div class="col-12 col-sm-auto mt-4 mt-sm-0">
+                    <!-- Action -->
+                <a class="btn btn-secondary d-block" href="../customers/customer-new.html">
+                    <span class="material-symbols-outlined me-1">export_notes</span> Export
+                </a>
+            </div>
+        </div>
+
+        <!-- Page content -->
+        <div class="row">
+            <div class="col-12">
+                <!-- Filters -->
+                <div class="card card-line bg-body-tertiary border-transparent mb-7">
+                    <div class="card-body p-4">
+                        <div class="row align-items-center">
+                            <div class="col-12 col-lg-auto mb-3 mb-lg-0">
+                                <div class="row align-items-center">
+                                    <div class="col-auto">
+                                        <div class="text-body-secondary">No customers selected</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        <div>
+
+
+
+
+        
+
     <!-- MAIN -->
     <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
         <h4 class="text-white" style="font-size: 18px;">Dashboard</h4>
@@ -430,16 +488,10 @@ if (isset($_GET['createcontestant']) || isset($_GET['editcontestant']) && !empty
     </div>
 <?php 
     endif;
-    include ('includes/main-footer.inc.php');
+    include ('includes/footer.inc.php');
 ?>
 
-    <!-- FOOTER -->
-    <script type="text/javascript" src="<?= PROOT; ?>172.06.84.0/media/files/jquery-3.3.1.min.js"></script>
-    <script type="text/javascript" src="<?= PROOT; ?>172.06.84.0/media/files/popper-1.14.6.min.js"></script>
-    <script type="text/javascript" src="<?= PROOT; ?>172.06.84.0/media/files/bootstrap.min.js"></script>
-    <script type="text/javascript" src="<?= PROOT; ?>172.06.84.0/media/files/feather.min.js"></script>
     <script type="text/javascript">
-        feather.replace()
         
         $(document).ready(function() {
             $("#temporary").fadeOut(3000);
@@ -547,5 +599,4 @@ if (isset($_GET['createcontestant']) || isset($_GET['editcontestant']) && !empty
             
         });
     </script>
-</body>
-</html>
+

@@ -186,7 +186,7 @@
                     <!-- Breadcrumb -->
                     <nav aria-label="breadcrumb">
                         <ol class="breadcrumb mb-1">
-                            <li class="breadcrumb-item"><a class="text-body-secondary" href="#">Elections</a></li>
+                            <li class="breadcrumb-item"><a class="text-body-secondary" href="javascript:;">Elections</a></li>
                             <li class="breadcrumb-item active" aria-current="page">Elections</li>
                         </ol>
                     </nav>
@@ -196,7 +196,7 @@
                 </div>
                 <div class="col-12 col-sm-auto mt-4 mt-sm-0">
                     <!-- Action -->
-                <a class="btn btn-secondary d-block" href="../customers/customer-new.html">
+                <a class="btn btn-secondary d-block" href="javascript:;">
                     <span class="material-symbols-outlined me-1">export_notes</span> Export
                 </a>
             </div>

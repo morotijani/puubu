@@ -40,9 +40,9 @@ $statement->execute();
 $result = $statement->fetchAll();
 
 $output = ' 
-	<h4 class="header-title mt-2" style="color: rgb(170, 184, 197);">List Of Contestants - '.$total_data.'</h4>
+	<h4 class="mt-2">List - '.$total_data.'</h4>
 	<div class="table-responsive">
-		<table class="table table-sm table-nowrap table-centered table-hover mb-0" style="color: #aab8c5;">
+		<table class="table align-middle mb-0">
 			<thead>
 				<tr class="text-center">
 					<th>#</th>

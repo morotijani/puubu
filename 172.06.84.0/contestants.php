@@ -267,9 +267,6 @@ if (isset($_POST['createcont'])) {
         } 
     }
 }
-
-
-if (isset($_GET['createcontestant']) || isset($_GET['editcontestant']) && !empty($_GET['editcontestant'])):
 ?>
 
 <!-- Main -->
@@ -288,47 +285,53 @@ if (isset($_GET['createcontestant']) || isset($_GET['editcontestant']) && !empty
                     <!-- Breadcrumb -->
                     <nav aria-label="breadcrumb">
                         <ol class="breadcrumb mb-1">
-                            <li class="breadcrumb-item"><a class="text-body-secondary" href="#">Elections</a></li>
-                            <li class="breadcrumb-item active" aria-current="page">Elections</li>
+                            <li class="breadcrumb-item"><a class="text-body-secondary" href="#">Contestatnt</a></li>
+                            <li class="breadcrumb-item active" aria-current="page">Contestatnt</li>
                         </ol>
                     </nav>
 
                     <!-- Heading -->
-                    <h1 class="fs-4 mb-0">Elections</h1>
+                    <h1 class="fs-4 mb-0">Contestatnt</h1>
                 </div>
                 <div class="col-12 col-sm-auto mt-4 mt-sm-0">
-                    <!-- Action -->
-                <a class="btn btn-secondary d-block" href="../customers/customer-new.html">
-                    <span class="material-symbols-outlined me-1">export_notes</span> Export
-                </a>
-            </div>
-        </div>
 
-        <!-- Page content -->
-        <div class="row">
-            <div class="col-12">
-                <!-- Filters -->
-                <div class="card card-line bg-body-tertiary border-transparent mb-7">
-                    <div class="card-body p-4">
-                        <div class="row align-items-center">
-                            <div class="col-12 col-lg-auto mb-3 mb-lg-0">
-                                <div class="row align-items-center">
-                                    <div class="col-auto">
-                                        <div class="text-body-secondary">No customers selected</div>
-                                    </div>
-                                </div>
-                            </div>
-
+                    <div class="row gx-2">
+                        <div class="col-6 col-sm-auto">
+                            <a class="btn btn-light w-100" href="javascript:;"><span class="material-symbols-outlined me-1">export_notes</span> Export</a>
+                        </div>
+                        <div class="col-6 col-sm-auto">
+                            <a href="contestants.php?achived_contestants=1" class="btn btn-danger w-100">Achive contestants</a>
                         </div>
                     </div>
                 </div>
             </div>
-        <div>
 
+            <!-- Page content -->
+            <div class="row">
+                <div class="col-12">
+                    <!-- Filters -->
+                    <div class="card card-line bg-body-tertiary border-transparent mb-7">
+                        <div class="card-body p-4">
+                            <div class="row align-items-center">
+                                <div class="col-12 col-lg-auto mb-3 mb-lg-0">
+                                    <div class="row align-items-center">
+                                        <div class="col-auto">
+                                            <div class="text-body-secondary">No customers selected</div>
+                                        </div>
+                                    </div>
+                                </div>
 
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            <div>
 
+<?php
 
-        
+if (isset($_GET['createcontestant']) || isset($_GET['editcontestant']) && !empty($_GET['editcontestant'])):
+?>
+
 
     <!-- MAIN -->
     <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
@@ -426,15 +429,7 @@ if (isset($_GET['createcontestant']) || isset($_GET['editcontestant']) && !empty
     
     <!-- ACHIVE CONTESTANTS -->
     <?php elseif(isset($_GET['achived_contestants'])): ?>
-    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-        <h4 class="text-white" style="font-size: 18px;">Dashboard</h4>
-        <div class="btn-toolbar mb-2 mb-md-0">
-            <div class="btn-group mr-2">
-                <a href="contestants.php?createcontestant=1" class="btn btn-sm btn-outline-info">Add New Contestant</a>
-                <a href="contestants.php" class="btn btn-sm btn-outline-warning">Go Back</a>
-            </div>
-        </div>
-    </div>
+    
     <div class="card" style="background-color: #37404a;">
         <div class="card-body">
             <a href="?achived_contestants=1" class="text-primary float-right mb-3">
@@ -464,25 +459,25 @@ if (isset($_GET['createcontestant']) || isset($_GET['editcontestant']) && !empty
     </div>
 
     <?php else: ?>
-    <!-- CONTESTANTS -->
-    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-        <h4 class="text-white" style="font-size: 18px;">Dashboard</h4>
-        <div class="btn-toolbar mb-2 mb-md-0">
-            <div class="btn-group mr-2">
-                <a href="contestants.php?createcontestant=1" class="btn btn-sm btn-outline-info">Add New Contestant</a>
-                <a href="contestants.php?achived_contestants=1" class="btn btn-sm btn-warning">Achive Contestant</a>
-            </div>
-        </div>
-    </div>
-      
+
+        
+          
     <div class="card">
         <div class="card-body">
-            <div class="form-group">
-                <input type="text" name="searchC" id="searchC" class="form-control-dark form-control form-control-sm" placeholder="Search for contestants here ...">
+            <div class="row align-items-center">
+                <div class="col-auto">
+                    <span class="material-symbols-outlined text-body-tertiary">search</span>
+                </div>
+                <div class="col">
+                    <input type="text" name="searchC" id="searchC" class="form-control" placeholder="Search for contestants here ...">
+                </div>
+                <div class="col-auto">
+                    <a href="contestants" class="text-primary float-right mb-3">
+                        <span class="material-symbols-outlined me-1">refresh</span> Refresh
+                    </a>
+                </div>
             </div>
-            <a href="contestants" class="text-primary float-right mb-3">
-                Refresh <span data-feather="refresh-ccw" class="ml-1"></span>
-            </a>
+            
             <div id="dynamic_content_onC"></div>
         </div>
     </div>

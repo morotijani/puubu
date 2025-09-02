@@ -269,7 +269,7 @@ if (isset($_POST['createcont'])) {
 }
 ?>
 
-<!-- Main -->
+    <!-- Main -->
     <main class="main px-lg-6">
         <!-- Content -->
         <div class="container-lg">
@@ -297,7 +297,7 @@ if (isset($_POST['createcont'])) {
 
                     <div class="row gx-2">
                         <div class="col-6 col-sm-auto">
-                            <a class="btn btn-light w-100" href="javascript:;"><span class="material-symbols-outlined me-1">export_notes</span> Export</a>
+                            <a class="btn btn-light w-100" href="<?= PROOT; ?>172.06.84.0/contestants?createcontestant=1"><span class="material-symbols-outlined me-1">add</span> Add</a>
                         </div>
                         <div class="col-6 col-sm-auto">
                             <a href="contestants.php?achived_contestants=1" class="btn btn-danger w-100">Achive contestants</a>
@@ -333,39 +333,27 @@ if (isset($_GET['createcontestant']) || isset($_GET['editcontestant']) && !empty
 ?>
 
 
-    <!-- MAIN -->
-    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-        <h4 class="text-white" style="font-size: 18px;">Dashboard</h4>
-        <div class="btn-toolbar mb-2 mb-md-0">
-            <div class="btn-group mr-2">
-                <a href="contestants.php?achived_contestants=1" class="btn btn-sm btn-info">Achive Contestants</a>
-                <a href="contestants.php" class="btn btn-sm btn-outline-warning">Go Back</a>
-            </div>
-        </div>
-    </div>
-
+  
     <!-- ADD OR UPDATE CONTESTANT -->
     <div class="card">
         <div class="card-body">
-            <a href="?createcontestant=1" class="text-primary float-right mb-3">
-                Refresh <span data-feather="refresh-ccw" class="ml-1"></span>
-            </a>
-            <h4 class="header-title mt-2" style="color: rgb(170, 184, 197);"><?= ((isset($_GET['editcontestant']))?'Edit':'Add New') ?> Contestant</h4>
+            <h4 class="header-title mt-2" style="color: rgb(170, 184, 197);"><?= ((isset($_GET['editcontestant']))?'Edit':'Add new') ?> contestant</h4>
 
             <form class="" action="contestants.php?<?= ((isset($_GET['editcontestant']))?'editcontestant='.$editid:'createcontestant=1'); ?>" method="post" id="submitcontestant" enctype="multipart/form-data">
-                <h1 class="text-center text-dark"></h1><hr>
-                <br><br>
+                <h1 class=""></h1><hr>
                 <div class="container">
                     <span><?= $message; ?></span>
                     <div class="row">
                         <div class="col-8">
-                            <div class="form-group">
-                                <input type="text" name="cont_indentification" value="<?= $cont_indentification; ?>" placeholder="Contestant ID or Ballot No" class="form-control form-control-sm form-control-dark">
+                            <div class="mb-3">
+                                <label class="form-label" for="cont_indentification">Ballot Number</label>
+                                <input type="text" name="cont_indentification" value="<?= $cont_indentification; ?>" placeholder="Contestant ID or Ballot No" class="form-control">
                             </div>
                         </div>
                         <div class="col-4">
-                            <div class="form-group">
-                                <select class="form-control form-control-sm form-control-dark" name="cont_gender" id="cont_gender">
+                            <div class="mb-3">
+                                <label class="form-label" for="cont_gender">Gender</label>
+                                <select class="form-control" name="cont_gender" id="cont_gender">
                                     <option value=""<?=(($cont_gender == '')?' selected':'');?>>Select Gender</option>
                                     <option value="male"<?=(($cont_gender == 'male')?' selected':'');?>>Male</option>
                                     <option value="female"<?=(($cont_gender == 'female')?' selected':'');?>>Female</option>
@@ -373,21 +361,24 @@ if (isset($_GET['createcontestant']) || isset($_GET['editcontestant']) && !empty
                             </div>
                         </div>
                         <div class="col-6">
-                            <div class="form-group">
-                                <input type="text" name="cont_fname" value="<?= $cont_fname; ?>" placeholder="Contestant First Name" class="form-control form-control-sm form-control-dark">
+                            <div class="mb-3">
+                                <label class="form-label" for="cont_fname">First name</label>
+                                <input type="text" name="cont_fname" value="<?= $cont_fname; ?>" placeholder="Contestant First Name" class="form-control">
                             </div>
                         </div>
                         <div class="col-6">
-                            <div class="form-group">
-                                <input type="text" name="cont_lname" value="<?= $cont_lname; ?>" placeholder="Contestant Last Name" class="form-control form-control-sm form-control-dark">
+                            <div class="mb-3">
+                                <label class="form-label" for="cont_lname">Last name</label>
+                                <input type="text" name="cont_lname" value="<?= $cont_lname; ?>" placeholder="Contestant Last Name" class="form-control">
                             </div>
                         </div>
                     </div>
                     
                     <div class="row">
                         <div class="col">
-                            <div class="form-group">
-                                <select class="form-control form-control-sm form-control-dark select2getpositions" name="sel_election" id="sel_election">
+                            <div class="mb-3">
+                                <label class="form-label" for="sel_election">Election</label>
+                                <select class="form-control select2getpositions" name="sel_election" id="sel_election">
                                     <option value=""<?= (($sel_election == '') ? ' selected ': ''); ?>>Select an Election</option>
                                     <?php foreach ($election_result as $election_row): ?>
                                     <option value="<?= $election_row['eid']; ?>"<?= (($sel_election == $election_row['eid']) ? ' selected': ''); ?>><?= ucwords($election_row['election_name']); ?> ~ <?= ucwords($election_row['election_by']); ?></option>
@@ -396,8 +387,9 @@ if (isset($_GET['createcontestant']) || isset($_GET['editcontestant']) && !empty
                             </div>
                         </div>
                         <div class="col">
-                            <div class="form-group">
-                                <select class="form-control form-control-sm form-control-dark" name="cont_position" id="cont_position">
+                            <div class="mb-3">
+                                <label class="form-label" for="cont_position">Position</label>
+                                <select class="form-control" name="cont_position" id="cont_position">
                                     <?php if (isset($_GET['editcontestant'])): ?>
                                         <?php foreach($positionQuery as $prow): ?>
                                             <option value="<?= $prow['position_id']; ?>"<?= (($cont_position == $prow['position_id']) ? ' selected': ''); ?>><?= ucwords($prow['position_name']); ?></option>
@@ -413,15 +405,16 @@ if (isset($_GET['createcontestant']) || isset($_GET['editcontestant']) && !empty
                         <img src="../media/uploadedprofile/<?= $saved_passport; ?>" class="img-fluid img-thumbnail" style="width: 200px; height: 200px; object-fit: cover;">
                         <a href="contestants.php?del_pp=1&editcontestant=<?=$editid;?>&contpp=<?=$saved_passport?>" class="badge badge-danger">Change Image</a><br>
                     <?php else: ?>
-                        <div class="form-group">
-                            <input type="file" name="cont_profile" id="cont_profile"  class="form-control form-control-sm form-control-dark">
+                        <div class="mb-3">
+                            <label class="form-label" for="cont_profile">Picture</label>
+                            <input type="file" name="cont_profile" id="cont_profile"  class="form-control">
                         </div>
                         <span id="upload_file"></span>
                     <?php endif; ?>
                     <input type="hidden" name="cont_up_profile" id="cont_up_profile" value="<?= $saved_passport; ?>">
                     <br>
-                    <button type="submit" class="btn btn-dark btn-sm" id="createcont" name="createcont"><?= (isset($_GET['editcontestant']))? 'Update Contestant': 'Add Contestant'; ?></button>
-                    <a href="contestants.php" class="btn btn-secondary btn-sm">Cancel</a>
+                    <button type="submit" class="btn btn-dark" id="createcont" name="createcont"><?= (isset($_GET['editcontestant']))? 'Update': 'Add'; ?> contestant</button>
+                    <a href="contestants.php" class="btn btn-secondary">Cancel</a>
                 </div>
             </form>
         </div>

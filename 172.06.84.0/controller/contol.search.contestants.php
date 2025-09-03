@@ -47,12 +47,11 @@ $output = '
 				<tr class="text-center">
 					<th>#</th>
 		            <th>Identity Number</th>
-		            <th>Full Name</th>
+		            <th>ID / Ballot Number</th>
 		            <th>Gender</th>
 		            <th>Position</th>
 		            <th>Election</th>
-		            <th>Passport Pic.</th>
-		            <th></th>
+		            <th>Option</th>
 				</tr>
     		</thead>
     		<tbody>
@@ -80,12 +79,23 @@ if ($total_data > 0) {
 		$output .= '
 			<tr class="text-center">
                 <td>'.$i.'</td>
-                <td>'.$row["cont_indentification"] . ' ' . $optionStatus . '</td>
-                <td>'.ucwords($row["cont_fname"].' '.$row["cont_lname"]).'</td>
+				<td>
+                    <div class="d-flex align-items-center">
+                        <div class="avatar">
+                          	<img class="avatar-img" src="../media/uploadedprofile/'.$row["cont_profile"].'" alt="'.ucwords($row["cont_fname"]).'" />
+                        </div>
+						<div class="ms-4">
+							<div>'.ucwords($row["cont_fname"].' '.$row["cont_lname"]).'</div>
+							<div class="fs-sm text-body-secondary">
+								<span class="">' . $optionStatus . '</span>
+							</div>
+						</div>
+					</div>
+				</td>
+                <td>'.$row["cont_indentification"] . '</td>
                 <td>'.ucwords($row["cont_gender"]).'</td>
                 <td>'.ucwords($row["position_name"]).'</td>
-                <td>'.ucwords($row["election_name"]).' ~ '.ucwords($row["election_by"]).'</td>
-                <td><img src="../media/uploadedprofile/'.$row["cont_profile"].'" class="img-thumbnail img-fluid" style="width: 80px; height: 80px; object-fit: cover;" alt="'.ucwords($row["cont_fname"].' '.$row["cont_lname"]).'"></td>
+                <td>'.ucwords($row["election_name"]).' ~<span class="text-muted"> '.ucwords($row["election_by"]).'</span></td>
                 <td>
                     '.$option.'
                 </td>

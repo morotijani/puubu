@@ -58,7 +58,7 @@
                         </div>
                         <div class="nav-item dropend">
                             <a class="nav-link" href="<?= PROOT; ?>172.06.84.0/registrar">
-                                <span class="material-symbols-outlined" title="Voters">auto_stories</span>
+                                <span class="material-symbols-outlined" title="Voters">crowdsource</span>
                                 <span class="ms-3 d-xl-none">Voters</span>
                             </a>
                         </div>
@@ -757,8 +757,8 @@
                             </a>
                         </div>
                         <div class="nav-item">
-                            <a class="nav-link " href="#" >
-                                <span class="material-symbols-outlined me-3">text_fields</span> Voters
+                            <a class="nav-link " href="<?= PROOT; ?>172.06.84.0/registrar">
+                                <span class="material-symbols-outlined me-3">crowdsource</span> Registrar
                             </a>
                         </div>
                         <div class="nav-item">

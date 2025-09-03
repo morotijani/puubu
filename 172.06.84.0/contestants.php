@@ -117,16 +117,31 @@ if ($statement->rowCount() > 0) {
     foreach ($result as $row) {
         $achive_contList .= '
             <tr class="text-center">
-                <td>'.$i.'</td>
-                <td>'.$row["cont_indentification"].'</td>
-                <td>'.ucwords($row["cont_fname"].' '.$row["cont_lname"]).'</td>
+                <td>' . $i . '</td>
+                <td>
+                    <div class="d-flex align-items-center">
+                        <div class="avatar">
+                          	<img class="avatar-img" src="../media/uploadedprofile/' . $row["cont_profile"] . '" alt="'.ucwords($row["cont_fname"]) . '" />
+                        </div>
+						<div class="ms-4">
+							<div>' . ucwords($row["cont_fname"].' '.$row["cont_lname"]).'</div>
+							<div class="fs-sm text-body-secondary">
+								<span class="text-reset">deleted</span>
+							</div>
+						</div>
+					</div>
+				</td>
+                <td>' . $row["cont_indentification"] . '</td>
                 <td>'.$row["cont_gender"].'</td>
                 <td>'.ucwords($row["position_name"]).'</td>
-                <td>'.ucwords($row["election_name"]).' / '.ucwords($row["election_by"]).'</td>
-                <td><img src="../media/uploadedprofile/'.$row["cont_profile"].'" class="img-thumbnail img-fluid" style="width: 80px; height: 80px; object-fit: cover;" alt="'.ucwords($row["cont_fname"].' '.$row["cont_lname"]).'"></td>
+                <td>'.ucwords($row["election_name"]).' / <span class="text-muted">' . ucwords($row["election_by"]) . '</span></td>
                 <td>
-                    <span class="badge badge-dark" title="Permanently Delete Contestant"><a href="contestants.php?permanentdel='.$row["cont_id"].'&uploadedpp_name='.$row["cont_profile"].'" class="text-danger"><span data-feather="trash"></span></a></span>&nbsp;
-                    <span class="badge badge-dark" title="Restore Contestant"><a href="contestants.php?restorecontestant='.$row["cont_id"].'&restore='.(($row["del_cont"] == 'yes')?'no':'yes').'" class="text-success"><span data-feather="refresh-cw"></span></a></span>
+                    <a href="contestants.php?permanentdel='.$row["cont_id"].'&uploadedpp_name='.$row["cont_profile"].'" class="btn btn-sm btn-danger" title="Permanently Delete Contestant">
+                        <span class="material-symbols-outlined me-1">delete</span> Delete
+                    </a>&nbsp;
+                    <a href="contestants.php?restorecontestant='.$row["cont_id"].'&restore='.(($row["del_cont"] == 'yes')?'no':'yes').'" class="btn btn-sm btn-success" title="Restore Contestant">
+                        <span class="material-symbols-outlined me-1">cycle</span> Restore
+                    </a>
                 </td>
             </tr>
         ';
@@ -423,24 +438,29 @@ if (isset($_GET['createcontestant']) || isset($_GET['editcontestant']) && !empty
     <!-- ACHIVE CONTESTANTS -->
     <?php elseif(isset($_GET['achived_contestants'])): ?>
     
-    <div class="card" style="background-color: #37404a;">
+    <div class="card">
         <div class="card-body">
-            <a href="?achived_contestants=1" class="text-primary float-right mb-3">
-                Refresh <span data-feather="refresh-ccw" class="ml-1"></span>
-            </a>
-            <h4 class="header-title mt-2" style="color: rgb(170, 184, 197);">Achived Contestants</h4>
+            <div class="row align-items-center">
+                <div class="col">
+                    <h4 class="header-title">Achived contestants</h4>
+                </div>
+                <div class="col-auto">
+                    <a href="contestants?achived_contestants?=1" class="text-primary float-right mb-3">
+                        <span class="material-symbols-outlined me-1">refresh</span> Refresh
+                    </a>
+                </div>
+            </div>
             <div class="table-responsive">
-                <table class="table table-sm table-nowrap table-centered table-hover mb-0" style="color: #aab8c5;">
+                <table class="table align-middle mb-0">
                     <thead>
-                        <tr>
+                        <tr class="text-center">
                             <th>#</th>
-                            <th>Identity Number</th>
-                            <th><span data-feather="user"></span>&nbsp;|&nbsp;Full Name</th>
+                            <th>Contestant</th>
+                            <th>ID / Ballot Number</th>
                             <th>Gender</th>
                             <th>Position</th>
                             <th>Election</th>
-                            <th>Passport Pic.</th>
-                            <th>Options</th>
+                            <th>Option</th>
                         </tr>
                     </thead>
                     <tbody>

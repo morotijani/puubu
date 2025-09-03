@@ -46,7 +46,7 @@ $output = '
 			<thead>
 				<tr class="text-center">
 					<th>#</th>
-		            <th>Identity Number</th>
+		            <th>Contestant</th>
 		            <th>ID / Ballot Number</th>
 		            <th>Gender</th>
 		            <th>Position</th>
@@ -78,7 +78,7 @@ if ($total_data > 0) {
 		}
 		$output .= '
 			<tr class="text-center">
-                <td>'.$i.'</td>
+                <td>' . $i . '</td>
 				<td>
                     <div class="d-flex align-items-center">
                         <div class="avatar">

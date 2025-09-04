@@ -300,7 +300,7 @@ if (isset($_POST['createcont'])) {
                     <!-- Breadcrumb -->
                     <nav aria-label="breadcrumb">
                         <ol class="breadcrumb mb-1">
-                            <li class="breadcrumb-item"><a class="text-body-secondary" href="#">Contestatnt</a></li>
+                            <li class="breadcrumb-item"><a class="text-body-secondary" href="javascript:;">Contestatnt</a></li>
                             <li class="breadcrumb-item active" aria-current="page">Contestatnt</li>
                         </ol>
                     </nav>

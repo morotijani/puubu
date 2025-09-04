@@ -202,19 +202,45 @@ if (isset($_POST['dataValue'])) {
 
 
 ?>
-  
-  <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-    <h4 class="text-white" style="font-size: 18px;">Dashboard</h4>
-    <div class="btn-toolbar mb-2 mb-md-0">
-      <div class="btn-group mr-2">
-        <a href="?addnewvoter=1" class="btn btn-sm btn-outline-info">Add New Voter</a>
-        <a href="registrar" class="btn btn-sm btn-outline-secondary">Go Back</a>
-      </div>
-      <button type="button" class="btn btn-sm btn-secondary" data-toggle="modal" data-target="#registrarsModal">
-        Other Actions
-      </button>
-    </div>
-  </div>
+
+    <!-- Main -->
+    <main class="main px-lg-6">
+        <!-- Content -->
+        <div class="container-lg">
+            <!-- Page header -->
+            <div class="row align-items-center mb-7">
+                <div class="col-auto">
+                    <!-- Avatar -->
+                    <div class="avatar avatar-xl rounded text-primary">
+                        <i class="fs-2" data-duoicon="app"></i>
+                    </div>
+                </div>
+                <div class="col">
+                    <!-- Breadcrumb -->
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb mb-1">
+                            <li class="breadcrumb-item"><a class="text-body-secondary" href="javascript:;">Voters</a></li>
+                            <li class="breadcrumb-item active" aria-current="page">Voters</li>
+                        </ol>
+                    </nav>
+
+                    <!-- Heading -->
+                    <h1 class="fs-4 mb-0">Voters</h1>
+                </div>
+                <div class="col-12 col-sm-auto mt-4 mt-sm-0">
+
+                    <div class="row gx-2">
+                        <div class="col-6 col-sm-auto">
+                            <a class="btn btn-light w-100" href="<?= PROOT; ?>172.06.84.0/registrar?addnewvoter=1"><span class="material-symbols-outlined me-1">add</span> Add</a>
+                        </div>
+                        <div class="col-6 col-sm-auto">
+                            <a href="javascript:;" class="btn btn-danger w-100" data-toggle="modal" data-target="#registrarsModal">Other options</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
 
 
     <?php if(isset($_GET['addnewvoter']) || isset($_GET['editvoter']) && !empty($_GET['editvoter'])): ?>

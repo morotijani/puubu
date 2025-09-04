@@ -363,7 +363,7 @@ if (isset($_POST['dataValue'])) {
   </div>
 </div>
   <?php endif; ?>
-  <?php include ('includes/main-footer.inc.php');?>
+  <?php include ('includes/footer.inc.php');?>
 
    <div class="modal fade" id="registrarsModal" tabindex="-1" role="dialog" aria-labelledby="registrarsLabel" style="display: none;" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
@@ -713,5 +713,3 @@ if (isset($_POST['dataValue'])) {
 
       });
     </script>
-  </body>
-</html>

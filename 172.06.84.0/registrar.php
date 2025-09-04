@@ -240,25 +240,46 @@ if (isset($_POST['dataValue'])) {
                 </div>
             </div>
 
+            <!-- Page content -->
+            <div class="row">
+                <div class="col-12">
+                    <!-- Filters -->
+                    <div class="card card-line bg-body-tertiary border-transparent mb-7">
+                        <div class="card-body p-4">
+                            <div class="row align-items-center">
+                                <div class="col-12 col-lg-auto mb-3 mb-lg-0">
+                                    <div class="row align-items-center">
+                                        <div class="col-auto">
+                                            <div class="text-body-secondary">No voters selected</div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            <div>
+
 
 
 
     <?php if(isset($_GET['addnewvoter']) || isset($_GET['editvoter']) && !empty($_GET['editvoter'])): ?>
     <!-- MAIN -->
-      <div class="card">
-    <div class="card-body">
-      <h4 class="header-title mt-2" style="color: rgb(170, 184, 197);"><?= ((isset($_GET['editvoter'])?'Edit':'Add New')); ?> Voter</h4>
-          <form action="?<?= ((isset($_GET['editvoter']))?'editvoter='.$editid:'addnewvoter=1') ?>" method="post" id="AddVoter">
-            <span id="errorMsg"><?= $message; ?></span>
-            <div id="dynamic_field">
-            <div class="row">
-              <div class="col-md-6 mb-2">
-                <label class="label">Voter Identity No:</label>
-                <input type="text" name="voter_identity[]" id="voter_identity1" placeholder="Student ID" class="form-control form-control-sm form-control-dark voter_details" value="<?= $voter_identity; ?>" required autofocus>
-              </div>
-              <div class="col-md-6 mb-2">
-                <label class="label">Voter Email:</label>
-                <input type="email" name="voter_email[]" id="voter_email1" placeholder="Student Email" class="form-control form-control-sm form-control-dark voter_details" value="<?= $voter_email; ?>" required>
+    <div class="card">
+        <div class="card-body">
+            <h4 class="header-title mt-2" style="color: rgb(170, 184, 197);"><?= ((isset($_GET['editvoter'])?'Edit':'Add New')); ?> Voter</h4>
+                <form action="?<?= ((isset($_GET['editvoter']))?'editvoter='.$editid:'addnewvoter=1') ?>" method="post" id="AddVoter">
+                    <span id="errorMsg"><?= $message; ?></span>
+                    <div id="dynamic_field">
+                    <div class="row">
+                    <div class="col-md-6 mb-2">
+                        <label class="label">Voter Identity No:</label>
+                        <input type="text" name="voter_identity[]" id="voter_identity1" placeholder="Student ID" class="form-control form-control-sm form-control-dark voter_details" value="<?= $voter_identity; ?>" required autofocus>
+                    </div>
+                    <div class="col-md-6 mb-2">
+                        <label class="label">Voter Email:</label>
+                        <input type="email" name="voter_email[]" id="voter_email1" placeholder="Student Email" class="form-control form-control-sm form-control-dark voter_details" value="<?= $voter_email; ?>" required>
               </div>
               <div class="col-md-4 mb-2">
                 <label class="label">Voter First Name:</label>
@@ -317,20 +338,28 @@ if (isset($_POST['dataValue'])) {
             </div>
           </div>
         </div>
-  <?php else: ?>
+    <?php else: ?>
     
     <!-- LIST REGISTRARS -->
-      <div class="card">
-    <div class="card-body">
-      <div class="form-group">
-        <input type="text" name="searchR" id="searchR" class="form-control-dark form-control form-control-sm" placeholder="Search for registrar here ...">
-      </div>
-      <a href="javascript:;" class="text-info float-right mb-3">
-        Export <span data-feather="download-cloud" class="ml-1"></span>
-      </a>
-      <a href="?fde=1" class="text-danger float-right mb-3 mr-2">
-        Find Duplicated Emails <span data-feather="mail" class="ml-1"></span>
-      </a>
+    <div class="card">
+        <div class="card-body">
+
+            <div class="row align-items-center">
+                <div class="col-auto">
+                    <a href="javascript:;" class="text-info float-right mb-3">
+                        Export <span data-feather="download-cloud" class="ml-1"></span>
+                    </a>
+                </div>
+                <div class="col">
+                    <input type="text" name="searchR" id="searchR" class="form-control-dark form-control form-control-sm" placeholder="Search for registrar here ...">
+                </div>
+                <div class="col-auto">
+                    <a href="?fde=1" class="text-danger float-right mb-3 mr-2">
+                        Find Duplicated Emails <span data-feather="mail" class="ml-1"></span>
+                    </a>
+                </div>
+            </div>
+            
       <?php if (isset($_GET['fde']) && !empty($_GET['fde'])): ?>
                 <h4 class="header-title mt-2" style="color: rgb(170, 184, 197);">List Of Duplicated email</h4>
                 <div class="table-responsive">
@@ -388,8 +417,9 @@ if (isset($_POST['dataValue'])) {
 
   </div>
 </div>
-  <?php endif; ?>
-  <?php include ('includes/footer.inc.php');?>
+<?php endif; 
+    include ('includes/footer.inc.php');
+?>
 
    <div class="modal fade" id="registrarsModal" tabindex="-1" role="dialog" aria-labelledby="registrarsLabel" style="display: none;" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">

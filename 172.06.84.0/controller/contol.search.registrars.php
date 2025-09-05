@@ -81,12 +81,17 @@
 							<div class="ms-4">
 								<div>'.ucwords(strtolower($row["std_fname"].' '.$row["std_lname"])).'</div>
 								<div class="fs-sm text-body-secondary">
-									<span class="text-reset">'.$row["std_email"].'</span>
+									<span class="text-reset">' . $row["std_email"] . '</span>
 								</div>
 							</div>
 						</div>
 					</td>
-                    <td>'.strtoupper($row["std_id"]).' <span class="text-'.(($row['status'] == '1')?'success':'danger').'" data-feather="'.(($row['status'] == '1')?'check':'x').'"></span></td>
+                    <td>' . strtoupper($row["std_id"]).' 
+						<span class="badge bg-'.(($row['status'] == '1') ? 'success' : 'danger') . '">
+							<span class="material-symbols-outlined">' . (($row['status'] == '1')?'done_all' : 'x') . '</span>
+						</span>
+
+					</td>
                     <td>
                     	<span name="email_button" class="btn btn-sm btn-dark email_button" id="'.$count.'" data-email="'.$row["std_email"].'" data-password="'.$row["std_password"].'" data-action="single" style="cursor: pointer;">
 							<span class="material-symbols-outlined">send</span>

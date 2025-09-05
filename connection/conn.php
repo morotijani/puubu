@@ -1,9 +1,7 @@
 <?php
 
 	// Connection To Database
-	// $servername = 'sdb-x.hosting.stackcp.net'; // LIVE
-	// $username = 'on_puubu-323134c7c8';
-	// $password = 'tczr54co36';
+	require dirname(__DIR__)  . '/bootstrap.php';
 
 	$servername = 'localhost';
 	$username = 'root';

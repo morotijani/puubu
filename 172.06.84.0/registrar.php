@@ -346,16 +346,16 @@ if (isset($_POST['dataValue'])) {
 
             <div class="row align-items-center">
                 <div class="col-auto">
-                    <a href="javascript:;" class="text-info float-right mb-3">
-                        Export <span data-feather="download-cloud" class="ml-1"></span>
+                    <a href="javascript:;" class="text-info">
+                        <span class="material-symbols-outlined me-1">cloud_download</span> Export
                     </a>
                 </div>
                 <div class="col">
-                    <input type="text" name="searchR" id="searchR" class="form-control-dark form-control form-control-sm" placeholder="Search for registrar here ...">
+                    <input type="text" name="searchR" id="searchR" class="form-control" placeholder="Search for registrar here ...">
                 </div>
                 <div class="col-auto">
-                    <a href="?fde=1" class="text-danger float-right mb-3 mr-2">
-                        Find Duplicated Emails <span data-feather="mail" class="ml-1"></span>
+                    <a href="?fde=1" class="text-danger">
+                        <span class="material-symbols-outlined me-1">notification_multiple</span> Find Duplicated Emails
                     </a>
                 </div>
             </div>
@@ -404,11 +404,7 @@ if (isset($_POST['dataValue'])) {
                         </tbody>
                     </table>
                 </div>
-                <br>
-                <script type="text/javascript" src="media/files/feather.min.js"></script>
-                <script type="text/javascript">
-                  feather.replace();
-                </script>
+                
                       
       <?php else: ?>
 

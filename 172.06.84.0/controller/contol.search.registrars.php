@@ -32,7 +32,7 @@
 	$result = $statement->fetchAll();
 
 	$output = ' 
-		<h4 class="header-title mt-2" style="color: rgb(170, 184, 197);">List Of Voters - '.$total_data.'</h4>
+		<h4 class="mt-2">List of voters</h4>
 		<div class="table-responsive">
 			<table class="table table-nowrap table-sm table-centered table-hover mb-0" style="color: #aab8c5;">
 				<thead>
@@ -40,7 +40,6 @@
 						<th>#</th>
 			            <th>Identity Number</th>
 			            <th>Full Name</th>
-			            <th>Email</th>
 			            <th>Send Mail</th>
 			            <th>Election Type</th>
 			            <th>
@@ -69,10 +68,18 @@
 			}
 			$output .= '
 				<tr>
-                    <td>'.$i.'</td>
-                    <td>'.strtoupper($row["std_id"]).'</td>
-                    <td>'.ucwords(strtolower($row["std_fname"].' '.$row["std_lname"])).' <span class="text-'.(($row['status'] == '1')?'success':'danger').'" data-feather="'.(($row['status'] == '1')?'check':'x').'"></span></td>
-                    <td>'.$row["std_email"].'</td>
+                    <td>' . $i . '</td>
+					<td>
+						<div class="d-flex align-items-center">
+							<div class="ms-4">
+								<div>'.ucwords(strtolower($row["std_fname"].' '.$row["std_lname"])).'</div>
+								<div class="fs-sm text-body-secondary">
+									<span class="text-reset">'.$row["std_email"].'</span>
+								</div>
+							</div>
+						</div>
+					</td>
+                    <td>'.strtoupper($row["std_id"]).' <span class="text-'.(($row['status'] == '1')?'success':'danger').'" data-feather="'.(($row['status'] == '1')?'check':'x').'"></span></td>
                     <td>
                     	<input type="checkbox" name="single_select" class="single_select" data-email="'.$row["std_email"].'" data-password="'.$row["std_password"].'">&nbsp;&nbsp;&nbsp;
                     	<span name="email_button" class="badge badge-dark text-warning email_button" id="'.$count.'" data-email="'.$row["std_email"].'" data-password="'.$row["std_password"].'" data-action="single" style="cursor: pointer;"><span data-feather="mail"></span></span>

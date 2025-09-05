@@ -3,11 +3,22 @@
 	// Connection To Database
 	require dirname(__DIR__)  . '/bootstrap.php';
 
-	$servername = 'localhost';
-	$username = 'root';
-	$password = '';
-	$conn = new PDO("mysql:host=$servername;dbname=puubu", $username, $password);
-	session_start();
+	$driver = $_ENV['DB_DRIVER'];
+    $hostname = $_ENV['DB_HOST'];
+    $port = $_ENV['DB_PORT'];
+    $database = $_ENV['DB_DATABASE'];
+    $username = $_ENV['DB_USERNAME'];
+    $password = $_ENV['DB_PASSWORD'];
+
+    try {
+        $string = $driver . ":host=" . $hostname . ";charset=utf8mb4;dbname=" . $database;
+        $conn = new \PDO(
+            $string, $username, $password
+        );
+    } catch (\PDOException $e) {
+        exit($e->getMessage());
+    }
+    session_start();
 
     date_default_timezone_set('Africa/Accra');
     require_once($_SERVER['DOCUMENT_ROOT'].'/puubu/config.php');

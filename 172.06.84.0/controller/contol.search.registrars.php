@@ -34,13 +34,14 @@
 	$output = ' 
 		<h4 class="mt-2">List of voters</h4>
 		<div class="table-responsive">
-			<table class="table table-nowrap table-sm table-centered table-hover mb-0" style="color: #aab8c5;">
+			<table class="table align-middle mb-0">
 				<thead>
 					<tr>
 						<th>#</th>
-			            <th>Identity Number</th>
+			            <th></th>
 			            <th>Full Name</th>
-			            <th>Send Mail</th>
+			            <th>Identity Number</th>
+						<th>Send Mail</th>
 			            <th>Election Type</th>
 			            <th>
 			              	<span id="delete_checkedDisplay" style="display: none;">
@@ -69,6 +70,12 @@
 			$output .= '
 				<tr>
                     <td>' . $i . '</td>
+					<td style="width: 0px">
+						<div class="form-check">
+							<input type="checkbox" name="single_select" class="form-check-input single_select" data-email="'.$row["std_email"].'" data-password="'.$row["std_password"].'">&nbsp;&nbsp;&nbsp;
+							<label class="form-check-label" for="tableCheckOne"></label>
+						</div>
+                    </td>
 					<td>
 						<div class="d-flex align-items-center">
 							<div class="ms-4">
@@ -81,8 +88,9 @@
 					</td>
                     <td>'.strtoupper($row["std_id"]).' <span class="text-'.(($row['status'] == '1')?'success':'danger').'" data-feather="'.(($row['status'] == '1')?'check':'x').'"></span></td>
                     <td>
-                    	<input type="checkbox" name="single_select" class="single_select" data-email="'.$row["std_email"].'" data-password="'.$row["std_password"].'">&nbsp;&nbsp;&nbsp;
-                    	<span name="email_button" class="badge badge-dark text-warning email_button" id="'.$count.'" data-email="'.$row["std_email"].'" data-password="'.$row["std_password"].'" data-action="single" style="cursor: pointer;"><span data-feather="mail"></span></span>
+                    	<span name="email_button" class="btn btn-sm btn-dark email_button" id="'.$count.'" data-email="'.$row["std_email"].'" data-password="'.$row["std_password"].'" data-action="single" style="cursor: pointer;">
+							<span class="material-symbols-outlined">send</span>
+						</span>
                     </td>
                     <td>
                     	'.ucwords($row['election_name']).' ~ '.ucwords($row['election_by']).'
@@ -96,10 +104,12 @@
 		}
 		$output .= '
 				<tr>
-      				<td colspan="5" align="right">
-      					<button type="button" name="bulk_email" class="btn btn-sm btn-warning email_button" id="bulk_email" data-action="bulk">Send bulk email <span data-feather="mail"></span></button>
+      				<td colspan="2" align="right">
+      					<button type="button" name="bulk_email" class="btn btn-sm btn-warning email_button" id="bulk_email" data-action="bulk">
+							<span class="material-symbols-outlined me-1">send</span> Send bulk email
+						</button>
       				</td>
-     			</td>';
+     			</tr>';
 
 	} else {
 		$output .= '
@@ -160,7 +170,7 @@
 			if ($page == $page_array[$count]) {
 				$page_link .= '
 					<li class="page-item active">
-						<a class="page-link" href="javascript:;">'.$page_array[$count].' <span class="sr-only">(current)</span></a>
+						<a class="page-link" href="javascript:;">'.$page_array[$count].' <span class="d-none">(current)</span></a>
 					</li>
 				';
 

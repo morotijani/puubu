@@ -97,7 +97,7 @@ if ($total_data > 0) {
                 <td>'.ucwords($row["position_name"]).'</td>
                 <td>'.ucwords($row["election_name"]).' ~<span class="text-muted"> '.ucwords($row["election_by"]).'</span></td>
                 <td>
-                    '.$option.'
+                    ' . $option . '
                 </td>
 			</tr>
 		';

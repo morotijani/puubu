@@ -88,7 +88,7 @@
 					</td>
                     <td>' . strtoupper($row["std_id"]).' 
 						<span class="badge bg-'.(($row['status'] == '1') ? 'success' : 'danger') . '">
-							<span class="material-symbols-outlined">' . (($row['status'] == '1')?'done_all' : 'x') . '</span>
+							<span class="material-symbols-outlined">' . (($row['status'] == '1')?'done_all' : 'close') . '</span>
 						</span>
 
 					</td>

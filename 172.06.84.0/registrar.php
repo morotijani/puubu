@@ -268,22 +268,22 @@ if (isset($_POST['dataValue'])) {
     <!-- MAIN -->
     <div class="card">
         <div class="card-body">
-            <h4 class="mt-2"><?= ((isset($_GET['editvoter'])?'Edit':'Add new')); ?> voter</h4>
-                <form action="?<?= ((isset($_GET['editvoter']))?'editvoter='.$editid:'addnewvoter=1') ?>" method="post" id="AddVoter">
-                    <span id="errorMsg"><?= $message; ?></span>
-                    <div id="dynamic_field">
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label class="form-label" for="">Voter Identity No:</label>
-                                <input type="text" name="voter_identity[]" id="voter_identity1" placeholder="Student ID" class="form-control voter_details" value="<?= $voter_identity; ?>" required autofocus>
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label class="form-label" for="">Voter Email:</label>
-                                <input type="email" name="voter_email[]" id="voter_email1" placeholder="Student Email" class="form-control voter_details" value="<?= $voter_email; ?>" required>
-                            </div>
-                            <div class="col-md-4 mb-3">
-                                <label class="form-label" for="">Voter First Name:</label>
-                                <input type="text" name="voter_fname[]" id="voter_fname1" placeholder="First Name" class="form-control voter_details" value="<?= $voter_fname; ?>" required>
+            <h4 class="mt-2"><?= ((isset($_GET['editvoter'])? 'Edit' : 'Add new')); ?> voter</h4>
+            <form action="?<?= ((isset($_GET['editvoter']))?'editvoter='.$editid:'addnewvoter=1') ?>" method="post" id="AddVoter">
+                <span id="errorMsg"><?= $message; ?></span>
+                <div id="dynamic_field">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label" for="">Voter Identity No:</label>
+                            <input type="text" name="voter_identity[]" id="voter_identity1" placeholder="Student ID" class="form-control voter_details" value="<?= $voter_identity; ?>" required autofocus>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label" for="">Voter Email:</label>
+                            <input type="email" name="voter_email[]" id="voter_email1" placeholder="Student Email" class="form-control voter_details" value="<?= $voter_email; ?>" required>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label" for="">Voter First Name:</label>
+                            <input type="text" name="voter_fname[]" id="voter_fname1" placeholder="First Name" class="form-control voter_details" value="<?= $voter_fname; ?>" required>
                         </div>
                         <div class="col-md-4 mb-3">
                             <label class="form-label" for="">Voter Last Name:</label>
@@ -295,22 +295,22 @@ if (isset($_POST['dataValue'])) {
                                 <option value=""> -- Select election type for voter -- </option>
                                 <?php foreach ($election_result as $election_row): ?>
                                 <option value="<?= $election_row['eid']; ?>"<?= (($sel_election == $election_row['eid'])?' selected' : '');?>><?= ucwords($election_row['election_name']); ?> / <?= ucwords($election_row['election_by']); ?></option>
-                            <?php endforeach; ?>
+                                <?php endforeach; ?>
                             </select>
                         </div>
-                        </div>
-                        </div>
-            <div class="mt-2">
-            <input type="hidden" name="total_fields" id="total_fields" value="1">
-            <button type="submit" name="submitVoters" id="submitVoters" class="btn btn-outline-warning btn-sm"><?= ((isset($_GET['editvoter'])?'Edit':'Add')); ?> Now!</button>
-            <a href="registrar" class="btn btn-danger btn-sm">Cancel</a>
-            <?php if (isset($_GET['addnewvoter'])): ?>
-              <button type="button" name="add" id="add" class="btn btn-sm btn-dark float-right">Add New Field</button>
-            <?php endif; ?>
-          </div>
-      </form>
+                    </div>
+                </div>
+                <div class="mt-2">
+                    <input type="hidden" name="total_fields" id="total_fields" value="1">
+                    <button type="submit" name="submitVoters" id="submitVoters" class="btn btn-outline-warning"><?= ((isset($_GET['editvoter'])?'Edit':'Add')); ?> Now!</button>
+                    <a href="registrar" class="btn btn-danger">Cancel</a>
+                    <?php if (isset($_GET['addnewvoter'])): ?>
+                        <button type="button" name="add" id="add" class="btn btn-dark float-right">Add New Field</button>
+                    <?php endif; ?>
+                </div>
+            </form>
+        </div>
     </div>
-  </div>
       
   <?php elseif (isset($_GET['ricsv'])): ?>
   <div class="card">

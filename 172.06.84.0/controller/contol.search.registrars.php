@@ -45,7 +45,8 @@
 			            <th>Election Type</th>
 			            <th>
 			              	<span id="delete_checkedDisplay" style="display: none;">
-			                	<button type="button" name="delete_checked" id="delete_checked" class="btn btn-sm btn-danger">delete All</button> <label>Select All <input type="checkbox" id="selectAll"></label>
+			                	<button type="button" name="delete_checked" id="delete_checked" class="btn btn-sm btn-info">Delete all</button> 
+								<label>Select all <input type="checkbox" class="form-check-input" id="selectAll"></label>
 			              	</span>
 			            </th>
 					</tr>
@@ -61,10 +62,13 @@
 			$option = '';
 			if ($row["session"] == 0) {
 				$option = '
-					<span class="badge badge-dark"><a href="?deletevoter='.$row["id"].'" class="text-danger"><span data-feather="trash"></span></a></span>
-					&nbsp;
-	                <span class="badge badge-dark"><a href="?editvoter='.$row["id"].'"><span data-feather="edit-3"></span></a></span>
-	                <input type="checkbox" class="checkToDelete" value="'.$row["id"].'" style="display: none;">
+					<a href="?deletevoter='.$row["id"].'" class="btn btn-sm btn-danger">
+						<span class="material-symbols-outlined me-1">delete</span> Delete
+					</a>
+					&nbsp;<a href="?editvoter='.$row["id"].'" class="btn btn-sm btn-dark">
+						<span class="material-symbols-outlined me-1">stylus_note</span> Edit
+					</a>
+	                <input type="checkbox" class="checkToDelete form-check-input" value="'.$row["id"].'" style="display: none;">
 				';
 			}
 			$output .= '
@@ -90,7 +94,6 @@
 						<span class="badge bg-'.(($row['status'] == '1') ? 'success' : 'danger') . '">
 							<span class="material-symbols-outlined">' . (($row['status'] == '1')?'done_all' : 'close') . '</span>
 						</span>
-
 					</td>
                     <td>
                     	<span name="email_button" class="btn btn-sm btn-dark email_button" id="'.$count.'" data-email="'.$row["std_email"].'" data-password="'.$row["std_password"].'" data-action="single" style="cursor: pointer;">
@@ -101,7 +104,7 @@
                     	'.ucwords($row['election_name']).' ~ '.ucwords($row['election_by']).'
                     </td>
                     <td>
-                      '.$option.'
+                      	' . $option . '
                     </td>
 				</tr>
 			';

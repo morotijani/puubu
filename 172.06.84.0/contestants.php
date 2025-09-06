@@ -353,9 +353,7 @@ if (isset($_GET['createcontestant']) || isset($_GET['editcontestant']) && !empty
     <div class="card">
         <div class="card-body">
             <h4 class="header-title mt-2" style="color: rgb(170, 184, 197);"><?= ((isset($_GET['editcontestant']))?'Edit':'Add new') ?> contestant</h4>
-
             <form class="" action="contestants.php?<?= ((isset($_GET['editcontestant']))?'editcontestant='.$editid:'createcontestant=1'); ?>" method="post" id="submitcontestant" enctype="multipart/form-data">
-                <h1 class=""></h1><hr>
                 <div class="container">
                     <span><?= $message; ?></span>
                     <div class="row">

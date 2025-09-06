@@ -90,24 +90,24 @@ if (isset($_POST['dataValue'])) {
     }
 }
 
-  // ADD A NEW VOTER
-  if (isset($_POST['submitVoters'])) {
+    // ADD A NEW VOTER
+    if (isset($_POST['submitVoters'])) {
 
-      for ($i = 0; $i < $_POST['total_fields']; $i++) {
+        for ($i = 0; $i < $_POST['total_fields']; $i++) {
 
-          $query = "SELECT * FROM registrars WHERE std_id = '".$_POST['voter_identity'][$i]."'";
-          if (isset($_GET['editvoter']) && !empty($_GET['editvoter'])) {
-            $query = "SELECT * FROM registrars WHERE std_id = '".$_POST['voter_identity'][$i]."' AND id != '".(int)$_GET['editvoter']."'";
-          }
-          $statement = $conn->prepare($query);
-          $statement->execute();
-          $count = $statement->rowCount();
+            $query = "SELECT * FROM registrars WHERE std_id = '".$_POST['voter_identity'][$i]."'";
+            if (isset($_GET['editvoter']) && !empty($_GET['editvoter'])) {
+                $query = "SELECT * FROM registrars WHERE std_id = '".$_POST['voter_identity'][$i]."' AND id != '".(int)$_GET['editvoter']."'";
+            }
+            $statement = $conn->prepare($query);
+            $statement->execute();
+            $count = $statement->rowCount();
 
-          if($count > 0) {
-            $message = '<div class="alert alert-danger" id="temporary">This Voter Already Exists</div>';
-          } else {
+            if ($count > 0) {
+                $message = '<div class="alert alert-danger" id="temporary">This Voter Already Exists</div>';
+            } else {
 
-            if ($message == '') {
+                if ($message == '') {
 
               // str_shuffle() RANDOMLY SHUFFLE ALL CHARACTERS OF A STRING (SIMPLY MEANS IT RANDOMLY REARRANGE STRING CHARACTERS) AND
               // substr() RETURNS A PART OF THAT STRING
@@ -268,38 +268,38 @@ if (isset($_POST['dataValue'])) {
     <!-- MAIN -->
     <div class="card">
         <div class="card-body">
-            <h4 class="header-title mt-2" style="color: rgb(170, 184, 197);"><?= ((isset($_GET['editvoter'])?'Edit':'Add New')); ?> Voter</h4>
+            <h4 class="mt-2"><?= ((isset($_GET['editvoter'])?'Edit':'Add new')); ?> voter</h4>
                 <form action="?<?= ((isset($_GET['editvoter']))?'editvoter='.$editid:'addnewvoter=1') ?>" method="post" id="AddVoter">
                     <span id="errorMsg"><?= $message; ?></span>
                     <div id="dynamic_field">
-                    <div class="row">
-                    <div class="col-md-6 mb-2">
-                        <label class="label">Voter Identity No:</label>
-                        <input type="text" name="voter_identity[]" id="voter_identity1" placeholder="Student ID" class="form-control form-control-sm form-control-dark voter_details" value="<?= $voter_identity; ?>" required autofocus>
-                    </div>
-                    <div class="col-md-6 mb-2">
-                        <label class="label">Voter Email:</label>
-                        <input type="email" name="voter_email[]" id="voter_email1" placeholder="Student Email" class="form-control form-control-sm form-control-dark voter_details" value="<?= $voter_email; ?>" required>
-              </div>
-              <div class="col-md-4 mb-2">
-                <label class="label">Voter First Name:</label>
-                <input type="text" name="voter_fname[]" id="voter_fname1" placeholder="First Name" class="form-control form-control-sm form-control-dark voter_details" value="<?= $voter_fname; ?>" required>
-              </div>
-              <div class="col-md-4 mb-2">
-                <label class="label">Voter Last Name:</label>
-                <input type="text" name="voter_lname[]" id="voter_lname1" placeholder="Last Name" class="form-control form-control-sm form-control-dark voter_details" value="<?= $voter_lname; ?>" required>
-              </div>
-              <div class="col-md-4 mb-2">
-                <label class="label">Election Type</label>
-                <select class="form-control form-control-sm form-control-dark voter_details" id="voter_election_type1" name="voter_election_type[]">
-                    <option value=""> -- Select election type for voter -- </option>
-                     <?php foreach ($election_result as $election_row): ?>
-                  <option value="<?= $election_row['eid']; ?>"<?= (($sel_election == $election_row['eid'])?' selected' : '');?>><?= ucwords($election_row['election_name']); ?> / <?= ucwords($election_row['election_by']); ?></option>
-                <?php endforeach; ?>
-                </select>
-              </div>
-            </div>
-            </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label" for="">Voter Identity No:</label>
+                                <input type="text" name="voter_identity[]" id="voter_identity1" placeholder="Student ID" class="form-control voter_details" value="<?= $voter_identity; ?>" required autofocus>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label" for="">Voter Email:</label>
+                                <input type="email" name="voter_email[]" id="voter_email1" placeholder="Student Email" class="form-control voter_details" value="<?= $voter_email; ?>" required>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label" for="">Voter First Name:</label>
+                                <input type="text" name="voter_fname[]" id="voter_fname1" placeholder="First Name" class="form-control voter_details" value="<?= $voter_fname; ?>" required>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label" for="">Voter Last Name:</label>
+                            <input type="text" name="voter_lname[]" id="voter_lname1" placeholder="Last Name" class="form-control voter_details" value="<?= $voter_lname; ?>" required>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label" for="">Election Type</label>
+                            <select class="form-control voter_details" id="voter_election_type1" name="voter_election_type[]" required>
+                                <option value=""> -- Select election type for voter -- </option>
+                                <?php foreach ($election_result as $election_row): ?>
+                                <option value="<?= $election_row['eid']; ?>"<?= (($sel_election == $election_row['eid'])?' selected' : '');?>><?= ucwords($election_row['election_name']); ?> / <?= ucwords($election_row['election_by']); ?></option>
+                            <?php endforeach; ?>
+                            </select>
+                        </div>
+                        </div>
+                        </div>
             <div class="mt-2">
             <input type="hidden" name="total_fields" id="total_fields" value="1">
             <button type="submit" name="submitVoters" id="submitVoters" class="btn btn-outline-warning btn-sm"><?= ((isset($_GET['editvoter'])?'Edit':'Add')); ?> Now!</button>
@@ -461,7 +461,7 @@ if (isset($_POST['dataValue'])) {
           $('#total_fields').val(i);
 
           // APPEND THE NEW ADDED FIELDS TO THE FORM
-          $('#dynamic_field').append('<div id="row'+i+'" class="mb-3"><hr><div class="row"><div class="col-md-6 mb-2"><label class="label">Voter Identity No:</label><input type="text" name="voter_identity[]" id="voter_identity'+i+'" placeholder="Student ID" class="form-control form-control-sm form-control-dark voter_details"></div><div class="col-md-6 mb-2"><label class="label">Voter Email:</label><input type="email" name="voter_email[]" id="voter_email'+i+'" placeholder="Student Email" class="form-control form-control-sm form-control-dark voter_details" value="<?= $voter_email; ?>"></div><div class="col-md-4 mb-2"><label class="label">Voter First Name:</label><input type="text" name="voter_fname[]" id="voter_fname'+i+'" placeholder="First Name" class="form-control form-control-sm form-control-dark voter_details"></div><div class="col-md-4 mb-2"><label class="label">Voter Last Name:</label><input type="text" name="voter_lname[]" id="voter_lname'+i+'" placeholder="Last Name" class="form-control form-control-sm form-control-dark voter_details"></div><div class="col-md-4 mb-2"><label class="label">Election Type</label><select class="form-control form-control-sm form-control-dark voter_details" id="voter_election_type'+i+'" name="voter_election_type[]"><option value="">-- Select election type for voter --</option><?php foreach ($election_result as $election_row): ?><option value="<?= $election_row['eid']; ?>"<?= (($sel_election == $election_row['eid'])?' selected' : '');?>><?= ucwords($election_row['election_name']); ?> / <?= ucwords($election_row['election_by']); ?></option><?php endforeach; ?></select></div></div><div class="mt-2"><button type="button" id="'+i+'" name="remove" class="btn btn-sm btn-danger btn_remove">remove</button></div></div>');
+          $('#dynamic_field').append('<div id="row'+i+'" class="mb-3"><hr><div class="row"><div class="col-md-6 mb-3"><label class="form-label" for="">Voter Identity No:</label><input type="text" name="voter_identity[]" id="voter_identity'+i+'" placeholder="Student ID" class="form-control voter_details"></div><div class="col-md-6 mb-3"><label class="form-label" for="">Voter Email:</label><input type="email" name="voter_email[]" id="voter_email'+i+'" placeholder="Student Email" class="form-control voter_details" value="<?= $voter_email; ?>"></div><div class="col-md-4 mb-3"><label class="form-label" for="">Voter First Name:</label><input type="text" name="voter_fname[]" id="voter_fname'+i+'" placeholder="First Name" class="form-control voter_details"></div><div class="col-md-4 mb-3"><label class="form-label" for="">Voter Last Name:</label><input type="text" name="voter_lname[]" id="voter_lname'+i+'" placeholder="Last Name" class="form-control voter_details"></div><div class="col-md-4 mb-3"><label class="form-label" for="">Election Type</label><select class="form-control voter_details" id="voter_election_type'+i+'" name="voter_election_type[]"><option value="">-- Select election type for voter --</option><?php foreach ($election_result as $election_row): ?><option value="<?= $election_row['eid']; ?>"<?= (($sel_election == $election_row['eid'])?' selected' : '');?>><?= ucwords($election_row['election_name']); ?> / <?= ucwords($election_row['election_by']); ?></option><?php endforeach; ?></select></div></div><div class="mt-2"><button type="button" id="'+i+'" name="remove" class="btn btn-sm btn-danger btn_remove">remove</button></div></div>');
 
           // IF SUBMIT BUTTON IS BEEN CLICKED AND THERE IS MORE FIELD ADDED RUN THE FOLLOWING VALIDATION
           $('#submitVoters').click(function () {

@@ -361,25 +361,25 @@ if (isset($_POST['dataValue'])) {
             </div>
             
       <?php if (isset($_GET['fde']) && !empty($_GET['fde'])): ?>
-                <h4 class="header-title mt-2" style="color: rgb(170, 184, 197);">List Of Duplicated email</h4>
-                <div class="table-responsive">
-                    <table class="table table-nowrap table-centered table-hover mb-0" style="color: #aab8c5;">
-                        <thead>
-                            <tr>
-                                <th>#</th>
-                                <th>Identity Number</th>
-                                <th>Full Name</th>
-                                <th>Email</th>
-                                <th>Election Type</th>
-                                <th>
-                                    <span id="delete_checkedDisplay" style="display: none;">
-                                        <button type="button" name="delete_checked" id="delete_checked" class="btn btn-sm btn-danger">delete All</button> <label>Select All <input type="checkbox" id="selectAll"></label>
-                                    </span>
-                                </th>
-                            </tr>
-                        </thead>
-                        <tbody>
-            <?php if ($fde_count > 0): ?>
+            <h4 class="mt-2">List of duplicated users</h4>
+            <div class="table-responsive">
+                <table class="table align-middle mb-0">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Identity Number</th>
+                            <th>Full Name</th>
+                            <th>Email</th>
+                            <th>Election Type</th>
+                            <th>
+                                <span id="delete_checkedDisplay" style="display: none;">
+                                    <button type="button" name="delete_checked" id="delete_checked" class="btn btn-sm btn-danger">delete All</button> <label>Select All <input type="checkbox" id="selectAll"></label>
+                                </span>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    <?php if ($fde_count > 0): ?>
                         <?php $i = 1; foreach ($result_fde as $fde_row): ?>
                             <tr>
                                 <td><?= $i; ?></td>
@@ -397,21 +397,19 @@ if (isset($_POST['dataValue'])) {
                             </tr>
                         <?php $i++; endforeach; ?>  
                     <?php else: ?>
-                            <tr class="text-warning">
-                              <td colspan="6">No data found!</td>
-                            </tr>
-            <?php endif; ?>
-                        </tbody>
-                    </table>
-                </div>
+                        <tr class="text-warning">
+                            <td colspan="6">No data found!</td>
+                        </tr>
+                    <?php endif; ?>
+                    </tbody>
+                </table>
+            </div>
                 
-                      
-      <?php else: ?>
+        <?php else: ?>
+            <div id="dynamic_content_onR"></div>
+        <?php endif; ?>
 
-      <div id="dynamic_content_onR"></div>
-      <?php endif; ?>
-
-  </div>
+    </div>
 </div>
 <?php endif; 
     include ('includes/footer.inc.php');

@@ -313,31 +313,31 @@ if (isset($_POST['dataValue'])) {
     </div>
       
   <?php elseif (isset($_GET['ricsv'])): ?>
-  <div class="card">
-    <div class="card-body">
-      <h4 class="header-title mt-2" style="color: rgb(170, 184, 197);">Import CSV File Data</h4>
-      <span id="csv_message"></span>
-    <form method="POST" action="" id="uploadRCSV" enctype="multipart/form-data" class="form-horizontal">
-              <div class="form-group">
-                <label class="col-md-4 control-label">Select CSV File</label>
-                <input type="file" name="csvfile" id="csvfile" class="form-control-dark form-control-sm form-control">
-                <small class="text-warning">Student ID, Password(Automatically generated), First name, Last name, Email, Election type.</small>
-              </div>
-              <div class="form-group">
-                <input type="hidden" name="csv_hidden_field" value="1">
-                <button type="submit" name="importCSV" class="btn-sm btn btn-danger" id="importCSV">Import</button>
-              </div>
-            </form>
-            <div class="form-group" id="process" style="display: none;">
-              <div class="progress">
-                <div class="progress-bar progress-bar-striped bg-success progress-bar-animated active" role="progressbar" aria-valuemin="0" aria-valuemax="100" style="display: flow-root;">
-                  <span id="process_data">0</span>
-                  - <span id="total_csv_data">0</span>
+    <div class="card">
+        <div class="card-body">
+            <h4 class="header-title mt-2" style="color: rgb(170, 184, 197);">Import CSV file data</h4>
+            <span id="csv_message"></span>
+            <form method="POST" action="" id="uploadRCSV" enctype="multipart/form-data">
+                <div class="mb-3">
+                    <label class="form-label">Select CSV File</label>
+                    <input type="file" name="csvfile" id="csvfile" class="form-control">
+                    <small class="text-warning">Student ID, Password(Automatically generated), First name, Last name, Email, Election type.</small>
                 </div>
-              </div>
+                <div class="mb-3">
+                    <input type="hidden" name="csv_hidden_field" value="1">
+                    <button type="submit" name="importCSV" class="btn btn-danger" id="importCSV">Import</button>
+                </div>
+            </form>
+            <div class="mb-3" id="process" style="display: none;">
+                <div class="progress">
+                    <div class="progress-bar progress-bar-striped bg-success progress-bar-animated active" role="progressbar" aria-valuemin="0" aria-valuemax="100" style="display: flow-root;">
+                        <span id="process_data">0</span>
+                        - <span id="total_csv_data">0</span>
+                    </div>
+                </div>
             </div>
-          </div>
         </div>
+    </div>
     <?php else: ?>
     
     <!-- LIST REGISTRARS -->

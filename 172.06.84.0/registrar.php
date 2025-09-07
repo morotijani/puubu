@@ -369,7 +369,6 @@ if (isset($_POST['dataValue'])) {
                             <th>#</th>
                             <th>Identity Number</th>
                             <th>Full Name</th>
-                            <th>Email</th>
                             <th>Election Type</th>
                             <th>
                                 <span id="delete_checkedDisplay" style="display: none;">
@@ -383,16 +382,32 @@ if (isset($_POST['dataValue'])) {
                         <?php $i = 1; foreach ($result_fde as $fde_row): ?>
                             <tr>
                                 <td><?= $i; ?></td>
-                                <td><?= strtoupper($fde_row["std_id"]); ?></td>
-                                <td><?= ucwords(strtolower($fde_row["std_fname"].' '.$fde_row["std_lname"])); ?> <span class="text-<?= (($fde_row['status'] == '1')?'success':'danger'); ?>" data-feather="<?= (($fde_row['status'] == '1')?'check':'x'); ?>"></span></td>
-                                <td><?= $fde_row["std_email"]; ?></td>
                                 <td>
-                                    <?= ucwords($fde_row['election_name']); ?> / <?= ucwords($fde_row['election_by']); ?>
+                                    <div class="d-flex align-items-center">
+                                        <div class="ms-4">
+                                            <div><?= ucwords(strtolower($fde_row["std_fname"].' '.$fde_row["std_lname"])); ?></div>
+                                            <div class="fs-sm text-body-secondary">
+                                                <span class="text-reset"><?= $fde_row["std_email"]; ?></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td><?= strtoupper($fde_row["std_id"]); ?>
+                                    <span class="badge bg-<?= (($fde_row['status'] == '1') ? 'success' : 'danger') ; ?>">
+                                        <span class="material-symbols-outlined"><?= (($fde_row['status'] == '1')?'done_all' : 'close'); ?></span>
+                                    </span>
                                 </td>
                                 <td>
-                                    <a href="?deletevoter=<?= $fde_row["id"]; ?>" class="badge badge-dark text-primary"><span data-feather="trash"></span></a>&nbsp;
-                                    <a href="?editvoter=<?= $fde_row["id"]; ?>" class="badge badge-dark text-danger"><span data-feather="edit-3"></span></a>
-                                    <input type="checkbox" class="checkToDelete" value="<?= $fde_row["id"]; ?>" style="display: none;">
+                                    <?= ucwords($fde_row['election_name']); ?> ~ <span class="text-muted"><?= ucwords($fde_row['election_by']); ?></spn>
+                                </td>
+                                <td>
+                                    <a href="?deletevoter=<?= $fde_row["id"]; ?>" class="btn btn-sm btn-primary">
+                                        <span class="material-symbols-outlined me-1">delete</span> Delete
+                                    </a>&nbsp;
+                                    <a href="?editvoter=<?= $fde_row["id"]; ?>" class="btn btn-smbtn-danger">
+                                        <span class="material-symbols-outlined me-1">stylus_note</span> Edit
+                                    </a>
+                                    <input type="checkbox" class="checkToDelete form-check-input" value="<?= $fde_row["id"]; ?>" style="display: none;">
                                 </td>
                             </tr>
                         <?php $i++; endforeach; ?>  

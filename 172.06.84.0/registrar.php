@@ -415,8 +415,6 @@ if (isset($_POST['dataValue'])) {
     include ('includes/footer.inc.php');
 ?>
 
-  
-
     <div class="modal fade" id="registrarsModal" tabindex="-1" aria-labelledby="registrarsLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
@@ -436,13 +434,7 @@ if (isset($_POST['dataValue'])) {
 
 
 
-    <!-- FOOTER -->
-    <script type="text/javascript" src="media/files/jquery-3.3.1.min.js"></script>
-    <script type="text/javascript" src="media/files/popper-1.14.6.min.js"></script>
-    <script type="text/javascript" src="media/files/bootstrap.min.js"></script>
-
     <script type="text/javascript">
-        $("#temporary").fadeOut(3000);
 
       $(document).ready(function() {
 

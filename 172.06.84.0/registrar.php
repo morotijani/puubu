@@ -415,28 +415,23 @@ if (isset($_POST['dataValue'])) {
     include ('includes/footer.inc.php');
 ?>
 
-   <div class="modal fade" id="registrarsModal" tabindex="-1" role="dialog" aria-labelledby="registrarsLabel" style="display: none;" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" role="document">
-      <div class="modal-content bg-dark border-secondary">
-        <div class="modal-header">
-          <h5 class="modal-title" id="registrarsLabel">Registrars Options</h5>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">×</span>
-          </button>
+  
+
+    <div class="modal fade" id="registrarsModal" tabindex="-1" aria-labelledby="registrarsLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header border-bottom-0 pb-0">
+                    <h1 class="modal-title fs-5" id="registrarsLabel">Registrars option</h1>
+                    <button class="btn-close" type="button" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <a href="?ricsv=1" type="button" class="btn btn-info w-100 mt-4">Import CSV</a>
+                    <button type="button" class="btn btn-warning w-100 mt-4 selectMoreToDelete">Select To Delete More</button>
+                    <button type="button" class="btn btn-danger w-100 mt-4" id="emptyTable">Truncate Table</button>
+                </div>
+            </div>
         </div>
-        <div class="modal-body">
-          <div class="text-center">
-            <a href="?ricsv=1" type="button" class="btn-sm btn btn-info">Import CSV</a>
-            <button type="button" class="btn-sm btn btn-warning selectMoreToDelete">Select To Delete More</button>
-            <button type="button" class="btn-sm btn btn-danger" id="emptyTable">Truncate Table</button>
-          </div>
-        </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-sm btn-secondary" data-dismiss="modal">Cancel</button>
-          </div>
-      </div>
     </div>
-  </div>
 
 
 

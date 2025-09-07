@@ -14,7 +14,7 @@
 	
 	if (isset($_SESSION['csv_file_name'])) {
 
-		$location = BASEURL.'media/uploadedregistrars/'.$_SESSION['csv_file_name'];
+		$location = BASEURL . 'media/uploadedregistrars/' . $_SESSION['csv_file_name'];
 		$file_data = fopen($location, 'r');
 		fgetcsv($file_data);
 

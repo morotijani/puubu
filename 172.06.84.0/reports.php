@@ -67,8 +67,57 @@ if (isset($_GET['report']) && !empty($_GET['election'])) {
                     </div>
                 </div>
             </div>
-            
-<main role="main" class="col-md-12 col-lg-12 px-4" style="background-color: rgb(70, 60, 54);">
+
+            <!-- Page content -->
+            <div class="row">
+                <div class="col-12">
+                    <!-- Filters -->
+                    <div class="card card-line bg-body-tertiary border-transparent mb-7">
+                        <div class="card-body p-4">
+                            <div class="row align-items-center">
+                                <div class="col-12 col-lg-auto mb-3 mb-lg-0">
+                                    <div class="row align-items-center">
+                                        <div class="col-auto">
+                                            <div class="text-body-secondary">No customers selected</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-12 col-lg"><div class="row gx-3  ">
+                                    <div class="col col-lg-auto ms-auto">
+                                        <div class="input-group bg-body">
+                                            <input type="text" class="form-control" placeholder="Search" aria-label="Search" aria-describedby="search" />
+                                            <span class="input-group-text" id="search">
+                                                <span class="material-symbols-outlined">search</span>
+                                            </span>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-auto">
+                                        <a class="btn btn-dark px-3" href="reports.voted.php?report=<?= $election_id; ?>">
+                                            Voted details
+                                        </a>
+                                    </div>
+                                    <div class="col-auto">
+                                        <a class="btn btn-dark px-3" href="reports.voter.php?report=<?= $election_id; ?>">
+                                            Voter details
+                                        </a>
+                                    </div>
+
+                                    <div class="col-auto ms-n2">
+                                        <a class="btn btn-dark px-3" href="<?= PROOT; ?>172.06.84.0/registrar">
+                                            Voters
+                                        </a>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            <div>
+
+
+
 <style type="text/css">
     .dropdown-menu.show {
         padding: 0!important;

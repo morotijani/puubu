@@ -104,31 +104,29 @@ if (isset($_GET['report']) && !empty($_GET['report'])) {
                                     </div>
                                 </div>
 
+                                <div class="col-auto">
+                                    <a class="btn btn-dark px-3" href="reports.voted.php?report=<?= $election_id; ?>">
+                                        Voted details
+                                    </a>
+                                </div>
+                                <div class="col-auto">
+                                    <a class="btn btn-dark px-3" href="reports.voter.php?report=<?= $election_id; ?>">
+                                        Voter details
+                                    </a>
+                                </div>
+
+                                <div class="col-auto ms-n2">
+                                    <a class="btn btn-dark px-3" href="<?= PROOT; ?>172.06.84.0/registrar">
+                                        Voters
+                                    </a>
+                                </div>
+                            </div>
+
                         </div>
                     </div>
                 </div>
             </div>
         <div>
-
-
-<style type="text/css">
-    .dropdown-menu.show {
-        padding: 0!important;
-        background-color: #5f554d;
-    }
-</style>
-
-    <ul class="nav justify-content-end p-3">
-        <li class="nav-item">
-             <a href="reports.voted.php?report=<?= $election_id; ?>" class="text-secondary nav-link active">Voted Details</a>
-        </li>
-        <li class="nav-item">
-            <a href="reports.voter.php?report=<?= $election_id; ?>" class="text-secondary nav-link">Voter Details</a>
-        </li>
-        <li class="nav-item">
-            <a href="registrar" class="text-secondary nav-link">Voters</a>
-        </li>
-    </ul>
 
     <?php
         // $position_name = ((isset($_POST['position_name']) ? $_POST["position_name"] : ''));

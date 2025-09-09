@@ -59,10 +59,10 @@ if (isset($_GET['report']) && !empty($_GET['election'])) {
                     <!-- Action -->
                     <div class="row gx-2">
                         <div class="col-6 col-sm-auto">
-                            <a class="btn btn-light w-100" href="<?= PROOT; ?>172.06.84.0/reports.voted.php?report=<?= $election_id; ?>"><span class="material-symbols-outlined me-1">add</span> Refresh</a>
+                            <a class="btn btn-light w-100" href="<?= PROOT; ?>172.06.84.0/reports?report=1&election=<?= $election_id; ?>"><span class="material-symbols-outlined me-1">add</span> Refresh</a>
                         </div>
                         <div class="col-6 col-sm-auto">
-                            <a href="reports?report=1&election=<?= $election_id; ?>" class="btn btn-danger w-100">Go back</a>
+                            <a href="<?= goBack(); ?>" class="btn btn-danger w-100">Go back</a>
                         </div>
                     </div>
                 </div>
@@ -116,36 +116,6 @@ if (isset($_GET['report']) && !empty($_GET['election'])) {
                 </div>
             <div>
 
-
-
-<style type="text/css">
-    .dropdown-menu.show {
-        padding: 0!important;
-        background-color: #5f554d;
-    }
-</style>
-    <ul class="nav justify-content-end p-3">
-        <li class="nav-item">
-             <a href="reports.voted.php?report=<?= $election_id; ?>" class="text-secondary nav-link">Voted Details</a>
-        </li>
-        <li class="nav-item">
-            <a href="reports.voter.php?report=<?= $election_id; ?>" class="text-secondary nav-link">Voter Details</a>
-        </li>
-        <li class="nav-item">
-            <a href="registrar" class="text-secondary nav-link">Voters</a>
-        </li>
-        <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-expanded="false">other</a>
-            <div class="dropdown-menu">
-                <?php if ($report_row['session'] == 1): ?>
-                    <a href="javascript:;" class="nav-link end-election text-danger" id="<?= $report_row["eid"]; ?>">End Election</a>
-                    <hr>                
-                <?php endif; ?>
-                <a href="reports?report=1&election=<?= $election_id; ?>" class="text-secondary nav-link">refresh!</a>
-                <a href="index" class="nav-link text-secondary">go back!</a>
-            </div>
-        </li>
-    </ul>
 
     <span id="temporary"></span>    
     <span id="graph-result"></span>

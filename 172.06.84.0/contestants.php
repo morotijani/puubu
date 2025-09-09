@@ -304,12 +304,10 @@ if (isset($_POST['createcont'])) {
                             <li class="breadcrumb-item active" aria-current="page">Contestatnt</li>
                         </ol>
                     </nav>
-
                     <!-- Heading -->
                     <h1 class="fs-4 mb-0">Contestatnt</h1>
                 </div>
                 <div class="col-12 col-sm-auto mt-4 mt-sm-0">
-
                     <div class="row gx-2">
                         <div class="col-6 col-sm-auto">
                             <a class="btn btn-light w-100" href="<?= PROOT; ?>172.06.84.0/contestants?createcontestant=1"><span class="material-symbols-outlined me-1">add</span> Add</a>

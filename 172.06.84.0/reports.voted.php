@@ -68,11 +68,17 @@ if (isset($_GET['report']) && !empty($_GET['report'])) {
                 </div>
                 <div class="col-12 col-sm-auto mt-4 mt-sm-0">
                     <!-- Action -->
-                <a class="btn btn-secondary d-block" href="javascript:;">
-                    <span class="material-symbols-outlined me-1">export_notes</span> Export
-                </a>
+                    <div class="row gx-2">
+                        <div class="col-6 col-sm-auto">
+                            <a class="btn btn-light w-100" href="<?= PROOT; ?>172.06.84.0/reports.voted.php?report=<?= $election_id; ?>"><span class="material-symbols-outlined me-1">add</span> Refresh</a>
+                        </div>
+                        <div class="col-6 col-sm-auto">
+                            <a href="reports?report=1&election=<?= $election_id; ?>" class="btn btn-danger w-100">Go back</a>
+                        </div>
+                    </div>
+                </div>
             </div>
-        </div>
+
 
         <!-- Page content -->
         <div class="row">
@@ -88,6 +94,15 @@ if (isset($_GET['report']) && !empty($_GET['report'])) {
                                     </div>
                                 </div>
                             </div>
+                            <div class="col-12 col-lg"><div class="row gx-3  ">
+                                <div class="col col-lg-auto ms-auto">
+                                    <div class="input-group bg-body">
+                                        <input type="text" class="form-control" placeholder="Search" aria-label="Search" aria-describedby="search" />
+                                        <span class="input-group-text" id="search">
+                                            <span class="material-symbols-outlined">search</span>
+                                        </span>
+                                    </div>
+                                </div>
 
                         </div>
                     </div>
@@ -95,14 +110,14 @@ if (isset($_GET['report']) && !empty($_GET['report'])) {
             </div>
         <div>
 
-        
-<main role="main" class="col-md-12 col-lg-12 px-4" style="background-color: rgb(70, 60, 54);">
+
 <style type="text/css">
     .dropdown-menu.show {
         padding: 0!important;
         background-color: #5f554d;
     }
 </style>
+
     <ul class="nav justify-content-end p-3">
         <li class="nav-item">
              <a href="reports.voted.php?report=<?= $election_id; ?>" class="text-secondary nav-link active">Voted Details</a>
@@ -112,13 +127,6 @@ if (isset($_GET['report']) && !empty($_GET['report'])) {
         </li>
         <li class="nav-item">
             <a href="registrar" class="text-secondary nav-link">Voters</a>
-        </li>
-        <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-expanded="false">other</a>
-            <div class="dropdown-menu">
-                <a href="reports.voted.php?report=<?= $election_id; ?>" class="text-secondary nav-link">Refresh!</a>
-                <a href="reports?report=1&election=<?= $election_id; ?>" class="nav-link text-secondary">Go back!</a>
-            </div>
         </li>
     </ul>
 

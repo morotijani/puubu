@@ -20,9 +20,9 @@ if (isset($_POST['election_id'])) {
     $registrars_result = $statement->fetchAll();
 
     $output = "
-        <div class='card mt-2' style='background-color: #37404a;'>
+        <div class='card mt-2'>
             <div class='card-body'>
-                <h4 class='header-title mb-3' style='color:rgb(170, 184, 197);'>Votes For Each Positions</h4>
+                <h4 class='mb-3'>Votes for each positions</h4>
     ";
 
     
@@ -37,7 +37,9 @@ if (isset($_POST['election_id'])) {
 
     if ($position_count < 0) {
         $output .= "
-            <p class='p-sized'>There are no positions under <u>".ucwords($election_name)."</u></p>
+            <div class='alert alert-info'>
+                There are no positions under <u>" . ucwords($election_name) . "</u>
+            </div>
         ";
     } else {
         foreach ($position_results as $position_row) {
@@ -45,8 +47,8 @@ if (isset($_POST['election_id'])) {
             $positionId = $position_row['position_id'];
 
             $output .= "
-                <h2 class='text-secondary font-weight-lighter text-center'>
-                    <b>".ucwords($positionName)."</b>
+                <h2 class='text-center'>
+                    " . ucwords($positionName) . "
                     <small class='text-danger' style='font-size: 15px'>Skipped Votes: ".$position_row['position_skipped_votes']."</small>
                 </h2>
                 

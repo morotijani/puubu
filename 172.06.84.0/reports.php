@@ -181,7 +181,7 @@ if (isset($_GET['eclear']) && !empty($_GET['eclear'])) {
 
 
 <script type="text/javascript">
-    feather.replace();
+
     $(document).ready(function() {
         $('.end-election').on('click', function() {
             var election_id = $(this).attr('id');

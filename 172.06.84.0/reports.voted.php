@@ -9,7 +9,7 @@ if (!cadminIsLoggedIn()) {
 
 include ('includes/header.inc.php');
 include ('includes/top-nav.inc.php');
-// include ('includes/left-nav.inc.php');
+include ('includes/left-nav.inc.php');
 
 if (isset($_GET['report']) && !empty($_GET['report'])) {
     $election_id = sanitize((int)$_GET['report']);
@@ -41,6 +41,61 @@ if (isset($_GET['report']) && !empty($_GET['report'])) {
         $statement->execute([$election_id, 0]);
         $position_result = $statement->fetchAll();
 ?>
+
+<!-- Main -->
+    <main class="main px-lg-6">
+        <!-- Content -->
+        <div class="container-lg">
+            <!-- Page header -->
+            <div class="row align-items-center mb-7">
+                <div class="col-auto">
+                    <!-- Avatar -->
+                    <div class="avatar avatar-xl rounded text-primary">
+                        <i class="fs-2" data-duoicon="app"></i>
+                    </div>
+                </div>
+                <div class="col">
+                    <!-- Breadcrumb -->
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb mb-1">
+                            <li class="breadcrumb-item"><a class="text-body-secondary" href="javascript:;">Elections</a></li>
+                            <li class="breadcrumb-item active" aria-current="page">Elections</li>
+                        </ol>
+                    </nav>
+
+                    <!-- Heading -->
+                    <h1 class="fs-4 mb-0">Elections</h1>
+                </div>
+                <div class="col-12 col-sm-auto mt-4 mt-sm-0">
+                    <!-- Action -->
+                <a class="btn btn-secondary d-block" href="javascript:;">
+                    <span class="material-symbols-outlined me-1">export_notes</span> Export
+                </a>
+            </div>
+        </div>
+
+        <!-- Page content -->
+        <div class="row">
+            <div class="col-12">
+                <!-- Filters -->
+                <div class="card card-line bg-body-tertiary border-transparent mb-7">
+                    <div class="card-body p-4">
+                        <div class="row align-items-center">
+                            <div class="col-12 col-lg-auto mb-3 mb-lg-0">
+                                <div class="row align-items-center">
+                                    <div class="col-auto">
+                                        <div class="text-body-secondary">No customers selected</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        <div>
+
+        
 <main role="main" class="col-md-12 col-lg-12 px-4" style="background-color: rgb(70, 60, 54);">
 <style type="text/css">
     .dropdown-menu.show {

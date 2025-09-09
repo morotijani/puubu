@@ -762,8 +762,8 @@
                             </a>
                         </div>
                         <div class="nav-item">
-                            <a class="nav-link" href="#">
-                                <span class="material-symbols-outlined me-3">login</span> Report
+                            <a class="nav-link" href="<?= PROOT; ?>172.06.84.0/reports">
+                                <span class="material-symbols-outlined me-3">bar_chart</span> Report
                             </a>
                         </div>
                     </nav>
@@ -774,7 +774,7 @@
                     <!-- Nav -->
                     <nav class="navbar-nav nav-pills mb-xl-7">
                         <div class="nav-item">
-                            <a class="nav-link " href="<?= PROOT; ?>172.06.84.0" />
+                            <a class="nav-link" href="<?= PROOT; ?>172.06.84.0">
                                 <span class="material-symbols-outlined me-3">sticky_note_2</span> Getting started
                             </a>
                         </div>

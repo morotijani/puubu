@@ -80,53 +80,53 @@ if (isset($_GET['report']) && !empty($_GET['report'])) {
             </div>
 
 
-        <!-- Page content -->
-        <div class="row">
-            <div class="col-12">
-                <!-- Filters -->
-                <div class="card card-line bg-body-tertiary border-transparent mb-7">
-                    <div class="card-body p-4">
-                        <div class="row align-items-center">
-                            <div class="col-12 col-lg-auto mb-3 mb-lg-0">
-                                <div class="row align-items-center">
+            <!-- Page content -->
+            <div class="row">
+                <div class="col-12">
+                    <!-- Filters -->
+                    <div class="card card-line bg-body-tertiary border-transparent mb-7">
+                        <div class="card-body p-4">
+                            <div class="row align-items-center">
+                                <div class="col-12 col-lg-auto mb-3 mb-lg-0">
+                                    <div class="row align-items-center">
+                                        <div class="col-auto">
+                                            <div class="text-body-secondary">No customers selected</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-12 col-lg"><div class="row gx-3  ">
+                                    <div class="col col-lg-auto ms-auto">
+                                        <div class="input-group bg-body">
+                                            <input type="text" class="form-control" placeholder="Search" aria-label="Search" aria-describedby="search" />
+                                            <span class="input-group-text" id="search">
+                                                <span class="material-symbols-outlined">search</span>
+                                            </span>
+                                        </div>
+                                    </div>
+
                                     <div class="col-auto">
-                                        <div class="text-body-secondary">No customers selected</div>
+                                        <a class="btn btn-dark px-3" href="reports.voted.php?report=<?= $election_id; ?>">
+                                            Voted details
+                                        </a>
+                                    </div>
+                                    <div class="col-auto">
+                                        <a class="btn btn-dark px-3" href="reports.voter.php?report=<?= $election_id; ?>">
+                                            Voter details
+                                        </a>
+                                    </div>
+
+                                    <div class="col-auto ms-n2">
+                                        <a class="btn btn-dark px-3" href="<?= PROOT; ?>172.06.84.0/registrar">
+                                            Voters
+                                        </a>
                                     </div>
                                 </div>
+
                             </div>
-                            <div class="col-12 col-lg"><div class="row gx-3  ">
-                                <div class="col col-lg-auto ms-auto">
-                                    <div class="input-group bg-body">
-                                        <input type="text" class="form-control" placeholder="Search" aria-label="Search" aria-describedby="search" />
-                                        <span class="input-group-text" id="search">
-                                            <span class="material-symbols-outlined">search</span>
-                                        </span>
-                                    </div>
-                                </div>
-
-                                <div class="col-auto">
-                                    <a class="btn btn-dark px-3" href="reports.voted.php?report=<?= $election_id; ?>">
-                                        Voted details
-                                    </a>
-                                </div>
-                                <div class="col-auto">
-                                    <a class="btn btn-dark px-3" href="reports.voter.php?report=<?= $election_id; ?>">
-                                        Voter details
-                                    </a>
-                                </div>
-
-                                <div class="col-auto ms-n2">
-                                    <a class="btn btn-dark px-3" href="<?= PROOT; ?>172.06.84.0/registrar">
-                                        Voters
-                                    </a>
-                                </div>
-                            </div>
-
                         </div>
                     </div>
                 </div>
-            </div>
-        <div>
+            <div>
 
     <?php
         // $position_name = ((isset($_POST['position_name']) ? $_POST["position_name"] : ''));
@@ -159,7 +159,7 @@ if (isset($_GET['report']) && !empty($_GET['report'])) {
              foreach ($result as $row) {}
             $output .= '
                 <div class="table-responsive">
-                    <table class="table table-nowrap table-centered table-sm table-hover mb-0" style="color: #aab8c5;" id="voted-table">
+                    <table class="table align-middle mb-0" id="voted-table">
                         <thead>
                             <tr>
                                 <th>#</th>
@@ -204,7 +204,7 @@ if (isset($_GET['report']) && !empty($_GET['report'])) {
             ';
         }
     ?>
-    <div class="card mt-4" style='background-color: #37404a;' id="printIframeDiv">
+    <div class="card" id="printIframeDiv">
         <div class="card-body">
             <?php if ($_POST): ?>
             <a href="javascript:;" name="create_excel" id="create_excel" class="float-right mb-3 ml-1">
@@ -212,12 +212,13 @@ if (isset($_GET['report']) && !empty($_GET['report'])) {
             </a>
             <?php endif; ?>
 
-            <h4 class='header-title mb-3 text-left' style='color:rgb(170, 184, 197);'>Search for, Voted For under the election <span class="text-danger"><?= ucwords($report_row["election_name"]) ?></span>.</h4>
-            <hr>
+            <h4 class='header-title mb-3 text-left' style='color:rgb(170, 184, 197);'>
+                Search for, voted for under the election <span class="text-danger"><?= ucwords($report_row["election_name"]) ?></span>.
+            </h4>
             <form method="POST" action="reports.voted.php?report=<?= $election_id; ?>">
                 <div class="row justify-content-center"> 
                     <div class="col-md-4">
-                        <select class="form-control form-control-sm form-control-dark" name="contestant_position" id="contestant_position" required>
+                        <select class="form-control" name="contestant_position" id="contestant_position" required>
                             <option value="">...</option>
                             <?php foreach($position_result as $position_row): ?>
                                 <option value="<?= $position_row['position_id']; ?>"<?=(($contestant_position == $position_row['position_id'])?' selected': '')?>><?= $position_row['position_name']; ?></option>
@@ -225,7 +226,7 @@ if (isset($_GET['report']) && !empty($_GET['report'])) {
                         </select>
                     </div>
                     <div class="col-md-4">
-                        <button class="btn btn-primary btn-sm"> Search</button>
+                        <button class="btn btn-primary"> Search</button>
                     </div>
                 </div>
             </form>

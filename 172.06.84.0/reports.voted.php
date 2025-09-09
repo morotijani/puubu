@@ -42,7 +42,7 @@ if (isset($_GET['report']) && !empty($_GET['report'])) {
         $position_result = $statement->fetchAll();
 ?>
 
-<!-- Main -->
+    <!-- Main -->
     <main class="main px-lg-6">
         <!-- Content -->
         <div class="container-lg">
@@ -58,13 +58,13 @@ if (isset($_GET['report']) && !empty($_GET['report'])) {
                     <!-- Breadcrumb -->
                     <nav aria-label="breadcrumb">
                         <ol class="breadcrumb mb-1">
-                            <li class="breadcrumb-item"><a class="text-body-secondary" href="javascript:;">Elections</a></li>
-                            <li class="breadcrumb-item active" aria-current="page">Elections</li>
+                            <li class="breadcrumb-item"><a class="text-body-secondary" href="javascript:;">Reports</a></li>
+                            <li class="breadcrumb-item active" aria-current="page">Reports</li>
                         </ol>
                     </nav>
 
                     <!-- Heading -->
-                    <h1 class="fs-4 mb-0">Elections</h1>
+                    <h1 class="fs-4 mb-0">Reports</h1>
                 </div>
                 <div class="col-12 col-sm-auto mt-4 mt-sm-0">
                     <!-- Action -->
@@ -78,7 +78,6 @@ if (isset($_GET['report']) && !empty($_GET['report'])) {
                     </div>
                 </div>
             </div>
-
 
             <!-- Page content -->
             <div class="row">
@@ -206,15 +205,21 @@ if (isset($_GET['report']) && !empty($_GET['report'])) {
     ?>
     <div class="card" id="printIframeDiv">
         <div class="card-body">
-            <?php if ($_POST): ?>
-            <a href="javascript:;" name="create_excel" id="create_excel" class="float-right mb-3 ml-1">
-                Export as excel file <span data-feather="download-cloud" class="ml-1"></span>
-            </a>
-            <?php endif; ?>
-
-            <h4 class='header-title mb-3 text-left' style='color:rgb(170, 184, 197);'>
-                Search for, voted for under the election <span class="text-danger"><?= ucwords($report_row["election_name"]) ?></span>.
-            </h4>
+            <div class="row align-items-center">
+                <div class="col">
+                    <h3 class='fs-6 mb-2' style='color:rgb(170, 184, 197);'>
+                        Search for, voted for under the election <span class="text-danger"><?= ucwords($report_row["election_name"]) ?></span>.
+                    </h4>
+                </div>
+                <div class="col-auto my-n3 me-n3">
+                    <?php if ($_POST): ?>
+                        <a href="javascript:;" name="create_excel" id="create_excel" class="float-right mb-3 ml-1">
+                            Export as excel file <span data-feather="download-cloud" class="ml-1"></span>
+                        </a>
+                    <?php endif; ?>
+                </div>
+            </div>
+            
             <form method="POST" action="reports.voted.php?report=<?= $election_id; ?>">
                 <div class="row justify-content-center"> 
                     <div class="col-md-4">

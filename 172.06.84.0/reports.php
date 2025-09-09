@@ -9,7 +9,7 @@ if (!cadminIsLoggedIn()) {
 
 include ('includes/header.inc.php');
 include ('includes/top-nav.inc.php');
-//include ('includes/left-nav.inc.php');
+include ('includes/left-nav.inc.php');
 
 if (isset($_GET['report']) && !empty($_GET['election'])) {
     $election_id = sanitize((int)$_GET['election']);
@@ -30,6 +30,44 @@ if (isset($_GET['report']) && !empty($_GET['election'])) {
 
     if ($count_report > 0) {
 ?>
+
+ <!-- Main -->
+    <main class="main px-lg-6">
+        <!-- Content -->
+        <div class="container-lg">
+            <!-- Page header -->
+            <div class="row align-items-center mb-7">
+                <div class="col-auto">
+                    <!-- Avatar -->
+                    <div class="avatar avatar-xl rounded text-primary">
+                        <i class="fs-2" data-duoicon="app"></i>
+                    </div>
+                </div>
+                <div class="col">
+                    <!-- Breadcrumb -->
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb mb-1">
+                            <li class="breadcrumb-item"><a class="text-body-secondary" href="javascript:;">Reports</a></li>
+                            <li class="breadcrumb-item active" aria-current="page">Reports</li>
+                        </ol>
+                    </nav>
+
+                    <!-- Heading -->
+                    <h1 class="fs-4 mb-0">Reports</h1>
+                </div>
+                <div class="col-12 col-sm-auto mt-4 mt-sm-0">
+                    <!-- Action -->
+                    <div class="row gx-2">
+                        <div class="col-6 col-sm-auto">
+                            <a class="btn btn-light w-100" href="<?= PROOT; ?>172.06.84.0/reports.voted.php?report=<?= $election_id; ?>"><span class="material-symbols-outlined me-1">add</span> Refresh</a>
+                        </div>
+                        <div class="col-6 col-sm-auto">
+                            <a href="reports?report=1&election=<?= $election_id; ?>" class="btn btn-danger w-100">Go back</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
 <main role="main" class="col-md-12 col-lg-12 px-4" style="background-color: rgb(70, 60, 54);">
 <style type="text/css">
     .dropdown-menu.show {
@@ -117,7 +155,6 @@ if (isset($_GET['eclear']) && !empty($_GET['eclear'])) {
 <div class="toast-container p-3 top-0 start-0" id="toastPlacement" data-original-class="toast-container p-3"></div>
 
 <?php
-    include ('includes/main-footer.inc.php');
     include ('includes/footer.inc.php');
 ?>
 <script type="text/javascript" src="<?= PROOT; ?>172.06.84.0/media/files/Chart.min.js"></script>

@@ -301,7 +301,7 @@ if (isset($_POST['createcont'])) {
                     <nav aria-label="breadcrumb">
                         <ol class="breadcrumb mb-1">
                             <li class="breadcrumb-item"><a class="text-body-secondary" href="javascript:;">Contestatnt</a></li>
-                            <li class="breadcrumb-item active" aria-current="page">Contestatnt</li>
+                            <li class="breadcrumb-item active" aria-current="page">Contestant</li>
                         </ol>
                     </nav>
                     <!-- Heading -->
@@ -469,8 +469,6 @@ if (isset($_GET['createcontestant']) || isset($_GET['editcontestant']) && !empty
 
     <?php else: ?>
 
-        
-          
     <div class="card">
         <div class="card-body">
             <div class="row align-items-center">

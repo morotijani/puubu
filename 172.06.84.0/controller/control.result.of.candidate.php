@@ -47,11 +47,14 @@ if (isset($_POST['election_id'])) {
             $positionId = $position_row['position_id'];
 
             $output .= "
-                <h2 class='text-center'>
-                    " . ucwords($positionName) . "
-                    <small class='text-danger' style='font-size: 15px'>Skipped Votes: ".$position_row['position_skipped_votes']."</small>
-                </h2>
-                
+            <div class='row align-items-center'>
+                <div class='col'>
+                    <h2 class='text-center'>" . ucwords($positionName) . "</h2>
+                </div>
+                <div class='col-auto'>
+                    <small class='text-danger' style='font-size: 15px'>Skipped Votes:  ". $position_row['position_skipped_votes'] . "</small>
+                </div>
+            </div>
             ";
             
             $contestant_query = "

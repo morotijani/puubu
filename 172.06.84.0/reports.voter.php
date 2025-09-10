@@ -9,7 +9,7 @@ if (!cadminIsLoggedIn()) {
 
 include ('includes/header.inc.php');
 include ('includes/top-nav.inc.php');
-// include ('includes/left-nav.inc.php');
+include ('includes/left-nav.inc.php');
 
 if (isset($_GET['report']) && !empty($_GET['report'])) {
     $election_id = sanitize((int)$_GET['report']);
@@ -42,31 +42,90 @@ if (isset($_GET['report']) && !empty($_GET['report'])) {
         $position_result = $statement->fetchAll();
 ?>
 
-<main role="main" class="col-md-12 col-lg-12 px-4" style="background-color: rgb(70, 60, 54);">
-<style type="text/css">
-    .dropdown-menu.show {
-        padding: 0!important;
-        background-color: #5f554d;
-    }
-</style>
-    <ul class="nav justify-content-end p-3">
-        <li class="nav-item">
-             <a href="reports.voted.php?report=<?= $election_id; ?>" class="text-secondary nav-link active">Voted Details</a>
-        </li>
-        <li class="nav-item">
-            <a href="reports.voter.php?report=<?= $election_id; ?>" class="text-secondary nav-link">Voter Details</a>
-        </li>
-        <li class="nav-item">
-            <a href="registrar" class="text-secondary nav-link">Voters</a>
-        </li>
-        <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-expanded="false">other</a>
-            <div class="dropdown-menu">
-                <a href="reports.voter.php?report=<?= $election_id; ?>" class="text-secondary nav-link">Refresh!</a>
-                <a href="reports?report=1&election=<?= $election_id; ?>" class="nav-link text-secondary">Go back!</a>
+<!-- Main -->
+    <main class="main px-lg-6">
+        <!-- Content -->
+        <div class="container-lg">
+            <!-- Page header -->
+            <div class="row align-items-center mb-7">
+                <div class="col-auto">
+                    <!-- Avatar -->
+                    <div class="avatar avatar-xl rounded text-primary">
+                        <i class="fs-2" data-duoicon="app"></i>
+                    </div>
+                </div>
+                <div class="col">
+                    <!-- Breadcrumb -->
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb mb-1">
+                            <li class="breadcrumb-item"><a class="text-body-secondary" href="javascript:;">Reports</a></li>
+                            <li class="breadcrumb-item active" aria-current="page">Reports</li>
+                        </ol>
+                    </nav>
+
+                    <!-- Heading -->
+                    <h1 class="fs-4 mb-0">Reports</h1>
+                </div>
+                <div class="col-12 col-sm-auto mt-4 mt-sm-0">
+                    <!-- Action -->
+                    <div class="row gx-2">
+                        <div class="col-6 col-sm-auto">
+                            <a class="btn btn-light w-100" href="<?= PROOT; ?>172.06.84.0/reports.voted.php?report=<?= $election_id; ?>"><span class="material-symbols-outlined me-1">add</span> Refresh</a>
+                        </div>
+                        <div class="col-6 col-sm-auto">
+                            <a href="reports?report=1&election=<?= $election_id; ?>" class="btn btn-danger w-100">Go back</a>
+                        </div>
+                    </div>
+                </div>
             </div>
-        </li>
-    </ul>
+
+            <!-- Page content -->
+            <div class="row">
+                <div class="col-12">
+                    <!-- Filters -->
+                    <div class="card card-line bg-body-tertiary border-transparent mb-7">
+                        <div class="card-body p-4">
+                            <div class="row align-items-center">
+                                <div class="col-12 col-lg-auto mb-3 mb-lg-0">
+                                    <div class="row align-items-center">
+                                        <div class="col-auto">
+                                            <div class="text-body-secondary">No customers selected</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-12 col-lg"><div class="row gx-3  ">
+                                    <div class="col col-lg-auto ms-auto">
+                                        <div class="input-group bg-body">
+                                            <input type="text" class="form-control" placeholder="Search" aria-label="Search" aria-describedby="search" />
+                                            <span class="input-group-text" id="search">
+                                                <span class="material-symbols-outlined">search</span>
+                                            </span>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-auto">
+                                        <a class="btn btn-dark px-3" href="reports.voted.php?report=<?= $election_id; ?>">
+                                            Voted details
+                                        </a>
+                                    </div>
+                                    <div class="col-auto">
+                                        <a class="btn btn-dark px-3" href="reports.voter.php?report=<?= $election_id; ?>">
+                                            Voter details
+                                        </a>
+                                    </div>
+
+                                    <div class="col-auto ms-n2">
+                                        <a class="btn btn-dark px-3" href="<?= PROOT; ?>172.06.84.0/registrar">
+                                            Voters
+                                        </a>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            <div>
 
     <?php
 
@@ -83,7 +142,7 @@ if (isset($_GET['report']) && !empty($_GET['report'])) {
             $i = 1;
             $output .= '
                 <div class="table-responsive">
-                    <table class="table table-nowrap table-centered table-sm table-hover mb-0" style="color: #aab8c5;" id="voter-table">
+                    <table class="table mb-0" id="voter-table">
                         <thead>
                             <tr>
                                 <th>#</th>
@@ -124,7 +183,7 @@ if (isset($_GET['report']) && !empty($_GET['report'])) {
             ';
         
     ?>
-    <div class="card mt-4" style='background-color: #37404a;' id="printIframeDiv">
+    <div class="card" id="printIframeDiv">
         <div class="card-body">
             <a href="javascript:;" name="create_excel" id="create_excel" class="float-right mb-3 ml-1">
                 Export as excel file <span data-feather="download-cloud" class="ml-1"></span>
@@ -145,14 +204,12 @@ if (isset($_GET['report']) && !empty($_GET['report'])) {
     echo '<script>window.location = "index";</script>';
 }
 
-include ('includes/main-footer.inc.php');
 include ('includes/footer.inc.php');
 
 ?>
 <script type="text/javascript" src="https://unpkg.com/xlsx@0.15.1/dist/xlsx.full.min.js"></script>
 
 <script type="text/javascript">
-    feather.replace();
     function html_table_to_excel(type) {
         var data = document.getElementById('voter-table');
 

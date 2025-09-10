@@ -22,7 +22,7 @@ if (isset($_POST['election_id'])) {
     $output = "
         <div class='card mt-2'>
             <div class='card-body'>
-                <h4 class='mb-3'>Votes for each positions</h4>
+                <h4 class='mb-3 text-center'>Votes for each positions</h4>
     ";
 
     
@@ -49,7 +49,7 @@ if (isset($_POST['election_id'])) {
             $output .= "
             <div class='row align-items-center'>
                 <div class='col'>
-                    <h2 class='text-center'>" . ucwords($positionName) . "</h2>
+                    <h4 class=''>" . strtoupper($positionName) . "</h4>
                 </div>
                 <div class='col-auto'>
                     <small class='text-danger' style='font-size: 15px'>Skipped Votes:  ". $position_row['position_skipped_votes'] . "</small>
@@ -151,7 +151,8 @@ if (isset($_POST['election_id'])) {
         $countNumberVotes = $statement->rowCount();
         if ($statement->rowCount() > 0) {
             $output .= "
-                <h4 class='header-title text-center mb-3'>Overall Votes for the election</h4>
+                <hr>
+                <h4 class='text-center mb-3'>Overall Votes for the election</h4>
                 <hr>
             ";
             $output .= "

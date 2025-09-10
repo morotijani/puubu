@@ -115,7 +115,6 @@ if (isset($_GET['report']) && !empty($_GET['election'])) {
                 </div>
             <div>
 
-
     <span id="temporary"></span>    
     <span id="graph-result"></span>
     <canvas id="myChart" width="400" height="160"></canvas>

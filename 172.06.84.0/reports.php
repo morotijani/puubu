@@ -52,7 +52,7 @@ if (isset($_GET['report']) && !empty($_GET['election'])) {
                     </nav>
 
                     <!-- Heading -->
-                    <h1 class="fs-4 mb-0">Reports</h1>
+                    <h1 class="fs-4 mb-0">Live reports</h1>
                 </div>
                 <div class="col-12 col-sm-auto mt-4 mt-sm-0">
                     <!-- Action -->
@@ -77,18 +77,18 @@ if (isset($_GET['report']) && !empty($_GET['election'])) {
                                 <div class="col-12 col-lg-auto mb-3 mb-lg-0">
                                     <div class="row align-items-center">
                                         <div class="col-auto">
-                                            <div class="text-body-secondary">No customers selected</div>
+                                            <div class="text-body-secondary">Report</div>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="col-12 col-lg"><div class="row gx-3  ">
                                     <div class="col col-lg-auto ms-auto">
-                                        <div class="input-group bg-body">
+                                        <!-- <div class="input-group bg-body">
                                             <input type="text" class="form-control" placeholder="Search" aria-label="Search" aria-describedby="search" />
                                             <span class="input-group-text" id="search">
                                                 <span class="material-symbols-outlined">search</span>
                                             </span>
-                                        </div>
+                                        </div> -->
                                     </div>
 
                                     <div class="col-auto">
@@ -114,11 +114,35 @@ if (isset($_GET['report']) && !empty($_GET['election'])) {
                     </div>
                 </div>
             <div>
+        
+            <span id="temporary"></span>    
+            <div class="card mb-6">
+                <div class="card-header">
+                    <div class="row align-items-center">
+                        <div class="col">
+                            <h3 class="fs-6 mb-0">Performance</h3>
+                        </div>
+                        <div class="col-auto fs-sm me-n3">
+                            <span class="material-symbols-outlined text-primary me-1">circle</span>
+                            Total
+                        </div>
+                        <div class="col-auto fs-sm">
+                            <span class="material-symbols-outlined text-dark me-1">circle</span>
+                            Tracked
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <!-- <div class="chart">
+                        <canvas class="chart-canvas" id="userPerformanceChart"></canvas>
+                    </div> -->
+                    <span id="graph-result"></span>
+                    <canvas id="myChart" width="400" height="160"></canvas>
+                </div>
+            </div>
 
-    <span id="temporary"></span>    
-    <span id="graph-result"></span>
-    <canvas id="myChart" width="400" height="160"></canvas>
-    <span id="display_candidate_and_result"></span>
+    
+            <div id="display_candidate_and_result"></div>
 
 <?php
     } else {

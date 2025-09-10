@@ -298,18 +298,21 @@ function goBack() {
 
 
 	// Sessions For login
-	function cAdminLoggedInID($cadmin_id) {
-		$_SESSION['crAdmin'] = $cadmin_id;
+	function cAdminLoggedInID($admin_id) {
+		$_SESSION['crAdmin'] = $admin_id;
 		global $conn;
 		$data = array(
 			':last_login' => date("Y-m-d H:i:s"),
-			':id' => (int)$cadmin_id
+			':id' => $admin_id
 		);
 		$query = "UPDATE puubu_admin SET last_login = :last_login WHERE id = :id";
 		$statement = $conn->prepare($query);
 		$result = $statement->execute($data);
 		if (isset($result)) {
-			$_SESSION['flash_success'] = '<div class="text-center" id="temporary">You are now logged in!</div>';
+			$message = "logged into the system";
+			add_to_log($message, $admin_id, 'admin');
+
+			$_SESSION['flash_success'] = 'You are now logged in!';
 			redirect(PROOT . '172.06.84.0/index');
 		}
 	}
@@ -512,7 +515,7 @@ function goBack() {
 
 		return $result;
 	}
-	
+
 	// add to logs
 	function add_to_log($message, $person, $type) {
 		global $conn;

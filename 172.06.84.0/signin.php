@@ -40,8 +40,8 @@
                                 if (!empty($errorsMsg)) {
                                     $errorsMsg = 'Oops... try again';
                                 } else {
-                                    $cadmin_id = $row['c_aid'];
-                                    cAdminLoggedInID($cadmin_id);
+                                    $admin_id = $row['admin_id'];
+                                    cAdminLoggedInID($admin_id);
                                 }
                             } else {
                                 $errorsMsg = 'Invalid details.';

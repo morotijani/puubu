@@ -34,7 +34,7 @@
                 </div>
                 <div class="col-12 col-md order-md-0 text-center text-md-start">
                     <h1>Hello, <?= ucwords($fname); ?></h1>
-                    <p class="fs-lg text-body-secondary mb-0">Here's a summary of your account activity for all election.</p>
+                    <p class="fs-lg text-body-secondary mb-0">Here's a summary of your account activity for all elections.</p>
                 </div>
             </div>
 
@@ -57,7 +57,7 @@
                                 <div class="col-auto">
                                     <!-- Avatar -->
                                     <div class="avatar avatar-lg bg-body text-primary">
-                                        <i class="fs-4" data-duoicon="credit-card"></i>
+                                        <i class="fs-4" data-duoicon="slideshow"></i>
                                     </div>
                             </div>
                         </div>
@@ -78,7 +78,7 @@
                             <div class="col-auto">
                                 <!-- Avatar -->
                                 <div class="avatar avatar-lg bg-body text-primary">
-                                    <i class="fs-4" data-duoicon="clock"></i>
+                                    <i class="fs-4" data-duoicon="user-card"></i>
                                 </div>
                             </div>
                         </div>
@@ -99,7 +99,7 @@
                             <div class="col-auto">
                                 <!-- Avatar -->
                                 <div class="avatar avatar-lg bg-body text-primary">
-                                    <i class="fs-4" data-duoicon="slideshow"></i>
+                                    <i class="fs-4" data-duoicon="menu"></i>
                                 </div>
                             </div>
                         </div>
@@ -120,7 +120,7 @@
                             <div class="col-auto">
                                 <!-- Avatar -->
                                 <div class="avatar avatar-lg bg-body text-primary">
-                                    <i class="fs-4" data-duoicon="discount"></i>
+                                    <i class="fs-4" data-duoicon="user"></i>
                                 </div>
                             </div>
                         </div>

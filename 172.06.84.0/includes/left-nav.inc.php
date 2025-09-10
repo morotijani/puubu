@@ -172,7 +172,7 @@
                     <div class="dropdown my-n2">
                     <a class="btn btn-link d-inline-flex align-items-center dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                         <span class="avatar avatar-sm avatar-status avatar-status-success me-3">
-                        <img class="avatar-img" src="./assets/img/photos/photo-6.jpg" alt="..." />
+                        <img class="avatar-img" src="<?= PROOT; ?>172.06.84.0/media/admin.jpg" alt="..." />
                         </span>
                         <span class="d-none d-xl-block"><?= $fullName; ?></span>
                     </a>
@@ -181,7 +181,7 @@
 
                         <li><a class="dropdown-item" href="<?= PROOT; ?>172.06.84.0/password-reset" target="_blank">Change password</a></li>
                         <li><hr class="dropdown-divider" /></li>
-                        <li><a class="dropdown-item" href="<?= PROOT; ?>172.06.84.0/logout">Sign out</a></li>
+                        <li><a class="dropdown-item" href="<?= PROOT ;?>172.06.84.0/cadminlogout">Sign out</a></li>
                     </ul>
                 </div>
             
@@ -378,8 +378,10 @@
                       Account <span class="material-symbols-outlined ms-auto">chevron_right</span>
                     </a>
                     <div class="dropdown-menu">
-                      <a class="dropdown-item " href="./account/account.html">Account overview</a>
-                      <a class="dropdown-item " href="./account/account-settings.html">Account settings</a>
+                      <a class="dropdown-item " href="<?= PROOT; ?>172.06.84.0/details">Account overview</a>
+                      <a class="dropdown-item " href="<?= PROOT; ?>172.06.84.0/settings">Account settings</a>
+                      <a class="dropdown-item " href="<?= PROOT; ?>172.06.84.0/settings?cp=1">Account settings</a>
+                      
                     </div>
                   </li>
                   <li class="dropend">
@@ -424,7 +426,7 @@
                     <div class="dropdown-menu">
                       <a class="dropdown-item" href="./auth/sign-in.html" target="_blank">Sign in</a>
                       <a class="dropdown-item" href="./auth/sign-up.html" target="_blank">Sign up</a>
-                      <a class="dropdown-item" href="./auth/password-reset.html" target="_blank">Password reset</a>
+                      <a class="dropdown-item" href="<?= PROOT; ?>172.06.84.0/settings" target="_blank">Password reset</a>
                       <a class="dropdown-item" href="./auth/verification-code.html" target="_blank">Verification code</a>
                       <a class="dropdown-item" href="./auth/error.html" target="_blank">Error</a>
                     </div>
@@ -593,7 +595,7 @@
                     <div class="dropdown my-n2">
                         <a class="btn btn-link d-inline-flex align-items-center dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                             <span class="avatar avatar-sm avatar-status avatar-status-success me-3">
-                                <img class="avatar-img" src="./assets/img/photos/photo-6.jpg" alt="..." />
+                                <img class="avatar-img" src="<?= PROOT; ?>172.06.84.0/media/admin.jpg" alt="..." />
                                 </span>
                             <span class="d-none d-xl-block"><?= $fullName; ?></span>
                         </a>
@@ -601,7 +603,7 @@
                             <li><a class="dropdown-item" href="<?= PROOT; ?>172.06.84.0/account">Account</a></li>
                             <li><a class="dropdown-item" href="<?= PROOT; ?>172.06.84.0/password-reset" target="_blank">Change password</a></li>
                             <li><hr class="dropdown-divider" /></li>
-                            <li><a class="dropdown-item" href="<?= PROOT; ?>172.06.84.0/logout">Sign out</a></li>
+                            <li><a class="dropdown-item" href="<?= PROOT ;?>172.06.84.0/cadminlogout">Sign out</a></li>
                         </ul>
                     </div>
             
@@ -876,15 +878,16 @@
           <div class="dropdown my-n2">
             <a class="btn btn-link d-inline-flex align-items-center dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
               <span class="avatar avatar-sm avatar-status avatar-status-success me-3">
-                <img class="avatar-img" src="./assets/img/photos/photo-6.jpg" alt="..." />
+                <img class="avatar-img" src="<?= PROOT; ?>172.06.84.0/media/admin.jpg" alt="..." />
               </span>
               <span class="d-none d-xl-block"><?= $fullName; ?></span>
             </a>
             <ul class="dropdown-menu dropdown-menu-end">
-              <li><a class="dropdown-item" href="./account/account.html">Account</a></li>
-              <li><a class="dropdown-item" href="./auth/password-reset.html" target="_blank">Change password</a></li>
+              <li><a class="dropdown-item" href="<?= PROOT; ?>172.06.84.0/details">Account</a></li>
+              <li><a class="dropdown-item" href="<?= PROOT; ?>172.06.84.0/settings">Settings</a></li>
+                <li><a class="dropdown-item" href="<?= PROOT; ?>172.06.84.0/settings?cp=1">Change password</a></li>
               <li><hr class="dropdown-divider" /></li>
-              <li><a class="dropdown-item" href="#">Sign out</a></li>
+              <li><a class="dropdown-item" href="<?= PROOT ;?>172.06.84.0/cadminlogout">Sign out</a></li>
             </ul>
           </div>
     
@@ -1067,8 +1070,9 @@
                     Account <span class="material-symbols-outlined ms-auto">chevron_right</span>
                   </a>
                   <div class="dropdown-menu">
-                    <a class="dropdown-item " href="./account/account.html">Account overview</a>
-                    <a class="dropdown-item " href="./account/account-settings.html">Account settings</a>
+                    <a class="dropdown-item " href="<?= PROOT; ?>172.06.84.0/details">Account overview</a>
+                    <a class="dropdown-item " href="<?= PROOT; ?>172.06.84.0/settings">Account settings</a>
+                    <a class="dropdown-item " href="<?= PROOT; ?>172.06.84.0/settings?cp=1">Change password</a>
                   </div>
                 </li>
                 <li class="dropend">
@@ -1113,7 +1117,7 @@
                   <div class="dropdown-menu">
                     <a class="dropdown-item" href="./auth/sign-in.html" target="_blank">Sign in</a>
                     <a class="dropdown-item" href="./auth/sign-up.html" target="_blank">Sign up</a>
-                    <a class="dropdown-item" href="./auth/password-reset.html" target="_blank">Password reset</a>
+                    <a class="dropdown-item" href="<?= PROOT; ?>172.06.84.0/settings" target="_blank">Password reset</a>
                     <a class="dropdown-item" href="./auth/verification-code.html" target="_blank">Verification code</a>
                     <a class="dropdown-item" href="./auth/error.html" target="_blank">Error</a>
                   </div>
@@ -1249,15 +1253,16 @@
             <div class="dropdown my-n2">
               <a class="btn btn-link d-inline-flex align-items-center dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                 <span class="avatar avatar-sm avatar-status avatar-status-success me-3">
-                  <img class="avatar-img" src="./assets/img/photos/photo-6.jpg" alt="..." />
+                  <img class="avatar-img" src="<?= PROOT; ?>172.06.84.0/media/admin.jpg" alt="..." />
                 </span>
                 <span class="d-none d-xl-block"><?= $fullName; ?></span>
               </a>
               <ul class="dropdown-menu dropdown-menu-end">
-                <li><a class="dropdown-item" href="./account/account.html">Account</a></li>
-                <li><a class="dropdown-item" href="./auth/password-reset.html" target="_blank">Change password</a></li>
+                <li><a class="dropdown-item" href="<?= PROOT; ?>172.06.84.0/details">Account</a></li>
+                <li><a class="dropdown-item" href="<?= PROOT; ?>172.06.84.0/settings">Settings</a></li>
+                <li><a class="dropdown-item" href="<?= PROOT; ?>172.06.84.0/settings?cp=1">Change password</a></li>
                 <li><hr class="dropdown-divider" /></li>
-                <li><a class="dropdown-item" href="#">Sign out</a></li>
+                <li><a class="dropdown-item" href="<?= PROOT ;?>172.06.84.0/cadminlogout">Sign out</a></li>
               </ul>
             </div>
     

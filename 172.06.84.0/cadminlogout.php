@@ -5,9 +5,4 @@
 
 	unset($_SESSION['crAdmin']);
 
-	header("Location: signin");
-
-
-
-
-?>
+	redirect(PROOT . '172.06.84.0/signin');

@@ -154,8 +154,14 @@ if (isset($_GET['report']) && !empty($_GET['report'])) {
                 ':vft'  => 0
             ]);
             $result = $statement->fetchAll();
+            // if (is_array($result)) {
+            //     dnd($statement->rowCount());
+            // }
             $i = 1;
-             foreach ($result as $row) {}
+            $p_name = '';
+            foreach ($result as $row) {
+                $p_name = 'Voted for - ' . ucwords($row['position_name']);
+            }
             $output .= '
                 <div class="table-responsive">
                     <table class="table align-middle mb-0" id="voted-table">
@@ -168,7 +174,7 @@ if (isset($_GET['report']) && !empty($_GET['report'])) {
                                 <th>Date and Time</th>
                                 <th>Location</th>
                                 <th>IP Address</th>
-                                <th>Voted For - ' . ucwords($row['position_name']) . '</th>
+                                <th>' . $p_name . '</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -192,7 +198,7 @@ if (isset($_GET['report']) && !empty($_GET['report'])) {
             } else {
                 $output .= '
                     <tr>
-                        <td colspan="5"> No data found</td>
+                        <td colspan="8"> No data found</td>
                     </td>
                 ';
             }

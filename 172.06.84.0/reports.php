@@ -6,7 +6,6 @@ if (!cadminIsLoggedIn()) {
     cadminLoginErrorRedirect();
 }
 
-
 include ('includes/header.inc.php');
 include ('includes/top-nav.inc.php');
 include ('includes/left-nav.inc.php');
@@ -122,15 +121,14 @@ if (isset($_GET['report']) && !empty($_GET['election'])) {
     <canvas id="myChart" width="400" height="160"></canvas>
     <span id="display_candidate_and_result"></span>
 
-
 <?php
     } else {
         $_SESSION['error_flash'] = 'Election was not found!';
-        echo '<script>window.location = "index";</script>';
+        redirect(PROOT . '172.06.84.0/index');
     }
 } else {
     $_SESSION['error_flash'] = 'There was an error, please try again later.';
-    echo '<script>window.location = "index";</script>';
+    redirect(PROOT . '172.06.84.0/index');
 }
 
 $electionStarted = '';

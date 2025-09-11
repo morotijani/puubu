@@ -2,7 +2,6 @@
 
     // CONNECTION TO DATABASE
     require_once("../connection/conn.php");
-    
     if (!cadminIsLoggedIn()) {
         cadminLoginErrorRedirect();
     }
@@ -15,12 +14,12 @@
     // OUTPUT ERRORS
     $message = '';
 
-    $election_name = ((isset($_POST['election_name'])?$_POST["election_name"]:''));
-    $election_by = ((isset($_POST['election_by'])?$_POST["election_by"]:''));
+    $election_name = ((isset($_POST['election_name'])?$_POST["election_name"] : ''));
+    $election_by = ((isset($_POST['election_by'])?$_POST["election_by"] : ''));
 
     // DELETE AN ELECTION NAME FROM DATABASE
     if (isset($_GET['delete_election']) && !empty($_GET['delete_election'])) {
-        $delete_id = (int)$_GET['delete_election'];
+        $delete_id = $_GET['delete_election'];
 
         $find_election_and_check_status = $conn->query("SELECT * FROM election WHERE eid = '".$delete_id."' AND session = 0")->rowCount();
         if ($find_election_and_check_status > 0) {
@@ -30,13 +29,18 @@
             $delete_election_result = $statement->execute([$delete_id]);
 
             if (isset($delete_election_result)) {
+                $log_message = "election with id ['" . $delete_id . "'] deleted!";
+	            add_to_log($log_message, $admin_id, 'admin');
+
                 $_SESSION['flash_success'] = 'Election Name Has Been Successfully <span class="bg-danger">Deleted</span>';
-                echo "<script>window.location = 'election'</script>";
+                redirect(ADROOT . 'election');
             }
         } else {
+            $log_message = "election ['" . $delete_id . "'], selected to be deleted, but did not exist!";
+            add_to_log($log_message, $admin_id, 'admin');
+            
             $_SESSION['flash_success'] = 'The selected election is either do not exist or has already been <span class="bg-danger">Activated</span>';
-            echo "<script>window.location = 'election'</script>";
-
+            redirect(ADROOT . 'election')
         }
 
     }
@@ -59,8 +63,11 @@
                 $election_by = ((isset($_row['election_by'])? $_row['election_by'] : $_POST["election_by"]));
             }
         } else {
+            $log_message = "election ['" . $delete_id . "'], selected to be edited, but did not exist!";
+            add_to_log($log_message, $admin_id, 'admin');
+
             $_SESSION['flash_success'] = 'The selected election is either do not exist or has already been <span class="bg-danger">Activated</span>';
-            echo "<script>window.location = 'election'</script>";
+            redirect(ADROOT . 'election')
         }
     }
 

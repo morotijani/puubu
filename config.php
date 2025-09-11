@@ -3,6 +3,7 @@
 	define('BASEURL', $_SERVER['DOCUMENT_ROOT'].'/puubu/');
 	
 	define('PROOT', '/puubu/');
+	define('ADROOT', '/puubu/172.06.84.0/');
 
 	// Load the environment variables from the .env file
     define('RECAPTCHA_SITE_KEY_PUBLIC', $_ENV['RECAPTCHA_SITE_KEY_PUBLIC']);

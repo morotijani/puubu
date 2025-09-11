@@ -181,7 +181,7 @@
 
                         <li><a class="dropdown-item" href="<?= PROOT; ?>172.06.84.0/password-reset" target="_blank">Change password</a></li>
                         <li><hr class="dropdown-divider" /></li>
-                        <li><a class="dropdown-item" href="<?= PROOT ;?>172.06.84.0/cadminlogout">Sign out</a></li>
+                        <li><a class="dropdown-item" href="<?= PROOT ;?>172.06.84.0/logout">Sign out</a></li>
                     </ul>
                 </div>
             
@@ -603,7 +603,7 @@
                             <li><a class="dropdown-item" href="<?= PROOT; ?>172.06.84.0/account">Account</a></li>
                             <li><a class="dropdown-item" href="<?= PROOT; ?>172.06.84.0/password-reset" target="_blank">Change password</a></li>
                             <li><hr class="dropdown-divider" /></li>
-                            <li><a class="dropdown-item" href="<?= PROOT ;?>172.06.84.0/cadminlogout">Sign out</a></li>
+                            <li><a class="dropdown-item" href="<?= PROOT ;?>172.06.84.0/logout">Sign out</a></li>
                         </ul>
                     </div>
             
@@ -887,7 +887,7 @@
               <li><a class="dropdown-item" href="<?= PROOT; ?>172.06.84.0/settings">Settings</a></li>
                 <li><a class="dropdown-item" href="<?= PROOT; ?>172.06.84.0/settings?cp=1">Change password</a></li>
               <li><hr class="dropdown-divider" /></li>
-              <li><a class="dropdown-item" href="<?= PROOT ;?>172.06.84.0/cadminlogout">Sign out</a></li>
+              <li><a class="dropdown-item" href="<?= PROOT ;?>172.06.84.0/logout">Sign out</a></li>
             </ul>
           </div>
     
@@ -1262,7 +1262,7 @@
                 <li><a class="dropdown-item" href="<?= PROOT; ?>172.06.84.0/settings">Settings</a></li>
                 <li><a class="dropdown-item" href="<?= PROOT; ?>172.06.84.0/settings?cp=1">Change password</a></li>
                 <li><hr class="dropdown-divider" /></li>
-                <li><a class="dropdown-item" href="<?= PROOT ;?>172.06.84.0/cadminlogout">Sign out</a></li>
+                <li><a class="dropdown-item" href="<?= PROOT ;?>172.06.84.0/logout">Sign out</a></li>
               </ul>
             </div>
     

@@ -528,10 +528,10 @@ function goBack() {
 		$statement = $conn->prepare($sql);
 		$result = $statement->execute([$log_id, $message, $person, $type]);
 
-		return false;
 		if ($result) {
 			return true;
 		}
+		return false;
 	}
 
 	// get logs for admins

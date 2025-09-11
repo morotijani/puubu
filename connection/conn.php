@@ -43,21 +43,20 @@
 
 
  	if (isset($_SESSION['crAdmin'])) {
- 		$data = array(
- 			':id' => (int)$_SESSION['crAdmin']
- 		);
- 		$sql = "SELECT * FROM puubu_admin WHERE id = :id LIMIT 1";
+ 		$data = array($_SESSION['crAdmin']);
+ 		$sql = "SELECT * FROM puubu_admin WHERE admin_id = ? LIMIT 1";
  		$statement = $conn->prepare($sql);
  		$statement->execute($data);
 		$admin_dt = $statement->fetchAll();
 
 		if ($statement->rowCount() > 0) {
 			$admin_data = $admin_dt[0];
+			$admin_id = $admin_data['admin_id'];
 			$fullName = ucwords($admin_data['cfname'] . ' ' . $admin_data['clname']);
  			$lName = ucwords($admin_data['clname']);
  			$fname = ucwords($admin_data['cfname']);
 		} else {
-			redirect(PROOT);
+			redirect(PROOT . '172.06.84.0');
 		}
 
  	}

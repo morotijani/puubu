@@ -249,10 +249,11 @@ function getDeviceType() {
 } 
 
 function goBack() {
-	$previous = "javascript:history.go(-1)";
-	if (isset($_SERVER['HTTP_REFERER'])) {
-	    $previous = $_SERVER['HTTP_REFERER'];
-	}
+	// $previous = "javascript:history.go(-1)";
+	$previous = "javascript:history.back()";
+	// if (isset($_SERVER['HTTP_REFERER'])) {
+	//     $previous = $_SERVER['HTTP_REFERER'];
+	// }
 	return $previous;
 }
 

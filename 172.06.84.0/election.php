@@ -156,7 +156,7 @@
                         $resultu = $statement->execute();
 
                         if (isset($resultu)) {
-                            $log_message = "election ['" . $delete_id . "'], selected to be edited, but did not exist!";
+                            $log_message = "updated election ['" . $delete_id . "']!";
                             add_to_log($log_message, $admin_id, 'admin');
 
                             $_SESSION['flash_success'] = 'Election Successfully Updated';
@@ -167,7 +167,7 @@
                         $statement = $conn->prepare($query);
                         $result = $statement->execute();
                         if (isset($result)) {
-                            $log_message = "election ['" . $delete_id . "'], selected to be edited, but did not exist!";
+                            $log_message = "new election added!";
                             add_to_log($log_message, $admin_id, 'admin');
 
                             $_SESSION['flash_success'] = 'Election Successfully <span class="bg-danger">Added</span></div>';

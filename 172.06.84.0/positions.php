@@ -26,7 +26,7 @@ $electionQuery = $conn->query("SELECT * FROM election WHERE election.session = 0
 if (isset($_GET['deleteposition']) && !empty($_GET['deleteposition'])) {
     $delete_id = sanitize((int)$_GET['deleteposition']);
 
-    $findPosition = $conn->query("SELECT * FROM positions INNER JOIN election ON election.eid = positions.election_id WHERE position_id = '".$delete_id."' AND election.session = 0")->fetchAll();
+    $findPosition = $conn->query("SELECT * FROM positions INNER JOIN election ON election.election_id = positions.election_id WHERE position_id = '".$delete_id."' AND election.session = 0")->fetchAll();
     if ($findPosition > 0) {
         if ($conn->query("DELETE FROM positions WHERE position_id = '".$delete_id."'")) {
             $_SESSION['flash_success'] = 'Position Name Has Been Successfully Deleted';
@@ -42,7 +42,7 @@ if (isset($_GET['deleteposition']) && !empty($_GET['deleteposition'])) {
 if (isset($_GET['editposition'])) {
     $edit_id = sanitize((int)$_GET['editposition']);
 
-    $findPosition = $conn->query("SELECT * FROM positions INNER JOIN election ON election.eid = positions.election_id WHERE position_id = '".$edit_id."' AND election.session = 0")->rowCount();
+    $findPosition = $conn->query("SELECT * FROM positions INNER JOIN election ON election.election_id = positions.election_id WHERE position_id = '".$edit_id."' AND election.session = 0")->rowCount();
     if ($findPosition > 0) {
         foreach ($conn->query("SELECT * FROM positions WHERE position_id = '".$edit_id."'")->fetchAll() as $_row) {
           $position_name = ((isset($_row['position_name']) ? $_row['position_name'] : $_POST["position_name"]));
@@ -56,7 +56,7 @@ if (isset($_GET['editposition'])) {
 
 // LIST POSITIONS
 $positionsList = '';
-foreach ($conn->query("SELECT * FROM positions INNER JOIN election WHERE positions.election_id = election.eid ORDER BY position_id DESC")->fetchAll() as $row) {
+foreach ($conn->query("SELECT * FROM positions INNER JOIN election WHERE positions.election_id = election.election_id ORDER BY position_id DESC")->fetchAll() as $row) {
     $editOption = '';
     $deleteOption = '';
     if ($row["session"] == 0) {
@@ -208,7 +208,7 @@ if (isset($_POST['addposition'])) {
                                 <select class="form-control" name="sel_election" id="sel_election">
                                     <option value=""<?=(($sel_election == '')?' selected':'');?>>Select Election Name</option>
                                     <?php foreach ($electionQuery as $election_row): ?>
-                                        <option value="<?=$election_row['eid'];?>"<?= (($sel_election == $election_row['eid']) ? ' selected' : ''); ?>><?= ucwords($election_row['election_name']); ?> ~ <?= ucwords($election_row['election_by']); ?></option>
+                                        <option value="<?=$election_row['election_id'];?>"<?= (($sel_election == $election_row['election_id']) ? ' selected' : ''); ?>><?= ucwords($election_row['election_name']); ?> ~ <?= ucwords($election_row['election_by']); ?></option>
                                     <?php endforeach; ?>
                                 </select>
                             </div>

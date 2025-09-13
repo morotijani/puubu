@@ -21,10 +21,10 @@
     if (isset($_GET['delete_election']) && !empty($_GET['delete_election'])) {
         $delete_id = $_GET['delete_election'];
 
-        $find_election_and_check_status = $conn->query("SELECT * FROM election WHERE eid = '".$delete_id."' AND session = 0")->rowCount();
+        $find_election_and_check_status = $conn->query("SELECT * FROM election WHERE election_id = '".$delete_id."' AND session = 0")->rowCount();
         if ($find_election_and_check_status > 0) {
 
-            $deleteQuery = "DELETE FROM election WHERE eid = ?";
+            $deleteQuery = "DELETE FROM election WHERE election_id = ?";
             $statement = $conn->prepare($deleteQuery);
             $delete_election_result = $statement->execute([$delete_id]);
 
@@ -49,12 +49,12 @@
     // SELECT ELECTION NAME FROM DATABASE FOR EDIT PROCESS USING THE ID IN GET FORM
     if (isset($_GET['edit_election'])) {
 
-        $edit_election_id = sanitize((int)$_GET['edit_election']);
+        $edit_election_id = sanitize($_GET['edit_election']);
 
-        $find_election_and_check_status = $conn->query("SELECT * FROM election WHERE eid = '".$edit_election_id."' AND session = 0")->rowCount();
+        $find_election_and_check_status = $conn->query("SELECT * FROM election WHERE election_id = '".$edit_election_id."' AND session = 0")->rowCount();
         if ($find_election_and_check_status > 0) {
 
-            $query = "SELECT * FROM election WHERE eid = ? AND session = ?";
+            $query = "SELECT * FROM election WHERE election_id = ? AND session = ?";
             $statement = $conn->prepare($query);
             $statement->execute([$edit_election_id, 0]);
             $result = $statement->fetchAll();
@@ -63,7 +63,7 @@
                 $election_by = ((isset($_row['election_by'])? $_row['election_by'] : $_POST["election_by"]));
             }
         } else {
-            $log_message = "election ['" . $delete_id . "'], selected to be edited, but did not exist!";
+            $log_message = "election ['" . $edit_election_id . "'], selected to be edited, but did not exist!";
             add_to_log($log_message, $admin_id, 'admin');
 
             $_SESSION['flash_success'] = 'The selected election is either do not exist or has already been <span class="bg-danger">Activated</span>';
@@ -73,7 +73,7 @@
 
 
     // LIST * INPUTED ELECTIONS
-    $get_election_query = "SELECT * FROM election ORDER BY eid DESC";
+    $get_election_query = "SELECT * FROM election ORDER BY election_id DESC";
     $statement = $conn->prepare($get_election_query);
     $statement->execute();
     $get_election_count = $statement->rowCount();
@@ -84,25 +84,25 @@
             if ($get_election_row['session'] == 1) {
                 $option1 = "<span class='badge bg-success-subtle text-success' title='Election is on going.'>running ...</span>";
                 $option2 = "
-                    <a href='" . ADROOT . "reports?report=1&election=" . $get_election_row["eid"] . "' class='btn btn-sm btn-primary' title='View Runing Election Details' target='_blank'>
+                    <a href='" . ADROOT . "reports?report=1&election=" . $get_election_row["election_id"] . "' class='btn btn-sm btn-primary' title='View Runing Election Details' target='_blank'>
                         <span class='material-symbols-outlined me-1'>visibility</span> View
                     </a>
                 ";
             } else if ($get_election_row['session'] == 2) {
                 $option1 = "<span class='badge bg-danger-subtle text-danger'>ended</span>";
                 $option2 = "
-                    <a href='" . ADROOT . "report/full_election_report?election=" . $get_election_row["eid"] . "' class='btn btn-sm btn-secondary' title='View Ended election Details'>
+                    <a href='" . ADROOT . "report/full_election_report?election=" . $get_election_row["election_id"] . "' class='btn btn-sm btn-secondary' title='View Ended election Details'>
                         <span class='material-symbols-outlined me-1'>visibility</span> View
                     </a>
                     ";
             } else {
                 $option1 = '
-                    <a href="' . ADROOT . 'election.php?edit_election='.$get_election_row["eid"].'" class="btn btn-sm btn-warning" title="Edit election">
+                    <a href="' . ADROOT . 'election.php?edit_election='.$get_election_row["election_id"].'" class="btn btn-sm btn-warning" title="Edit election">
                         <span class="material-symbols-outlined me-1">stylus_note</span> Edit
                     </a>
                 ';
                 $option2 = '
-                    <a href="javascript:;" class="btn btn-sm btn-danger delete-election" title="Delete election" id="'.$get_election_row["eid"].'">
+                    <a href="javascript:;" class="btn btn-sm btn-danger delete-election" title="Delete election" id="'.$get_election_row["election_id"].'">
                         <span class="material-symbols-outlined me-1">delete</span> Delete
                     </a>
                 ';
@@ -137,7 +137,7 @@
 
             $query = "SELECT * FROM election WHERE election_name = '". $_POST['election_name']."' AND election_by = '".$_POST["election_by"]."'";
             if (isset($_GET['edit_election']) && !empty($_GET['edit_election'])) {
-                $query = "SELECT * FROM election WHERE election_name = '".$_POST['election_name']."' AND eid != '".(int)$_GET['edit_election']."'";
+                $query = "SELECT * FROM election WHERE election_name = '".$_POST['election_name']."' AND election_id != '".(int)$_GET['edit_election']."'";
             }
             $statement = $conn->prepare($query);
             $statement->execute();
@@ -151,19 +151,20 @@
                         $update = "
                             UPDATE election 
                             SET election_name = '".$_POST['election_name']."', election_by = '".$_POST['election_by']."' 
-                            WHERE eid = '" . $_GET['edit_election'] . "'";
+                            WHERE election_id = '" . $_GET['edit_election'] . "'";
                         $statement = $conn->prepare($update);
                         $resultu = $statement->execute();
 
                         if (isset($resultu)) {
-                            $log_message = "updated election ['" . $delete_id . "']!";
+                            $log_message = "updated election ['" . $_GET['edit_election'] . "']!";
                             add_to_log($log_message, $admin_id, 'admin');
 
                             $_SESSION['flash_success'] = 'Election Successfully Updated';
                             redirect(ADROOT . 'election');
                         }
                     } else {
-                        $query = "INSERT INTO election (election_name, election_by) VALUES ('".$_POST['election_name']."', '".$_POST['election_by']."')";
+                        $unique_id = guidv4();
+                        $query = "INSERT INTO election (election_id, election_name, election_by) VALUES ('" . $unique_id . "', '".$_POST['election_name']."', '".$_POST['election_by']."')";
                         $statement = $conn->prepare($query);
                         $result = $statement->execute();
                         if (isset($result)) {

@@ -195,15 +195,15 @@
                                             $electionStatus = '<span class="badge bg-success">ended</span>';
                                             $election_report_option = '
                                                 <span class="badge bg-dark">
-                                                    <a href="'.PROOT.'172.06.84.0/report/full_election_report?election='.$row["eid"].'" class="text-secondary" target="_blank">report</a>
+                                                    <a href="'.PROOT.'172.06.84.0/report/full_election_report?election='.$row["election_id"].'" class="text-secondary" target="_blank">report</a>
                                                     </span>
                                                 <br>
-                                                <a href="reports.voted.php?report=' . $row["eid"] . '" class="badge bg-secondary nav-link" target="_blank">Voted Details</a>
-                                                <a href="reports.voter.php?report=' . $row["eid"] . '" class="badge bg-info nav-link" target="_blank">Voters Details</a>
+                                                <a href="reports.voted.php?report=' . $row["election_id"] . '" class="badge bg-secondary nav-link" target="_blank">Voted Details</a>
+                                                <a href="reports.voter.php?report=' . $row["election_id"] . '" class="badge bg-info nav-link" target="_blank">Voters Details</a>
                                                 ';
                                         } else {
                                             $electionStatus = '<span class="badge bg-danger">running ...</span>';
-                                            $election_report_option = '<span class="badge bg-dark"><a href="'.PROOT.'172.06.84.0/reports?report=1&election='.$row["eid"].'" class="text-secondary" target="_blank">report</a></span>';
+                                            $election_report_option = '<span class="badge bg-dark"><a href="'.PROOT.'172.06.84.0/reports?report=1&election='.$row["election_id"].'" class="text-secondary" target="_blank">report</a></span>';
                                         }
                                         ?>
                                 <tr>
@@ -212,13 +212,13 @@
                                         <br>
                                         Org: <?= ucwords($row["election_by"]); ?>
                                     </td>
-                                    <td><?= count_positions_on_running_election($row["eid"]); ?></td>
-                                    <td><?= count_contestants_on_runing_election($row["eid"]); ?></td>
+                                    <td><?= count_positions_on_running_election($row["election_id"]); ?></td>
+                                    <td><?= count_contestants_on_runing_election($row["election_id"]); ?></td>
                                     <td>
-                                        <span class="badge bg-success-subtle text-success"><?= count_voters_on_runing_election($row['eid']); ?></span>
+                                        <span class="badge bg-success-subtle text-success"><?= count_voters_on_runing_election($row['election_id']); ?></span>
                                     </td>
                                     <td>
-                                        <span class="badge bg-success-subtle text-success"><?= count_votes_on_runing_election($row["eid"]); ?></span>
+                                        <span class="badge bg-success-subtle text-success"><?= count_votes_on_runing_election($row["election_id"]); ?></span>
                                     </td>
                                     <td>
                                         <div class="chart" style="height: 1rem; width: 3rem">
@@ -418,7 +418,7 @@
                         <select class="form-control form-control-sm form-control-dark" name="election-session" id="election-session" required="required">
                             <option>Select Election</option> 
                             <?php foreach ($not_started_election_result as $row): ?>
-                                <option value="<?= $row["eid"]; ?>"><?= ucwords($row["election_name"]); ?> / <?= ucwords($row["election_by"]); ?></option>
+                                <option value="<?= $row["election_id"]; ?>"><?= ucwords($row["election_name"]); ?> / <?= ucwords($row["election_by"]); ?></option>
                             <?php endforeach; ?>
                         </select>
                         <br>

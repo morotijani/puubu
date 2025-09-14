@@ -124,7 +124,7 @@ $query = "
     INNER JOIN positions 
     ON positions.position_id = cont_details.cont_position 
     LEFT JOIN election 
-    ON election.election_id = cont_details.election_name 
+    ON election.election_id = cont_details.contestant_election 
     WHERE cont_details.del_cont = ? 
     ORDER BY cont_details.contestant_id DESC
 ";
@@ -181,7 +181,7 @@ if ($statement->rowCount() > 0) {
 if (isset($_GET['editcontestant']) && !empty($_GET['editcontestant'])) {
     $editid = sanitize($_GET['editcontestant']);
 
-    $findContestant = $conn->query("SELECT * FROM cont_details INNER JOIN election ON election.election_id = cont_details.election_name WHERE cont_details.contestant_id = '".$editid."' AND election.session = 0 AND cont_details.del_cont = 'no'")->rowCount();
+    $findContestant = $conn->query("SELECT * FROM cont_details INNER JOIN election ON election.election_id = cont_details.contestant_election WHERE cont_details.contestant_id = '".$editid."' AND election.session = 0 AND cont_details.del_cont = 'no'")->rowCount();
     if ($findContestant > 0) {
         $editQuery = $conn->query("SELECT * FROM cont_details WHERE contestant_id = '".$editid."' LIMIT 1")->fetchAll();
         foreach ($editQuery as $sub_row) {
@@ -190,7 +190,7 @@ if (isset($_GET['editcontestant']) && !empty($_GET['editcontestant'])) {
             $cont_lname = ((isset($_POST['cont_lname']) && $_POST['cont_lname'] != '') ? sanitize($_POST['cont_lname']) : $sub_row['cont_lname']);
             $cont_position = ((isset($_POST['cont_position']) && $_POST['cont_position'] != '') ? sanitize($_POST['cont_position']) : $sub_row['cont_position']);
             $cont_gender = ((isset($_POST['cont_gender']) && $_POST['cont_gender'] != '') ? sanitize($_POST['cont_gender']) : $sub_row['cont_gender']);
-            $sel_election = ((isset($_POST['sel_election']) && $_POST['sel_election'] != '') ? sanitize($_POST['sel_election']) : $sub_row['election_name']);
+            $sel_election = ((isset($_POST['sel_election']) && $_POST['sel_election'] != '') ? sanitize($_POST['sel_election']) : $sub_row['contestant_election']);
             $saved_passport = (($sub_row['cont_profile'] != '') ? $sub_row['cont_profile'] : '');
             $pp_path = $saved_passport;
         }
@@ -206,9 +206,10 @@ if (isset($_GET['editcontestant']) && !empty($_GET['editcontestant'])) {
                 }
             }
         }
+        
 
         // GET LIST POSITIONS FOR EDIT CONTESTANT
-        $positionQuery = $conn->query("SELECT * FROM positions WHERE election_id = ".$sub_row['election_name']." ORDER BY position_name ASC")->fetchAll();
+        $positionQuery = $conn->query("SELECT * FROM positions WHERE election_id = '".$sub_row['contestant_election']."' ORDER BY position_name ASC")->fetchAll();
     } else {
         $_SESSION['flash_error'] = 'Contestant was not found or cannot be deleted Permanently!';
         redirect(ADROOT . 'contestants'); 

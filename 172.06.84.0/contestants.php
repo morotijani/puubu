@@ -39,7 +39,7 @@ if (isset($_GET['deletecontestant']) && !empty($_GET['deletecontestant'])) {
     $deleteid = sanitize($_GET['deletecontestant']);
     $delnoyes = $_GET['del'];
 
-    $findContestant = $conn->query("SELECT * FROM cont_details INNER JOIN election ON election.election_id = cont_details.election_name WHERE cont_details.contestant_id = '".$deleteid."' AND election.session = 0 AND cont_details.del_cont = 'no'")->rowCount();
+    $findContestant = $conn->query("SELECT * FROM cont_details INNER JOIN election ON election.election_id = cont_details.contestant_election WHERE cont_details.contestant_id = '".$deleteid."' AND election.session = 0 AND cont_details.del_cont = 'no'")->rowCount();
     if ($findContestant > 0) {
         if ($conn->query("UPDATE cont_details SET del_cont = '".$delnoyes."' WHERE contestant_id = '".$deleteid."'"))
             $log_message = "contestant ['" . $deleteid . "'], temporary deleted!";
@@ -96,7 +96,7 @@ if (isset($_GET['restorecontestant']) && !empty($_GET['restorecontestant'])) {
     $restoreid = sanitize($_GET['restorecontestant']);
     $restorenoyes = $_GET['restore'];
 
-    $findContestant = $conn->query("SELECT * FROM cont_details INNER JOIN election ON election.election_id = cont_details.election_name WHERE cont_details.contestant_id = '".$restoreid."' AND election.session = 0 AND cont_details.del_cont = 'yes'")->rowCount();
+    $findContestant = $conn->query("SELECT * FROM cont_details INNER JOIN election ON election.election_id = cont_details.contestant_election WHERE cont_details.contestant_id = '".$restoreid."' AND election.session = 0 AND cont_details.del_cont = 'yes'")->rowCount();
     if ($findContestant > 0) {
         if ($conn->query("UPDATE cont_details SET del_cont = '".$restorenoyes."' WHERE contestant_id = '".$restoreid."'")) {
             $log_message = "contestant ['" . $restoreid . "'], restored!";
@@ -227,9 +227,9 @@ if (isset($_POST['createcont'])) {
         }
         $message = '<div class="alert alert-danger">Empty Fields are Required</div>';
     } else {
-        $findContestant = $conn->query("SELECT * FROM cont_details INNER JOIN election ON election.election_id = cont_details.election_name WHERE cont_indentification = '".$_POST['cont_indentification']."' AND election.election_id = '".$_POST['sel_election']."' AND cont_position = '".$_POST['cont_position']."'")->rowCount();
+        $findContestant = $conn->query("SELECT * FROM cont_details INNER JOIN election ON election.election_id = cont_details.contestant_election WHERE cont_indentification = '".$_POST['cont_indentification']."' AND election.election_id = '".$_POST['sel_election']."' AND cont_position = '".$_POST['cont_position']."'")->rowCount();
         if (isset($_GET['editcontestant']) && !empty($_GET['editcontestant'])) {
-            $findContestant = $conn->query("SELECT * FROM cont_details INNER JOIN election ON election.election_id = cont_details.election_name WHERE election.election_id = '".$_POST['sel_election']."' AND cont_indentification = '".$_POST['cont_indentification']."' AND contestant_id != '".$_GET['editcontestant']."'")->rowCount();
+            $findContestant = $conn->query("SELECT * FROM cont_details INNER JOIN election ON election.election_id = cont_details.contestant_election WHERE election.election_id = '".$_POST['sel_election']."' AND cont_indentification = '".$_POST['cont_indentification']."' AND contestant_id != '".$_GET['editcontestant']."'")->rowCount();
         }
         if ($findContestant > 0) {
             if (isset($_POST['uploadedPassport']) != '') {
@@ -268,7 +268,7 @@ if (isset($_POST['createcont'])) {
             // INSERT DATA TO DATABASE IF ERRORS OR MESSAGES ARE EMPTY
             if ($message == '') {
                 if (isset($_GET['editcontestant']) && !empty($_GET['editcontestant'])) {
-                    $updateQ = "UPDATE cont_details SET cont_indentification = '".$cont_indentification."', cont_fname = '".$cont_fname."', cont_lname = '".$cont_lname."', cont_gender = '".$cont_gender."', cont_position = '".$cont_position."',  election_name = '".$sel_election."', cont_profile = '".$image_name."'  WHERE contestant_id = '".$_GET["editcontestant"]."'";
+                    $updateQ = "UPDATE cont_details SET cont_indentification = '".$cont_indentification."', cont_fname = '".$cont_fname."', cont_lname = '".$cont_lname."', cont_gender = '".$cont_gender."', cont_position = '".$cont_position."', contestant_election = '".$sel_election."', cont_profile = '".$image_name."'  WHERE contestant_id = '".$_GET["editcontestant"]."'";
                     $statement = $conn->prepare($updateQ);
                     $resultQ = $statement->execute();
                     if (isset($resultQ)) {
@@ -276,7 +276,7 @@ if (isset($_POST['createcont'])) {
                         echo '<script>window.location = "contestants"</script>';
                     }
                 } else {
-                    $query = "INSERT INTO cont_details (cont_indentification, cont_fname, cont_lname, cont_gender, cont_position, election_name, cont_profile) VALUES ('".$cont_indentification."', '".$cont_fname."', '".$cont_lname."', '".$cont_gender."', '".$cont_position."',  '".$sel_election."', '".$image_name."')";
+                    $query = "INSERT INTO cont_details (cont_indentification, cont_fname, cont_lname, cont_gender, cont_position, contestant_election, cont_profile) VALUES ('".$cont_indentification."', '".$cont_fname."', '".$cont_lname."', '".$cont_gender."', '".$cont_position."',  '".$sel_election."', '".$image_name."')";
                     $statement = $conn->prepare($query);
                     $result = $statement->execute();
                     $lastinsetedID = $conn->lastinsertId();
@@ -372,7 +372,7 @@ if (isset($_GET['createcontestant']) || isset($_GET['editcontestant']) && !empty
     <!-- ADD OR UPDATE CONTESTANT -->
     <div class="card">
         <div class="card-body">
-            <h4 class="header-title mt-2" style="color: rgb(170, 184, 197);"><?= ((isset($_GET['editcontestant']))?'Edit':'Add new') ?> contestant</h4>
+            <h4 class="mt-2"><?= ((isset($_GET['editcontestant']))?'Edit':'Add new') ?> contestant</h4>
             <form class="" action="contestants.php?<?= ((isset($_GET['editcontestant']))?'editcontestant='.$editid:'createcontestant=1'); ?>" method="post" id="submitcontestant" enctype="multipart/form-data">
                 <div class="container">
                     <span><?= $message; ?></span>

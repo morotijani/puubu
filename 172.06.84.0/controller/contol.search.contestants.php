@@ -20,7 +20,7 @@ $query = "
 	INNER JOIN positions 
 	ON positions.position_id = cont_details.cont_position 
 	LEFT JOIN election 
-	ON election.election_id = cont_details.election_name 
+	ON election.election_id = cont_details.contestant_election 
 	";
 if ($_POST['query'] != '') {
 	$query .= 'WHERE cont_details.cont_indentification LIKE "%'.str_replace(' ', '%', $_POST['query']).'%" OR cont_details.cont_fname LIKE "%'.str_replace(' ', '%', $_POST['query']).'%" OR cont_details.cont_lname LIKE "%'.str_replace(' ', '%', $_POST['query']).'%" OR cont_details.cont_gender LIKE "%'.str_replace(' ', '%', $_POST['query']).'%" OR positions.position_name LIKE "%'.str_replace(' ', '%', $_POST['query']).'%" OR election.election_name LIKE "%'.str_replace(' ', '%', $_POST['query']).'%" AND cont_details.del_cont = "no" ';

@@ -129,7 +129,7 @@ if (isset($_POST['addposition'])) {
                         redirect(ADROOT . 'positions');
                     }
                 } else {
-                    $query = "INSERT INTO positions (position_name, election_id) VALUES ('".$_POST['position_name']."', '".$_POST['sel_election']."')";
+                    $query = "INSERT INTO positions (position_id, position_name, election_id) VALUES ('" . guidv4() . "', '".$_POST['position_name']."', '".$_POST['sel_election']."')";
                     $statement = $conn->prepare($query);
                     $result = $statement->execute();
                     if (isset($result)) {

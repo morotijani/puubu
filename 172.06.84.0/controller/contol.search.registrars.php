@@ -15,11 +15,11 @@
 		$start = 0;
 	}
 
-	$query = "SELECT * FROM registrars INNER JOIN election ON election.eid = registrars.election_type ";
+	$query = "SELECT * FROM registrars INNER JOIN election ON election.election_id = registrars.election_type ";
 	if ($_POST['query'] != '') {
 		$query .= 'WHERE std_fname LIKE "%'.str_replace(' ', '%', $_POST['query']).'%" OR std_lname LIKE "%'.str_replace(' ', '%', $_POST['query']).'%" OR std_id LIKE "%'.str_replace(' ', '%', $_POST['query']).'%" ';
 	}
-	$query .= 'GROUP BY id ORDER BY std_fname ASC ';
+	$query .= 'GROUP BY registrars.id ORDER BY std_fname ASC ';
 
 	$filter_query = $query . 'LIMIT '.$start.', '.$limit.'';
 

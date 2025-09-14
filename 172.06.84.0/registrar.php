@@ -26,7 +26,7 @@ $sel_election = ((isset($_POST['sel_election']) && !empty($_POST['sel_election']
 // $voter_identity = ((isset($_POST['voter_identity']) != '')?$_POST["voter_identity"]:'');
   
 // FETCH ELECTIONS THAT HAS NOT YET BEEN STATED
-$query = "SELECT * FROM election WHERE session = ? ORDER BY eid DESC";
+$query = "SELECT * FROM election WHERE session = ? ORDER BY election_id DESC";
 $statement = $conn->prepare($query);
 $statement->execute([0]);
 $election_result = $statement->fetchAll();
@@ -36,7 +36,7 @@ $election_result = $statement->fetchAll();
 if (isset($_GET['editvoter']) && !empty($_GET['editvoter'])) {
     $editid = sanitize((int)$_GET['editvoter']);
 
-    $findVoter = $conn->query("SELECT * FROM registrars INNER JOIN election ON election.eid = registrars.election_type WHERE registrars.id = '".$editid."' AND election.session = 0")->rowCount();
+    $findVoter = $conn->query("SELECT * FROM registrars INNER JOIN election ON election.election_id = registrars.election_type WHERE registrars.id = '".$editid."' AND election.session = 0")->rowCount();
     if ($findVoter > 0) {
         foreach ($conn->query("SELECT * FROM registrars WHERE id = '".$editid."'")->fetchAll() as $row) {
             $voter_fname = ((isset($row['std_fname']) != '') ? $row["std_fname"] : $_POST["voter_fname"]);
@@ -56,7 +56,7 @@ if (isset($_GET['editvoter']) && !empty($_GET['editvoter'])) {
 if (isset($_GET['deletevoter']) && !empty($_GET['deletevoter'])) {
     $deleteid = (int)$_GET['deletevoter'];
 
-    $findVoter = $conn->query("SELECT * FROM registrars INNER JOIN election ON election.eid = registrars.election_type WHERE registrars.id = '".$deleteid."' AND election.session = 0")->rowCount();
+    $findVoter = $conn->query("SELECT * FROM registrars INNER JOIN election ON election.election_id = registrars.election_type WHERE registrars.id = '".$deleteid."' AND election.session = 0")->rowCount();
     if ($findVoter > 0) {
         // $deleteQuery = "DELETE FROM registrars WHERE id = '".$deleteid."'";
         // $statement = $conn->prepare($deleteQuery);
@@ -184,7 +184,7 @@ if (isset($_POST['dataValue'])) {
         SELECT *
         FROM registrars 
         INNER JOIN election
-        ON election.eid = registrars.election_type 
+        ON election.election_id = registrars.election_type 
         WHERE registrars.std_email 
         IN (
                 SELECT registrars.std_email 
@@ -294,7 +294,7 @@ if (isset($_POST['dataValue'])) {
                             <select class="form-control voter_details" id="voter_election_type1" name="voter_election_type[]" required>
                                 <option value=""> -- Select election type for voter -- </option>
                                 <?php foreach ($election_result as $election_row): ?>
-                                <option value="<?= $election_row['eid']; ?>"<?= (($sel_election == $election_row['eid'])?' selected' : '');?>><?= ucwords($election_row['election_name']); ?> / <?= ucwords($election_row['election_by']); ?></option>
+                                <option value="<?= $election_row['election_id']; ?>"<?= (($sel_election == $election_row['election_id'])?' selected' : '');?>><?= ucwords($election_row['election_name']); ?> / <?= ucwords($election_row['election_by']); ?></option>
                                 <?php endforeach; ?>
                             </select>
                         </div>
@@ -461,7 +461,7 @@ if (isset($_POST['dataValue'])) {
           $('#total_fields').val(i);
 
           // APPEND THE NEW ADDED FIELDS TO THE FORM
-          $('#dynamic_field').append('<div id="row'+i+'" class="mb-3"><hr><div class="row"><div class="col-md-6 mb-3"><label class="form-label" for="">Voter Identity No:</label><input type="text" name="voter_identity[]" id="voter_identity'+i+'" placeholder="Student ID" class="form-control voter_details"></div><div class="col-md-6 mb-3"><label class="form-label" for="">Voter Email:</label><input type="email" name="voter_email[]" id="voter_email'+i+'" placeholder="Student Email" class="form-control voter_details" value="<?= $voter_email; ?>"></div><div class="col-md-4 mb-3"><label class="form-label" for="">Voter First Name:</label><input type="text" name="voter_fname[]" id="voter_fname'+i+'" placeholder="First Name" class="form-control voter_details"></div><div class="col-md-4 mb-3"><label class="form-label" for="">Voter Last Name:</label><input type="text" name="voter_lname[]" id="voter_lname'+i+'" placeholder="Last Name" class="form-control voter_details"></div><div class="col-md-4 mb-3"><label class="form-label" for="">Election Type</label><select class="form-control voter_details" id="voter_election_type'+i+'" name="voter_election_type[]"><option value="">-- Select election type for voter --</option><?php foreach ($election_result as $election_row): ?><option value="<?= $election_row['eid']; ?>"<?= (($sel_election == $election_row['eid'])?' selected' : '');?>><?= ucwords($election_row['election_name']); ?> / <?= ucwords($election_row['election_by']); ?></option><?php endforeach; ?></select></div></div><div class="mt-2"><button type="button" id="'+i+'" name="remove" class="btn btn-sm btn-danger btn_remove">remove</button></div></div>');
+          $('#dynamic_field').append('<div id="row'+i+'" class="mb-3"><hr><div class="row"><div class="col-md-6 mb-3"><label class="form-label" for="">Voter Identity No:</label><input type="text" name="voter_identity[]" id="voter_identity'+i+'" placeholder="Student ID" class="form-control voter_details"></div><div class="col-md-6 mb-3"><label class="form-label" for="">Voter Email:</label><input type="email" name="voter_email[]" id="voter_email'+i+'" placeholder="Student Email" class="form-control voter_details" value="<?= $voter_email; ?>"></div><div class="col-md-4 mb-3"><label class="form-label" for="">Voter First Name:</label><input type="text" name="voter_fname[]" id="voter_fname'+i+'" placeholder="First Name" class="form-control voter_details"></div><div class="col-md-4 mb-3"><label class="form-label" for="">Voter Last Name:</label><input type="text" name="voter_lname[]" id="voter_lname'+i+'" placeholder="Last Name" class="form-control voter_details"></div><div class="col-md-4 mb-3"><label class="form-label" for="">Election Type</label><select class="form-control voter_details" id="voter_election_type'+i+'" name="voter_election_type[]"><option value="">-- Select election type for voter --</option><?php foreach ($election_result as $election_row): ?><option value="<?= $election_row['election_id']; ?>"<?= (($sel_election == $election_row['election_id'])?' selected' : '');?>><?= ucwords($election_row['election_name']); ?> / <?= ucwords($election_row['election_by']); ?></option><?php endforeach; ?></select></div></div><div class="mt-2"><button type="button" id="'+i+'" name="remove" class="btn btn-sm btn-danger btn_remove">remove</button></div></div>');
 
           // IF SUBMIT BUTTON IS BEEN CLICKED AND THERE IS MORE FIELD ADDED RUN THE FOLLOWING VALIDATION
           $('#submitVoters').click(function () {

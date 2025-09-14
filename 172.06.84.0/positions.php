@@ -2,7 +2,6 @@
 
 // CONNECTION TO DATABASE
 require_once("../connection/conn.php");
-
 if (!cadminIsLoggedIn()) {
     cadminLoginErrorRedirect();
 }
@@ -24,23 +23,30 @@ $electionQuery = $conn->query("SELECT * FROM election WHERE election.session = 0
 
 // DELETE A POSITION NAME FROM DATABASE
 if (isset($_GET['deleteposition']) && !empty($_GET['deleteposition'])) {
-    $delete_id = sanitize((int)$_GET['deleteposition']);
+    $delete_id = sanitize($_GET['deleteposition']);
 
     $findPosition = $conn->query("SELECT * FROM positions INNER JOIN election ON election.election_id = positions.election_id WHERE position_id = '".$delete_id."' AND election.session = 0")->fetchAll();
     if ($findPosition > 0) {
         if ($conn->query("DELETE FROM positions WHERE position_id = '".$delete_id."'")) {
+            
+            $log_message = "position ['" . $delete_id . "'], deleted!";
+            add_to_log($log_message, $admin_id, 'admin');
+
             $_SESSION['flash_success'] = 'Position Name Has Been Successfully Deleted';
-            echo "<script>window.location = 'positions';</script>";
+            redirect(ADROOT . 'positions');
         }
     } else {
+        $log_message = "position ['" . $delete_id . "'], selected to be deleted, but did not exist!";
+        add_to_log($log_message, $admin_id, 'admin');
+
         $_SESSION['flash_error'] = 'Position was not found to be deleted!';
-        echo '<script>window.location = "positions";</script>';
+        redirect(ADROOT . 'positions');
     }
 }
 
 // EDIT POSITION
 if (isset($_GET['editposition'])) {
-    $edit_id = sanitize((int)$_GET['editposition']);
+    $edit_id = sanitize($_GET['editposition']);
 
     $findPosition = $conn->query("SELECT * FROM positions INNER JOIN election ON election.election_id = positions.election_id WHERE position_id = '".$edit_id."' AND election.session = 0")->rowCount();
     if ($findPosition > 0) {
@@ -49,8 +55,11 @@ if (isset($_GET['editposition'])) {
           $sel_election = ((isset($_POST['sel_election']) && $_POST['sel_election'] != '') ? sanitize($_POST['sel_election']) : $_row['election_id']);
         }
     } else {
+        $log_message = "position ['" . $edit_id . "'], selected to be edited, but did not exist!";
+        add_to_log($log_message, $admin_id, 'admin');
+
         $_SESSION['flash_error'] = 'Position was not found to be edited!';
-        echo '<script>window.location = "positions";</script>';
+        redirect(ADROOT . 'positions');
     }
 }
 

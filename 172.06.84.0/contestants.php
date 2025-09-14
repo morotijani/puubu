@@ -157,10 +157,10 @@ if ($statement->rowCount() > 0) {
                 <td>'.ucwords($row["position_name"]).'</td>
                 <td>'.ucwords($row["election_name"]).' / <span class="text-muted">' . ucwords($row["election_by"]) . '</span></td>
                 <td>
-                    <a href="contestants.php?permanentdel='.$row["contestant_id"].'&uploadedpp_name='.$row["cont_profile"].'" class="btn btn-sm btn-danger" title="Permanently Delete Contestant">
+                    <a href="'.ADROOT.'contestants?permanentdel='.$row["contestant_id"].'&uploadedpp_name='.$row["cont_profile"].'" class="btn btn-sm btn-danger" title="Permanently Delete Contestant">
                         <span class="material-symbols-outlined me-1">delete</span> Delete
                     </a>&nbsp;
-                    <a href="contestants.php?restorecontestant='.$row["contestant_id"].'&restore='.(($row["del_cont"] == 'yes')?'no':'yes').'" class="btn btn-sm btn-success" title="Restore Contestant">
+                    <a href="'.ADROOT.'contestants?restorecontestant='.$row["contestant_id"].'&restore='.(($row["del_cont"] == 'yes')?'no':'yes').'" class="btn btn-sm btn-success" title="Restore Contestant">
                         <span class="material-symbols-outlined me-1">cycle</span> Restore
                     </a>
                 </td>
@@ -202,7 +202,7 @@ if (isset($_GET['editcontestant']) && !empty($_GET['editcontestant'])) {
             if (unlink($contpp_loc)) {
                 unset($contpp);
                 if ($conn->query("UPDATE cont_details SET cont_profile = '' WHERE contestant_id = '".$editid."'")) {
-                    echo '<script>window.location = "contestants.php?editcontestant='.$editid.'"</script>';
+                    echo '<script>window.location = "'. ADROOT .'contestants?editcontestant='.$editid.'"</script>';
                 }
             }
         }
@@ -272,8 +272,11 @@ if (isset($_POST['createcont'])) {
                     $statement = $conn->prepare($updateQ);
                     $resultQ = $statement->execute();
                     if (isset($resultQ)) {
+                        $log_message = "contestant ['" . $_GET["editcontestant"] . "'], updated!";
+                        add_to_log($log_message, $admin_id, 'admin');
+
                         $_SESSION['flash_success'] = ucwords($sub_row["cont_fname"] .' '. $sub_row["cont_lname"]) .' Contestant Successfully <span class="bg-danger">Updated</span>';
-                        echo '<script>window.location = "contestants"</script>';
+                        redirect(ADROOT . 'contestants');
                     }
                 } else {
                     $query = "INSERT INTO cont_details (cont_indentification, cont_fname, cont_lname, cont_gender, cont_position, contestant_election, cont_profile) VALUES ('".$cont_indentification."', '".$cont_fname."', '".$cont_lname."', '".$cont_gender."', '".$cont_position."',  '".$sel_election."', '".$image_name."')";
@@ -291,8 +294,12 @@ if (isset($_POST['createcont'])) {
                                 ':election_id' => $sel_election
                             )
                         );
+                        
+                        $log_message = "new contestant, added!";
+                        add_to_log($log_message, $admin_id, 'admin');
+
                         $_SESSION['flash_success'] = 'A Contestant Successfully <span class="bg-danger">Created</span>';
-                        echo '<script>window.location = "contestants"</script>';
+                        redirect(ADROOT . 'contestants');
                     }
                 }
             } else {
@@ -335,7 +342,7 @@ if (isset($_POST['createcont'])) {
                             <a class="btn btn-light w-100" href="<?= PROOT; ?>172.06.84.0/contestants?createcontestant=1"><span class="material-symbols-outlined me-1">add</span> Add</a>
                         </div>
                         <div class="col-6 col-sm-auto">
-                            <a href="contestants.php?achived_contestants=1" class="btn btn-danger w-100">Achive contestants</a>
+                            <a href="<?= ADROOT; ?>contestants?achived_contestants=1" class="btn btn-danger w-100">Achive contestants</a>
                         </div>
                     </div>
                 </div>
@@ -351,11 +358,35 @@ if (isset($_POST['createcont'])) {
                                 <div class="col-12 col-lg-auto mb-3 mb-lg-0">
                                     <div class="row align-items-center">
                                         <div class="col-auto">
-                                            <div class="text-body-secondary">No customers selected</div>
+                                            <div class="text-body-secondary">Contestants</div>
                                         </div>
                                     </div>
                                 </div>
+                                <div class="col-12 col-lg">
+                                    <div class="row gx-3  ">
+                                        <div class="col col-lg-auto ms-auto">
+                                            <div class="input-group bg-body">
+                                                <input type="text" class="form-control" placeholder="Search" aria-label="Search" aria-describedby="search" />
+                                                <span class="input-group-text" id="search">
+                                                    <span class="material-symbols-outlined">search</span>
+                                                </span>
+                                            </div>
+                                        </div>
 
+                                        <div class="col-auto">
+                                            <a class="btn btn-dark px-3" href="<?= ADROOT; ?>contestants">
+                                                Refresh
+                                            </a>
+                                        </div>
+
+                                        <div class="col-auto ms-n2">
+                                            <a class="btn btn-dark px-3" href="<?= goBack(); ?>">
+                                                Go back
+                                            </a>
+                                        </div>
+                                    </div>
+
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -436,7 +467,7 @@ if (isset($_GET['createcontestant']) || isset($_GET['editcontestant']) && !empty
                     <?php if($saved_passport != ''): ?>
                         <label>Saved Image</label><br>
                         <img src="../media/uploadedprofile/<?= $saved_passport; ?>" class="img-fluid img-thumbnail" style="width: 200px; height: 200px; object-fit: cover;">
-                        <a href="contestants.php?del_pp=1&editcontestant=<?=$editid;?>&contpp=<?=$saved_passport?>" class="badge badge-danger">Change Image</a><br>
+                        <a href="contestants?del_pp=1&editcontestant=<?=$editid;?>&contpp=<?=$saved_passport?>" class="badge badge-danger">Change Image</a><br>
                     <?php else: ?>
                         <div class="mb-3">
                             <label class="form-label" for="cont_profile">Picture</label>
@@ -447,7 +478,7 @@ if (isset($_GET['createcontestant']) || isset($_GET['editcontestant']) && !empty
                     <input type="hidden" name="cont_up_profile" id="cont_up_profile" value="<?= $saved_passport; ?>">
                     <br>
                     <button type="submit" class="btn btn-dark" id="createcont" name="createcont"><?= (isset($_GET['editcontestant']))? 'Update': 'Add'; ?> contestant</button>
-                    <a href="contestants.php" class="btn btn-secondary">Cancel</a>
+                    <a href="<?= ADROOT; ?>contestants" class="btn btn-secondary">Cancel</a>
                 </div>
             </form>
         </div>

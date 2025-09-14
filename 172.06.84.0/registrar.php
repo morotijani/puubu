@@ -46,8 +46,11 @@ if (isset($_GET['editvoter']) && !empty($_GET['editvoter'])) {
             $sel_election = ((isset($row['election_type']) != '')?$row["election_type"] : $_POST["voter_election_type"]);
         }
     } else {
+        $log_message = "voter ['" . $editid . "'], selected to be edited, but did not exist!";
+        add_to_log($log_message, $admin_id, 'admin');
+
         $_SESSION['flash_error'] = 'Voter cannot be found!';
-        echo "<script>window.location = 'registrar</script>";
+        redirect(ADROOT . 'registrar');
     }
 
 }
@@ -62,12 +65,18 @@ if (isset($_GET['deletevoter']) && !empty($_GET['deletevoter'])) {
         // $statement = $conn->prepare($deleteQuery);
         // $statement->execute();
         if ($conn->query("DELETE FROM registrars WHERE id = '".$deleteid."'")) {
+            $log_message = "voter ['" . $delete_id . "'], deleted!";
+            add_to_log($log_message, $admin_id, 'admin');
+
             $_SESSION['flash_success'] = 'Registrar Has Been Deleted Successfully';
             echo "<script>window.location = 'registrar';</script>";
         }
     } else {
+        $log_message = "voter ['" . $delete_id . "'], selected to be deleted, but did not exist!";
+        add_to_log($log_message, $admin_id, 'admin');
+
         $_SESSION['flash_error'] = 'Voter cannot be found!';
-        echo "<script>window.location = 'registrar</script>";
+        redirect(ADROOT . 'registrar');
     }
 }
 
@@ -254,15 +263,35 @@ if (isset($_POST['dataValue'])) {
                                         </div>
                                     </div>
                                 </div>
+                                <div class="col-12 col-lg">
+                                    <div class="row gx-3  ">
+                                        <div class="col col-lg-auto ms-auto">
+                                            <div class="input-group bg-body">
+                                                <input type="text" class="form-control" placeholder="Search" aria-label="Search" aria-describedby="search" />
+                                                <span class="input-group-text" id="search">
+                                                    <span class="material-symbols-outlined">search</span>
+                                                </span>
+                                            </div>
+                                        </div>
 
+                                        <div class="col-auto">
+                                            <a class="btn btn-dark px-3" href="<?= ADROOT; ?>registrar">
+                                                Refresh
+                                            </a>
+                                        </div>
+
+                                        <div class="col-auto ms-n2">
+                                            <a class="btn btn-dark px-3" href="<?= goBack(); ?>">
+                                                Go back
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
             <div>
-
-
-
 
     <?php if(isset($_GET['addnewvoter']) || isset($_GET['editvoter']) && !empty($_GET['editvoter'])): ?>
     <!-- MAIN -->

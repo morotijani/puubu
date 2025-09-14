@@ -423,7 +423,7 @@ function goBack() {
 	// GET THE TOTAL NUMBER OF CONTESTANTS UNDER STARTED ELECTION
 	function count_contestants() {
 		global $conn;
-		$query = "SELECT * FROM cont_details INNER JOIN election WHERE election.election_id = cont_details.election_name AND election.session = '1'";
+		$query = "SELECT * FROM cont_details INNER JOIN election WHERE election.election_id = cont_details.contestant_election AND election.session = '1'";
 		$statement = $conn->prepare($query);
 		$statement->execute();
 		return $statement->rowCount();

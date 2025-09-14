@@ -93,7 +93,7 @@ if (isset($_POST['checkbox_value'])) {
 // TRUNCATE VOTERS TABLE
 if (isset($_POST['dataValue'])) {
     if ($_POST['dataValue'] == 'emptyVotersTable') {
-        $query = "TRUNCATE `evt`.`registrars`";
+        $query = "TRUNCATE `puubu`.`registrars`";
         $statement = $conn->prepare($query);
         $statement->execute();
     }
@@ -584,23 +584,23 @@ if (isset($_POST['dataValue'])) {
 
         // TRUNCATE OR DELETE EVERY SIGLE ROW FROM THE VOTERS DATABASE
         $(document).on('click', '#emptyTable', function() {
-          var dataValue = 'emptyVotersTable';
-          $.ajax({
-            url : "registrar",
-            method : "POST",
-            data : {dataValue : dataValue},
-            success: function(data) {
-              window.location = 'registrar';
-            }
-          });
+            var dataValue = 'emptyVotersTable';
+            $.ajax({
+                url : "registrar",
+                method : "POST",
+                data : {dataValue : dataValue},
+                success: function(data) {
+                window.location = '<?= ADROOT; ?>registrar';
+                }
+            });
         });
 
         // DISPLAY BUTTON AND CHECKE BOX TO DELETE VOTERS
         $(document).on('click', '.selectMoreToDelete', function() {
-          $('#delete_checkedDisplay').fadeIn(1500);
-          $('.checkToDelete').fadeIn(1500);
-          // HIDE MODAL AFTER selectMoreToDelete HAS BEEN CLICKED
-          $('#registrarsModal').modal('hide');
+            $('#delete_checkedDisplay').fadeIn(1500);
+            $('.checkToDelete').fadeIn(1500);
+            // HIDE MODAL AFTER selectMoreToDelete HAS BEEN CLICKED
+            $('#registrarsModal').modal('hide');
         });
 
         var checkBoxChecked = false;

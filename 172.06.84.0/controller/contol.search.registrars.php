@@ -15,7 +15,7 @@
 		$start = 0;
 	}
 
-	$query = "SELECT * FROM registrars INNER JOIN election ON election.election_id = registrars.election_type ";
+	$query = "SELECT * FROM registrars INNER JOIN election ON election.election_id = registrars.registrar_election ";
 	if ($_POST['query'] != '') {
 		$query .= 'WHERE std_fname LIKE "%'.str_replace(' ', '%', $_POST['query']).'%" OR std_lname LIKE "%'.str_replace(' ', '%', $_POST['query']).'%" OR std_id LIKE "%'.str_replace(' ', '%', $_POST['query']).'%" ';
 	}
@@ -235,12 +235,4 @@
 	}
 	echo $output;
 
-
-
-
- ?>
-
-    <script type="text/javascript" src="media/files/feather.min.js"></script>
-    <script type="text/javascript">
-      feather.replace();
-    </script>
+?>

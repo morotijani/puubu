@@ -137,7 +137,7 @@
 
             $query = "SELECT * FROM election WHERE election_name = '". $_POST['election_name']."' AND election_by = '".$_POST["election_by"]."'";
             if (isset($_GET['edit_election']) && !empty($_GET['edit_election'])) {
-                $query = "SELECT * FROM election WHERE election_name = '".$_POST['election_name']."' AND election_id != '".(int)$_GET['edit_election']."'";
+                $query = "SELECT * FROM election WHERE election_name = '".$_POST['election_name']."' AND election_id != '".$_GET['edit_election']."'";
             }
             $statement = $conn->prepare($query);
             $statement->execute();

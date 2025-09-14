@@ -106,7 +106,7 @@ if (isset($_POST['addposition'])) {
 
         $query = "SELECT * FROM positions WHERE position_name = '".$_POST['position_name']."' AND election_id = '".$_POST['sel_election']."'";
         if (isset($_GET['editposition']) && !empty($_GET['editposition'])) {
-            $query = "SELECT * FROM positions WHERE position_id = '".$_GET['editposition']."' AND position_id != '".(int)$_GET['editposition']."'";
+            $query = "SELECT * FROM positions WHERE position_id = '".$_GET['editposition']."' AND position_id != '".$_GET['editposition']."'";
         }
         $statement = $conn->prepare($query);
         $statement->execute();

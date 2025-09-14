@@ -211,6 +211,12 @@ if (isset($_POST['dataValue'])) {
 
 
 ?>
+<style>
+.tr-bg-danger {
+    /* background-color: red !Important; */
+    border-color: red;
+}
+</style>
 
     <!-- Main -->
     <main class="main px-lg-6">
@@ -607,11 +613,11 @@ if (isset($_POST['dataValue'])) {
         $(document).on('click', '#selectAll', function() {
           if (checkBoxChecked === false) {
             $("input").prop("checked", true);
-            $(".checkToDelete").closest('tr').addClass(['bg-danger', 'removeRow']);
+            $(".checkToDelete").closest('tr').addClass(['tr-bg-danger', 'removeRow']);
             checkBoxChecked = true;
           } else if (checkBoxChecked === true) {
             $("input").prop("checked", false);
-            $(".checkToDelete").closest('tr').removeClass(['bg-danger', 'removeRow']);
+            $(".checkToDelete").closest('tr').removeClass(['tr-bg-danger', 'removeRow']);
             checkBoxChecked = false;
           }
         });
@@ -620,9 +626,9 @@ if (isset($_POST['dataValue'])) {
         $(document).on('click', '.checkToDelete', function() {
           //alert('ass');
           if ($(this).is(':checked')) {
-            $(this).closest('tr').addClass(['bg-danger', 'removeRow']);
+            $(this).closest('tr').addClass(['tr-bg-danger', 'removeRow']);
           } else {
-            $(this).closest('tr').removeClass(['bg-danger', 'removeRow']);
+            $(this).closest('tr').removeClass(['tr-bg-danger', 'removeRow']);
           }
         });
 

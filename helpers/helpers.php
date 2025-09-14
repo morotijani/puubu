@@ -468,7 +468,7 @@ function goBack() {
 		    SELECT * FROM cont_details 
 		    INNER JOIN election 
 		    WHERE election.election_id = ? 
-		    AND cont_details.election_name = ?";
+		    AND cont_details.contestant_election = ?";
 		$statement = $conn->prepare($query);
 		$statement->execute([$election_id, $election_id]);
 		return $statement->rowCount();

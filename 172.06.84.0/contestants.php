@@ -394,11 +394,8 @@ if (isset($_POST['createcont'])) {
             <div>
 
 <?php
-
-if (isset($_GET['createcontestant']) || isset($_GET['editcontestant']) && !empty($_GET['editcontestant'])):
+    if (isset($_GET['createcontestant']) || isset($_GET['editcontestant']) && !empty($_GET['editcontestant'])):
 ?>
-
-
   
     <!-- ADD OR UPDATE CONTESTANT -->
     <div class="card">
@@ -489,16 +486,7 @@ if (isset($_GET['createcontestant']) || isset($_GET['editcontestant']) && !empty
     
     <div class="card">
         <div class="card-body">
-            <div class="row align-items-center">
-                <div class="col">
-                    <h4 class="header-title">Achived contestants</h4>
-                </div>
-                <div class="col-auto">
-                    <a href="contestants?achived_contestants?=1" class="text-primary float-right mb-3">
-                        <span class="material-symbols-outlined me-1">refresh</span> Refresh
-                    </a>
-                </div>
-            </div>
+            <h4 class="">Achived contestants</h4>
             <div class="table-responsive">
                 <table class="table align-middle mb-0">
                     <thead>

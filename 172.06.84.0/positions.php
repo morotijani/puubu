@@ -70,12 +70,12 @@ foreach ($conn->query("SELECT * FROM positions INNER JOIN election WHERE positio
     $deleteOption = '';
     if ($row["session"] == 0) {
         $editOption = '
-            <a href="?editposition=' . $row["position_id"] . '" class="btn btn-secondary btn-sm">
+            <a href="'.ADROOT.'positions?editposition=' . $row["position_id"] . '" class="btn btn-secondary btn-sm">
                 <span class="material-symbols-outlined me-1">stylus_note</span> Edit
             </a>
         ';
         $deleteOption = '
-            <a href="?deleteposition='.$row["position_id"].'&election='.$row["election_id"].'" class="btn btn-sm btn-warning">
+            <a href="'.ADROOT.'positions?deleteposition='.$row["position_id"].'&election='.$row["election_id"].'" class="btn btn-sm btn-warning">
                 <span class="material-symbols-outlined me-1">delete</span> Delete
             </a>&nbsp; 
         ';
@@ -117,21 +117,27 @@ if (isset($_POST['addposition'])) {
             if ($message == '') {
 
                 if (isset($_GET['editposition']) && !empty($_GET['editposition'])) {
-                    $update = "UPDATE positions SET position_name = '".$_POST['position_name']."', election_id = '".$_POST['sel_election']."' WHERE position_id = '".(int)$_GET['editposition']."'";
+                    $update = "UPDATE positions SET position_name = '".$_POST['position_name']."', election_id = '".$_POST['sel_election']."' WHERE position_id = '".$_GET['editposition']."'";
                     $statement = $conn->prepare($update);
                     $resultu = $statement->execute();
 
                     if (isset($resultu)) {
+                        $log_message = "position ['" . $_GET['editposition'] . "'], updated!";
+                        add_to_log($log_message, $admin_id, 'admin');
+
                         $_SESSION['flash_success'] = 'Position Name Successfully Updated';
-                        echo "<script>window.location = 'positions';</script>";
+                        redirect(ADROOT . 'positions');
                     }
                 } else {
                     $query = "INSERT INTO positions (position_name, election_id) VALUES ('".$_POST['position_name']."', '".$_POST['sel_election']."')";
                     $statement = $conn->prepare($query);
                     $result = $statement->execute();
                     if (isset($result)) {
+                        $log_message = "position ['" . $edit_id . "'], added!";
+                        add_to_log($log_message, $admin_id, 'admin');
+
                         $_SESSION['flash_success'] = 'Position Name Successfully Added';
-                        echo "<script>window.location = 'positions';</script>";
+                        redirect(ADROOT . 'positions');
                     }
                 }
             }

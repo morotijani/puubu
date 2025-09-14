@@ -43,10 +43,10 @@ if (isset($_GET['deletecontestant']) && !empty($_GET['deletecontestant'])) {
     if ($findContestant > 0) {
         if ($conn->query("UPDATE cont_details SET del_cont = '".$delnoyes."' WHERE contestant_id = '".$deleteid."'"))
             $_SESSION['flash_success'] = 'Contestant Has Been Temporary <span class="bg-danger">DELETED</span>';
-            echo '<script>window.location = "contestants.php"</script>';
+            redirect(ADROOT . 'contestants');
     } else {
         $_SESSION['flash_error'] = 'Contestant was not found or cannot be deleted Temporary!';
-        echo '<script>window.location = "contestants.php"</script>'; 
+        redirect(ADROOT . 'contestants'); 
     }
 }
 
@@ -72,7 +72,7 @@ if (isset($_GET['permanentdel']) && !empty($_GET['permanentdel'])) {
         }
     } else {
         $_SESSION['flash_error'] = 'Contestant was not found or cannot be deleted Permanently!';
-        echo '<script>window.location = "contestants.php"</script>'; 
+        redirect(ADROOT . 'contestants'); 
     }
 }
 
@@ -85,14 +85,14 @@ if (isset($_GET['restorecontestant']) && !empty($_GET['restorecontestant'])) {
     if ($findContestant > 0) {
         if ($conn->query("UPDATE cont_details SET del_cont = '".$restorenoyes."' WHERE contestant_id = '".$restoreid."'")) {
             $_SESSION['flash_success'] = 'Contestant Has Been Successfully <span class="bg-danger">Restored</span>';
-            echo '<script>window.location = "contestants.php"</script>';
+            redirect(ADROOT . 'contestants');
         } else {
             $_SESSION['flash_success'] = 'Contestant Has Been Successfully <span class="bg-danger">Restored</span>';
-            echo '<script>window.location = "contestants.php"</script>';
+            redirect(ADROOT . 'contestants');
         }
     } else {
         $_SESSION['flash_error'] = 'Contestant was not found to be restored, either the election he/she is under is already going on or ended!';
-        echo '<script>window.location = "contestants.php"</script>'; 
+        redirect(ADROOT . 'contestants'); 
     }
 }
 
@@ -190,7 +190,7 @@ if (isset($_GET['editcontestant']) && !empty($_GET['editcontestant'])) {
         $positionQuery = $conn->query("SELECT * FROM positions WHERE election_id = ".$sub_row['election_name']." ORDER BY position_name ASC")->fetchAll();
     } else {
         $_SESSION['flash_error'] = 'Contestant was not found or cannot be deleted Permanently!';
-        echo '<script>window.location = "contestants.php"</script>'; 
+        redirect(ADROOT . 'contestants'); 
     }
 }
 

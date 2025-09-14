@@ -99,13 +99,19 @@ if (isset($_GET['restorecontestant']) && !empty($_GET['restorecontestant'])) {
     $findContestant = $conn->query("SELECT * FROM cont_details INNER JOIN election ON election.election_id = cont_details.election_name WHERE cont_details.contestant_id = '".$restoreid."' AND election.session = 0 AND cont_details.del_cont = 'yes'")->rowCount();
     if ($findContestant > 0) {
         if ($conn->query("UPDATE cont_details SET del_cont = '".$restorenoyes."' WHERE contestant_id = '".$restoreid."'")) {
+            $log_message = "contestant ['" . $restoreid . "'], restored!";
+            add_to_log($log_message, $admin_id, 'admin');
+
             $_SESSION['flash_success'] = 'Contestant Has Been Successfully <span class="bg-danger">Restored</span>';
             redirect(ADROOT . 'contestants');
         } else {
-            $_SESSION['flash_success'] = 'Contestant Has Been Successfully <span class="bg-danger">Restored</span>';
+            $_SESSION['flash_success'] = 'Contestant restore <span class="bg-danger">Failed</span>';
             redirect(ADROOT . 'contestants');
         }
     } else {
+        $log_message = "contestant ['" . $restoreid . "'], selected to be restored, but did not exist!";
+        add_to_log($log_message, $admin_id, 'admin');
+
         $_SESSION['flash_error'] = 'Contestant was not found to be restored, either the election he/she is under is already going on or ended!';
         redirect(ADROOT . 'contestants'); 
     }

@@ -29,19 +29,19 @@ $pp_path = '';
 $saved_passport = '';
 
 // FETCH ELECTIONS THAT HAS NOT YET BEEN STATED
-$query = "SELECT * FROM election WHERE session = ? ORDER BY eid DESC";
+$query = "SELECT * FROM election WHERE session = ? ORDER BY election_id DESC";
 $statement = $conn->prepare($query);
 $statement->execute([0]);
 $election_result = $statement->fetchAll();
 
 // DELETE A CONTESTANT TEMPORARY
 if (isset($_GET['deletecontestant']) && !empty($_GET['deletecontestant'])) {
-    $deleteid = sanitize((int)$_GET['deletecontestant']);
+    $deleteid = sanitize($_GET['deletecontestant']);
     $delnoyes = $_GET['del'];
 
-    $findContestant = $conn->query("SELECT * FROM cont_details INNER JOIN election ON election.eid = cont_details.election_name WHERE cont_details.cont_id = '".$deleteid."' AND election.session = 0 AND cont_details.del_cont = 'no'")->rowCount();
+    $findContestant = $conn->query("SELECT * FROM cont_details INNER JOIN election ON election.election_id = cont_details.election_name WHERE cont_details.contestant_id = '".$deleteid."' AND election.session = 0 AND cont_details.del_cont = 'no'")->rowCount();
     if ($findContestant > 0) {
-        if ($conn->query("UPDATE cont_details SET del_cont = '".$delnoyes."' WHERE cont_id = '".$deleteid."'"))
+        if ($conn->query("UPDATE cont_details SET del_cont = '".$delnoyes."' WHERE contestant_id = '".$deleteid."'"))
             $_SESSION['flash_success'] = 'Contestant Has Been Temporary <span class="bg-danger">DELETED</span>';
             echo '<script>window.location = "contestants.php"</script>';
     } else {
@@ -52,14 +52,14 @@ if (isset($_GET['deletecontestant']) && !empty($_GET['deletecontestant'])) {
 
 // DELETE A CONTESTANT PERMANENTLY
 if (isset($_GET['permanentdel']) && !empty($_GET['permanentdel'])) {
-    $p_deleteid = sanitize((int)$_GET['permanentdel']);
+    $p_deleteid = sanitize($_GET['permanentdel']);
 
-    $findContestant = $conn->query("SELECT * FROM cont_details WHERE cont_details.cont_id = '".$p_deleteid."' AND cont_details.del_cont = 'yes'")->rowCount();
+    $findContestant = $conn->query("SELECT * FROM cont_details WHERE cont_details.contestant_id = '".$p_deleteid."' AND cont_details.del_cont = 'yes'")->rowCount();
     if ($findContestant > 0) {
         // REMOVE PASSPORT PICTURE FROM uploadedprofile FOLDER
         $uploadedpp_loc = BASEURL.'media/uploadedprofile/'.$_GET['uploadedpp_name'];
         if (unlink($uploadedpp_loc)) {
-            if ($conn->query("DELETE FROM cont_details WHERE cont_id = ".$p_deleteid." AND del_cont = 'yes'")) {
+            if ($conn->query("DELETE FROM cont_details WHERE contestant_id = ".$p_deleteid." AND del_cont = 'yes'")) {
                 $_SESSION['flash_success'] = 'Contestant Has Been Permanently <span class="bg-danger">DELETED</span>';
                 echo '<script>window.location = "contestants.php?achived_contestants"</script>';
             } else {
@@ -78,12 +78,12 @@ if (isset($_GET['permanentdel']) && !empty($_GET['permanentdel'])) {
 
 // RESTORE A TEMPORARY DELETED CONTESTANT
 if (isset($_GET['restorecontestant']) && !empty($_GET['restorecontestant'])) {
-    $restoreid = sanitize((int)$_GET['restorecontestant']);
+    $restoreid = sanitize($_GET['restorecontestant']);
     $restorenoyes = $_GET['restore'];
 
-    $findContestant = $conn->query("SELECT * FROM cont_details INNER JOIN election ON election.eid = cont_details.election_name WHERE cont_details.cont_id = '".$restoreid."' AND election.session = 0 AND cont_details.del_cont = 'yes'")->rowCount();
+    $findContestant = $conn->query("SELECT * FROM cont_details INNER JOIN election ON election.election_id = cont_details.election_name WHERE cont_details.contestant_id = '".$restoreid."' AND election.session = 0 AND cont_details.del_cont = 'yes'")->rowCount();
     if ($findContestant > 0) {
-        if ($conn->query("UPDATE cont_details SET del_cont = '".$restorenoyes."' WHERE cont_id = '".$restoreid."'")) {
+        if ($conn->query("UPDATE cont_details SET del_cont = '".$restorenoyes."' WHERE contestant_id = '".$restoreid."'")) {
             $_SESSION['flash_success'] = 'Contestant Has Been Successfully <span class="bg-danger">Restored</span>';
             echo '<script>window.location = "contestants.php"</script>';
         } else {
@@ -103,9 +103,9 @@ $query = "
     INNER JOIN positions 
     ON positions.position_id = cont_details.cont_position 
     LEFT JOIN election 
-    ON election.eid = cont_details.election_name 
+    ON election.election_id = cont_details.election_name 
     WHERE cont_details.del_cont = ? 
-    ORDER BY cont_details.cont_id DESC
+    ORDER BY cont_details.contestant_id DESC
 ";
 $statement = $conn->prepare($query);
 $statement->execute(['yes']);
@@ -136,10 +136,10 @@ if ($statement->rowCount() > 0) {
                 <td>'.ucwords($row["position_name"]).'</td>
                 <td>'.ucwords($row["election_name"]).' / <span class="text-muted">' . ucwords($row["election_by"]) . '</span></td>
                 <td>
-                    <a href="contestants.php?permanentdel='.$row["cont_id"].'&uploadedpp_name='.$row["cont_profile"].'" class="btn btn-sm btn-danger" title="Permanently Delete Contestant">
+                    <a href="contestants.php?permanentdel='.$row["contestant_id"].'&uploadedpp_name='.$row["cont_profile"].'" class="btn btn-sm btn-danger" title="Permanently Delete Contestant">
                         <span class="material-symbols-outlined me-1">delete</span> Delete
                     </a>&nbsp;
-                    <a href="contestants.php?restorecontestant='.$row["cont_id"].'&restore='.(($row["del_cont"] == 'yes')?'no':'yes').'" class="btn btn-sm btn-success" title="Restore Contestant">
+                    <a href="contestants.php?restorecontestant='.$row["contestant_id"].'&restore='.(($row["del_cont"] == 'yes')?'no':'yes').'" class="btn btn-sm btn-success" title="Restore Contestant">
                         <span class="material-symbols-outlined me-1">cycle</span> Restore
                     </a>
                 </td>
@@ -158,11 +158,11 @@ if ($statement->rowCount() > 0) {
 
 // FETCH CONTESTANT DETAILS FOR EDITING OR UPDATE
 if (isset($_GET['editcontestant']) && !empty($_GET['editcontestant'])) {
-    $editid = sanitize((int)$_GET['editcontestant']);
+    $editid = sanitize($_GET['editcontestant']);
 
-    $findContestant = $conn->query("SELECT * FROM cont_details INNER JOIN election ON election.eid = cont_details.election_name WHERE cont_details.cont_id = '".$editid."' AND election.session = 0 AND cont_details.del_cont = 'no'")->rowCount();
+    $findContestant = $conn->query("SELECT * FROM cont_details INNER JOIN election ON election.election_id = cont_details.election_name WHERE cont_details.contestant_id = '".$editid."' AND election.session = 0 AND cont_details.del_cont = 'no'")->rowCount();
     if ($findContestant > 0) {
-        $editQuery = $conn->query("SELECT * FROM cont_details WHERE cont_id = '".$editid."' LIMIT 1")->fetchAll();
+        $editQuery = $conn->query("SELECT * FROM cont_details WHERE contestant_id = '".$editid."' LIMIT 1")->fetchAll();
         foreach ($editQuery as $sub_row) {
             $cont_indentification = ((isset($_POST['cont_indentification']) && $_POST['cont_indentification'] != '') ? sanitize($_POST['cont_indentification']):$sub_row['cont_indentification']);
             $cont_fname = ((isset($_POST['cont_fname']) && $_POST['cont_fname'] != '') ? sanitize($_POST['cont_fname']) : $sub_row['cont_fname']);
@@ -180,7 +180,7 @@ if (isset($_GET['editcontestant']) && !empty($_GET['editcontestant'])) {
             $contpp_loc = $_SERVER['DOCUMENT_ROOT'].'/puubu/media/uploadedprofile/'.$contpp;
             if (unlink($contpp_loc)) {
                 unset($contpp);
-                if ($conn->query("UPDATE cont_details SET cont_profile = '' WHERE cont_id = '".$editid."'")) {
+                if ($conn->query("UPDATE cont_details SET cont_profile = '' WHERE contestant_id = '".$editid."'")) {
                     echo '<script>window.location = "contestants.php?editcontestant='.$editid.'"</script>';
                 }
             }
@@ -205,9 +205,9 @@ if (isset($_POST['createcont'])) {
         }
         $message = '<div class="alert alert-danger">Empty Fields are Required</div>';
     } else {
-        $findContestant = $conn->query("SELECT * FROM cont_details INNER JOIN election ON election.eid = cont_details.election_name WHERE cont_indentification = '".$_POST['cont_indentification']."' AND election.eid = '".$_POST['sel_election']."' AND cont_position = '".$_POST['cont_position']."'")->rowCount();
+        $findContestant = $conn->query("SELECT * FROM cont_details INNER JOIN election ON election.election_id = cont_details.election_name WHERE cont_indentification = '".$_POST['cont_indentification']."' AND election.election_id = '".$_POST['sel_election']."' AND cont_position = '".$_POST['cont_position']."'")->rowCount();
         if (isset($_GET['editcontestant']) && !empty($_GET['editcontestant'])) {
-            $findContestant = $conn->query("SELECT * FROM cont_details INNER JOIN election ON election.eid = cont_details.election_name WHERE election.eid = '".(int)$_POST['sel_election']."' AND cont_indentification = '".$_POST['cont_indentification']."' AND cont_id != '".(int)$_GET['editcontestant']."'")->rowCount();
+            $findContestant = $conn->query("SELECT * FROM cont_details INNER JOIN election ON election.election_id = cont_details.election_name WHERE election.election_id = '".$_POST['sel_election']."' AND cont_indentification = '".$_POST['cont_indentification']."' AND contestant_id != '".$_GET['editcontestant']."'")->rowCount();
         }
         if ($findContestant > 0) {
             if (isset($_POST['uploadedPassport']) != '') {
@@ -246,7 +246,7 @@ if (isset($_POST['createcont'])) {
             // INSERT DATA TO DATABASE IF ERRORS OR MESSAGES ARE EMPTY
             if ($message == '') {
                 if (isset($_GET['editcontestant']) && !empty($_GET['editcontestant'])) {
-                    $updateQ = "UPDATE cont_details SET cont_indentification = '".$cont_indentification."', cont_fname = '".$cont_fname."', cont_lname = '".$cont_lname."', cont_gender = '".$cont_gender."', cont_position = '".$cont_position."',  election_name = '".$sel_election."', cont_profile = '".$image_name."'  WHERE cont_id = '".(int)$_GET["editcontestant"]."'";
+                    $updateQ = "UPDATE cont_details SET cont_indentification = '".$cont_indentification."', cont_fname = '".$cont_fname."', cont_lname = '".$cont_lname."', cont_gender = '".$cont_gender."', cont_position = '".$cont_position."',  election_name = '".$sel_election."', cont_profile = '".$image_name."'  WHERE contestant_id = '".$_GET["editcontestant"]."'";
                     $statement = $conn->prepare($updateQ);
                     $resultQ = $statement->execute();
                     if (isset($resultQ)) {
@@ -259,12 +259,12 @@ if (isset($_POST['createcont'])) {
                     $result = $statement->execute();
                     $lastinsetedID = $conn->lastinsertId();
                     if (isset($result)) {
-                        $queryVoteCounts = "INSERT INTO vote_counts (results, cont_id, position_id, election_id) VALUE (:results, :cont_id, :position_id, :election_id)";
+                        $queryVoteCounts = "INSERT INTO vote_counts (results, contestant_id, position_id, election_id) VALUE (:results, :contestant_id, :position_id, :election_id)";
                         $statement = $conn->prepare($queryVoteCounts);
                         $statement->execute(
                             array(
                                 ':results' => 0,
-                                ':cont_id' => $lastinsetedID,
+                                ':contestant_id' => $lastinsetedID,
                                 ':position_id' => $cont_position,
                                 ':election_id' => $sel_election
                             )
@@ -392,7 +392,7 @@ if (isset($_GET['createcontestant']) || isset($_GET['editcontestant']) && !empty
                                 <select class="form-control select2getpositions" name="sel_election" id="sel_election">
                                     <option value=""<?= (($sel_election == '') ? ' selected ': ''); ?>>Select an Election</option>
                                     <?php foreach ($election_result as $election_row): ?>
-                                    <option value="<?= $election_row['eid']; ?>"<?= (($sel_election == $election_row['eid']) ? ' selected': ''); ?>><?= ucwords($election_row['election_name']); ?> ~ <?= ucwords($election_row['election_by']); ?></option>
+                                    <option value="<?= $election_row['election_id']; ?>"<?= (($sel_election == $election_row['election_id']) ? ' selected': ''); ?>><?= ucwords($election_row['election_name']); ?> ~ <?= ucwords($election_row['election_by']); ?></option>
                                     <?php endforeach; ?>
                                 </select>
                             </div>

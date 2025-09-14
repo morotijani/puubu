@@ -20,7 +20,7 @@ $query = "
 	INNER JOIN positions 
 	ON positions.position_id = cont_details.cont_position 
 	LEFT JOIN election 
-	ON election.eid = cont_details.election_name 
+	ON election.election_id = cont_details.election_name 
 	";
 if ($_POST['query'] != '') {
 	$query .= 'WHERE cont_details.cont_indentification LIKE "%'.str_replace(' ', '%', $_POST['query']).'%" OR cont_details.cont_fname LIKE "%'.str_replace(' ', '%', $_POST['query']).'%" OR cont_details.cont_lname LIKE "%'.str_replace(' ', '%', $_POST['query']).'%" OR cont_details.cont_gender LIKE "%'.str_replace(' ', '%', $_POST['query']).'%" OR positions.position_name LIKE "%'.str_replace(' ', '%', $_POST['query']).'%" OR election.election_name LIKE "%'.str_replace(' ', '%', $_POST['query']).'%" AND cont_details.del_cont = "no" ';
@@ -64,10 +64,10 @@ if ($total_data > 0) {
 		$optionStatus = '';
 		if ($row["session"] == 0) {
 			$option = '
-				<a href="contestants.php?deletecontestant='.$row["cont_id"].'&del='.(($row["del_cont"] == 'yes')?'no':'yes').'" class="btn btn-danger btn-sm">
+				<a href="contestants.php?deletecontestant='.$row["contestant_id"].'&del='.(($row["del_cont"] == 'yes')?'no':'yes').'" class="btn btn-danger btn-sm">
 					<span class="material-symbols-outlined me-1">delete</span> Delete
 				</a>&nbsp;
-				<a href="contestants.php?editcontestant='.$row["cont_id"].'" class="btn btn-sm btn-success">
+				<a href="contestants.php?editcontestant='.$row["contestant_id"].'" class="btn btn-sm btn-success">
 					<span class="material-symbols-outlined me-1">stylus_note</span> Edit
 				</a>
 			';

@@ -41,6 +41,9 @@ if (isset($_GET['deletecontestant']) && !empty($_GET['deletecontestant'])) {
 
     $findContestant = $conn->query("SELECT * FROM cont_details INNER JOIN election ON election.election_id = cont_details.election_name WHERE cont_details.contestant_id = '".$deleteid."' AND election.session = 0 AND cont_details.del_cont = 'no'")->rowCount();
     if ($findContestant > 0) {
+        $log_message = "position ['" . $delete_id . "'], selected to be deleted, but did not exist!";
+        add_to_log($log_message, $admin_id, 'admin');
+        
         if ($conn->query("UPDATE cont_details SET del_cont = '".$delnoyes."' WHERE contestant_id = '".$deleteid."'"))
             $_SESSION['flash_success'] = 'Contestant Has Been Temporary <span class="bg-danger">DELETED</span>';
             redirect(ADROOT . 'contestants');

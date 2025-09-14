@@ -279,7 +279,7 @@ if (isset($_POST['createcont'])) {
                         redirect(ADROOT . 'contestants');
                     }
                 } else {
-                    $query = "INSERT INTO cont_details (cont_indentification, cont_fname, cont_lname, cont_gender, cont_position, contestant_election, cont_profile) VALUES ('".$cont_indentification."', '".$cont_fname."', '".$cont_lname."', '".$cont_gender."', '".$cont_position."',  '".$sel_election."', '".$image_name."')";
+                    $query = "INSERT INTO cont_details (contestant_id, cont_indentification, cont_fname, cont_lname, cont_gender, cont_position, contestant_election, cont_profile) VALUES ('" . guidv4() . "', '".$cont_indentification."', '".$cont_fname."', '".$cont_lname."', '".$cont_gender."', '".$cont_position."',  '".$sel_election."', '".$image_name."')";
                     $statement = $conn->prepare($query);
                     $result = $statement->execute();
                     $lastinsetedID = $conn->lastinsertId();

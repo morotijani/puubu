@@ -41,13 +41,16 @@ if (isset($_GET['deletecontestant']) && !empty($_GET['deletecontestant'])) {
 
     $findContestant = $conn->query("SELECT * FROM cont_details INNER JOIN election ON election.election_id = cont_details.election_name WHERE cont_details.contestant_id = '".$deleteid."' AND election.session = 0 AND cont_details.del_cont = 'no'")->rowCount();
     if ($findContestant > 0) {
-        $log_message = "position ['" . $delete_id . "'], selected to be deleted, but did not exist!";
-        add_to_log($log_message, $admin_id, 'admin');
-        
         if ($conn->query("UPDATE cont_details SET del_cont = '".$delnoyes."' WHERE contestant_id = '".$deleteid."'"))
+            $log_message = "contestant ['" . $deleteid . "'], temporary deleted!";
+            add_to_log($log_message, $admin_id, 'admin');
+
             $_SESSION['flash_success'] = 'Contestant Has Been Temporary <span class="bg-danger">DELETED</span>';
             redirect(ADROOT . 'contestants');
     } else {
+        $log_message = "contestant ['" . $deleteid . "'], selected to be deleted temporary, but did not exist!";
+        add_to_log($log_message, $admin_id, 'admin');
+
         $_SESSION['flash_error'] = 'Contestant was not found or cannot be deleted Temporary!';
         redirect(ADROOT . 'contestants'); 
     }
@@ -64,16 +67,25 @@ if (isset($_GET['permanentdel']) && !empty($_GET['permanentdel'])) {
         if (unlink($uploadedpp_loc)) {
             if ($conn->query("DELETE FROM cont_details WHERE contestant_id = ".$p_deleteid." AND del_cont = 'yes'")) {
                 $_SESSION['flash_success'] = 'Contestant Has Been Permanently <span class="bg-danger">DELETED</span>';
-                echo '<script>window.location = "contestants.php?achived_contestants"</script>';
+                redirect(ADROOT . 'contestants?achived_contestants');
             } else {
+                $log_message = "contestant ['" . $p_deleteid . "'], selected to be deleted permanently, but did not exist!";
+                add_to_log($log_message, $admin_id, 'admin');
+
                 $_SESSION['flash_error'] = 'Something went wrong, please try again or contact System Administrator!';
-                echo '<script>window.location = "contestants.php?achived_contestants"</script>';
+                redirect(ADROOT . 'contestants?achived_contestants');
             }
         } else {
+            $log_message = "contestant ['" . $p_deleteid . "'], selected to be deleted permanently, but was unable to delete becuase contestant profile picture was unable to  delete!";
+            add_to_log($log_message, $admin_id, 'admin');
+
             $_SESSION['flash_error'] = 'Could not find contestant profile picture to delete, please try again or contact System Administrator!';
-            echo '<script>window.location = "contestants.php?achived_contestants"</script>';
+            redirect(ADROOT . 'contestants?achived_contestants');
         }
     } else {
+        $log_message = "contestant ['" . $p_deleteid . "'], selected to be deleted permanently, but did not exist!";
+        add_to_log($log_message, $admin_id, 'admin');
+
         $_SESSION['flash_error'] = 'Contestant was not found or cannot be deleted Permanently!';
         redirect(ADROOT . 'contestants'); 
     }

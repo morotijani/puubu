@@ -133,7 +133,7 @@ if (isset($_POST['addposition'])) {
                     $statement = $conn->prepare($query);
                     $result = $statement->execute();
                     if (isset($result)) {
-                        $log_message = "position ['" . $edit_id . "'], added!";
+                        $log_message = "new position added!";
                         add_to_log($log_message, $admin_id, 'admin');
 
                         $_SESSION['flash_success'] = 'Position Name Successfully Added';
@@ -190,8 +190,30 @@ if (isset($_POST['addposition'])) {
                             <div class="col-12 col-lg-auto mb-3 mb-lg-0">
                                 <div class="row align-items-center">
                                     <div class="col-auto">
-                                        <div class="text-body-secondary">No customers selected</div>
+                                        <div class="text-body-secondary">Positions</div>
                                     </div>
+                                </div>
+                            </div>
+                            <div class="col-12 col-lg"><div class="row gx-3  ">
+                                <div class="col col-lg-auto ms-auto">
+                                    <div class="input-group bg-body">
+                                        <input type="text" class="form-control" placeholder="Search" aria-label="Search" aria-describedby="search" />
+                                        <span class="input-group-text" id="search">
+                                            <span class="material-symbols-outlined">search</span>
+                                        </span>
+                                    </div>
+                                </div>
+
+                                <div class="col-auto">
+                                    <a class="btn btn-dark px-3" href="<?= ADROOT; ?>positions">
+                                        Refresh
+                                    </a>
+                                </div>
+
+                                <div class="col-auto ms-n2">
+                                    <a class="btn btn-dark px-3" href="<?= goBack(); ?>">
+                                        Go back
+                                    </a>
                                 </div>
                             </div>
 

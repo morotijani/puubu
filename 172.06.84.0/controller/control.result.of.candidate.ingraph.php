@@ -3,9 +3,9 @@
 require_once("../../connection/conn.php");
 
 if (isset($_POST['election_id'])) {
-    $election_id = sanitize((int)$_POST['election_id']);
-    $election_name = sanitize((int)$_POST['election_name']);
-    $election_session = sanitize((int)$_POST['election_session']);
+    $election_id = sanitize($_POST['election_id']);
+    $election_name = sanitize($_POST['election_name']);
+    $election_session = sanitize($_POST['election_session']);
         
     $candidate_name = '';
     $candidate_votes = '';
@@ -32,8 +32,8 @@ if (isset($_POST['election_id'])) {
             $contestant_query = "
                 SELECT * FROM vote_counts 
                 INNER JOIN cont_details 
-                ON cont_details.cont_id = vote_counts.cont_id 
-                WHERE election_name = ? 
+                ON cont_details.contestant_id = vote_counts.contestant_id 
+                WHERE contestant_election = ? 
                 AND cont_position = ? 
                 AND cont_details.del_cont = ?
             ";
@@ -41,8 +41,6 @@ if (isset($_POST['election_id'])) {
             $statement->execute([$election_id, $positionId, 'no']);
             $contestant_results = $statement->fetchAll();
             $contestant_count = $statement->rowCount();
-
-       
 
             if ($contestant_count > 0) {
                 $count_candidates = 0;

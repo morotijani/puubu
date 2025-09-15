@@ -83,12 +83,9 @@ if (isset($_GET['report']) && !empty($_GET['election'])) {
                                 </div>
                                 <div class="col-12 col-lg"><div class="row gx-3  ">
                                     <div class="col col-lg-auto ms-auto">
-                                        <!-- <div class="input-group bg-body">
-                                            <input type="text" class="form-control" placeholder="Search" aria-label="Search" aria-describedby="search" />
-                                            <span class="input-group-text" id="search">
-                                                <span class="material-symbols-outlined">search</span>
-                                            </span>
-                                        </div> -->
+                                        <?php if ($report_row['session'] == 1): ?>
+                                            <a href="javascript:;" class="end-election btn btn-warning" id="<?= $report_row["election_id"]; ?>">End Election</a>
+                                        <?php endif; ?>
                                     </div>
 
                                     <div class="col-auto">

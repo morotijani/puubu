@@ -144,11 +144,11 @@ if (isset($_GET['report']) && !empty($_GET['election'])) {
 <?php
     } else {
         $_SESSION['error_flash'] = 'Election was not found!';
-        redirect(PROOT . '172.06.84.0/index');
+        redirect(ADROOT . 'index');
     }
 } else {
     $_SESSION['error_flash'] = 'There was an error, please try again later.';
-    redirect(PROOT . '172.06.84.0/index');
+    redirect(ADROOT . 'index');
 }
 
 $electionStarted = '';
@@ -203,7 +203,7 @@ if (isset($_GET['eclear']) && !empty($_GET['eclear'])) {
     $(document).ready(function() {
         $('.end-election').on('click', function() {
             var election_id = $(this).attr('id');
-            if (confirm("ELection will End")) {
+            if (confirm("Election will be ended")) {
                 $.ajax({
                     url : "controller/control.end.election.php",
                     method : "POST",
@@ -211,8 +211,8 @@ if (isset($_GET['eclear']) && !empty($_GET['eclear'])) {
                         election_id : election_id
                     },
                     success : function(data) {
-                        window.location = 'https://puubu.namibra.io/172.06.84.0/reports?report=1&election='+election_id
-                        //$('#temporary').html('<span>'+data+'</span>');
+                        window.location = '<?= ADROOT; ?>reports?report=1&election='+election_id
+                        // $('#temporary').html('<span>'+data+'</span>');
                     }
                 });
             } else {

@@ -6,11 +6,11 @@
 	ob_start();
 
 	if (isset($_GET['election']) && !empty($_GET['election'])) {
-		$election_id = sanitize((int)$_GET['election']);
+		$election_id = sanitize($_GET['election']);
 		// code...
 		$query = "
 	        SELECT * FROM election 
-	        WHERE eid = ? 
+	        WHERE election_id = ? 
 	        AND session = ? 
 	        LIMIT 1
 	    ";
@@ -23,7 +23,7 @@
 	    	foreach ($report_result as $report_row) {
 
 				$election = ucwords($report_row['election_name']) . ' ~ ' . ucwords($report_row['election_by']);
-				$electionId = $report_row['eid'];
+				$electionId = $report_row['election_id'];
 				
 				class PDF extends FPDF {
 
@@ -77,14 +77,13 @@
 				$registrarsQ = "
 					SELECT * FROM registrars 
 					INNER JOIN election 
-					ON election.eid = registrars.election_type 
-					WHERE  registrars.election_type = ? 
-					AND election.eid = ?
+					ON election.election_id = registrars.registrar_election 
+					WHERE registrars.registrar_election = ? 
+					AND election.election_id = ?
 				";
 				$statement = $conn->prepare($registrarsQ);
 				$statement->execute([$election_id, $election_id]);
 				$voteTurnOut = $statement->rowCount();
-
 
 				// GET THE NUMBER OF REGISTRARS WHO VOTED
 				$sql = "
@@ -128,7 +127,7 @@
 			     	$statement = $conn->prepare($sql8);
 			     	$statement->execute(
 			            [
-			                ':cont_position' => (int)$row['position_id'],
+			                ':cont_position' => $row['position_id'],
 			                ':del_cont' => 'no'
 			            ]
 			        );
@@ -138,7 +137,7 @@
 					$votecountQ = "
 						SELECT * FROM vote_counts 
 						INNER JOIN cont_details 
-						ON cont_details.cont_id = vote_counts.cont_id 
+						ON cont_details.contestant_id = vote_counts.contestant_id 
 						WHERE vote_counts.election_id = ? 
 						AND vote_counts.position_id = ? 
 						AND cont_details.del_cont = ?
@@ -146,6 +145,8 @@
 					$statement = $conn->prepare($votecountQ);
 					$statement->execute([$election_id, $row['position_id'], 'no']);
 					$votecountResult = $statement->fetchAll();
+					// dnd($votecountResult);
+
 					foreach ($votecountResult as $counts) {
 
 						$ContName = ucwords($counts['cont_fname'] .' '. $counts['cont_lname']);

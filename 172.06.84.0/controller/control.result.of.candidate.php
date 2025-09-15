@@ -91,7 +91,7 @@ if (isset($_POST['election_id'])) {
             if ($contestant_count > 0) {
                 $output .= "<div class='row'>";
                 foreach ($contestant_results as $crow) {
-                    $contestantBallotNo = $crow['cont_fname'];
+                    $contestantBallotNo = $crow['contestant_ballot_number'];
                     $contestantName = $crow['cont_fname'] . ' ' . $crow['cont_lname'];
                     $contestantPicture = $crow['cont_profile'];
 
@@ -112,27 +112,29 @@ if (isset($_POST['election_id'])) {
                             ";
                         } else {
                             $output .= "
-
-                               
-
                                 <div class='col-md-3'>
-                                    <div class='row align-items-center'>
-                                        <div class='col'>
-                                            <div class='d-flex align-items-center'>
-                                                <div class='avatar'>
-                                                    <img class='avatar-img rounded' src='../media/uploadedprofile/".$contestantPicture."' alt='...' />
+                                    <div class='card'>
+                                        <div class='card-body p-3'>
+                                            <div class='row align-items-center'>
+                                                <div class='col'>
+                                                    <div class='d-flex align-items-center'>
+                                                        <div class='avatar'>
+                                                            <img class='avatar-img rounded' src='../media/uploadedprofile/".$contestantPicture."' alt='...' />
+                                                        </div>
+                                                        <div class='ms-4'>
+                                                            <div class='fw-bold'> ". ucwords($contestantName) . "</div>
+                                                            <div class=''>Ballot no: <span class=''>".$contestantBallotNo . "</span></div>
+                                                            <div>Yes votes: <span class='badge bg-warning'>" . $countVotes . "</span> out of <span class='badge bg-primary'>" . $registrars_count . "</span></div>
+                                                            <div>No votes: <span class='badge bg-warning'>" . $countVotesNO . "</span> out of <span class='badge bg-primary'>" . $registrars_count . "</span></div>
+                                                        </div>
+                                                    </div>
                                                 </div>
-                                                <div class='ms-4'>
-                                                    <div>".ucwords($contestantName)."</div>
-                                                    <div>VR Headset</div>
-                                                    <div>VR Headset</div>
-                                                </div>
+                                                <!-- <div class='col-auto'></div> -->
                                             </div>
                                         </div>
-                                        <div class='col-auto'>Ballot <span class='text-body-secondary mx-1'>No</span> ".."</div>
                                     </div>
 
-                                    <div class='card'>
+                                    <!-- <div class='card'>
                                         <img src='../media/uploadedprofile/".$contestantPicture."' class='img-fluid' style='height: 150px; object-fit: contain; object-position: center;'>
                                         <div class='card-body'>
                                             <p class='lead text-center text-secondary'>
@@ -144,7 +146,7 @@ if (isset($_POST['election_id'])) {
                                                 <span class='text-info'>No votes</span> = <span class='badge badge-info'>".$countVotesNO."</span> out of <spa class='badge badge-warning'>". $registrars_count ."</span>
                                             </p>
                                         </div>
-                                    </div>
+                                    </div> -->
                                 </div>
                             ";
                         }

@@ -2,7 +2,6 @@
 
   // CONNECTION TO DATABASE
 require_once("../connection/conn.php");
-
 if (!cadminIsLoggedIn()) {
     cadminLoginErrorRedirect();
 }
@@ -34,16 +33,16 @@ $election_result = $statement->fetchAll();
 
 // GET VOTER FOR EDITING
 if (isset($_GET['editvoter']) && !empty($_GET['editvoter'])) {
-    $editid = sanitize((int)$_GET['editvoter']);
+    $editid = sanitize($_GET['editvoter']);
 
-    $findVoter = $conn->query("SELECT * FROM registrars INNER JOIN election ON election.election_id = registrars.election_type WHERE registrars.id = '".$editid."' AND election.session = 0")->rowCount();
+    $findVoter = $conn->query("SELECT * FROM registrars INNER JOIN election ON election.election_id = registrars.registrar_election WHERE registrars.voter_id = '" . $editid . "' AND election.session = 0")->rowCount();
     if ($findVoter > 0) {
         foreach ($conn->query("SELECT * FROM registrars WHERE id = '".$editid."'")->fetchAll() as $row) {
             $voter_fname = ((isset($row['std_fname']) != '') ? $row["std_fname"] : $_POST["voter_fname"]);
             $voter_lname = ((isset($row['std_lname']) != '') ? $row["std_lname"] : $_POST["voter_lname"]);
             $voter_identity = ((isset($row['std_id']) != '') ? $row["std_id"] : $_POST["voter_identity"]);
             $voter_email = ((isset($row['std_email']) != '') ? $row["std_email"] : $_POST["voter_email"]);
-            $sel_election = ((isset($row['election_type']) != '')?$row["election_type"] : $_POST["voter_election_type"]);
+            $sel_election = ((isset($row['registrar_election']) != '')?$row["registrar_election"] : $_POST["voter_election_type"]);
         }
     } else {
         $log_message = "voter ['" . $editid . "'], selected to be edited, but did not exist!";
@@ -57,22 +56,22 @@ if (isset($_GET['editvoter']) && !empty($_GET['editvoter'])) {
 
 // DELETE VOTER
 if (isset($_GET['deletevoter']) && !empty($_GET['deletevoter'])) {
-    $deleteid = (int)$_GET['deletevoter'];
+    $deleteid = $_GET['deletevoter'];
 
-    $findVoter = $conn->query("SELECT * FROM registrars INNER JOIN election ON election.election_id = registrars.election_type WHERE registrars.id = '".$deleteid."' AND election.session = 0")->rowCount();
+    $findVoter = $conn->query("SELECT * FROM registrars INNER JOIN election ON election.election_id = registrars.registrar_election WHERE registrars.voter_id = '".$deleteid."' AND election.session = 0")->rowCount();
     if ($findVoter > 0) {
         // $deleteQuery = "DELETE FROM registrars WHERE id = '".$deleteid."'";
         // $statement = $conn->prepare($deleteQuery);
         // $statement->execute();
-        if ($conn->query("DELETE FROM registrars WHERE id = '".$deleteid."'")) {
-            $log_message = "voter ['" . $delete_id . "'], deleted!";
+        if ($conn->query("DELETE FROM registrars WHERE voter_id = '".$deleteid."'")) {
+            $log_message = "voter ['" . $deleteid . "'], deleted!";
             add_to_log($log_message, $admin_id, 'admin');
 
             $_SESSION['flash_success'] = 'Registrar Has Been Deleted Successfully';
             echo "<script>window.location = 'registrar';</script>";
         }
     } else {
-        $log_message = "voter ['" . $delete_id . "'], selected to be deleted, but did not exist!";
+        $log_message = "voter ['" . $deleteid . "'], selected to be deleted, but did not exist!";
         add_to_log($log_message, $admin_id, 'admin');
 
         $_SESSION['flash_error'] = 'Voter cannot be found!';
@@ -84,7 +83,7 @@ if (isset($_GET['deletevoter']) && !empty($_GET['deletevoter'])) {
 // MUTIPLE DELETE VOTERS
 if (isset($_POST['checkbox_value'])) {
     for ($i = 0; $i < count($_POST['checkbox_value']); $i++) { 
-        $query = "DELETE FROM registrars WHERE id = '".$_POST['checkbox_value'][$i]."'";
+        $query = "DELETE FROM registrars WHERE voter_id = '".$_POST['checkbox_value'][$i]."'";
         $statement = $conn->prepare($query);
         $statement->execute();
     }
@@ -106,7 +105,7 @@ if (isset($_POST['dataValue'])) {
 
             $query = "SELECT * FROM registrars WHERE std_id = '".$_POST['voter_identity'][$i]."'";
             if (isset($_GET['editvoter']) && !empty($_GET['editvoter'])) {
-                $query = "SELECT * FROM registrars WHERE std_id = '".$_POST['voter_identity'][$i]."' AND id != '".(int)$_GET['editvoter']."'";
+                $query = "SELECT * FROM registrars WHERE std_id = '".$_POST['voter_identity'][$i]."' AND id != '".$_GET['editvoter']."'";
             }
             $statement = $conn->prepare($query);
             $statement->execute();
@@ -125,13 +124,13 @@ if (isset($_POST['dataValue'])) {
               $generatedpassword = substr(str_shuffle($string), 0, 8);
 
               if (isset($_GET['editvoter']) && !empty($_GET['editvoter'])) {
-                $update = "UPDATE registrars SET std_id = '".$_POST['voter_identity'][$i]."', std_fname = '".$_POST['voter_fname'][$i]."', std_lname = '".$_POST['voter_lname'][$i]."', std_email = '".$_POST['voter_email'][$i]."', election_type = '".$_POST['voter_election_type'][$i]."' WHERE id = '".(int)$_GET['editvoter']."'";
+                $update = "UPDATE registrars SET std_id = '".$_POST['voter_identity'][$i]."', std_fname = '".$_POST['voter_fname'][$i]."', std_lname = '".$_POST['voter_lname'][$i]."', std_email = '".$_POST['voter_email'][$i]."', registrar_election = '".$_POST['voter_election_type'][$i]."' WHERE id = '".$_GET['editvoter']."'";
                 $statement = $conn->prepare($update);
                 $statement->execute();
                 $_SESSION['flash_success'] = 'The Voter Has Been Successfully Updated';
                 echo "<script>window.location = 'registrar';</script>";
               } else {
-                $query = "INSERT INTO registrars (std_id, std_password, std_fname, std_lname, std_email, election_type) VALUES ('".$_POST['voter_identity'][$i]."', '".$generatedpassword."', '".$_POST['voter_fname'][$i]."', '".$_POST['voter_lname'][$i]."', '".$_POST['voter_email'][$i]."', '".$_POST['voter_election_type'][$i]."')";
+                $query = "INSERT INTO registrars (std_id, std_password, std_fname, std_lname, std_email, registrar_election) VALUES ('".$_POST['voter_identity'][$i]."', '".$generatedpassword."', '".$_POST['voter_fname'][$i]."', '".$_POST['voter_lname'][$i]."', '".$_POST['voter_email'][$i]."', '".$_POST['voter_election_type'][$i]."')";
                 $statement = $conn->prepare($query);
                 $result = $statement->execute();
                 if (isset($result)) {
@@ -193,7 +192,7 @@ if (isset($_POST['dataValue'])) {
         SELECT *
         FROM registrars 
         INNER JOIN election
-        ON election.election_id = registrars.election_type 
+        ON election.election_id = registrars.registrar_election 
         WHERE registrars.std_email 
         IN (
                 SELECT registrars.std_email 

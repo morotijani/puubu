@@ -62,13 +62,13 @@
 			$option = '';
 			if ($row["session"] == 0) {
 				$option = '
-					<a href="?deletevoter='.$row["id"].'" class="btn btn-sm btn-danger">
+					<a href="?deletevoter='.$row["voter_id"].'" class="btn btn-sm btn-danger">
 						<span class="material-symbols-outlined me-1">delete</span> Delete
 					</a>
-					&nbsp;<a href="?editvoter='.$row["id"].'" class="btn btn-sm btn-dark">
+					&nbsp;<a href="?editvoter='.$row["voter_id"].'" class="btn btn-sm btn-dark">
 						<span class="material-symbols-outlined me-1">stylus_note</span> Edit
 					</a>
-	                <input type="checkbox" class="checkToDelete form-check-input" value="'.$row["id"].'" style="display: none;">
+	                <input type="checkbox" class="checkToDelete form-check-input" value="'.$row["voter_id"].'" style="display: none;">
 				';
 			}
 			$output .= '

@@ -89,8 +89,9 @@ if (isset($_POST['election_id'])) {
             $sql8_result = $statement->fetchAll();
 
             if ($contestant_count > 0) {
-                    $output .= "<div class='row'>";
+                $output .= "<div class='row'>";
                 foreach ($contestant_results as $crow) {
+                    $contestantBallotNo = $crow['cont_fname'];
                     $contestantName = $crow['cont_fname'] . ' ' . $crow['cont_lname'];
                     $contestantPicture = $crow['cont_profile'];
 
@@ -111,7 +112,26 @@ if (isset($_POST['election_id'])) {
                             ";
                         } else {
                             $output .= "
+
+                               
+
                                 <div class='col-md-3'>
+                                    <div class='row align-items-center'>
+                                        <div class='col'>
+                                            <div class='d-flex align-items-center'>
+                                                <div class='avatar'>
+                                                    <img class='avatar-img rounded' src='../media/uploadedprofile/".$contestantPicture."' alt='...' />
+                                                </div>
+                                                <div class='ms-4'>
+                                                    <div>".ucwords($contestantName)."</div>
+                                                    <div>VR Headset</div>
+                                                    <div>VR Headset</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class='col-auto'>Ballot <span class='text-body-secondary mx-1'>No</span> ".."</div>
+                                    </div>
+
                                     <div class='card'>
                                         <img src='../media/uploadedprofile/".$contestantPicture."' class='img-fluid' style='height: 150px; object-fit: contain; object-position: center;'>
                                         <div class='card-body'>

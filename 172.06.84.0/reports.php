@@ -30,7 +30,7 @@ if (isset($_GET['report']) && !empty($_GET['election'])) {
     if ($count_report > 0) {
 ?>
 
- <!-- Main -->
+    <!-- Main -->
     <main class="main px-lg-6">
         <!-- Content -->
         <div class="container-lg">

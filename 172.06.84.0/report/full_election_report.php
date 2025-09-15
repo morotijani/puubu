@@ -145,12 +145,11 @@
 					$statement = $conn->prepare($votecountQ);
 					$statement->execute([$election_id, $row['position_id'], 'no']);
 					$votecountResult = $statement->fetchAll();
-					// dnd($votecountResult);
 
 					foreach ($votecountResult as $counts) {
 
 						$ContName = ucwords($counts['cont_fname'] .' '. $counts['cont_lname']);
-						$ContID = strtoupper($counts['cont_indentification']) .' | ';
+						$ContID = strtoupper($counts['contestant_ballot_number']) .' | ';
 						$ContResult = $counts['results'];
 						$ContResultNO = $counts['results_no'];
 

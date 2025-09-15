@@ -388,6 +388,77 @@
     
 
 
+    <div class="modal fade" id="electionModal" tabindex="-1" aria-labelledby="electionLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header border-bottom-0 pb-0">
+                    <h1 class="modal-title fs-5" id="electionLabel">Start an election</h1>
+                    <button class="btn-close" type="button" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="submitElectionSession" method="POST">
+
+                        <?php
+                            $query = "SELECT * FROM election WHERE session = ?";
+                            $statement = $conn->prepare($query);
+                            $statement->execute([0]);
+                            $not_started_election_result = $statement->fetchAll();
+                            $not_started_election_count = $statement->rowCount();
+                            if ($not_started_election_count > 0) {
+                        ?>
+
+                            <label class="control-label" for="election-session">Elections</label>
+                            <select class="form-control form-control-sm form-control-dark" name="election-session" id="election-session" required="required">
+                                <option>Select Election</option> 
+                                <?php foreach ($not_started_election_result as $row): ?>
+                                    <option value="<?= $row["election_id"]; ?>"><?= ucwords($row["election_name"]); ?> / <?= ucwords($row["election_by"]); ?></option>
+                                <?php endforeach; ?>
+                            </select>
+                            <br>
+                            <div class="form-group">
+                                <label class="control-label">Create voting end time session.</label>
+                                <input type="datetime-local" name="ctimer" id="ctimer" class="form-control form-control-sm form-control-dark" required>
+                            </div>
+                        <?php } else { ?>
+                            <div class='well'>There aren't any election available to start. You can <a href='election'>add one</a></div>
+                        <?php } ?>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-sm btn-secondary" data-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-sm btn-outline-info">Start!</button>
+                    </div>
+                </form>
+
+                        <div class="mb-4">
+                            <label class="form-label" for="eventTitle">Title</label>
+                            <input class="form-control" id="eventTitle" type="text" />
+                        </div>
+                        <div class="mb-4">
+                            <label class="form-label" for="eventDescription">Description</label>
+                            <textarea class="form-control" id="eventDescription" rows="3" data-autosize></textarea>
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                <div class="mb-4">
+                                    <label class="form-label" for="eventStart">Start</label>
+                                    <input class="form-control" id="eventStart" type="text" data-flatpickr />
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="mb-4">
+                                    <label class="form-label" for="eventEnd">End</label>
+                                    <input class="form-control" id="eventEnd" type="text" data-flatpickr />
+                                </div>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-secondary w-100 mt-4">Create event</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
 
 
 <div class="modal fade" id="electionModal" tabindex="-1" role="dialog" aria-labelledby="electionLabel" style="display: none;" aria-hidden="true">
@@ -401,39 +472,7 @@
                 </button>
             </div>
 
-            <form id="submitElectionSession" method="POST">
-                <div class="modal-body">
-
-                    <?php
-                        $query = "SELECT * FROM election WHERE session = ?";
-                        $statement = $conn->prepare($query);
-                        $statement->execute([0]);
-                        $not_started_election_result = $statement->fetchAll();
-                        $not_started_election_count = $statement->rowCount();
-                        if ($not_started_election_count > 0) {
-                    ?>
-
-                        <label class="control-label" for="election-session">Elections</label>
-                        <select class="form-control form-control-sm form-control-dark" name="election-session" id="election-session" required="required">
-                            <option>Select Election</option> 
-                            <?php foreach ($not_started_election_result as $row): ?>
-                                <option value="<?= $row["election_id"]; ?>"><?= ucwords($row["election_name"]); ?> / <?= ucwords($row["election_by"]); ?></option>
-                            <?php endforeach; ?>
-                        </select>
-                        <br>
-                        <div class="form-group">
-                            <label class="control-label">Create voting end time session.</label>
-                            <input type="datetime-local" name="ctimer" id="ctimer" class="form-control form-control-sm form-control-dark" required>
-                        </div>
-                    <?php } else { ?>
-                        <div class='well'>There aren't any election available to start. You can <a href='election'>add one</a></div>
-                    <?php } ?>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-sm btn-secondary" data-dismiss="modal">Cancel</button>
-                    <button type="submit" class="btn btn-sm btn-outline-info">Start!</button>
-                </div>
-            </form>
+            
         </div>
     </div>
 </div>

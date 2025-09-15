@@ -12,8 +12,8 @@
 				INNER JOIN registrars
 				ON registrars.id = voterhasdone.voter_id 
 				INNER JOIN election 
-				ON election.eid = voterhasdone.election_id
-				AND election.eid = registrars.election_type
+				ON election.election_id = voterhasdone.election_id
+				AND election.election_id = registrars.registrar_election
 				WHERE voterhasdone_status = ?
 				AND election.session = ?
 			";

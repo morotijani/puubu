@@ -11,11 +11,11 @@ include ('includes/top-nav.inc.php');
 include ('includes/left-nav.inc.php');
 
 if (isset($_GET['report']) && !empty($_GET['election'])) {
-    $election_id = sanitize((int)$_GET['election']);
+    $election_id = sanitize($_GET['election']);
 
     $query = "
         SELECT * FROM election 
-        WHERE eid = ? 
+        WHERE election_id = ? 
         AND session = ? 
         OR session = ? 
         LIMIT 1
@@ -166,12 +166,12 @@ if (isset($_GET['eclear']) && !empty($_GET['eclear'])) {
     if ($count_election_clear_started_election > 0) {
         foreach ($clear_started_election_result as $clear_started_election_row) {}
         
-        $queryStop = "UPDATE election SET session = ?, stop_timer = ? WHERE eid = ?";
+        $queryStop = "UPDATE election SET session = ?, stop_timer = ? WHERE election_id = ?";
         $statement = $conn->prepare($queryStop);
-        $result = $statement->execute([0, '', $clear_started_election_row['eid']]);
+        $result = $statement->execute([0, '', $clear_started_election_row['election_id']]);
         if (isset($result)) {
             $_SESSION['flash_success'] = 'Election Has Been Stopped Successfully';
-            echo "<script>window.location = 'index';</script>";
+            redirect(ADROOT);
         }
     }
 }

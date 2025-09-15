@@ -99,13 +99,12 @@
                         <div class="nav-item">
                             <a
                                 class="nav-link"
-                                href="<?= PROOT; ?>index"
-                                target="_blank"
+                                href="javascript:;"
                                 data-bs-toggle="tooltip"
                                 data-bs-placement="right"
-                                data-bs-title="Go to website"
+                                data-bs-title="Start / End and election" data-toggle="modal" data-target="#electionModal"
                             >
-                                <span class="material-symbols-outlined">globe</span> <span class="d-xl-none ms-3">Go to website</span>
+                                <span class="material-symbols-outlined">start</span> <span class="d-xl-none ms-3">Start / End and election</span>
                             </a>
                         </div>
                         <div class="nav-item">
@@ -509,19 +508,19 @@
               <div class="nav-item">
                 <a
                   class="nav-link flex-xl-column"
-                  href="https://themes.getbootstrap.com/product/dashbrd/"
+                  href="javascript:;"
                   target="_blank"
                   data-bs-toggle="tooltip"
                   data-bs-placement="right"
-                  data-bs-title="Go to product page"
+                  data-bs-title="Start / End and election" data-toggle="modal" data-target="#electionModal"
                 >
-                  <span class="material-symbols-outlined">local_mall</span> <span class="d-xl-none ms-3">Go to product page</span>
+                  <span class="material-symbols-outlined">start</span> <span class="d-xl-none ms-3">Start / End and election</span>
                 </a>
               </div>
               <div class="nav-item">
                 <a
                   class="nav-link flex-xl-column"
-                  href="mailto:yevgenysim+simpleqode@gmail.com"
+                  href="mailto:contact-us@puubu.com"
                   data-bs-toggle="tooltip"
                   data-bs-placement="right"
                   data-bs-title="Contact us"
@@ -801,12 +800,12 @@
                 <!-- Nav -->
                 <nav class="navbar-nav nav-pills d-xl-none mb-7">
                     <div class="nav-item">
-                        <a class="nav-link" href="https://themes.getbootstrap.com/product/dashbrd/" target="_blank">
-                        <span class="material-symbols-outlined me-3">local_mall</span> Go to website
+                        <a class="nav-link" href="javascript:;" data-toggle="modal" data-target="#electionModal">
+                        <span class="material-symbols-outlined me-3">local_mall</span> Start / End and election
                         </a>
                     </div>
                     <div class="nav-item">
-                        <a class="nav-link" href="mailto:yevgenysim+simpleqode@gmail.com">
+                        <a class="nav-link" href="mailto:contact-us@puubu.com">
                         <span class="material-symbols-outlined me-3">alternate_email</span> Contact us
                         </a>
                     </div>
@@ -1145,12 +1144,12 @@
               </div>
             </div>
             <div class="nav-item">
-              <a class="nav-link" href="https://themes.getbootstrap.com/product/dashbrd/" target="_blank">
-                <span class="material-symbols-outlined">local_mall</span><span class="d-xl-none ms-3">Go to product page</span>
+              <a class="nav-link" href="javascript:;" data-toggle="modal" data-target="#electionModal">
+                <span class="material-symbols-outlined">local_mall</span><span class="d-xl-none ms-3">Start / End and election</span>
               </a>
             </div>
             <div class="nav-item">
-              <a class="nav-link" href="mailto:yevgenysim+simpleqode@gmail.com">
+              <a class="nav-link" href="mailto:contact-us@puubu.com">
                 <span class="material-symbols-outlined">alternate_email</span><span class="d-xl-none ms-3">Contact us</span>
               </a>
             </div>

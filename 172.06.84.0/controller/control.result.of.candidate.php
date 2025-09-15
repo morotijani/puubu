@@ -3,16 +3,16 @@
 require_once("../../connection/conn.php");
 
 if (isset($_POST['election_id'])) {
-    $election_id = sanitize((int)$_POST['election_id']);
-    $election_name = sanitize((int)$_POST['election_name']);
-    $election_session = sanitize((int)$_POST['election_session']);
+    $election_id = sanitize($_POST['election_id']);
+    $election_name = sanitize($_POST['election_name']);
+    $election_session = sanitize($_POST['election_session']);
         
     // GET THE REGISTRARS
     $registrars_query = "
         SELECT * FROM registrars 
         INNER JOIN election 
-        ON election.eid = registrars.election_type 
-        WHERE election.eid = ?
+        ON election.election_id = registrars.registrar_election 
+        WHERE election.election_id = ?
     ";
     $statement = $conn->prepare($registrars_query);
     $statement->execute([$election_id]);
@@ -60,8 +60,8 @@ if (isset($_POST['election_id'])) {
             $contestant_query = "
                 SELECT * FROM vote_counts 
                 INNER JOIN cont_details 
-                ON cont_details.cont_id = vote_counts.cont_id 
-                WHERE election_name = ? 
+                ON cont_details.contestant_id = vote_counts.contestant_id 
+                WHERE contestant_election = ? 
                 AND cont_position = ? 
                 AND cont_details.del_cont = ?
             ";
@@ -73,14 +73,14 @@ if (isset($_POST['election_id'])) {
             $sql8 = "
                 SELECT COUNT(*) count_pc 
                 FROM cont_details 
-                WHERE election_name = :election_name 
+                WHERE contestant_election = :contestant_election 
                 AND cont_position = :cont_position 
                 AND del_cont = :del_cont
             ";
             $statement = $conn->prepare($sql8);
             $statement->execute(
                 [
-                    ':election_name' => $election_id,
+                    ':contestant_election' => $election_id,
                     ':cont_position' => (int)$positionId,
                     ':del_cont' => 'no'
                 ]

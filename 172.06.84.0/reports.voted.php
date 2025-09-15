@@ -12,11 +12,11 @@ include ('includes/top-nav.inc.php');
 include ('includes/left-nav.inc.php');
 
 if (isset($_GET['report']) && !empty($_GET['report'])) {
-    $election_id = sanitize((int)$_GET['report']);
+    $election_id = sanitize($_GET['report']);
 
     $query = "
         SELECT * FROM election 
-        WHERE eid = ?
+        WHERE election_id = ?
         LIMIT 1
     ";
     $statement = $conn->prepare($query);
@@ -33,8 +33,8 @@ if (isset($_GET['report']) && !empty($_GET['report'])) {
         $position_sql = "
             SELECT * FROM positions 
             INNER JOIN election 
-            ON election.eid = positions.election_id 
-            WHERE election.eid = ? 
+            ON election.election_id = positions.election_id 
+            WHERE election.election_id = ? 
             AND election.session != ?
         ";
         $statement = $conn->prepare($position_sql);
@@ -131,26 +131,26 @@ if (isset($_GET['report']) && !empty($_GET['report'])) {
         // $position_name = ((isset($_POST['position_name']) ? $_POST["position_name"] : ''));
 
         $output = '';
-        $contestant_position = ((isset($_POST['contestant_position']) && !empty($_POST['contestant_position'])) ? (int)$_POST['contestant_position'] : '');
+        $contestant_position = ((isset($_POST['contestant_position']) && !empty($_POST['contestant_position'])) ? $_POST['contestant_position'] : '');
         if ($_POST) {
             $s_query = "
                 SELECT * FROM voted_for
                 INNER JOIN registrars
                 ON registrars.id = voted_for.voter_id
                 LEFT JOIN election
-                ON election.eid = voted_for.election_id
+                ON election.election_id = voted_for.election_id
                 LEFT JOIN positions
                 ON positions.position_id = voted_for.position_id
                 LEFT JOIN cont_details
-                ON cont_details.cont_id = voted_for.candidate_id
-                WHERE election.eid = :eid
+                ON cont_details.contestant_id = voted_for.candidate_id
+                WHERE election.election_id = :election_id
                 AND positions.position_id = :pid
                 AND voted_for.trash = :vft
             ";
             $statement = $conn->prepare($s_query);
             $statement->execute([
-                ':eid'  => $election_id,
-                ':pid'  => sanitize((int)$_POST['contestant_position']),
+                ':election_id'  => $election_id,
+                ':pid'  => sanitize($_POST['contestant_position']),
                 ':vft'  => 0
             ]);
             $result = $statement->fetchAll();
@@ -213,7 +213,7 @@ if (isset($_GET['report']) && !empty($_GET['report'])) {
         <div class="card-body">
             <div class="row align-items-center">
                 <div class="col">
-                    <h3 class='fs-6 mb-2' style='color:rgb(170, 184, 197);'>
+                    <h3 class='fs-6 mb-2'>
                         Search for, voted for under the election <span class="text-danger"><?= ucwords($report_row["election_name"]) ?></span>.
                     </h4>
                 </div>

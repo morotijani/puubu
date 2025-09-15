@@ -103,11 +103,30 @@ if (isset($_POST['election_id'])) {
                             $output .= "
                                 <div class='col-md-3'>
                                     <div class='card'>
+                                        <div class='card-body p-3'>
+                                            <div class='row align-items-center'>
+                                                <div class='col'>
+                                                    <div class='d-flex align-items-center'>
+                                                        <div class='avatar avatar-xl'>
+                                                            <img class='avatar-img rounded' src='../media/uploadedprofile/".$contestantPicture."' alt='...' />
+                                                        </div>
+                                                        <div class='ms-4'>
+                                                            <div class='fw-bold'> ". ucwords($contestantName) . "</div>
+                                                            <div class=''>Ballot no: <span class=''>".$contestantBallotNo . "</span></div>
+                                                            <div>Votes: <span class='badge bg-warning'>" . $countVotes . "</span> out of <span class='badge bg-primary'>" . $registrars_count . "</span></div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <!-- <div class='col-auto'></div> -->
+                                            </div>
+                                        </div>
+
+                                    <!-- <div class='card'>
                                         <img src='../media/uploadedprofile/".$contestantPicture."' class='img-fluid' style='height: 150px; object-fit: contain; object-position: center;'>
                                         <div class='card-body'>
                                             <p class='text-center text-secondary lead'><u>".ucwords($contestantName)."</u>: <span class='badge badge-danger'>".$countVotes."</span> out of <spa class='badge badge-warning'>". $registrars_count ."</span></p>
                                         </div>
-                                    </div>
+                                    </div> -->
                                 </div>
                             ";
                         } else {
@@ -118,7 +137,7 @@ if (isset($_POST['election_id'])) {
                                             <div class='row align-items-center'>
                                                 <div class='col'>
                                                     <div class='d-flex align-items-center'>
-                                                        <div class='avatar'>
+                                                        <div class='avatar avatar-xl'>
                                                             <img class='avatar-img rounded' src='../media/uploadedprofile/".$contestantPicture."' alt='...' />
                                                         </div>
                                                         <div class='ms-4'>

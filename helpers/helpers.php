@@ -413,7 +413,7 @@ function goBack() {
 	// GET THE TOTAL NUMBER OF VOTERS
 	function count_voters() {
 		global $conn;
-		$query = "SELECT * FROM `registrars` INNER JOIN election ON election.election_id = registrars.election_type";
+		$query = "SELECT * FROM `registrars` INNER JOIN election ON election.election_id = registrars.registrar_election";
 		$statement = $conn->prepare($query);
 		$statement->execute();
 		return $statement->rowCount();
@@ -455,7 +455,7 @@ function goBack() {
 	// GET THE TOTAL NUMBER OF VOTERS
 	function count_voters_on_runing_election($election_id) {
 		global $conn;
-		$query = "SELECT * FROM `registrars` INNER JOIN election ON election.election_id = ? AND registrars.election_type = ? WHERE election.session = ? OR election.session = ?";
+		$query = "SELECT * FROM `registrars` INNER JOIN election ON election.election_id = ? AND registrars.registrar_election = ? WHERE election.session = ? OR election.session = ?";
 		$statement = $conn->prepare($query);
 		$statement->execute([$election_id, $election_id, 1, 2]);
 		return $statement->rowCount();

@@ -1,102 +1,107 @@
 <?php
 
-  // CONNECTION TO DATABASE
-require_once("../connection/conn.php");
-if (!cadminIsLoggedIn()) {
-    cadminLoginErrorRedirect();
-}
-
-
-// REQUIREMENT OF EXTERNAL FILES
-include ('includes/header.inc.php');
-include ('includes/top-nav.inc.php');
-include ('includes/left-nav.inc.php');
-$message = '';
-
-$voter_fname = '';
-$voter_lname = '';
-$voter_identity = '';
-$voter_email = '';
-$sel_election = '';
-$sel_election = ((isset($_POST['sel_election']) && !empty($_POST['sel_election']))?sanitize($_POST['sel_election']):'');
-  
-// $voter_fname = ((isset($_POST['voter_fname']) != '')?$_POST["voter_fname"]:'');
-// $voter_lname = ((isset($_POST['voter_lname']) != '')?$_POST["voter_lname"]:'');
-// $voter_identity = ((isset($_POST['voter_identity']) != '')?$_POST["voter_identity"]:'');
-  
-// FETCH ELECTIONS THAT HAS NOT YET BEEN STATED
-$query = "SELECT * FROM election WHERE session = ? ORDER BY election_id DESC";
-$statement = $conn->prepare($query);
-$statement->execute([0]);
-$election_result = $statement->fetchAll();
-
-
-// GET VOTER FOR EDITING
-if (isset($_GET['editvoter']) && !empty($_GET['editvoter'])) {
-    $editid = sanitize($_GET['editvoter']);
-
-    $findVoter = $conn->query("SELECT * FROM registrars INNER JOIN election ON election.election_id = registrars.registrar_election WHERE registrars.voter_id = '" . $editid . "' AND election.session = 0")->rowCount();
-    if ($findVoter > 0) {
-        foreach ($conn->query("SELECT * FROM registrars WHERE id = '".$editid."'")->fetchAll() as $row) {
-            $voter_fname = ((isset($row['std_fname']) != '') ? $row["std_fname"] : $_POST["voter_fname"]);
-            $voter_lname = ((isset($row['std_lname']) != '') ? $row["std_lname"] : $_POST["voter_lname"]);
-            $voter_identity = ((isset($row['std_id']) != '') ? $row["std_id"] : $_POST["voter_identity"]);
-            $voter_email = ((isset($row['std_email']) != '') ? $row["std_email"] : $_POST["voter_email"]);
-            $sel_election = ((isset($row['registrar_election']) != '')?$row["registrar_election"] : $_POST["voter_election_type"]);
-        }
-    } else {
-        $log_message = "voter ['" . $editid . "'], selected to be edited, but did not exist!";
-        add_to_log($log_message, $admin_id, 'admin');
-
-        $_SESSION['flash_error'] = 'Voter cannot be found!';
-        redirect(ADROOT . 'registrar');
+    // CONNECTION TO DATABASE
+    require_once("../connection/conn.php");
+    if (!cadminIsLoggedIn()) {
+        cadminLoginErrorRedirect();
     }
 
-}
+    // REQUIREMENT OF EXTERNAL FILES
+    include ('includes/header.inc.php');
+    include ('includes/top-nav.inc.php');
+    include ('includes/left-nav.inc.php');
+    $message = '';
 
-// DELETE VOTER
-if (isset($_GET['deletevoter']) && !empty($_GET['deletevoter'])) {
-    $deleteid = $_GET['deletevoter'];
+    $voter_fname = '';
+    $voter_lname = '';
+    $voter_identity = '';
+    $voter_email = '';
+    $sel_election = '';
+    $sel_election = ((isset($_POST['sel_election']) && !empty($_POST['sel_election']))?sanitize($_POST['sel_election']):'');
+    
+    // $voter_fname = ((isset($_POST['voter_fname']) != '')?$_POST["voter_fname"]:'');
+    // $voter_lname = ((isset($_POST['voter_lname']) != '')?$_POST["voter_lname"]:'');
+    // $voter_identity = ((isset($_POST['voter_identity']) != '')?$_POST["voter_identity"]:'');
+    
+    // FETCH ELECTIONS THAT HAS NOT YET BEEN STATED
+    $query = "SELECT * FROM election WHERE session = ? ORDER BY election_id DESC";
+    $statement = $conn->prepare($query);
+    $statement->execute([0]);
+    $election_result = $statement->fetchAll();
 
-    $findVoter = $conn->query("SELECT * FROM registrars INNER JOIN election ON election.election_id = registrars.registrar_election WHERE registrars.voter_id = '".$deleteid."' AND election.session = 0")->rowCount();
-    if ($findVoter > 0) {
-        // $deleteQuery = "DELETE FROM registrars WHERE id = '".$deleteid."'";
-        // $statement = $conn->prepare($deleteQuery);
-        // $statement->execute();
-        if ($conn->query("DELETE FROM registrars WHERE voter_id = '".$deleteid."'")) {
-            $log_message = "voter ['" . $deleteid . "'], deleted!";
+
+    // GET VOTER FOR EDITING
+    if (isset($_GET['editvoter']) && !empty($_GET['editvoter'])) {
+        $editid = sanitize($_GET['editvoter']);
+
+        $findVoter = $conn->query("SELECT * FROM registrars INNER JOIN election ON election.election_id = registrars.registrar_election WHERE registrars.voter_id = '" . $editid . "' AND election.session = 0")->rowCount();
+        if ($findVoter > 0) {
+            foreach ($conn->query("SELECT * FROM registrars WHERE id = '".$editid."'")->fetchAll() as $row) {
+                $voter_fname = ((isset($row['std_fname']) != '') ? $row["std_fname"] : $_POST["voter_fname"]);
+                $voter_lname = ((isset($row['std_lname']) != '') ? $row["std_lname"] : $_POST["voter_lname"]);
+                $voter_identity = ((isset($row['std_id']) != '') ? $row["std_id"] : $_POST["voter_identity"]);
+                $voter_email = ((isset($row['std_email']) != '') ? $row["std_email"] : $_POST["voter_email"]);
+                $sel_election = ((isset($row['registrar_election']) != '')?$row["registrar_election"] : $_POST["voter_election_type"]);
+            }
+        } else {
+            $log_message = "voter ['" . $editid . "'], selected to be edited, but did not exist!";
             add_to_log($log_message, $admin_id, 'admin');
 
-            $_SESSION['flash_success'] = 'Registrar Has Been Deleted Successfully';
-            echo "<script>window.location = 'registrar';</script>";
+            $_SESSION['flash_error'] = 'Voter cannot be found!';
+            redirect(ADROOT . 'registrar');
         }
-    } else {
-        $log_message = "voter ['" . $deleteid . "'], selected to be deleted, but did not exist!";
-        add_to_log($log_message, $admin_id, 'admin');
 
-        $_SESSION['flash_error'] = 'Voter cannot be found!';
-        redirect(ADROOT . 'registrar');
     }
-}
 
+    // DELETE VOTER
+    if (isset($_GET['deletevoter']) && !empty($_GET['deletevoter'])) {
+        $deleteid = $_GET['deletevoter'];
 
-// MUTIPLE DELETE VOTERS
-if (isset($_POST['checkbox_value'])) {
-    for ($i = 0; $i < count($_POST['checkbox_value']); $i++) { 
-        $query = "DELETE FROM registrars WHERE voter_id = '".$_POST['checkbox_value'][$i]."'";
-        $statement = $conn->prepare($query);
-        $statement->execute();
+        $findVoter = $conn->query("SELECT * FROM registrars INNER JOIN election ON election.election_id = registrars.registrar_election WHERE registrars.voter_id = '".$deleteid."' AND election.session = 0")->rowCount();
+        if ($findVoter > 0) {
+            // $deleteQuery = "DELETE FROM registrars WHERE id = '".$deleteid."'";
+            // $statement = $conn->prepare($deleteQuery);
+            // $statement->execute();
+            if ($conn->query("DELETE FROM registrars WHERE voter_id = '".$deleteid."'")) {
+                $log_message = "voter ['" . $deleteid . "'], deleted!";
+                add_to_log($log_message, $admin_id, 'admin');
+
+                $_SESSION['flash_success'] = 'Registrar Has Been Deleted Successfully';
+                echo "<script>window.location = 'registrar';</script>";
+            }
+        } else {
+            $log_message = "voter ['" . $deleteid . "'], selected to be deleted, but did not exist!";
+            add_to_log($log_message, $admin_id, 'admin');
+
+            $_SESSION['flash_error'] = 'Voter cannot be found!';
+            redirect(ADROOT . 'registrar');
+        }
     }
-}
 
-// TRUNCATE VOTERS TABLE
-if (isset($_POST['dataValue'])) {
-    if ($_POST['dataValue'] == 'emptyVotersTable') {
-        $query = "TRUNCATE `puubu`.`registrars`";
-        $statement = $conn->prepare($query);
-        $statement->execute();
+
+    // MUTIPLE DELETE VOTERS
+    if (isset($_POST['checkbox_value'])) {
+        for ($i = 0; $i < count($_POST['checkbox_value']); $i++) { 
+            $query = "DELETE FROM registrars WHERE voter_id = '".$_POST['checkbox_value'][$i]."'";
+            $statement = $conn->prepare($query);
+            $statement->execute();
+
+            $log_message = count($_POST['checkbox_value']) . " multiple voters, deleted!";
+            add_to_log($log_message, $admin_id, 'admin');
+        }
     }
-}
+
+    // TRUNCATE VOTERS TABLE
+    if (isset($_POST['dataValue'])) {
+        if ($_POST['dataValue'] == 'emptyVotersTable') {
+            $query = "TRUNCATE `puubu`.`registrars`";
+            $statement = $conn->prepare($query);
+            $statement->execute();
+            
+            $log_message = "voters table, emptyed!";
+            add_to_log($log_message, $admin_id, 'admin');
+        }
+    }
 
     // ADD A NEW VOTER
     if (isset($_POST['submitVoters'])) {

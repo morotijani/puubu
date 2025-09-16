@@ -215,7 +215,12 @@
     <title>Dashboard • Puubu</title>
 </head>
 <body>
-    <?= $flash; ?>
+    <?php 
+        $pageName = pathinfo($_SERVER['PHP_SELF'], PATHINFO_FILENAME);
+        if ($pageName != 'signin') {
+            echo $flash;
+        }
+    ?>
 
     <!-- Modals -->
     

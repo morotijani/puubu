@@ -224,72 +224,71 @@ if (isset($_POST['addposition'])) {
                 </div>
             <div>
 
-        <section class="card bg-body-tertiary border-transparent card-line mb-5" id="billing">
-            <div class="card-body">
-                <form action="positions?<?= ((isset($_GET['editposition']))?'editposition='.$edit_id:'addnewposition=1'); ?>" method="post">
-                    <div class="row align-items-center mb-4">
-                        <div class="col">
-                            <h2 class="fs-5 mb-1">Add position</h2>
-                            <p class="text-body-secondary mb-0">Billing information is securely stored with our payment processor and is not accessible to us.</p>
-                        </div>
-                        <div class="col-auto">
-                            <button class="btn btn-sm btn-dark" type="submit" name="addposition"><?= ((isset($_GET["editposition"]))? 'Edit' : 'Add'); ?></button>
-                            <?php if(isset($_GET['editposition'])): ?>
-                                <a href="positions" class="btn btn-danger btn-sm">Cancel</a>
-                            <?php endif; ?>
-                        </div>
-                    </div>
-                    <div class="card border-transparent">
-                        <div class="card-body">
-                            <span><?= $message; ?></span>
-                            <div class="mb-4">
-                                <select class="form-control" name="sel_election" id="sel_election">
-                                    <option value=""<?=(($sel_election == '')?' selected':'');?>>Select Election Name</option>
-                                    <?php foreach ($electionQuery as $election_row): ?>
-                                        <option value="<?=$election_row['election_id'];?>"<?= (($sel_election == $election_row['election_id']) ? ' selected' : ''); ?>><?= ucwords($election_row['election_name']); ?> ~ <?= ucwords($election_row['election_by']); ?></option>
-                                    <?php endforeach; ?>
-                                </select>
-                            </div>
-                            <div class="mb-4 mb-lg-0">
-                                <label class="form-label" for="election_by">Organizers</label>
-                                <input type="text" name="position_name" value="<?= $position_name; ?>" placeholder="<?= ((isset($_GET["editposition"]))?'Edit':'Add'); ?> Position Name" class="form-control">
-                            </div>
-                        </div>
-                    </div>
-                </form>
-            </div>
-        </section>
-
-
-        <div class="row">
-            <div class="col-12 ">
-                <div class="card mb-6">
-                    <div class="card-header">
-                        <div class="row align-items-center">
+            <section class="card bg-body-tertiary border-transparent card-line mb-5" id="billing">
+                <div class="card-body">
+                    <form action="positions?<?= ((isset($_GET['editposition']))?'editposition='.$edit_id:'addnewposition=1'); ?>" method="post">
+                        <div class="row align-items-center mb-4">
                             <div class="col">
-                                <h3 class="fs-6 mb-0">List</h3>
+                                <h2 class="fs-5 mb-1"><?= ((isset($_GET["editposition"]))? 'Edit' : 'Add'); ?> position</h2>
+                                <p class="text-body-secondary mb-0">Update or create new position by selecting from available elections.</p>
                             </div>
-                            <div class="col-auto my-n3 me-n3">
-                                <button class="btn btn-sm btn-link" type="button">+ Add</button>
+                            <div class="col-auto">
+                                <button class="btn btn-sm btn-dark" type="submit" name="addposition"><?= ((isset($_GET["editposition"]))? 'Edit' : 'Add'); ?></button>
+                                <?php if(isset($_GET['editposition'])): ?>
+                                    <a href="positions" class="btn btn-danger btn-sm">Cancel</a>
+                                <?php endif; ?>
                             </div>
                         </div>
-                    </div>
-                    <div class="table-responsive">
-                        <table class="table align-middle mb-0">
-                            <thead>
-                                <th class="fs-sm"></th>
-                                <th class="fs-sm">Position</th>
-                                <th class="fs-sm">Election</th>
-                                <th class="fs-sm"></th>
-                            </thead>
-                            <tbody>
-                                <?= $positionsList; ?>
-                            </tbody>
-                        </table>
+                        <div class="card border-transparent">
+                            <div class="card-body">
+                                <span><?= $message; ?></span>
+                                <div class="mb-4">
+                                    <select class="form-control" name="sel_election" id="sel_election">
+                                        <option value=""<?=(($sel_election == '')?' selected':'');?>>Select Election Name</option>
+                                        <?php foreach ($electionQuery as $election_row): ?>
+                                            <option value="<?=$election_row['election_id'];?>"<?= (($sel_election == $election_row['election_id']) ? ' selected' : ''); ?>><?= ucwords($election_row['election_name']); ?> ~ <?= ucwords($election_row['election_by']); ?></option>
+                                        <?php endforeach; ?>
+                                    </select>
+                                </div>
+                                <div class="mb-4 mb-lg-0">
+                                    <label class="form-label" for="election_by">Organizers</label>
+                                    <input type="text" name="position_name" value="<?= $position_name; ?>" placeholder="<?= ((isset($_GET["editposition"]))?'Edit':'Add'); ?> Position Name" class="form-control">
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </section>
+
+
+            <div class="row">
+                <div class="col-12 ">
+                    <div class="card mb-6">
+                        <div class="card-header">
+                            <div class="row align-items-center">
+                                <div class="col">
+                                    <h3 class="fs-6 mb-0">List</h3>
+                                </div>
+                                <div class="col-auto my-n3 me-n3">
+                                    <button class="btn btn-sm btn-link" type="button">+ Add</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table align-middle mb-0">
+                                <thead>
+                                    <th class="fs-sm"></th>
+                                    <th class="fs-sm">Position</th>
+                                    <th class="fs-sm">Election</th>
+                                    <th class="fs-sm"></th>
+                                </thead>
+                                <tbody>
+                                    <?= $positionsList; ?>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-
 
     <?php include ('includes/footer.inc.php'); ?>

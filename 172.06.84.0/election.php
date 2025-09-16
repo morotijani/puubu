@@ -259,80 +259,79 @@
                 </div>
             <div>
 
-        <section class="card bg-body-tertiary border-transparent card-line mb-5" id="billing">
-            <div class="card-body">
-                <form class="" action="election.php?<?= ((isset($_GET['edit_election']))?'edit_election='.$edit_election_id:'addnewposition=1'); ?>" method="post">
-                    <div class="row align-items-center mb-4">
-                        <div class="col">
-                            <h2 class="fs-5 mb-1">Add election</h2>
-                            <p class="text-body-secondary mb-0">Billing information is securely stored with our payment processor and is not accessible to us.</p>
-                        </div>
-                        <div class="col-auto">
-                            <button class="btn btn-sm btn-dark" type="submit" name="addelection"><?= ((isset($_GET["edit_election"]))? '- Edit' : '+ Add'); ?></button>
-                            <?php if(isset($_GET['edit_election'])): ?>&nbsp;
-                                <a href="election" class="btn btn-sm btn-secondary btn-lg">Cancel</a>
-                            <?php endif; ?>
-                        </div>
-                    </div>
-                    <div class="card border-transparent">
-                        <div class="card-body">
-                            <span><?= $message; ?></span>
-                            <div class="row gx-3">
-                                <div class="col-6 col-md">
-                                    <div class="mb-4 mb-lg-0">
-                                        <label class="form-label" for="election_name">Election name</label>
-                                        <input class="form-control" name="election_name" id="election_name" type="text" placeholder="SRC" value="<?= $election_name; ?>"
-                                        />
-                                    </div>
-                                </div>
-                                <div class="col-6">
-                                    <div class="mb-4 mb-lg-0">
-                                        <label class="form-label" for="election_by">Organizers</label>
-                                        <input class="form-control" name="election_by" id="election_by" type="text" placeholder="University of Ghana" value="<?= $election_by; ?>" />
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </form>
-            </div>
-        </section>
-
-        <div class="row">
-            <div class="col-12 ">
-                <div class="card mb-6">
-                    <div class="card-header">
-                        <div class="row align-items-center">
+            <section class="card bg-body-tertiary border-transparent card-line mb-5" id="billing">
+                <div class="card-body">
+                    <form class="" action="election.php?<?= ((isset($_GET['edit_election']))?'edit_election='.$edit_election_id:'addnewposition=1'); ?>" method="post">
+                        <div class="row align-items-center mb-4">
                             <div class="col">
-                                <h3 class="fs-6 mb-0">List</h3>
+                                <h2 class="fs-5 mb-1"><?= ((isset($_GET["edit_election"])) ? 'Edit' : 'Add'); ?> election</h2>
+                                <p class="text-body-secondary mb-0">Create new or update existing election</p>
                             </div>
-                            <div class="col-auto my-n3 me-n3">
-                                <button class="btn btn-sm btn-link" type="button">+ Add</button>
+                            <div class="col-auto">
+                                <button class="btn btn-sm btn-dark" type="submit" name="addelection"><?= ((isset($_GET["edit_election"])) ? 'Edit' : 'Add'); ?></button>
+                                <?php if(isset($_GET['edit_election'])): ?>&nbsp;
+                                    <a href="election" class="btn btn-sm btn-secondary btn-lg">Cancel</a>
+                                <?php endif; ?>
                             </div>
                         </div>
-                    </div>
-                    <div class="table-responsive">
-                        <table class="table align-middle mb-0">
-                            <thead>
-                                <th class="fs-sm">Status</th>
-                                <th class="fs-sm">Name</th>
-                                <th class="fs-sm">Organizer</th>
-                                <th class="fs-sm"></th>
-                            </thead>
-                            <tbody>
-                                <?= $listElection; ?>
-                            </tbody>
-                        </table>
+                        <div class="card border-transparent">
+                            <div class="card-body">
+                                <span><?= $message; ?></span>
+                                <div class="row gx-3">
+                                    <div class="col-6 col-md">
+                                        <div class="mb-4 mb-lg-0">
+                                            <label class="form-label" for="election_name">Election name</label>
+                                            <input class="form-control" name="election_name" id="election_name" type="text" placeholder="SRC" value="<?= $election_name; ?>"
+                                            />
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="mb-4 mb-lg-0">
+                                            <label class="form-label" for="election_by">Organizers</label>
+                                            <input class="form-control" name="election_by" id="election_by" type="text" placeholder="University of Ghana" value="<?= $election_by; ?>" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </section>
+
+            <div class="row">
+                <div class="col-12 ">
+                    <div class="card mb-6">
+                        <div class="card-header">
+                            <div class="row align-items-center">
+                                <div class="col">
+                                    <h3 class="fs-6 mb-0">List</h3>
+                                </div>
+                                <div class="col-auto my-n3 me-n3">
+                                    <button class="btn btn-sm btn-link" type="button">+ Add</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table align-middle mb-0">
+                                <thead>
+                                    <th class="fs-sm">Status</th>
+                                    <th class="fs-sm">Name</th>
+                                    <th class="fs-sm">Organizer</th>
+                                    <th class="fs-sm"></th>
+                                </thead>
+                                <tbody>
+                                    <?= $listElection; ?>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
     
     <?php include ('includes/footer.inc.php'); ?>
 
     <script>
         $(document).ready(function() {
-            $("#temporary").fadeOut(5000);
 
             // DELETE ELECTION TEMPORARY
             $(document).on('click', '.delete-election', function() {

@@ -12,6 +12,7 @@
     <script type="text/javascript">
 
         $(document).ready(function() {
+            $("#temporary").fadeOut(3000);
 
             $.fn.extend({
             print: function() {
@@ -27,7 +28,6 @@
             }
             });
             
-            $("#temporary").fadeOut(3000);
         
             $('.select2getpositions').change(function() {
             if ($(this).val() != '') {

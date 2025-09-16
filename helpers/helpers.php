@@ -287,8 +287,8 @@ function goBack() {
 		return true;
 	}
 
-	function forceToJpeg($sourcePath) {
-    // Detect real mime type
+	function convertAndOverwriteToJpeg($sourcePath) {
+		// Detect real mime type
 		$mime = mime_content_type($sourcePath);
 
 		switch ($mime) {
@@ -311,17 +311,20 @@ function goBack() {
 		if (!$image) {
 			throw new Exception("Invalid or corrupted image file.");
 		}
+		// Overwrite original file but force .jpg extension
+		$targetPath = preg_replace('/\\.[^.]+$/', '', $sourcePath) . ".jpg";
 
-		// Generate a clean temp jpeg file
-		$targetPath = sys_get_temp_dir() . '/' . uniqid("img_", true) . ".jpg";
-
-		// Save as JPEG
+		// Save as true JPEG
 		imagejpeg($image, $targetPath, 90);
 		imagedestroy($image);
 
+		// Optionally delete old file if extension changed
+		if ($targetPath !== $sourcePath && file_exists($sourcePath)) {
+			unlink($sourcePath);
+		}
+
 		return $targetPath;
 	}
-
 
 
 

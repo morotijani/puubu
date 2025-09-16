@@ -156,8 +156,20 @@
 
 						$pdf->Cell(64,0,$ContID.$ContName,0,0);
 						$profile_picture = '../../media/uploadedprofile/' . $counts['cont_profile'];
-						$safeImage = forceToJpeg($profile_picture);
-						
+						try {
+							$safeImage = convertAndOverwriteToJpeg($profile_picture); 
+							$newFileName = basename($safeImage);
+							$newQuery = "UPDATE cont_details SET cont_profile = ? WHERE contestant_id = ?";
+							$statement = $conn->prepare($newQuery);
+							$statement->execute([$newFileName, $counts['contestant_id']]);
+							// dnd($newFileName);
+						} catch (Exception $e) {
+							echo "Error: " . $e->getMessage();
+						}
+
+						// $safeImage = forceToJpeg($profile_picture);
+						// dnd($safeImage);
+
 						if (file_exists($profile_picture)) {
 							$pdf->Cell(63,0,$pdf->Image($safeImage,$pdf->GetX(),$pdf->GetY(),20,22.5),0,0,'R');
 						} else {

@@ -30,11 +30,11 @@
 
 	$access_token = IPINFO_PRIVATE_KEY;
 	$client = new IPinfo($access_token);
-	$details = [];//$client->getDetails();
+	$details = $client->getDetails();
 
 	// $page = "http://".$_SERVER['HTTP_HOST']."".$_SERVER['PHP_SELF'];
 	// $page .= iif(!empty($_SERVER['QUERY_STRING']), "?{$_SERVER['QUERY_STRING']}", "");
- // 	$referrer = $_SERVER['HTTP_REFERER'];
+ 	// $referrer = $_SERVER['HTTP_REFERER'];
 
 	// $user_visitor_query = "
 	// 	INSERT INTO puubu_election_logs (election_logs_election_id, election_logs_description, election_logs_page, election_logs_referrer) 
@@ -67,9 +67,9 @@
 		$voterQuery = "
 		    SELECT * FROM registrars 
 		    INNER JOIN election 
-		    ON election.eid = registrars.election_type 
+		    ON election.election_id = registrars.election_type 
 		    WHERE registrars.id = ? 
-		    AND election.eid = registrars.election_type
+		    AND election.election_id = registrars.election_type
 		    LIMIT 1
 		";
 		$statement = $conn->prepare($voterQuery);

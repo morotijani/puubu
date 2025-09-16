@@ -1,6 +1,11 @@
 <?php 
 
-
+	// Import PHPMailer classes into the global namespace
+    // These must be at the top of your script, not inside a function
+    use PHPMailer\PHPMailer\PHPMailer;
+    use PHPMailer\PHPMailer\SMTP;
+    use PHPMailer\PHPMailer\Exception;
+	
 	// print out results for development usages
 	function dnd($data) {
 		echo "<pre>";
@@ -119,59 +124,58 @@ function js_alert($msg) {
 
 
 // 
-// function sms_otp($msg, $phone) {
-// 	$sender = urlencode("Inqoins VER");
-//     $api_url = "https://api.innotechdev.com/sendmessage.php?key=".SMS_API_KEY."&message={$msg}&senderid={$sender}&phone={$phone}";
-//     $json_data = file_get_contents($api_url);
-//     $response_data = json_decode($json_data);
-//     // Can be use for checks on finished / unfinished balance
-//     $fromAPI = 'insufficient balance, kindly credit your account';  
-//     if ($api_url)
-//     	return 1;
-// 	else
-// 		return 0;
-// }
+function sms_otp($msg, $phone) {
+	$sender = urlencode("Inqoins VER");
+    $api_url = "https://api.innotechdev.com/sendmessage.php?key=".SMS_API_KEY."&message={$msg}&senderid={$sender}&phone={$phone}";
+    $json_data = file_get_contents($api_url);
+    $response_data = json_decode($json_data);
+    // Can be use for checks on finished / unfinished balance
+    $fromAPI = 'insufficient balance, kindly credit your account';  
+    if ($api_url)
+    	return 1;
+	else
+		return 0;
+}
 
-//
-// function send_email($name, $to, $subject, $body) {
-// 	$mail = new PHPMailer(true);
-// 	try {
-//         $fn = $name;
-//         $to = $to;
-//         $from = MAIL_MAIL;
-//         $from_name = 'Garypie, Shop.';
-//         $subject = $subject;
-//         $body = $body;
+// Send EMAIL
+	function send_email($to, $subject, $body) {
+		$mail = new PHPMailer(true);
+		try {
+	        $to = $to;
+	        $from = MAIL_EMAIL;
+	        $from_name = 'Puubu, Group 🤞';
+	        $subject = $subject;
+	        $body = $body;
 
-//         //Create an instance; passing `true` enables exceptions
-//         $mail = new PHPMailer(true);
+	        //Create an instance; passing `true` enables exceptions
+	        $mail = new PHPMailer(true);
 
-//         $mail->IsSMTP();
-//         $mail->SMTPAuth = true;
+	        $mail->IsSMTP();
+	        $mail->SMTPAuth = true;
 
-//         $mail->SMTPSecure = 'ssl'; 
-//         $mail->Host = 'smtp.garypie.com';
-//         $mail->Port = 465;  
-//         $mail->Username = $from;
-//         $mail->Password = MAIL_KEY; 
+	        $mail->SMTPSecure = 'ssl'; 
+	        $mail->Host = MAIL_HOST;
+	        $mail->Port = MAIL_PORT;  
+	        $mail->Username = $from;
+	        $mail->Password = MAIL_KEY; 
 
-//         $mail->IsHTML(true);
-//         $mail->WordWrap = 50;
-//         $mail->From = $from;
-//         $mail->FromName = $from_name;
-//         $mail->Sender = $from;
-//         $mail->AddReplyTo($from, $from_name);
-//         $mail->Subject = $subject;
-//         $mail->Body = $body;
-//         $mail->AddAddress($to);
-//         $mail->send();
-//         return true;
-//     } catch (Exception $e) {
-//     	//return "Message could not be sent. Mailer Error: {$mail->ErrorInfo}";
-//     	return false;
-//         //$message = "Please check your internet connection well...";
-//     }
-// }
+	        $mail->IsHTML(true);
+	        $mail->WordWrap = 50;
+	        $mail->From = $from;
+	        $mail->FromName = $from_name;
+	        $mail->Sender = $from;
+	        $mail->AddReplyTo($from, $from_name);
+	        $mail->Subject = $subject;
+	        $mail->Body = $body;
+	        $mail->AddAddress($to);
+	        $mail->send();
+	        return true;
+	    } catch (Exception $e) {
+	    	//return "Message could not be sent. Mailer Error: {$mail->ErrorInfo}";
+	    	return false;
+	        //$message = "Please check your internet connection well...";
+	    }
+	}
 
 // Generate UUID VERSION 4
 function guidv4($data = null) {

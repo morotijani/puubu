@@ -3,9 +3,8 @@
     require_once("connection/conn.php");
 
     if (isset($_SESSION['voter_accessed'])) {
-        header("Location: startvote");
+        redirect(PROOT . 'startvote');
     }
-    require (BASEURL . "172.06.84.0/PHPMailer/PHPMailerAutoload.php");
     $login_issue_text = "Problem loggin in to cast my vote. Assist me ASAP!";
     $login_issue = urlencode($login_issue_text);
 
@@ -21,7 +20,7 @@
                 $query = "
                     SELECT * FROM registrars 
                     INNER JOIN election
-                    ON election.eid = registrars.election_type
+                    ON election.election_id = registrars.registrar_election
                     WHERE std_id = ?
                 ";
                 $statement = $conn->prepare($query);
@@ -38,61 +37,42 @@
                                 $login_issue = urlencode($login_issue_text);
 
                                 $to   = $row["std_email"];
-                                $from = 'info@puubu.namibra.io';
-                                $from_name = 'Puubu, Inc';
                                 $subject = 'New login on Puubu.';
                                 $body = '
-                                <center>
-                                    <p>We\'ve noticed a new login, '.ucwords($row["std_fname"]).',</p>
-                                    <p>We\'ve noticed a login from a device that you don\'t usually use from this location; '.$details->country.'.</p>
-                                    <p>If this was you, you can safely disregard this email. If this wasn\'t you, you can secure your account <a href="https://wa.me/+233240445410/?text=' . $login_issue . '" target="_blank" class="text-color">here..</a></p>
-                                    <p>From <br>, Puubu Inc.</p>
-                                </center>
+                                    <center>
+                                        <p>We\'ve noticed a new login, '.ucwords($row["std_fname"]).',</p>
+                                        <p>We\'ve noticed a login from a device that you don\'t usually use from this location; '.$details->country.'.</p>
+                                        <p>If this was you, you can safely disregard this email. If this wasn\'t you, you can secure your account <a href="https://wa.me/+233240445410/?text=' . $login_issue . '" target="_blank" class="text-color">here..</a></p>
+                                        <p>From <br>, Puubu Inc.</p>
+                                    </center>
                                 ';
 
-                                $mail = new PHPMailer();
                                 try {
-                                    $mail->IsSMTP();
-                                    $mail->SMTPAuth = true;
-
-                                    $mail->SMTPSecure = 'ssl'; 
-                                    $mail->Host = 'smtp.namibra.io';
-                                    $mail->Port = 465;  
-                                    $mail->Username = 'info@puubu.namibra.io';
-                                    $mail->Password = 'Ys7eeeeb9'; 
-
-                                    $mail->IsHTML(true);
-                                    $mail->WordWrap = 50;
-                                    $mail->From = "info@puubu.namibra.io";
-                                    $mail->FromName = $from_name;
-                                    $mail->Sender = $from;
-                                    $mail->AddReplyTo($from, $from_name);
-                                    $mail->Subject = $subject;
-                                    $mail->Body = $body;
-                                    $mail->AddAddress($to);
-                                    $mail->Send();
+                                    send_email($to, $subject, $body);
                                 
 
                                     $election_logs_query = "
-                                        INSERT INTO voter_login_details (voter_id) 
-                                        VALUES (?)
+                                        INSERT INTO voter_login_details (voter_login_details_id, voter_id) 
+                                        VALUES (?, ?)
                                     ";
                                     $statement = $conn->prepare($election_logs_query);
-                                    $election_logs_result = $statement->execute([$row['id']]);
+                                    $election_logs_result = $statement->execute([guidv4(), $row['voter_id']]);
                                     $just_inserted_election_log_id = $conn->lastinsertId();
 
                                     if (isset($election_logs_result)) {
-                                        $_SESSION['voter_accessed'] = $row['id'];
+                                        $_SESSION['voter_accessed'] = $row['voter_id'];
                                         $_SESSION['voter_login_details_id'] = $just_inserted_election_log_id;
-                                        header("Location: votingon");
-                                    }
 
+                                        $log_message = "voter ['" . ucwords($row["std_fname"] . ' ' . $row["std_lname"]) . "'], loggedin!";
+                                        add_to_log($log_message, $admin_id, 'user');
+
+                                        redirect(PROOT . 'votingon');
+                                    }
 
                                 } catch (Exception $e) {
                                     //echo "Message could not be sent. Mailer Error: {$mail->ErrorInfo}";
                                     $displayErrors = "Please check you internet connection or contact Puubu Administrator.";
                                 }
-
 
                             }
                         } else {
@@ -157,7 +137,7 @@
                     <small style="color: #FF9800;">Sign in to, </small><h1>PuuBu</h1>
                     <p class="lead text-secondary mb-5">We have the power to make a difference. But we need to VOTE.</p>
                     <div class="row align-items-center g-3">
-                        <form action="signin.php" method="POST">
+                        <form action="" method="POST">
                             <code id="displayErrors"><?= $displayErrors; ?></code>
                             <div class="form-group mb-1">
                                 <label for="voter_id" class="form-label">Your ID</label>

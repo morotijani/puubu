@@ -37,7 +37,7 @@
                                 $login_issue = urlencode($login_issue_text);
 
                                 $to   = $row["std_email"];
-                                $subject = 'New login on Puubu.';
+                                $subject = 'New login on Puubu 🦝.';
                                 $body = '
                                     <center>
                                         <p>We\'ve noticed a new login, '.ucwords($row["std_fname"]).',</p>

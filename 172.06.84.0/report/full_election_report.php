@@ -155,7 +155,8 @@
 						$ContResultNO = $counts['results_no'];
 
 						$pdf->Cell(64,0,$ContID.$ContName,0,0);
-						$profile_picture = 'https://sites.local/puubu/media/uploadedprofile/' . $counts['cont_profile'];
+						$profile_picture = '../../media/uploadedprofile/' . $counts['cont_profile'];
+						// dnd($profile_picture);
 						if (file_exists($profile_picture)) {
 							$pdf->Cell(63,0,$pdf->Image($profile_picture,$pdf->GetX(),$pdf->GetY(),20,22.5),0,0,'R');
 						} else {

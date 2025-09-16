@@ -52,11 +52,11 @@
                                     
                                     $unique_vld_id = guidv4();
                                     $election_logs_query = "
-                                        INSERT INTO voter_login_details (voter_login_details_id, voter_id) 
-                                        VALUES (?, ?)
+                                        INSERT INTO voter_login_details (voter_login_details_id, voter_id, details_location) 
+                                        VALUES (?, ?, ?)
                                     ";
                                     $statement = $conn->prepare($election_logs_query);
-                                    $election_logs_result = $statement->execute([$unique_vld_id, $row['voter_id']]);
+                                    $election_logs_result = $statement->execute([$unique_vld_id, $row['voter_id'], $location]);
                                     $just_inserted_election_log_id = $conn->lastinsertId();
 
                                     if (isset($election_logs_result)) {

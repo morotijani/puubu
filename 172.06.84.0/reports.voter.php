@@ -150,6 +150,7 @@ if (isset($_GET['report']) && !empty($_GET['report'])) {
                                 <th>Identity Number</th>
                                 <th>Full Name</th>
                                 <th>Email</th>
+                                <th>Location ...</th>
                                 <th>Login Datetime</th>
                                 <th>Logout Datetime</th>
                             </tr>
@@ -164,6 +165,7 @@ if (isset($_GET['report']) && !empty($_GET['report'])) {
                             <td class='text-uppercase'>{$row['std_id']}</td>
                             <td class='text-capitalize'>{$row['std_fname']}&nbsp;{$row['std_lname']}</td>
                             <td>{$row['std_email']}</td>
+                            <td>{$row['details_location']}</td>
                             <td>".pretty_date($row['voter_login_datetime'])."</td>
                             <td>".pretty_date($row['voter_logout_datetime'])."</td>
                         </tr>

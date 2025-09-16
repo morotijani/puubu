@@ -24,7 +24,7 @@ if ($voter_count > 0) {
 }
   
 // CHeck if voter has voted
-$count_checkVoterhasdone = $conn->query("SELECT * FROM voterhasdone WHERE voter_id = '".$voterId."' AND election_id = '".$voter_row['election_type']."'")->rowCount();
+$count_checkVoterhasdone = $conn->query("SELECT * FROM voterhasdone WHERE voter_id = '".$voterId."' AND election_id = '".$voter_row['election_id']."'")->rowCount();
 ?>
 
 

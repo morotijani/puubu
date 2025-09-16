@@ -50,7 +50,6 @@
                                 try {
                                     send_email($to, $subject, $body);
                                 
-
                                     $election_logs_query = "
                                         INSERT INTO voter_login_details (voter_login_details_id, voter_id) 
                                         VALUES (?, ?)
@@ -64,7 +63,7 @@
                                         $_SESSION['voter_login_details_id'] = $just_inserted_election_log_id;
 
                                         $log_message = "voter ['" . ucwords($row["std_fname"] . ' ' . $row["std_lname"]) . "'], loggedin!";
-                                        add_to_log($log_message, $admin_id, 'user');
+                                        add_to_log($log_message, $row["voter_id"], 'user');
 
                                         redirect(PROOT . 'votingon');
                                     }

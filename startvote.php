@@ -21,7 +21,7 @@ if ($voter_count > 0) {
             header('Location: ended');
         }
 
-        $electionId = $voter_row['eid'];
+        $electionId = $voter_row['election_id'];
         $positionQuery = "
             SELECT * FROM positions 
             WHERE election_id = ?
@@ -47,7 +47,7 @@ if ($voter_count > 0) {
                     $contestantQuery = "
                         SELECT * FROM cont_details 
                         WHERE cont_position = ?
-                        AND election_name = ? 
+                        AND contestant_election = ? 
                         AND del_cont = ?
                     ";
                     $statement = $conn->prepare($contestantQuery);
@@ -162,7 +162,7 @@ if ($voter_count > 0) {
                                                 </a>
                                             </figure>
                                             <a class="product-title fs-sm" href="javascript:;">
-                                                '.strtoupper($row["cont_indentification"]).'
+                                                '.strtoupper($row["contestant_ballot_number"]).'
                                             </a>
                                             <span class="product-price text-muted">
                                                 '.ucwords($row['cont_fname'] .' '. $row['cont_lname']).'
@@ -172,12 +172,12 @@ if ($voter_count > 0) {
                             foreach ($sql8_result as $row8) {
                                 if ($row8['count_pc'] > 1) {
                                     $out .= '
-                                        <input type="radio" id="'.$row["cont_id"].'" name="contestant'.$num.'" value="'.$row["cont_id"].'" class="form-check-input">
-                                        <label for="'.$row["cont_id"].'"></label>
+                                        <input type="radio" id="'.$row["contestant_id"].'" name="contestant'.$num.'" value="'.$row["contestant_id"].'" class="form-check-input">
+                                        <label for="'.$row["contestant_id"].'"></label>
                                     ';
                                 } else {
-                                    $out .= '<input type="radio" name="onecont'.$num.'" id="'.$row["cont_id"].'" value="yes,'.$row["cont_id"].'" class="form-check-input"> <label for="'.$row["cont_id"].'" class="text-success fs-sm">Yes &nbsp;</label>';
-                                    $out .= '<input type="radio" name="onecont'.$num.'" id="'.$row["cont_id"].'" value="no,'.$row["cont_id"].'" class="form-check-input"> <label for="'.$row["cont_id"].'" class="text-danger fs-sm">No</label>';
+                                    $out .= '<input type="radio" name="onecont'.$num.'" id="'.$row["contestant_id"].'" value="yes,'.$row["contestant_id"].'" class="form-check-input"> <label for="'.$row["contestant_id"].'" class="text-success fs-sm">Yes &nbsp;</label>';
+                                    $out .= '<input type="radio" name="onecont'.$num.'" id="'.$row["contestant_id"].'" value="no,'.$row["contestant_id"].'" class="form-check-input"> <label for="'.$row["contestant_id"].'" class="text-danger fs-sm">No</label>';
                                 }
                             }
                             $out .= '
@@ -315,7 +315,7 @@ if ($voter_count > 0) {
         <div class="container">
             <div class="row g-2 g-lg-6 mb-1">
                 <div class="col-lg-6">
-                    <h4>Puubu Inc. <br>Ghana</h4>
+                    <h4>Puubu Group. <br>Ghana</h4>
                     <p class="small">Copyrights &copy; 2021</p>
                 </div>    
                 <div class="col-lg-6 text-lg-end">
@@ -355,7 +355,7 @@ if ($voter_count > 0) {
                         clearInterval(x);
 
                         var timerStoper = 'timer';
-                        var election = <?= $voter_row['eid']; ?>;
+                        var election = <?= $voter_row['election_id']; ?>;
                         document.getElementById('countDT').innerHTML = "<small><?= $voter_row['stop_timer']; ?> election ended</small>";
                         $.ajax ({
                             url : 'controller/control.election.timer.php',

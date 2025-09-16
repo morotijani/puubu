@@ -67,9 +67,9 @@
 		$voterQuery = "
 		    SELECT * FROM registrars 
 		    INNER JOIN election 
-		    ON election.election_id = registrars.election_type 
-		    WHERE registrars.id = ? 
-		    AND election.election_id = registrars.election_type
+		    ON election.election_id = registrars.registrar_election 
+		    WHERE registrars.voter_id = ? 
+		    AND election.election_id = registrars.registrar_election
 		    LIMIT 1
 		";
 		$statement = $conn->prepare($voterQuery);

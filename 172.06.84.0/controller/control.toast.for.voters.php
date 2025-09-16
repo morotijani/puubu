@@ -10,7 +10,7 @@
 			$query = "
 				SELECT * FROM voterhasdone 
 				INNER JOIN registrars
-				ON registrars.registrar_id = voterhasdone.vhd_id 
+				ON registrars.voter_id = voterhasdone.vhd_id 
 				INNER JOIN election 
 				ON election.election_id = voterhasdone.election_id
 				AND election.election_id = registrars.registrar_election

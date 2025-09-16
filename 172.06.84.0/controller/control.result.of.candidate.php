@@ -47,14 +47,14 @@ if (isset($_POST['election_id'])) {
             $positionId = $position_row['position_id'];
 
             $output .= "
-            <div class='row align-items-center'>
-                <div class='col'>
-                    <h4 class=''>" . strtoupper($positionName) . "</h4>
+                <div class='row align-items-center'>
+                    <div class='col'>
+                        <h4 class=''>" . strtoupper($positionName) . "</h4>
+                    </div>
+                    <div class='col-auto'>
+                        <small class='text-danger' style='font-size: 15px'>Skipped Votes:  ". $position_row['position_skipped_votes'] . "</small>
+                    </div>
                 </div>
-                <div class='col-auto'>
-                    <small class='text-danger' style='font-size: 15px'>Skipped Votes:  ". $position_row['position_skipped_votes'] . "</small>
-                </div>
-            </div>
             ";
             
             $contestant_query = "
@@ -69,7 +69,7 @@ if (isset($_POST['election_id'])) {
             $statement->execute([$election_id, $positionId, 'no']);
             $contestant_results = $statement->fetchAll();
             $contestant_count = $statement->rowCount();
-
+            
             $sql8 = "
                 SELECT COUNT(*) count_pc 
                 FROM cont_details 
@@ -120,6 +120,7 @@ if (isset($_POST['election_id'])) {
                                                 <!-- <div class='col-auto'></div> -->
                                             </div>
                                         </div>
+                                    </div>
 
                                     <!-- <div class='card'>
                                         <img src='../media/uploadedprofile/".$contestantPicture."' class='img-fluid' style='height: 150px; object-fit: contain; object-position: center;'>

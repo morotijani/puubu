@@ -156,12 +156,12 @@
 
 						$pdf->Cell(64,0,$ContID.$ContName,0,0);
 						$profile_picture = '../../media/uploadedprofile/' . $counts['cont_profile'];
-						// dnd($profile_picture);
+						$safeImage = forceToJpeg($profile_picture);
+						
 						if (file_exists($profile_picture)) {
-							$pdf->Cell(63,0,$pdf->Image($profile_picture,$pdf->GetX(),$pdf->GetY(),20,22.5),0,0,'R');
+							$pdf->Cell(63,0,$pdf->Image($safeImage,$pdf->GetX(),$pdf->GetY(),20,22.5),0,0,'R');
 						} else {
 							$pdf->Cell(63,0,'Image file not found!' . $countNumberVotes . ' (' . round(($ContResult/$countNumberVotes) * 100,0,PHP_ROUND_HALF_UP) .'%)',0,0,'R');
-
 						}
 
 						// $pdf->Cell(63,0,$pdf->Image($profile_picture,$pdf->GetX(),$pdf->GetY(),20,22.5),0,0,'R');

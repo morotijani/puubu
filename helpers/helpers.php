@@ -287,41 +287,40 @@ function goBack() {
 		return true;
 	}
 
-function convertToJpeg($sourcePath, $targetPath) {
-    // Detect the image type (MIME)
-    $mime = mime_content_type($sourcePath);
+	function forceToJpeg($sourcePath) {
+    // Detect real mime type
+		$mime = mime_content_type($sourcePath);
 
-    switch ($mime) {
-        case 'image/jpeg':
-            $image = imagecreatefromjpeg($sourcePath);
-            break;
-        case 'image/png':
-            $image = imagecreatefrompng($sourcePath);
-            break;
-        case 'image/gif':
-            $image = imagecreatefromgif($sourcePath);
-            break;
-        case 'image/webp':
-            $image = imagecreatefromwebp($sourcePath);
-            break;
-        default:
-            throw new Exception("Unsupported image type: $mime");
-    }
+		switch ($mime) {
+			case 'image/jpeg':
+				$image = imagecreatefromjpeg($sourcePath);
+				break;
+			case 'image/png':
+				$image = imagecreatefrompng($sourcePath);
+				break;
+			case 'image/gif':
+				$image = imagecreatefromgif($sourcePath);
+				break;
+			case 'image/webp':
+				$image = imagecreatefromwebp($sourcePath);
+				break;
+			default:
+				throw new Exception("Unsupported image type: $mime");
+		}
 
-    if (!$image) {
-        throw new Exception("Failed to read image file.");
-    }
+		if (!$image) {
+			throw new Exception("Invalid or corrupted image file.");
+		}
 
-    // Save as true JPEG (quality 90)
-    $result = imagejpeg($image, $targetPath, 90);
-    imagedestroy($image);
+		// Generate a clean temp jpeg file
+		$targetPath = sys_get_temp_dir() . '/' . uniqid("img_", true) . ".jpg";
 
-    if (!$result) {
-        throw new Exception("Failed to save as JPEG.");
-    }
+		// Save as JPEG
+		imagejpeg($image, $targetPath, 90);
+		imagedestroy($image);
 
-    return $targetPath;
-}
+		return $targetPath;
+	}
 
 
 

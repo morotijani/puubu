@@ -258,40 +258,29 @@ if (!isset($_SESSION["voter_accessed"])) {
 	            $aftervote_result = $statement->fetchAll();
 
 				$body = '
-					<p>
-						Cheers, '.ucwords($voter_row["std_fname"]).',
-						<br>
-						You have successfully voted.
-						<br>
-						Chillax, within some few hours the election will come to an end.
-						<br><br>
-						<b>Your vote details.</b>
-						<br>
+					<p>Dear ' . ucwords($voter_row["std_fname"]) . ',</p>
+					<p>Thank you for participating in the election. Your vote has been successfully recorded.</p>
+    				<p>Below are the candidates you voted for under each position:</p>
 				';
 				$positions_shown = [];
 				foreach ($aftervote_result as $aftervote_row) {
-					    $position = $aftervote_row['position_name'];
-						// Prevent duplicate display for same position
-    					if (!in_array($position, $positions_shown)) {
-							$candidate_name = ucwords($aftervote_row['cont_fname'] . ' ' . $aftervote_row['cont_lname']);
-							$body .= '<span style="color: blue; font-weight: bolder;">' . ucwords($position) . '</span> ~ ' . $candidate_name . '<br>';
-							$positions_shown[] = $position;
-						}
-
-					// $body .= '
-					// 	<span style="color: blue; font-weight: bolder;">' . ucwords($aftervote_row['position_name']) . ' </span> ~ ' . ucwords($aftervote_row['cont_fname'] . ' ' . $aftervote_row['cont_lname'])  . '<br>'
-					// ;
-					// break;
+					$position = $aftervote_row['position_name'];
+					// Prevent duplicate display for same position
+					if (!in_array($position, $positions_shown)) {
+						$candidate_name = ucwords($aftervote_row['cont_fname'] . ' ' . $aftervote_row['cont_lname']);
+						$body .= '<span style="color: blue; font-weight: bolder;">' . ucwords($position) . '</span> ~ ' . $candidate_name . '<br>';
+						$positions_shown[] = $position;
+					}
 				}
 				$body .= '
-					<br>
-						Greatly appreciated, Puubu Group.
-					</p>
+					<p>We appreciate your engagement in shaping the future of our community. Stay tuned—results will be announced shortly after the election concludes.</p>
+
+					<p>Warm regards,<br>
+					The Electoral Committee</p>
 				';
 
                 $to   = $voter_row["std_email"];
 				$subject = 'Done Voting.';
-
 				try {
 					send_email($to, $subject, $body);
 

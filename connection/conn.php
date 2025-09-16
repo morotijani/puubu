@@ -45,7 +45,7 @@
 	if (file_exists($cacheFile) && (time() - filemtime($cacheFile) < 3600)) {
 		$cached = json_decode(file_get_contents($cacheFile), true);
 		if ($cached && isset($cached['city'], $cached['region'], $cached['country'])) {
-			$location = $cached['city'] . ', ' . $cached['region'] . ', ' . $cached['country'] . $cached['ip'];
+			$location = $cached['city'] . ', ' . $cached['region'] . ', ' . $cached['country'] . ', ' . $cached['ip'];
 		}
 		
 		// If no cache, create a fallback object

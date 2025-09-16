@@ -569,7 +569,8 @@ function goBack() {
 				$person = 'voter';
 				$persons = get_voter_details('std_id', $row["log_person"]);
 				if (is_array($persons)) {
-					$person = ucwords($persons['std_fname'] . ' ' . $person['std_lname']);
+					//dnd($persons);
+					$person = ucwords($persons['std_fname'] . ' ' . $persons['std_lname']);
 				}
 			}
 

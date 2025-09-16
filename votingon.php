@@ -59,7 +59,7 @@ $count_checkVoterhasdone = $conn->query("SELECT * FROM voterhasdone WHERE voter_
             </a>
           <ul class="navbar-nav navbar-nav-secondary order-lg-3">
                 <li class="nav-item">
-                    <a class="nav-link nav-icon" data-bs-toggle="offcanvas" href="logout" title="Logout">
+                    <a class="nav-link nav-icon" href="<?= PROOT; ?>logout" title="Logout">
                         <span class="bi bi-box-arrow-down-left"></span>
                     </a>
                 </li>

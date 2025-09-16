@@ -19,12 +19,5 @@
 
 		session_destroy();
 
-		header("Location: index");
+		redirect(PROOT . "index");
     }
-
-
- ?>
-<script>
-    // window.top.close();
-
-</script>

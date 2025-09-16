@@ -43,8 +43,83 @@
             }
         }
     }
+?>
+        <!-- Main -->
+    <main class="main px-lg-6">
+        <!-- Content -->
+        <div class="container-lg">
+            <!-- Page header -->
+            <div class="row align-items-center mb-7">
+                <div class="col-auto">
+                    <!-- Avatar -->
+                    <div class="avatar avatar-xl rounded text-primary">
+                        <i class="fs-2" data-duoicon="app"></i>
+                    </div>
+                </div>
+                <div class="col">
+                    <!-- Breadcrumb -->
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb mb-1">
+                            <li class="breadcrumb-item"><a class="text-body-secondary" href="javascript:;">Profile</a></li>
+                            <li class="breadcrumb-item active" aria-current="page">Profile</li>
+                        </ol>
+                    </nav>
 
+                    <!-- Heading -->
+                    <h1 class="fs-4 mb-0">Profile</h1>
+                </div>
+                <div class="col-12 col-sm-auto mt-4 mt-sm-0">
+                    <!-- Action -->
+                <!-- <a class="btn btn-secondary d-block" href="javascript:;">
+                    <span class="material-symbols-outlined me-1">export_notes</span> Export
+                </a> -->
+            </div>
+        </div>
 
+        <!-- Page content -->
+        <div class="row">
+            <div class="col-12">
+                <!-- Filters -->
+                <div class="card card-line bg-body-tertiary border-transparent mb-7">
+                    <div class="card-body p-4">
+                        <div class="row align-items-center">
+                            <div class="col-12 col-lg-auto mb-3 mb-lg-0">
+                                <div class="row align-items-center">
+                                    <div class="col-auto">
+                                        <div class="text-body-secondary">Profile details.</div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="col-12 col-lg">
+                                <div class="row gx-3  ">
+                                    <div class="col col-lg-auto ms-auto">
+                                        <!-- <div class="input-group bg-body">
+                                            <input type="text" class="form-control" placeholder="Search" aria-label="Search" aria-describedby="search" />
+                                            <span class="input-group-text" id="search">
+                                                <span class="material-symbols-outlined">search</span>
+                                            </span>
+                                        </div> -->
+                                    </div>
+
+                                    <div class="col-auto">
+                                        <a class="btn btn-dark px-3" href="<?= ADROOT; ?>">
+                                            Dashboard
+                                        </a>
+                                    </div>
+
+                                    <div class="col-auto ms-n2">
+                                        <a class="btn btn-dark px-3" href="<?= goBack(); ?>">
+                                            Go back
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            <div>
+<?php
  
     if (isset($_GET['cp']) && $_GET['cp'] == 1) {
 
@@ -101,19 +176,11 @@
 
 ?>
 
-        <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-            <h4 class="text-white" style="font-size: 18px;">Dashboard</h4>
-            <div class="btn-toolbar mb-2 mb-md-0">
-                <div class="btn-group mr-2">
-                    <a href="settings" class="btn btn-sm btn-outline-secondary">Go back</a>
-                </div>
-            </div>
-        </div>
 
 
         <div class="card">
             <div class="card-body">
-                <a href="details" class="btn btn-sm btn-link float-right mb-3">
+                <a href="details" class="btn btn-link float-right mb-3">
                     Profile <span data-feather="user" class="ml-1"></span>
                 </a>
                 <h4 class="header-title mt-2" style="color: rgb(170, 184, 197);">Change Password</h4>
@@ -123,18 +190,18 @@
                         <span class="text-danger lead"><?= $errors; ?></span>
                         <div class="mb-3">
                             <label for="old_password" class="form-label">Old password</label>
-                            <input type="password" class="form-control form-control-sm form-control-dark" name="old_password" id="old_password" value="<?= $old_password; ?>" required>
+                            <input type="password" class="form-control" name="old_password" id="old_password" value="<?= $old_password; ?>" required>
                         </div>
                         <div class="mb-3">
                             <label for="new_password" class="form-label">New password</label>
-                            <input type="password" class="form-control form-control-sm form-control-dark" name="password" id="password" value="<?= $password; ?>" required>
+                            <input type="password" class="form-control" name="password" id="password" value="<?= $password; ?>" required>
                         </div>
                         <div class="mb-3">
                             <label for="confirm" class="form-label">Confirm new password</label>
-                            <input type="password" class="form-control form-control-sm form-control-dark" name="confirm" id="confirm" value="<?= $confirm; ?>" required>
+                            <input type="password" class="form-control" name="confirm" id="confirm" value="<?= $confirm; ?>" required>
                         </div>
-                        <button type="submit" class="btn btn-sm btn-outline-warning" name="edit_pasword" id="edit_pasword">Change Password</button>&nbsp;
-                        <a href="details" class="btn btn-sm btn-outline-secondary">Cancel</a>
+                        <button type="submit" class="btn btn-outline-warning" name="edit_pasword" id="edit_pasword">Change Password</button>&nbsp;
+                        <a href="details" class="btn btn-outline-secondary">Cancel</a>
                     </form>
                 </div>
             </div>
@@ -143,59 +210,40 @@
 
 <?php } else { ?>
 
-    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-        <h4 class="text-white" style="font-size: 18px;">Dashboard</h4>
-        <div class="btn-toolbar mb-2 mb-md-0">
-            <div class="btn-group mr-2">
-                <a href="?cp=1" class="btn btn-sm btn-outline-secondary">Change Password</a>
+    <!-- Industry news -->
+    <div class="card mb-6 mb-xxl-0">
+        <div class="card-header">
+            <div class="row align-items-center">
+                <div class="col">
+                    <h3 class="fs-6 mb-0">Update profile</h3>
+                </div>
+                <div class="col-auto my-n3 me-n3">
+                    <a class="btn btn-link" href="<?= ADROOT; ?>settings?cp=1">
+                        Change password
+                        <span class="material-symbols-outlined">arrow_right_alt</span>
+                    </a>
+                </div>
             </div>
+        </div>
+        <div class="card-body py-3">
+            <form method="POST" action="" id="settingsForm">
+                <span class="text-danger lead"><?= $errors; ?></span>
+                <div class="mb-3">
+                    <label for="fname" class="form-label">First Name</label>
+                    <input type="text" class="form-control-sm form-control form-control-dark" name="fname" id="fname" value="<?= ((isset($_POST["fname"]))?sanitize($_POST["fname"]):$admin_data["cfname"]); ?>" required>
+                </div>
+                <div class="mb-3">
+                    <label for="lname" class="form-label">Last Name</label>
+                    <input type="text" class="form-control" name="lname" id="lname" value="<?= ((isset($_POST["lname"]))?sanitize($_POST["lname"]):$admin_data["clname"]); ?>" required>
+                </div>
+                <div class="mb-3">
+                    <label for="email" class="form-label">Email</label>
+                    <input type="email" class="form-control" name="email" id="email" value="<?= ((isset($_POST["email"]))?sanitize($_POST["email"]):$admin_data["cemail"]); ?>" required>
+                </div>
+                <button type="submit" class="btn btn-dark" name="submit_settings" id="submit_settings">Update</button>&nbsp;
+                <a href="details" class="btn btn-outline-secondary">Cancel</a>
+            </form>
         </div>
     </div>
 
-
-    <div class="card">
-        <div class="card-body">
-            <a href="details" class="btn btn-sm btn-link float-right mb-3">
-                Profile <span data-feather="user" class="ml-1"></span>
-            </a>
-            <h4 class="header-title mt-2" style="color: rgb(170, 184, 197);">Update Profile</h4>
-            <hr>
-            <div class="container">
-                <form method="POST" action="settings.php" id="settingsForm">
-                    <span class="text-danger lead"><?= $errors; ?></span>
-                    <div class="mb-3">
-                        <label for="fname" class="form-label">First Name</label>
-                        <input type="text" class="form-control-sm form-control form-control-dark" name="fname" id="fname" value="<?= ((isset($_POST["fname"]))?sanitize($_POST["fname"]):$row["cfname"]); ?>" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="lname" class="form-label">Last Name</label>
-                        <input type="text" class="form-control-sm form-control form-control-dark" name="lname" id="lname" value="<?= ((isset($_POST["lname"]))?sanitize($_POST["lname"]):$row["clname"]); ?>" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="email" class="form-label">Email</label>
-                        <input type="email" class="form-control-sm form-control form-control-dark" name="email" id="email" value="<?= ((isset($_POST["email"]))?sanitize($_POST["email"]):$row["cemail"]); ?>" required>
-                    </div>
-                    <button type="submit" class="btn btn-sm btn-dark" name="submit_settings" id="submit_settings">Update</button>&nbsp;
-                    <a href="details" class="btn btn-sm btn-outline-secondary">Cancel</a>
-                </form>
-            </div>
-        </div>
-
-    </div>
-<?php } include ('includes/main-footer.inc.php');?>
-
-<!-- FOOTER -->
-<script type="text/javascript" src="media/files/jquery-3.3.1.min.js"></script>
-<script type="text/javascript" src="media/files/popper-1.14.6.min.js"></script>
-<script type="text/javascript" src="media/files/bootstrap.min.js"></script>
-<script type="text/javascript" src="media/files/feather.min.js"></script>
-<script>
-  feather.replace()
-</script>
-<script>
-  $(document).ready(function() {
-    $("#temporary").fadeOut(5000);
-});
-</script>
-</body>
-</html>
+<?php } include ('includes/footer.inc.php');?>

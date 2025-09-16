@@ -88,24 +88,24 @@
             <div>
 
             
-                <!-- Industry news -->
-                <div class="card mb-6 mb-xxl-0">
-                    <div class="card-header">
-                        <div class="row align-items-center">
-                            <div class="col">
-                                <h3 class="fs-6 mb-0">General overview</h3>
-                            </div>
-                            <div class="col-auto my-n3 me-n3">
-                                <a class="btn btn-sm btn-link" href="">
-                                    Browse all
-                                    <span class="material-symbols-outlined">arrow_right_alt</span>
-                                </a>
-                            </div>
+            <!-- Industry news -->
+            <div class="card mb-6 mb-xxl-0">
+                <div class="card-header">
+                    <div class="row align-items-center">
+                        <div class="col">
+                            <h3 class="fs-6 mb-0">General overview</h3>
+                        </div>
+                        <div class="col-auto my-n3 me-n3">
+                            <a class="btn btn-sm btn-link" href="">
+                                Browse all
+                                <span class="material-symbols-outlined">arrow_right_alt</span>
+                            </a>
                         </div>
                     </div>
-                    <div class="card-body py-3">
-                        <!-- List -->
-                        <div class="list-group list-group-flush">
+                </div>
+                <div class="card-body py-3">
+                    <!-- List -->
+                    <div class="list-group list-group-flush">
 
                         <div class="list-group-item px-0">
                             <div class="row">

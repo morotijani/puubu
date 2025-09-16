@@ -377,9 +377,8 @@ function goBack() {
 	}
 
 	// GET ADMIN PROFILE DETAILS
-	function get_admin_profile() {
+	function get_admin_profile($admin_id) {
 		global $conn;
-		global $row;
 		$output = '';
 
 		$query = "
@@ -392,7 +391,7 @@ function goBack() {
 		$result = $statement->fetchAll();
 
 		foreach ($result as $admin_row) {
-			if ($admin_row['id'] == $row['id']) {
+			if ($admin_row['admin_id'] == $admin_id) {
 				$output = '
 					<h6>First Name</h6>
 				    <p class="lead text-info">'.ucwords($admin_row["cfname"]).'</p>

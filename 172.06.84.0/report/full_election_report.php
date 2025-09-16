@@ -140,7 +140,8 @@
 						ON cont_details.contestant_id = vote_counts.contestant_id 
 						WHERE vote_counts.election_id = ? 
 						AND vote_counts.position_id = ? 
-						AND cont_details.del_cont = ?
+						AND cont_details.del_cont = ? 
+						ORDER BY contestant_ballot_number ASC
 					";
 					$statement = $conn->prepare($votecountQ);
 					$statement->execute([$election_id, $row['position_id'], 'no']);

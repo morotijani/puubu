@@ -193,7 +193,6 @@
             </div>
         </div>
         <div class="card-body py-3">
-
             <form method="POST" action="settings.php?cp=1" id="edit_passwordForm">
                 <span class="text-danger lead"><?= $errors; ?></span>
                 <div class="mb-3">

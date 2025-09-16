@@ -1,8 +1,9 @@
 <?php 
 
     require_once("../connection/conn.php");
+    // dnd(password_hash('password', PASSWORD_BCRYPT));
     if (cadminIsLoggedIn()) {
-        redirect(PROOT . '172.06.84.0/index');
+        redirect(ADROOT);
     }
     include ("includes/header.inc.php");
 

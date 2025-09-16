@@ -426,7 +426,6 @@
                         </div>
                     </form>
 
-                       
                 </div>
             </div>
         </div>
@@ -435,20 +434,19 @@
 
 
 
-<div class="modal fade" id="electionModal" tabindex="-1" role="dialog" aria-labelledby="electionLabel" style="display: none;" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content bg-dark border-secondary">
+    <div class="modal fade" id="electionModal" tabindex="-1" role="dialog" aria-labelledby="electionLabel" style="display: none;" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content bg-dark border-secondary">
 
-            <div class="modal-header">
-                <h5 class="modal-title" id="electionLabel">Start an election</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">×</span>
-                </button>
+                <div class="modal-header">
+                    <h5 class="modal-title" id="electionLabel">Start an election</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+        
             </div>
-
-            
         </div>
     </div>
-</div>
 
 <?php include ('includes/footer.inc.php'); ?>

@@ -5,13 +5,13 @@
         <div class="container-fluid">
           <!-- Nav -->
           <nav class="navbar-nav nav-pills h-100">
-            <div class="nav-item" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="Go to product page">
-              <a class="nav-link" href="https://themes.getbootstrap.com/product/dashbrd/" target="_blank">
-                <span class="material-symbols-outlined">local_mall</span>
+            <div class="nav-item" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="Start an election">
+              <a class="nav-link" href="javascript:;" data-toggle="modal" data-target="#electionModal">
+                <span class="material-symbols-outlined">start</span>
               </a>
             </div>
             <div class="nav-item" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="Contact us">
-              <a class="nav-link" href="mailto:yevgenysim+simpleqode@gmail.com">
+              <a class="nav-link" href="mailto:contact-us@puubu.com">
                 <span class="material-symbols-outlined">support</span>
               </a>
             </div>

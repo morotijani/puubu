@@ -82,7 +82,7 @@
                             </a>
                             <div class="dropdown-menu ms-xl-3">
                                 <h6 class="dropdown-header d-none d-xl-block">Documentation</h6>
-                                <a class="dropdown-item " href="./docs/getting-started.html">Getting started</a>
+                                <a class="dropdown-item " href="<?= ADROOT; ?>documentation">Getting started</a>
                                 <a class="dropdown-item " href="./docs/components.html">Components</a>
                                 <a class="dropdown-item d-flex " href="./docs/changelog.html"
                                 >Changelog <span class="badge text-bg-primary ms-auto">1.0.6</span></a
@@ -102,7 +102,7 @@
                                 href="javascript:;"
                                 data-bs-toggle="tooltip"
                                 data-bs-placement="right"
-                                data-bs-title="Start / End and election" data-toggle="modal" data-target="#electionModal"
+                                data-bs-title="Start an election" data-toggle="modal" data-target="#electionModal"
                             >
                                 <span class="material-symbols-outlined">start</span> <span class="d-xl-none ms-3">Start / End and election</span>
                             </a>
@@ -491,9 +491,9 @@
                 </a>
                 <div class="dropdown-menu ms-xl-3">
                   <h6 class="dropdown-header d-none d-xl-block">Documentation</h6>
-                  <a class="dropdown-item " href="./docs/getting-started.html">Getting started</a>
-                  <a class="dropdown-item " href="./docs/components.html">Components</a>
-                  <a class="dropdown-item d-flex " href="./docs/changelog.html"
+                  <a class="dropdown-item " href="<?= ADROOT; ?>documentation">Getting started</a>
+                  <a class="dropdown-item " href="<?= ADROOT; ?>details">Profile</a>
+                  <a class="dropdown-item d-flex" href="javascript:;"
                     >Changelog <span class="badge text-bg-primary ms-auto">1.0.6</span></a
                   >
                 </div>
@@ -731,9 +731,9 @@
                             </a>
                             <div class="collapse show" id="dashboards">
                                 <nav class="nav nav-pills">
-                                    <a class="nav-link active" href="<?= PROOT; ?>172.06.84.0/index">Home</a>
-                                    <a class="nav-link " href="<?= PROOT; ?>172.06.84.0/election">Elections</a>
-                                    <a class="nav-link " href="javascript:;">...</a>
+                                    <a class="nav-link active" href="<?= ADROOT; ?>">Home</a>
+                                    <a class="nav-link " href="<?= ADROOT; ?>election">Elections</a>
+                                    <a class="nav-link " href="<?= ADROOT; ?>details">Account</a>
                                 </nav>
                             </div>
                         </div>
@@ -775,12 +775,12 @@
                     <!-- Nav -->
                     <nav class="navbar-nav nav-pills mb-xl-7">
                         <div class="nav-item">
-                            <a class="nav-link" href="<?= PROOT; ?>172.06.84.0">
+                            <a class="nav-link" href="<?= ADROOT; ?>index">
                                 <span class="material-symbols-outlined me-3">sticky_note_2</span> Getting started
                             </a>
                         </div>
                         <div class="nav-item">
-                            <a class="nav-link " href="./docs/components.html">
+                            <a class="nav-link " href="<?= ADROOT; ?>documentation">
                                 <span class="material-symbols-outlined me-3">deployed_code</span> Documentation
                             </a>
                         </div>
@@ -792,7 +792,6 @@
                         </div>
                     </nav>
 
-                    heres
             
                 <!-- Divider -->
                 <hr class="my-4 d-xl-none" />
@@ -1092,9 +1091,9 @@
                 Documentation
               </a>
               <div class="dropdown-menu">
-                <a class="dropdown-item " href="./docs/getting-started.html">Getting started</a>
-                <a class="dropdown-item " href="./docs/components.html">Components</a>
-                <a class="dropdown-item d-flex " href="./docs/changelog.html"
+                <a class="dropdown-item " href="<?= ADROOT; ?>documentation">Getting started</a>
+                <a class="dropdown-item " href="<?= ADROOT; ?>details">Profile</a>
+                <a class="dropdown-item d-flex " href="javascript:;"
                   >Changelog <span class="badge text-bg-primary ms-auto">1.0.6</span></a
                 >
               </div>

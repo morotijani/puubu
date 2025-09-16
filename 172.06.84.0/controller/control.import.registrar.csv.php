@@ -6,7 +6,6 @@
 	header("Cache-Control: no-cache, must-revalidate");
 	header("Pragma: no-cache");
 
-
 	set_time_limit(0);
 	ob_implicit_flush(1);
 
@@ -23,17 +22,18 @@
 		    $string = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKMNOPQRSTUVWXYZ0123456789!@#$%^&*()-_';
 		    $generatedpassword = substr(str_shuffle($string), 0, 8);
 			$data = array(
+				':voter_id' => guidv4(),
 				':std_id' => $row[0],
 				':std_password' => $generatedpassword,
 				':std_fname' => $row[1],
 				':std_lname' => $row[2],
 				':std_email' => $row[3],
-				':election_type' => $row[4]
+				':registrar_election' => $row[4]
 			);
 
-			$query = "INSERT INTO registrars (std_id, std_password, std_fname, std_lname, std_email, election_type) VALUES (:std_id, :std_password, :std_fname, :std_lname, :std_email, :election_type)";
+			$query = "INSERT INTO registrars (voter_id, std_id, std_password, std_fname, std_lname, std_email, registrar_election) VALUES (:voter_id, :std_id, :std_password, :std_fname, :std_lname, :std_email, :registrar_election)";
 			$statement = $conn->prepare($query);
-			$statement->execute($data);
+			$result = $statement->execute($data);
 			sleep(1);
 
 			if (ob_get_level() > 0) {
@@ -43,6 +43,3 @@
 		unset($_SESSION['csv_file_name']);
 	}
 
-
-
- ?>

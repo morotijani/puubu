@@ -8,7 +8,3 @@
 	$statement = $conn->prepare($query);
 	$statement->execute();
 	echo $statement->rowCount();
-
-
-
- ?>

@@ -64,7 +64,7 @@ if (isset($_GET['report']) && !empty($_GET['report'])) {
                     </nav>
 
                     <!-- Heading -->
-                    <h1 class="fs-4 mb-0">Reports</h1>
+                    <h1 class="fs-4 mb-0">Voted reports</h1>
                 </div>
                 <div class="col-12 col-sm-auto mt-4 mt-sm-0">
                     <!-- Action -->
@@ -93,39 +93,40 @@ if (isset($_GET['report']) && !empty($_GET['report'])) {
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-12 col-lg"><div class="row gx-3  ">
-                                    <div class="col col-lg-auto ms-auto">
-                                        <div class="input-group bg-body">
-                                            <input type="text" class="form-control" placeholder="Search" aria-label="Search" aria-describedby="search" />
-                                            <span class="input-group-text" id="search">
-                                                <span class="material-symbols-outlined">search</span>
-                                            </span>
+                                <div class="col-12 col-lg">
+                                    <div class="row gx-3  ">
+                                        <div class="col col-lg-auto ms-auto">
+                                            <!-- <div class="input-group bg-body">
+                                                <input type="text" class="form-control" placeholder="Search" aria-label="Search" aria-describedby="search" />
+                                                <span class="input-group-text" id="search">
+                                                    <span class="material-symbols-outlined">search</span>
+                                                </span>
+                                            </div> -->
+                                        </div>
+
+                                        <div class="col-auto">
+                                            <a class="btn btn-dark px-3" href="reports.voted.php?report=<?= $election_id; ?>">
+                                                Voted details
+                                            </a>
+                                        </div>
+                                        <div class="col-auto">
+                                            <a class="btn btn-dark px-3" href="reports.voter.php?report=<?= $election_id; ?>">
+                                                Voter details
+                                            </a>
+                                        </div>
+
+                                        <div class="col-auto ms-n2">
+                                            <a class="btn btn-dark px-3" href="<?= PROOT; ?>172.06.84.0/registrar">
+                                                Voters
+                                            </a>
                                         </div>
                                     </div>
 
-                                    <div class="col-auto">
-                                        <a class="btn btn-dark px-3" href="reports.voted.php?report=<?= $election_id; ?>">
-                                            Voted details
-                                        </a>
-                                    </div>
-                                    <div class="col-auto">
-                                        <a class="btn btn-dark px-3" href="reports.voter.php?report=<?= $election_id; ?>">
-                                            Voter details
-                                        </a>
-                                    </div>
-
-                                    <div class="col-auto ms-n2">
-                                        <a class="btn btn-dark px-3" href="<?= PROOT; ?>172.06.84.0/registrar">
-                                            Voters
-                                        </a>
-                                    </div>
                                 </div>
-
                             </div>
                         </div>
                     </div>
-                </div>
-            <div>
+                <div>
 
     <?php
         // $position_name = ((isset($_POST['position_name']) ? $_POST["position_name"] : ''));
@@ -154,7 +155,6 @@ if (isset($_GET['report']) && !empty($_GET['report'])) {
                 ':vft'  => 0
             ]);
             $result = $statement->fetchAll();
-            // dnd($result);
             // if (is_array($result)) {
             //     dnd($statement->rowCount());
             // }
@@ -221,7 +221,7 @@ if (isset($_GET['report']) && !empty($_GET['report'])) {
                 <div class="col-auto my-n3 me-n3">
                     <?php if ($_POST): ?>
                         <a href="javascript:;" name="create_excel" id="create_excel" class="float-right mb-3 ml-1">
-                            Export as excel file <span data-feather="download-cloud" class="ml-1"></span>
+                            <span class="material-symbols-outlined me-1">cloud_download</span> Export as excel file
                         </a>
                     <?php endif; ?>
                 </div>
@@ -265,7 +265,6 @@ include ('includes/footer.inc.php');
 <script type="text/javascript" src="https://unpkg.com/xlsx@0.15.1/dist/xlsx.full.min.js"></script>
 
 <script type="text/javascript">
-    feather.replace();
     function html_table_to_excel(type) {
         var data = document.getElementById('voted-table');
 

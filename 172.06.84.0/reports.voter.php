@@ -12,11 +12,11 @@ include ('includes/top-nav.inc.php');
 include ('includes/left-nav.inc.php');
 
 if (isset($_GET['report']) && !empty($_GET['report'])) {
-    $election_id = sanitize((int)$_GET['report']);
+    $election_id = sanitize($_GET['report']);
 
     $query = "
         SELECT * FROM election 
-        WHERE eid = ? 
+        WHERE election_id = ? 
         LIMIT 1
     ";
     $statement = $conn->prepare($query);
@@ -33,8 +33,8 @@ if (isset($_GET['report']) && !empty($_GET['report'])) {
         $position_sql = "
             SELECT * FROM positions 
             INNER JOIN election 
-            ON election.eid = positions.election_id 
-            WHERE election.eid = ? 
+            ON election.election_id = positions.election_id 
+            WHERE election.election_id = ? 
             AND election.session != ?
         ";
         $statement = $conn->prepare($position_sql);
@@ -64,7 +64,7 @@ if (isset($_GET['report']) && !empty($_GET['report'])) {
                     </nav>
 
                     <!-- Heading -->
-                    <h1 class="fs-4 mb-0">Reports</h1>
+                    <h1 class="fs-4 mb-0">Voters details reports</h1>
                 </div>
                 <div class="col-12 col-sm-auto mt-4 mt-sm-0">
                     <!-- Action -->
@@ -93,39 +93,40 @@ if (isset($_GET['report']) && !empty($_GET['report'])) {
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-12 col-lg"><div class="row gx-3  ">
-                                    <div class="col col-lg-auto ms-auto">
-                                        <div class="input-group bg-body">
-                                            <input type="text" class="form-control" placeholder="Search" aria-label="Search" aria-describedby="search" />
-                                            <span class="input-group-text" id="search">
-                                                <span class="material-symbols-outlined">search</span>
-                                            </span>
+                                <div class="col-12 col-lg">
+                                    <div class="row gx-3  ">
+                                        <div class="col col-lg-auto ms-auto">
+                                            <!-- <div class="input-group bg-body">
+                                                <input type="text" class="form-control" placeholder="Search" aria-label="Search" aria-describedby="search" />
+                                                <span class="input-group-text" id="search">
+                                                    <span class="material-symbols-outlined">search</span>
+                                                </span>
+                                            </div> -->
+                                        </div>
+
+                                        <div class="col-auto">
+                                            <a class="btn btn-dark px-3" href="reports.voted.php?report=<?= $election_id; ?>">
+                                                Voted details
+                                            </a>
+                                        </div>
+                                        <div class="col-auto">
+                                            <a class="btn btn-dark px-3" href="reports.voter.php?report=<?= $election_id; ?>">
+                                                Voter details
+                                            </a>
+                                        </div>
+
+                                        <div class="col-auto ms-n2">
+                                            <a class="btn btn-dark px-3" href="<?= PROOT; ?>172.06.84.0/registrar">
+                                                Voters
+                                            </a>
                                         </div>
                                     </div>
 
-                                    <div class="col-auto">
-                                        <a class="btn btn-dark px-3" href="reports.voted.php?report=<?= $election_id; ?>">
-                                            Voted details
-                                        </a>
-                                    </div>
-                                    <div class="col-auto">
-                                        <a class="btn btn-dark px-3" href="reports.voter.php?report=<?= $election_id; ?>">
-                                            Voter details
-                                        </a>
-                                    </div>
-
-                                    <div class="col-auto ms-n2">
-                                        <a class="btn btn-dark px-3" href="<?= PROOT; ?>172.06.84.0/registrar">
-                                            Voters
-                                        </a>
-                                    </div>
                                 </div>
-
                             </div>
                         </div>
                     </div>
-                </div>
-            <div>
+                <div>
 
     <?php
 
@@ -133,8 +134,8 @@ if (isset($_GET['report']) && !empty($_GET['report'])) {
             $voter_query = "
                 SELECT * FROM voter_login_details 
                 INNER JOIN registrars 
-                ON registrars.id = voter_login_details.voter_id 
-                WHERE registrars.election_type = ?
+                ON registrars.voter_id = voter_login_details.voter_id 
+                WHERE registrars.registrar_election = ?
             ";
             $statement = $conn->prepare($voter_query);
             $statement->execute([$election_id]);
@@ -183,16 +184,25 @@ if (isset($_GET['report']) && !empty($_GET['report'])) {
             ';
         
     ?>
+
     <div class="card" id="printIframeDiv">
         <div class="card-body">
-            <a href="javascript:;" name="create_excel" id="create_excel" class="float-right mb-3 ml-1">
-                Export as excel file <span data-feather="download-cloud" class="ml-1"></span>
-            </a>
-
-            <h4 class='header-title mb-3 text-left' style='color:rgb(170, 184, 197);'>Voter details <span class="text-danger"><?= ucwords($report_row["election_name"]) ?></span>.</h4>
+            <div class="row align-items-center mb-2">
+                <div class="col">
+                    <h3 class='fs-6 mb-2'>
+                        Voter details <span class="text-danger"><?= ucwords($report_row["election_name"]) ?></span>.
+                    </h4>
+                </div>
+                <div class="col-auto my-n3 me-n3">
+                    <a href="javascript:;" name="create_excel" id="create_excel" class="float-right mb-3 ml-1">
+                        <span class="material-symbols-outlined me-1">cloud_download</span> Export as excel file
+                    </a>
+                </div>
+            </div>
             <?= $output; ?>
         </div>
     </div>
+    
             
 <?php 
     } else {

@@ -49,18 +49,19 @@
 
                                 try {
                                     send_email($to, $subject, $body);
-                                
+                                    
+                                    $unique_vld_id = guidv4();
                                     $election_logs_query = "
                                         INSERT INTO voter_login_details (voter_login_details_id, voter_id) 
                                         VALUES (?, ?)
                                     ";
                                     $statement = $conn->prepare($election_logs_query);
-                                    $election_logs_result = $statement->execute([guidv4(), $row['voter_id']]);
+                                    $election_logs_result = $statement->execute([$unique_vld_id, $row['voter_id']]);
                                     $just_inserted_election_log_id = $conn->lastinsertId();
 
                                     if (isset($election_logs_result)) {
                                         $_SESSION['voter_accessed'] = $row['voter_id'];
-                                        $_SESSION['voter_login_details_id'] = $just_inserted_election_log_id;
+                                        $_SESSION['voter_login_details_id'] = $unique_vld_id;
 
                                         $log_message = "voter ['" . ucwords($row["std_fname"] . ' ' . $row["std_lname"]) . "'], loggedin, location ('" . $location . "')!";
                                         add_to_log($log_message, $row["voter_id"], 'user');

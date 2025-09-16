@@ -89,7 +89,7 @@ if (isset($_GET['report']) && !empty($_GET['report'])) {
                                 <div class="col-12 col-lg-auto mb-3 mb-lg-0">
                                     <div class="row align-items-center">
                                         <div class="col-auto">
-                                            <div class="text-body-secondary">No customers selected</div>
+                                            <div class="text-body-secondary">Report on <?= ucwords($report_row["election_name"] . ' ~ ' . $report_row["election_by"]) ?> election, voter details</div>
                                         </div>
                                     </div>
                                 </div>

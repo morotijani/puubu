@@ -136,7 +136,7 @@ if (isset($_GET['report']) && !empty($_GET['report'])) {
             $s_query = "
                 SELECT * FROM voted_for
                 INNER JOIN registrars
-                ON registrars.id = voted_for.voter_id
+                ON registrars.voter_id = voted_for.voter_id
                 LEFT JOIN election
                 ON election.election_id = voted_for.election_id
                 LEFT JOIN positions
@@ -154,6 +154,7 @@ if (isset($_GET['report']) && !empty($_GET['report'])) {
                 ':vft'  => 0
             ]);
             $result = $statement->fetchAll();
+            // dnd($result);
             // if (is_array($result)) {
             //     dnd($statement->rowCount());
             // }

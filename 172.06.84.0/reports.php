@@ -137,7 +137,6 @@ if (isset($_GET['report']) && !empty($_GET['election'])) {
                     <canvas id="myChart" width="400" height="160"></canvas>
                 </div>
             </div>
-
     
             <div id="display_candidate_and_result"></div>
 
@@ -175,41 +174,54 @@ if (isset($_GET['eclear']) && !empty($_GET['eclear'])) {
 
 ?>
 
-<style type="text/css">
-.start-0 {
-    left: 0!important;
-}
-
-.top-0 {
-    top: 6rem !important;
-}
-
-.toast-container {
-    position: absolute;
-}
-</style>
-
-<div class="toast-container p-3 top-0 start-0" id="toastPlacement" data-original-class="toast-container p-3"></div>
-<button type="button" class="btn btn-primary" id="liveToastBtn">Show live toast</button>
-
-<div class="toast-container position-fixed bottom-0 end-0 p-3">
-  <div id="liveToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
-    <div class="toast-header">
-      <img src="..." class="rounded me-2" alt="...">
-      <strong class="me-auto">Bootstrap</strong>
-      <small>11 mins ago</small>
-      <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
-    </div>
-    <div class="toast-body">
-      Hello, world! This is a toast message.
-    </div>
-  </div>
+<!-- Toast Container -->
+<div aria-live="polite" aria-atomic="true" class="position-relative">
+    <div id="toast-container" class="toast-container position-fixed top-0 end-0 p-3"></div>
 </div>
+
 <?php
     include ('includes/footer.inc.php');
 ?>
 <script type="text/javascript" src="<?= PROOT; ?>172.06.84.0/media/files/Chart.min.js"></script>
 <!-- <script src="https://cdn.jsdelivr.net/npm/chart.js@3/dist/chart.min.js"></script> -->
+
+<script>
+    function showToast(message) {
+        let container = document.getElementById("toast-container");
+
+        let toastEl = document.createElement("div");
+        toastEl.className = "toast align-items-center text-bg-primary border-0";
+        toastEl.setAttribute("role", "alert");
+        toastEl.setAttribute("aria-live", "assertive");
+        toastEl.setAttribute("aria-atomic", "true");
+
+        toastEl.innerHTML = `
+            <div class="d-flex">
+                <div class="toast-body">${message}</div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" 
+                    data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+        `;
+
+        container.appendChild(toastEl);
+
+        let toast = new bootstrap.Toast(toastEl, { delay: 10000 });
+        toast.show();
+
+        // Auto remove after hidden
+        toastEl.addEventListener('hidden.bs.toast', () => toastEl.remove());
+    }
+
+    // Poll server every 5 seconds
+    setInterval(() => {
+        fetch("<?= ADROOT; ?>controller/control.notifications.php")
+            .then(res => res.json())
+            .then(data => {
+                data.forEach(notif => showToast(notif.log_message));
+            });
+    }, 5000);
+</script>
+
 
 
 <script type="text/javascript">
@@ -279,43 +291,43 @@ if (isset($_GET['eclear']) && !empty($_GET['eclear'])) {
         setInterval(function() {
             get_all_results_per_candidate();
             get_all_results_per_candidate_ingraph();
-            toast_for_voted_voters();
-        }, 3000)
+            // toast_for_voted_voters();
+        }, 5000)
 
         // Toast for just voted voters
-        function toast_for_voted_voters() {
-            var toast = "toast"
+        // function toast_for_voted_voters() {
+        //     var toast = "toast"
 
-            $.ajax({
-                url : 'controller/control.toast.for.voters.php',
-                method : "POST",
-                data : {
-                    toast : toast
-                },
-                success : function(data) {
-                    $('#toastPlacement').html(data);
-                    var voterhasdone_id = $('#vhd_id').val();
-                    $("#liveToast").toast({ 
-                        delay: 3000
-                    }, update_voter_toast(voterhasdone_id));
-                    $("#liveToast").toast('show');
+        //     $.ajax({
+        //         url : 'controller/control.toast.for.voters.php',
+        //         method : "POST",
+        //         data : {
+        //             toast : toast
+        //         },
+        //         success : function(data) {
+        //             $('#toastPlacement').html(data);
+        //             var voterhasdone_id = $('#vhd_id').val();
+        //             $("#liveToast").toast({ 
+        //                 delay: 3000
+        //             }, update_voter_toast(voterhasdone_id));
+        //             $("#liveToast").toast('show');
                     
-                }
-            });
-        }
-        toast_for_voted_voters()
+        //         }
+        //     });
+        // }
+        // toast_for_voted_voters()
 
         // UPDATE TOAST STATUS TO SEEN
-        function update_voter_toast(voterhasdone_id) {
-            $.ajax({
-                url : "controller/control.toast.for.voters.update.php",
-                method : "POST",
-                data: {
-                    voterhasdone_id : voterhasdone_id
-                },
-                success : function(data) {}
-            });
-        }
+        // function update_voter_toast(voterhasdone_id) {
+        //     $.ajax({
+        //         url : "controller/control.toast.for.voters.update.php",
+        //         method : "POST",
+        //         data: {
+        //             voterhasdone_id : voterhasdone_id
+        //         },
+        //         success : function(data) {}
+        //     });
+        // }
 
     });
 </script>

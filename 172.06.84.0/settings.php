@@ -6,7 +6,7 @@
         cadminLoginErrorRedirect();
     }
 
-       // REQUIREMENT OF EXTERNAL FILES
+    // REQUIREMENT OF EXTERNAL FILES
     include ('includes/header.inc.php');
     include ('includes/top-nav.inc.php');
     include ('includes/left-nav.inc.php');
@@ -28,23 +28,27 @@
                 ':cfname' => sanitize($_POST['fname']),
                 ':clname' => sanitize($_POST['lname']),
                 ':cemail' => sanitize($_POST['email']),
-                ':c_aid' => $row['c_aid']
+                ':c_aid' => $admin_id
             ];
             $query = "
                 UPDATE puubu_admin 
                 SET cfname = :cfname, clname = :clname, cemail = :cemail
-                WHERE c_aid = :c_aid
+                WHERE admin_id = :c_aid
             ";
             $statement = $conn->prepare($query);
             $result = $statement->execute($data);
             if (isset($result)) {
+                $log_message = "admin ['" . $admin_id . "'], profile updated!";
+                add_to_log($log_message, $admin_id, 'admin');
+
                 $_SESSION['flash_success'] = 'Admin\'s profile has been <span class="bg-info">Updated</span></div>';
-                echo "<script>window.location = 'settings';</script>";
+                redirect(ADROOT . 'settings');
             }
         }
     }
 ?>
-        <!-- Main -->
+    
+    <!-- Main -->
     <main class="main px-lg-6">
         <!-- Content -->
         <div class="container-lg">
@@ -94,12 +98,6 @@
                             <div class="col-12 col-lg">
                                 <div class="row gx-3  ">
                                     <div class="col col-lg-auto ms-auto">
-                                        <!-- <div class="input-group bg-body">
-                                            <input type="text" class="form-control" placeholder="Search" aria-label="Search" aria-describedby="search" />
-                                            <span class="input-group-text" id="search">
-                                                <span class="material-symbols-outlined">search</span>
-                                            </span>
-                                        </div> -->
                                     </div>
 
                                     <div class="col-auto">
@@ -124,7 +122,7 @@
     if (isset($_GET['cp']) && $_GET['cp'] == 1) {
 
         $errors = '';
-        $hashed = $row['ckey'];
+        $hashed = $admin_data['ckey'];
         $old_password = ((isset($_POST['old_password']))?sanitize($_POST['old_password']):'');
         $old_password = trim($old_password);
         $password = ((isset($_POST['password']))?sanitize($_POST['password']):'');
@@ -132,7 +130,6 @@
         $confirm = ((isset($_POST['confirm']))?sanitize($_POST['confirm']):'');
         $confirm = trim($confirm);
         $new_hashed = password_hash($password, PASSWORD_BCRYPT);
-        $admin_id = $row['c_aid'];
 
         if (isset($_POST['edit_pasword'])) {
             if (empty($_POST['old_password']) || empty($_POST['password']) || empty($_POST['confirm'])) {
@@ -158,7 +155,7 @@
                 $query = '
                     UPDATE puubu_admin 
                     SET ckey = :ckey 
-                    WHERE c_aid = :c_aid
+                    WHERE admin_id = :c_aid
                 ';
                 $satement = $conn->prepare($query);
                 $result = $satement->execute(
@@ -168,8 +165,11 @@
                     )
                 );
                 if (isset($result)) {
+                    $log_message = "admin ['" . $admin_id . "'], password changed!";
+                    add_to_log($log_message, $admin_id, 'admin');
+
                     $_SESSION['flash_success'] = 'Password successfully <span class="bg-info">UPDATED</span></div>';
-                    echo "<script>window.location = 'details';</script>";
+                    redirect(ADROOT . 'details');
                 }
             }
         }
@@ -177,36 +177,42 @@
 ?>
 
 
-
-        <div class="card">
-            <div class="card-body">
-                <a href="details" class="btn btn-link float-right mb-3">
-                    Profile <span data-feather="user" class="ml-1"></span>
-                </a>
-                <h4 class="header-title mt-2" style="color: rgb(170, 184, 197);">Change Password</h4>
-                <hr>
-                <div class="container">
-                    <form method="POST" action="settings.php?cp=1" id="edit_passwordForm">
-                        <span class="text-danger lead"><?= $errors; ?></span>
-                        <div class="mb-3">
-                            <label for="old_password" class="form-label">Old password</label>
-                            <input type="password" class="form-control" name="old_password" id="old_password" value="<?= $old_password; ?>" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="new_password" class="form-label">New password</label>
-                            <input type="password" class="form-control" name="password" id="password" value="<?= $password; ?>" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="confirm" class="form-label">Confirm new password</label>
-                            <input type="password" class="form-control" name="confirm" id="confirm" value="<?= $confirm; ?>" required>
-                        </div>
-                        <button type="submit" class="btn btn-outline-warning" name="edit_pasword" id="edit_pasword">Change Password</button>&nbsp;
-                        <a href="details" class="btn btn-outline-secondary">Cancel</a>
-                    </form>
+ <!-- Industry news -->
+    <div class="card mb-6 mb-xxl-0">
+        <div class="card-header">
+            <div class="row align-items-center">
+                <div class="col">
+                    <h3 class="fs-6 mb-0">Change password</h3>
+                </div>
+                <div class="col-auto my-n3 me-n3">
+                    <a class="btn btn-link" href="<?= ADROOT; ?>details">
+                        Profile
+                        <span class="material-symbols-outlined">arrow_right_alt</span>
+                    </a>
                 </div>
             </div>
-
         </div>
+        <div class="card-body py-3">
+
+            <form method="POST" action="settings.php?cp=1" id="edit_passwordForm">
+                <span class="text-danger lead"><?= $errors; ?></span>
+                <div class="mb-3">
+                    <label for="old_password" class="form-label">Old password</label>
+                    <input type="password" class="form-control" name="old_password" id="old_password" value="<?= $old_password; ?>" required>
+                </div>
+                <div class="mb-3">
+                    <label for="new_password" class="form-label">New password</label>
+                    <input type="password" class="form-control" name="password" id="password" value="<?= $password; ?>" required>
+                </div>
+                <div class="mb-3">
+                    <label for="confirm" class="form-label">Confirm new password</label>
+                    <input type="password" class="form-control" name="confirm" id="confirm" value="<?= $confirm; ?>" required>
+                </div>
+                <button type="submit" class="btn btn-outline-warning" name="edit_pasword" id="edit_pasword">Change Password</button>&nbsp;
+                <a href="details" class="btn btn-outline-secondary">Cancel</a>
+            </form>
+        </div>
+    </div>
 
 <?php } else { ?>
 

@@ -23,7 +23,7 @@ $cont_position = ((isset($_POST['cont_position']) && !empty($_POST['cont_positio
 $cont_gender = ((isset($_POST['cont_gender']) && !empty($_POST['cont_gender'])) ? sanitize($_POST['cont_gender']) : '');
 $cont_lname = ((isset($_POST['cont_lname']) && !empty($_POST['cont_lname'])) ? sanitize($_POST['cont_lname']) : '');
 $cont_fname = ((isset($_POST['cont_fname']) && !empty($_POST['cont_fname']))? sanitize($_POST['cont_fname']) : '');
-$cont_indentification = ((isset($_POST['cont_indentification']) && !empty($_POST['cont_indentification'])) ? sanitize($_POST['cont_indentification']) : '');
+$contestant_ballot_number = ((isset($_POST['contestant_ballot_number']) && !empty($_POST['contestant_ballot_number'])) ? sanitize($_POST['contestant_ballot_number']) : '');
 $sel_election = ((isset($_POST['sel_election']) && !empty($_POST['sel_election'])) ? sanitize($_POST['sel_election']):'');
 $pp_path = '';
 $saved_passport = '';
@@ -152,7 +152,7 @@ if ($statement->rowCount() > 0) {
 						</div>
 					</div>
 				</td>
-                <td>' . $row["cont_indentification"] . '</td>
+                <td>' . $row["contestant_ballot_number"] . '</td>
                 <td>'.$row["cont_gender"].'</td>
                 <td>'.ucwords($row["position_name"]).'</td>
                 <td>'.ucwords($row["election_name"]).' / <span class="text-muted">' . ucwords($row["election_by"]) . '</span></td>
@@ -185,7 +185,7 @@ if (isset($_GET['editcontestant']) && !empty($_GET['editcontestant'])) {
     if ($findContestant > 0) {
         $editQuery = $conn->query("SELECT * FROM cont_details WHERE contestant_id = '".$editid."' LIMIT 1")->fetchAll();
         foreach ($editQuery as $sub_row) {
-            $cont_indentification = ((isset($_POST['cont_indentification']) && $_POST['cont_indentification'] != '') ? sanitize($_POST['cont_indentification']):$sub_row['cont_indentification']);
+            $contestant_ballot_number = ((isset($_POST['contestant_ballot_number']) && $_POST['contestant_ballot_number'] != '') ? sanitize($_POST['contestant_ballot_number']):$sub_row['contestant_ballot_number']);
             $cont_fname = ((isset($_POST['cont_fname']) && $_POST['cont_fname'] != '') ? sanitize($_POST['cont_fname']) : $sub_row['cont_fname']);
             $cont_lname = ((isset($_POST['cont_lname']) && $_POST['cont_lname'] != '') ? sanitize($_POST['cont_lname']) : $sub_row['cont_lname']);
             $cont_position = ((isset($_POST['cont_position']) && $_POST['cont_position'] != '') ? sanitize($_POST['cont_position']) : $sub_row['cont_position']);
@@ -221,15 +221,15 @@ if (isset($_GET['editcontestant']) && !empty($_GET['editcontestant'])) {
 if (isset($_POST['createcont'])) {
 
     // CHECK FOR EMPTY FIELDS
-    if (empty($_POST['cont_indentification']) || empty($_POST['cont_fname']) || empty($_POST['cont_lname']) || empty($_POST['cont_position']) || empty($_POST['cont_gender'])) {
+    if (empty($_POST['contestant_ballot_number']) || empty($_POST['cont_fname']) || empty($_POST['cont_lname']) || empty($_POST['cont_position']) || empty($_POST['cont_gender'])) {
         if ($_POST['uploadedPassport'] != '') {
             unlink($_POST['uploadedPassport']);
         }
         $message = '<div class="alert alert-danger">Empty Fields are Required</div>';
     } else {
-        $findContestant = $conn->query("SELECT * FROM cont_details INNER JOIN election ON election.election_id = cont_details.contestant_election WHERE cont_indentification = '".$_POST['cont_indentification']."' AND election.election_id = '".$_POST['sel_election']."' AND cont_position = '".$_POST['cont_position']."'")->rowCount();
+        $findContestant = $conn->query("SELECT * FROM cont_details INNER JOIN election ON election.election_id = cont_details.contestant_election WHERE contestant_ballot_number = '".$_POST['contestant_ballot_number']."' AND election.election_id = '".$_POST['sel_election']."' AND cont_position = '".$_POST['cont_position']."'")->rowCount();
         if (isset($_GET['editcontestant']) && !empty($_GET['editcontestant'])) {
-            $findContestant = $conn->query("SELECT * FROM cont_details INNER JOIN election ON election.election_id = cont_details.contestant_election WHERE election.election_id = '".$_POST['sel_election']."' AND cont_indentification = '".$_POST['cont_indentification']."' AND contestant_id != '".$_GET['editcontestant']."'")->rowCount();
+            $findContestant = $conn->query("SELECT * FROM cont_details INNER JOIN election ON election.election_id = cont_details.contestant_election WHERE election.election_id = '".$_POST['sel_election']."' AND contestant_ballot_number = '".$_POST['contestant_ballot_number']."' AND contestant_id != '".$_GET['editcontestant']."'")->rowCount();
         }
         if ($findContestant > 0) {
             if (isset($_POST['uploadedPassport']) != '') {
@@ -268,7 +268,7 @@ if (isset($_POST['createcont'])) {
             // INSERT DATA TO DATABASE IF ERRORS OR MESSAGES ARE EMPTY
             if ($message == '') {
                 if (isset($_GET['editcontestant']) && !empty($_GET['editcontestant'])) {
-                    $updateQ = "UPDATE cont_details SET cont_indentification = '".$cont_indentification."', cont_fname = '".$cont_fname."', cont_lname = '".$cont_lname."', cont_gender = '".$cont_gender."', cont_position = '".$cont_position."', contestant_election = '".$sel_election."', cont_profile = '".$image_name."'  WHERE contestant_id = '".$_GET["editcontestant"]."'";
+                    $updateQ = "UPDATE cont_details SET contestant_ballot_number = '".$contestant_ballot_number."', cont_fname = '".$cont_fname."', cont_lname = '".$cont_lname."', cont_gender = '".$cont_gender."', cont_position = '".$cont_position."', contestant_election = '".$sel_election."', cont_profile = '".$image_name."'  WHERE contestant_id = '".$_GET["editcontestant"]."'";
                     $statement = $conn->prepare($updateQ);
                     $resultQ = $statement->execute();
                     if (isset($resultQ)) {
@@ -279,7 +279,7 @@ if (isset($_POST['createcont'])) {
                         redirect(ADROOT . 'contestants');
                     }
                 } else {
-                    $query = "INSERT INTO cont_details (contestant_id, cont_indentification, cont_fname, cont_lname, cont_gender, cont_position, contestant_election, cont_profile) VALUES ('" . guidv4() . "', '".$cont_indentification."', '".$cont_fname."', '".$cont_lname."', '".$cont_gender."', '".$cont_position."',  '".$sel_election."', '".$image_name."')";
+                    $query = "INSERT INTO cont_details (contestant_id, contestant_ballot_number, cont_fname, cont_lname, cont_gender, cont_position, contestant_election, cont_profile) VALUES ('" . guidv4() . "', '".$contestant_ballot_number."', '".$cont_fname."', '".$cont_lname."', '".$cont_gender."', '".$cont_position."',  '".$sel_election."', '".$image_name."')";
                     $statement = $conn->prepare($query);
                     $result = $statement->execute();
                     $lastinsetedID = $conn->lastinsertId();
@@ -334,7 +334,7 @@ if (isset($_POST['createcont'])) {
                         </ol>
                     </nav>
                     <!-- Heading -->
-                    <h1 class="fs-4 mb-0">Contestatnt</h1>
+                    <h1 class="fs-4 mb-0">Contestant</h1>
                 </div>
                 <div class="col-12 col-sm-auto mt-4 mt-sm-0">
                     <div class="row gx-2">
@@ -365,12 +365,12 @@ if (isset($_POST['createcont'])) {
                                 <div class="col-12 col-lg">
                                     <div class="row gx-3  ">
                                         <div class="col col-lg-auto ms-auto">
-                                            <div class="input-group bg-body">
+                                            <!-- <div class="input-group bg-body">
                                                 <input type="text" class="form-control" placeholder="Search" aria-label="Search" aria-describedby="search" />
                                                 <span class="input-group-text" id="search">
                                                     <span class="material-symbols-outlined">search</span>
                                                 </span>
-                                            </div>
+                                            </div> -->
                                         </div>
 
                                         <div class="col-auto">
@@ -407,8 +407,8 @@ if (isset($_POST['createcont'])) {
                     <div class="row">
                         <div class="col-8">
                             <div class="mb-3">
-                                <label class="form-label" for="cont_indentification">Ballot Number</label>
-                                <input type="text" name="cont_indentification" value="<?= $cont_indentification; ?>" placeholder="Contestant ID or Ballot No" class="form-control">
+                                <label class="form-label" for="contestant_ballot_number">Ballot Number</label>
+                                <input type="text" name="contestant_ballot_number" value="<?= $contestant_ballot_number; ?>" placeholder="Contestant ID or Ballot No" class="form-control">
                             </div>
                         </div>
                         <div class="col-4">

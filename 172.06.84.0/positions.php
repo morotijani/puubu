@@ -197,12 +197,12 @@ if (isset($_POST['addposition'])) {
                             <div class="col-12 col-lg">
                                 <div class="row gx-3  ">
                                     <div class="col col-lg-auto ms-auto">
-                                        <div class="input-group bg-body">
+                                        <!-- <div class="input-group bg-body">
                                             <input type="text" class="form-control" placeholder="Search" aria-label="Search" aria-describedby="search" />
                                             <span class="input-group-text" id="search">
                                                 <span class="material-symbols-outlined">search</span>
                                             </span>
-                                        </div>
+                                        </div> -->
                                     </div>
 
                                     <div class="col-auto">

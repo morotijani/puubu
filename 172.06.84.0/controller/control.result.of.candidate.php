@@ -81,7 +81,7 @@ if (isset($_POST['election_id'])) {
             $statement->execute(
                 [
                     ':contestant_election' => $election_id,
-                    ':cont_position' => (int)$positionId,
+                    ':cont_position' => $positionId,
                     ':del_cont' => 'no'
                 ]
             );

@@ -23,7 +23,7 @@ $query = "
 	ON election.election_id = cont_details.contestant_election 
 	";
 if ($_POST['query'] != '') {
-	$query .= 'WHERE cont_details.cont_indentification LIKE "%'.str_replace(' ', '%', $_POST['query']).'%" OR cont_details.cont_fname LIKE "%'.str_replace(' ', '%', $_POST['query']).'%" OR cont_details.cont_lname LIKE "%'.str_replace(' ', '%', $_POST['query']).'%" OR cont_details.cont_gender LIKE "%'.str_replace(' ', '%', $_POST['query']).'%" OR positions.position_name LIKE "%'.str_replace(' ', '%', $_POST['query']).'%" OR election.election_name LIKE "%'.str_replace(' ', '%', $_POST['query']).'%" AND cont_details.del_cont = "no" ';
+	$query .= 'WHERE cont_details.contestant_ballot_number LIKE "%'.str_replace(' ', '%', $_POST['query']).'%" OR cont_details.cont_fname LIKE "%'.str_replace(' ', '%', $_POST['query']).'%" OR cont_details.cont_lname LIKE "%'.str_replace(' ', '%', $_POST['query']).'%" OR cont_details.cont_gender LIKE "%'.str_replace(' ', '%', $_POST['query']).'%" OR positions.position_name LIKE "%'.str_replace(' ', '%', $_POST['query']).'%" OR election.election_name LIKE "%'.str_replace(' ', '%', $_POST['query']).'%" AND cont_details.del_cont = "no" ';
 } else {
 	$query .= 'WHERE cont_details.del_cont = "no" ORDER BY cont_details.cont_fname ASC ';
 }
@@ -92,10 +92,10 @@ if ($total_data > 0) {
 						</div>
 					</div>
 				</td>
-                <td>'.$row["cont_indentification"] . '</td>
+                <td>' . $row["contestant_ballot_number"] . '</td>
                 <td>'.ucwords($row["cont_gender"]).'</td>
                 <td>'.ucwords($row["position_name"]).'</td>
-                <td>'.ucwords($row["election_name"]).' ~<span class="text-muted"> '.ucwords($row["election_by"]).'</span></td>
+                <td>'.ucwords($row["election_name"]).' ~ <span class="text-muted"> '.ucwords($row["election_by"]).'</span></td>
                 <td>
                     ' . $option . '
                 </td>

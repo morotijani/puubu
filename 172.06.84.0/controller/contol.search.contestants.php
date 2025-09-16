@@ -40,7 +40,7 @@ $statement->execute();
 $result = $statement->fetchAll();
 
 $output = ' 
-	<h4 class="mt-2">List - '.$total_data.'</h4>
+	<h2 class="fs-5 mb-1">List - '.$total_data.'</h2>
 	<div class="table-responsive">
 		<table class="table align-middle mb-0">
 			<thead>

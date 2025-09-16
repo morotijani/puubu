@@ -67,7 +67,7 @@
                 add_to_log($log_message, $admin_id, 'admin');
 
                 $_SESSION['flash_success'] = 'Registrar Has Been Deleted Successfully';
-                echo "<script>window.location = 'registrar';</script>";
+                redirect(ADROOT . 'registrar');
             }
         } else {
             $log_message = "voter ['" . $deleteid . "'], selected to be deleted, but did not exist!";
@@ -115,111 +115,84 @@
             $statement = $conn->prepare($query);
             $statement->execute();
             $count = $statement->rowCount();
-
+            
             if ($count > 0) {
                 $message = '<div class="alert alert-danger" id="temporary">This Voter Already Exists</div>';
             } else {
-
+                
                 if ($message == '') {
 
-              // str_shuffle() RANDOMLY SHUFFLE ALL CHARACTERS OF A STRING (SIMPLY MEANS IT RANDOMLY REARRANGE STRING CHARACTERS) AND
-              // substr() RETURNS A PART OF THAT STRING
-              //$string = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKMNOPQRSTUVWXYZ0123456789!@#$%^&*()-_';
-              $string = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKMNOPQRSTUVWXYZ0123456789';
-              $generatedpassword = substr(str_shuffle($string), 0, 8);
+                // str_shuffle() RANDOMLY SHUFFLE ALL CHARACTERS OF A STRING (SIMPLY MEANS IT RANDOMLY REARRANGE STRING CHARACTERS) AND
+                // substr() RETURNS A PART OF THAT STRING
+                //$string = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKMNOPQRSTUVWXYZ0123456789!@#$%^&*()-_';
+                $string = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKMNOPQRSTUVWXYZ0123456789';
+                $generatedpassword = substr(str_shuffle($string), 0, 8);
 
-              if (isset($_GET['editvoter']) && !empty($_GET['editvoter'])) {
-                $update = "UPDATE registrars SET std_id = '".$_POST['voter_identity'][$i]."', std_fname = '".$_POST['voter_fname'][$i]."', std_lname = '".$_POST['voter_lname'][$i]."', std_email = '".$_POST['voter_email'][$i]."', registrar_election = '".$_POST['voter_election_type'][$i]."' WHERE id = '".$_GET['editvoter']."'";
-                $statement = $conn->prepare($update);
-                $statement->execute();
-                $_SESSION['flash_success'] = 'The Voter Has Been Successfully Updated';
-                echo "<script>window.location = 'registrar';</script>";
-              } else {
-                $query = "INSERT INTO registrars (std_id, std_password, std_fname, std_lname, std_email, registrar_election) VALUES ('".$_POST['voter_identity'][$i]."', '".$generatedpassword."', '".$_POST['voter_fname'][$i]."', '".$_POST['voter_lname'][$i]."', '".$_POST['voter_email'][$i]."', '".$_POST['voter_election_type'][$i]."')";
-                $statement = $conn->prepare($query);
-                $result = $statement->execute();
-                if (isset($result)) {
+                if (isset($_GET['editvoter']) && !empty($_GET['editvoter'])) {
+                    $update = "
+                        UPDATE registrars 
+                        SET std_id = '".$_POST['voter_identity'][$i]."', std_fname = '".$_POST['voter_fname'][$i]."', std_lname = '".$_POST['voter_lname'][$i]."', std_email = '".$_POST['voter_email'][$i]."', registrar_election = '".$_POST['voter_election_type'][$i]."' 
+                        WHERE id = '".$_GET['editvoter']."'
+                    ";
+                    $statement = $conn->prepare($update);
+                    $statement->execute();
+                    
+                    $log_message = "voter [" . $_GET['editvoter'] . "], updated!";
+                    add_to_log($log_message, $admin_id, 'admin');
 
-                  // function smtpmailer($to, $from, $from_name, $subject, $body) {
-                  //   $mail = new PHPMailer();
-                  //   $mail->IsSMTP();
-                  //   $mail->SMTPAuth = true; 
-                     
-                  //   $mail->SMTPSecure = 'ssl'; 
-                  //   $mail->Host = 'smtp.namibra.com';
-                  //   $mail->Port = 465;  
-                  //   $mail->Username = 'castright@namibra.com';
-                  //   $mail->Password = 'Um9f985c2'; 
-                       
-                  //   $mail->IsHTML(true);
-                  //   $mail->From="castright@namibra.com";
-                  //   $mail->FromName=$from_name;
-                  //   $mail->Sender=$from;
-                  //   $mail->AddReplyTo($from, $from_name);
-                  //   $mail->Subject = $subject;
-                  //   $mail->Body = $body;
-                  //   $mail->AddAddress($to);
-                  //   if (!$mail->Send()) {
-                  //       $error ="Please try Later, Error Occured while Processing...";
-                  //       return $error; 
-                  //   } else {
-                  //     $error = "Thanks You !! Your email is sent.";  
-                  //     return $error;
-                  //   }
-                  // }
-                        
-                  // $to   = $_POST['voter_email'][$i];
-                  // $from = 'castright@namibra.com';
-                  // $name = 'Castright ~ Namibra, Inc';
-                  // $subj = 'Your password for Voting';
-                  // $msg = '<p>This is you password for voting. <b>'.$generatedpassword.'</b></p><br><p>Visit this link to vote <a href="evoting.namibra.com">castRight</a></p>';
-                        
-                  // $error=smtpmailer($to[$i],$from, $name ,$subj, $msg);
-                  // $_SESSION['flash_success'] = $error;
+                    $_SESSION['flash_success'] = 'The Voter Has Been Successfully Updated';
+                    redirect(ADROOT . 'registrar');
+                } else {
+                    
+                    $query = "
+                        INSERT INTO registrars (voter_id, std_id, std_password, std_fname, std_lname, std_email, registrar_election) 
+                        VALUES ('" . guidv4() . "', '".$_POST['voter_identity'][$i]."', '".$generatedpassword."', '".$_POST['voter_fname'][$i]."', '".$_POST['voter_lname'][$i]."', '".$_POST['voter_email'][$i]."', '".$_POST['voter_election_type'][$i]."')
+                    ";
+                    $statement = $conn->prepare($query);
+                    $result = $statement->execute();
+                    if (isset($result)) {
+                        $log_message = $_POST['total_fields'] . " new voter(s), added!";
+                        add_to_log($log_message, $admin_id, 'admin');
 
-                  $_SESSION['flash_success'] = ''.$_POST['total_fields'].' Voter(s) Successfully Added';
-                  echo "<script>window.location = 'registrar';</script>";
+                        $_SESSION['flash_success'] = ''.$_POST['total_fields'].' Voter(s) Successfully Added';
+                        redirect(ADROOT . 'registrar');
+                    }
                 }
-              }
             }
 
-          }
+        }
         
-      }
-    
-  }
+    }    
+}
 
 
-
-// FIND DULICATED EMAILS
-  if (isset($_GET['fde']) && !empty($_GET['fde'])) {
-      $query = "
-        SELECT *
-        FROM registrars 
-        INNER JOIN election
-        ON election.election_id = registrars.registrar_election 
-        WHERE registrars.std_email 
-        IN (
-                SELECT registrars.std_email 
+    // FIND DULICATED EMAILS
+    if (isset($_GET['fde']) && !empty($_GET['fde'])) {
+            $query = "
+                SELECT *
                 FROM registrars 
-                GROUP BY registrars.std_email 
-                HAVING COUNT(*) > 1
-        );
-      ";
-      $statement = $conn->prepare($query);
-      $statement->execute();
-      $result_fde = $statement->fetchAll();
-      $fde_count = $statement->rowCount();
-  }
-
-
+                INNER JOIN election
+                ON election.election_id = registrars.registrar_election 
+                WHERE registrars.std_email 
+                IN (
+                        SELECT registrars.std_email 
+                        FROM registrars 
+                        GROUP BY registrars.std_email 
+                        HAVING COUNT(*) > 1
+                );
+            ";
+            $statement = $conn->prepare($query);
+            $statement->execute();
+            $result_fde = $statement->fetchAll();
+            $fde_count = $statement->rowCount();
+    }
 
 ?>
 <style>
-.tr-bg-danger {
-    /* background-color: red !Important; */
-    border-color: red;
-}
+    .tr-bg-danger {
+        /* background-color: red !Important; */
+        border-color: red;
+    }
 </style>
 
     <!-- Main -->
@@ -276,12 +249,12 @@
                                 <div class="col-12 col-lg">
                                     <div class="row gx-3  ">
                                         <div class="col col-lg-auto ms-auto">
-                                            <div class="input-group bg-body">
+                                            <!-- <div class="input-group bg-body">
                                                 <input type="text" class="form-control" placeholder="Search" aria-label="Search" aria-describedby="search" />
                                                 <span class="input-group-text" id="search">
                                                     <span class="material-symbols-outlined">search</span>
                                                 </span>
-                                            </div>
+                                            </div> -->
                                         </div>
 
                                         <div class="col-auto">
@@ -344,7 +317,7 @@
                     <button type="submit" name="submitVoters" id="submitVoters" class="btn btn-outline-warning"><?= ((isset($_GET['editvoter'])?'Edit':'Add')); ?> Now!</button>
                     <a href="registrar" class="btn btn-danger">Cancel</a>
                     <?php if (isset($_GET['addnewvoter'])): ?>
-                        <button type="button" name="add" id="add" class="btn btn-dark float-right">Add New Field</button>
+                        <button type="button" name="add" id="add" class="btn btn-dark">Add New Field</button>
                     <?php endif; ?>
                 </div>
             </form>
@@ -354,7 +327,7 @@
   <?php elseif (isset($_GET['ricsv'])): ?>
     <div class="card">
         <div class="card-body">
-            <h4 class="header-title mt-2" style="color: rgb(170, 184, 197);">Import CSV file data</h4>
+            <h2 class="fs-5 mb-1">Import CSV file data</h2>
             <span id="csv_message"></span>
             <form method="POST" action="" id="uploadRCSV" enctype="multipart/form-data">
                 <div class="mb-3">
@@ -400,7 +373,7 @@
             </div>
             
       <?php if (isset($_GET['fde']) && !empty($_GET['fde'])): ?>
-            <h4 class="mt-2">List of duplicated users</h4>
+            <h2 class="fs-5 mb-1">List of duplicated users</h2>
             <div class="table-responsive">
                 <table class="table align-middle mb-0">
                     <thead>

@@ -229,7 +229,7 @@ if (isset($_POST['createcont'])) {
     } else {
         $findContestant = $conn->query("SELECT * FROM cont_details INNER JOIN election ON election.election_id = cont_details.contestant_election WHERE contestant_ballot_number = '".$_POST['contestant_ballot_number']."' AND election.election_id = '".$_POST['sel_election']."' AND cont_position = '".$_POST['cont_position']."'")->rowCount();
         if (isset($_GET['editcontestant']) && !empty($_GET['editcontestant'])) {
-            $findContestant = $conn->query("SELECT * FROM cont_details INNER JOIN election ON election.election_id = cont_details.contestant_election WHERE election.election_id = '".$_POST['sel_election']."' AND contestant_ballot_number = '".$_POST['contestant_ballot_number']."' AND contestant_id != '".$_GET['editcontestant']."'")->rowCount();
+            $findContestant = $conn->query("SELECT * FROM cont_details INNER JOIN election ON election.election_id = cont_details.contestant_election WHERE election.election_id = '".$_POST['sel_election']."' AND contestant_ballot_number = '".$_POST['contestant_ballot_number']."' AND cont_position = '".$_POST['cont_position']."' AND contestant_id != '".$_GET['editcontestant']."'")->rowCount();
         }
         if ($findContestant > 0) {
             if (isset($_POST['uploadedPassport']) != '') {

@@ -32,7 +32,7 @@
 	$result = $statement->fetchAll();
 
 	$output = ' 
-		<h4 class="mt-2">List of voters</h4>
+		<h2 class="fs-5 mb-1">List of voters</h2>
 		<div class="table-responsive">
 			<table class="table align-middle mb-0">
 				<thead>

@@ -58,7 +58,7 @@ if (isset($_GET['report']) && !empty($_GET['election'])) {
                     <!-- Action -->
                     <div class="row gx-2">
                         <div class="col-6 col-sm-auto">
-                            <a class="btn btn-light w-100" href="<?= PROOT; ?>172.06.84.0/reports?report=1&election=<?= $election_id; ?>"><span class="material-symbols-outlined me-1">add</span> Refresh</a>
+                            <a class="btn btn-light w-100" href="<?= PROOT; ?>172.06.84.0/reports?report=1&election=<?= $election_id; ?>"><span class="material-symbols-outlined me-1">refresh</span> Refresh</a>
                         </div>
                         <div class="col-6 col-sm-auto">
                             <a href="<?= goBack(); ?>" class="btn btn-danger w-100">Go back</a>
@@ -120,12 +120,12 @@ if (isset($_GET['report']) && !empty($_GET['election'])) {
                             <h3 class="fs-6 mb-0">Performance</h3>
                         </div>
                         <div class="col-auto fs-sm me-n3">
-                            <span class="material-symbols-outlined text-primary me-1">circle</span>
-                            Total
+                            <span class="material-symbols-outlined text-danger me-1">circle</span>
+                            No
                         </div>
                         <div class="col-auto fs-sm">
                             <span class="material-symbols-outlined text-dark me-1">circle</span>
-                            Tracked
+                            Normal
                         </div>
                     </div>
                 </div>
@@ -190,7 +190,21 @@ if (isset($_GET['eclear']) && !empty($_GET['eclear'])) {
 </style>
 
 <div class="toast-container p-3 top-0 start-0" id="toastPlacement" data-original-class="toast-container p-3"></div>
+<button type="button" class="btn btn-primary" id="liveToastBtn">Show live toast</button>
 
+<div class="toast-container position-fixed bottom-0 end-0 p-3">
+  <div id="liveToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+    <div class="toast-header">
+      <img src="..." class="rounded me-2" alt="...">
+      <strong class="me-auto">Bootstrap</strong>
+      <small>11 mins ago</small>
+      <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+    </div>
+    <div class="toast-body">
+      Hello, world! This is a toast message.
+    </div>
+  </div>
+</div>
 <?php
     include ('includes/footer.inc.php');
 ?>

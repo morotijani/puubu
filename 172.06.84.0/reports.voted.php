@@ -161,7 +161,7 @@ if (isset($_GET['report']) && !empty($_GET['report'])) {
             $i = 1;
             $p_name = '';
             foreach ($result as $row) {
-                $p_name = 'Voted for - ' . ucwords($row['position_name']);
+                $p_name = ucwords($row['position_name']);
             }
             $output .= '
                 <div class="table-responsive">
@@ -175,12 +175,16 @@ if (isset($_GET['report']) && !empty($_GET['report'])) {
                                 <th>Date and Time</th>
                                 <th>Location</th>
                                 <th>IP Address</th>
-                                <th>' . $p_name . '</th>
+                                <th>Voted for - '  . $p_name . '</th>
                             </tr>
                         </thead>
                         <tbody>
             ';
             if ($statement->rowCount() > 0) {
+                
+                $log_message = "search on voted for on position ['" . $p_name . "']!";
+                add_to_log($log_message, $admin_id, 'admin');
+
                 foreach ($result as $row) {
                     $output .= "
                         <tr>
@@ -197,6 +201,9 @@ if (isset($_GET['report']) && !empty($_GET['report'])) {
                     $i++;
                 }
             } else {
+                $log_message = "search on voted for on position ['" . $contestant_position . "'], but there was no result!";
+                add_to_log($log_message, $admin_id, 'admin');
+
                 $output .= '
                     <tr>
                         <td colspan="8"> No data found</td>

@@ -64,6 +64,7 @@ if (isset($_POST['election_id'])) {
                 WHERE contestant_election = ? 
                 AND cont_position = ? 
                 AND cont_details.del_cont = ?
+                ORDER BY contestant_ballot_number ASC
             ";
             $statement = $conn->prepare($contestant_query);
             $statement->execute([$election_id, $positionId, 'no']);

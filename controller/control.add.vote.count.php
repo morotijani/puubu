@@ -1,13 +1,11 @@
 <?php 
 
 require_once("../connection/conn.php");
-require (BASEURL . "172.06.84.0/PHPMailer/PHPMailerAutoload.php");
-
 $msg = '';
 
 // REDIRECT VOTER IF NOT LOGGEDIN
 if (!isset($_SESSION["voter_accessed"])) {
-	header("Location: ../signin");
+	redirect(PROOT . 'signin');
 	exit();
 } else {
 
@@ -17,13 +15,13 @@ if (!isset($_SESSION["voter_accessed"])) {
     }
 
 	// CHECK IF LOGGED IN VOTER REALLY EXIST INOUR DATABASE
-	$voterId = sanitize((int)$_SESSION['voter_accessed']);
+	$voterId = sanitize($_SESSION['voter_accessed']);
 	$voterQuery = "
 	    SELECT * FROM registrars 
 	    INNER JOIN election 
-	    ON election.eid = registrars.election_type 
-	    WHERE registrars.id = ? 
-	    AND election.eid = registrars.election_type 
+	    ON election.election_id = registrars.registrar_election 
+	    WHERE registrars.voter_id = ? 
+	    AND election.election_id = registrars.registrar_election 
 	    AND election.session = ?
 	    LIMIT 1
 	";
@@ -34,7 +32,7 @@ if (!isset($_SESSION["voter_accessed"])) {
 
 	// IF LOGGED IN VOTER DO NOT EXIST REDIRECT TO LOGIN PAGE
 	if ($voter_count < 1) {
-		header("Location: ../signin");
+		redirect(PROOT . 'signin');
 		exit();
 	} else {
 		foreach ($voter_result as $voter_row) {}
@@ -48,7 +46,8 @@ if (!isset($_SESSION["voter_accessed"])) {
 		$checkVoterhasdone = "
 			SELECT * FROM voterhasdone 
 			WHERE voter_id = ? 
-			AND election_id = ?";
+			AND election_id = ?
+		";
 		$statement = $conn->prepare($checkVoterhasdone);
 		$statement->execute([$voterId, $election]);
 		$result_checkVoterhasdone = $statement->fetchAll();
@@ -92,22 +91,22 @@ if (!isset($_SESSION["voter_accessed"])) {
 						 if ($skipped_votes_result) {
 						     $msg .= '
         						<li class="mt-1">
-        						<a href="javascript:;" class="card bg-white card-hover-border text-danger">
-        						<div class="card-body py-4">
-        						<div class="row align-items-center g-2 g-md-4 text-center text-md-start">
-        						<div class="col-md-9">
-        						<p class="fs-lg mb-0">You did not vote for the position</p>
-        						<ul class="list-inline list-inline-separated text-muted">
-        						<li class="list-inline-item">'.$electionStarted.'</li>
-        						<li class="list-inline-item">'.$electionBy.'</li>
-        						</ul>
-        						</div>
-        						<div class="col-md-3 text-lg-end">
-        						<span>'. ucwords($key_row['position_name']) .'</span>
-        						</div>
-        						</div>
-        						</div>
-        						</a>
+									<a href="javascript:;" class="card bg-white card-hover-border text-danger">
+										<div class="card-body py-4">
+											<div class="row align-items-center g-2 g-md-4 text-center text-md-start">
+												<div class="col-md-9">
+													<p class="fs-lg mb-0">You did not vote for the position</p>
+													<ul class="list-inline list-inline-separated text-muted">
+														<li class="list-inline-item">'.$electionStarted.'</li>
+														<li class="list-inline-item">'.$electionBy.'</li>
+													</ul>
+													</div>
+													<div class="col-md-3 text-lg-end">
+													<span>'. ucwords($key_row['position_name']) .'</span>
+												</div>
+											</div>
+										</div>
+									</a>
         						</li> ';
 						 }
 					}
@@ -124,7 +123,7 @@ if (!isset($_SESSION["voter_accessed"])) {
 					// CHECK IF VOTE TO CONTESTANT ALREDY EXIST
 					$queryVotecount = "
 						SELECT * FROM vote_counts 
-						WHERE cont_id = ?
+						WHERE contestant_id = ?
 						AND position_id = ? 
 						AND election_id = ?
 					";
@@ -147,7 +146,7 @@ if (!isset($_SESSION["voter_accessed"])) {
 							$dataUpdate = array(
 								':results' => $newVote,
 								':results_no' => (($exOptionYN == 'no')?$newVote_no:$row['results_no']),
-								':cont_id' => (($exOptionYN == 'no' || $exOptionYN == 'yes')?$exOptionID:$votedPerson[$i]),
+								':contestant_id' => (($exOptionYN == 'no' || $exOptionYN == 'yes')?$exOptionID:$votedPerson[$i]),
 								':position_id' => $nameOfPositions[$i],
 								':election_id' => $election
 							);
@@ -156,7 +155,7 @@ if (!isset($_SESSION["voter_accessed"])) {
 							$query_newVote = "
 								UPDATE vote_counts 
 								SET results = :results, results_no = :results_no 
-								WHERE cont_id = :cont_id 
+								WHERE contestant_id = :contestant_id 
 								AND position_id = :position_id 
 								AND election_id = :election_id
 							";
@@ -167,7 +166,7 @@ if (!isset($_SESSION["voter_accessed"])) {
 							$sql = "
 								UPDATE registrars 
 								SET status = :status 
-								WHERE id = :id
+								WHERE voter_id = :id
 							";
 							$statement = $conn->prepare($sql);
 							$statement->execute(
@@ -192,12 +191,13 @@ if (!isset($_SESSION["voter_accessed"])) {
 						// $statement->execute([$nameOfPositions[$i]]);
 						foreach ($position_result as $sub_row) {
 							$votedforQ = "
-								INSERT INTO voted_for (voter_id, election_id, position_id, candidate_id, voted_location, voted_ip)
-								VALUES (:voter_id, :election_id, :position_id, :candidate_id, :voted_location, :voted_ip)
+								INSERT INTO voted_for (for_id, voter_id, election_id, position_id, candidate_id, voted_location, voted_ip)
+								VALUES (:for_id, :voter_id, :election_id, :position_id, :candidate_id, :voted_location, :voted_ip)
 							";
 							$statement = $conn->prepare($votedforQ);
 							$votedfor_result = $statement->execute(
 								array(
+									':for_id' 			=> guidv4(),
 									':voter_id' 		=> $voterId,
 									':election_id' 		=> $election,
 									':position_id' 		=> $nameOfPositions[$i],
@@ -210,24 +210,25 @@ if (!isset($_SESSION["voter_accessed"])) {
 
 								// DISPLAY MESSAGE ON VOTED POSITIONS
 								$msg .= '
-								<li class="mt-1">
-								<a href="javascript:;" class="card bg-white card-hover-border">
-								<div class="card-body py-4">
-								<div class="row align-items-center g-2 g-md-4 text-center text-md-start">
-								<div class="col-md-9">
-								<p class="fs-lg mb-0">Voted for the position</p>
-								<ul class="list-inline list-inline-separated text-muted">
-								<li class="list-inline-item">'.$electionStarted.'</li>
-								<li class="list-inline-item">'.$electionBy.'</li>
-								</ul>
-								</div>
-								<div class="col-md-3 text-lg-end">
-								<span>'. ucwords($sub_row['position_name']) .'</span>
-								</div>
-								</div>
-								</div>
-								</a>
-								</li>';
+									<li class="mt-1">
+										<a href="javascript:;" class="card bg-white card-hover-border">
+											<div class="card-body py-4">
+												<div class="row align-items-center g-2 g-md-4 text-center text-md-start">
+													<div class="col-md-9">
+														<p class="fs-lg mb-0">Voted for the position</p>
+														<ul class="list-inline list-inline-separated text-muted">
+															<li class="list-inline-item">'.$electionStarted.'</li>
+															<li class="list-inline-item">'.$electionBy.'</li>
+														</ul>
+													</div>
+													<div class="col-md-3 text-lg-end">
+														<span>'. ucwords($sub_row['position_name']) .'</span>
+													</div>
+												</div>
+											</div>
+										</a>
+									</li>
+								';
 							}
 						}
 					}
@@ -246,7 +247,7 @@ if (!isset($_SESSION["voter_accessed"])) {
 				$aftervoteQ = "
 				    SELECT * FROM voted_for
                     INNER JOIN cont_details
-                    ON cont_details.cont_id = voted_for.candidate_id
+                    ON cont_details.contestant_id = voted_for.candidate_id
                     INNER JOIN positions
                     ON positions.position_id = voted_for.position_id
                     WHERE voted_for.voter_id = ?

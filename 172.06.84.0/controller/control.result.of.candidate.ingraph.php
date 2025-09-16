@@ -45,6 +45,7 @@ if (isset($_POST['election_id'])) {
             if ($contestant_count > 0) {
                 $count_candidates = 0;
                 foreach ($contestant_results as $crow) {
+                    
                     $contestantName = ucwords($crow['cont_fname'] . ' ' . $crow['cont_lname']);
 
                     $candidate_name .= '"'.$contestantName.'", ';

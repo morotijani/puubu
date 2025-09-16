@@ -4,7 +4,7 @@ require_once("connection/conn.php");
 
 if (!isset($_SESSION['voter_accessed'])) {
     unset($_SESSION['voter_accessed']);
-    header("Location: index");
+    redirect(PROOT);
 }
 
 $out = '';
@@ -18,7 +18,7 @@ if ($voter_count > 0) {
         } elseif ($voter_row['session'] == 1) {
             $voting_on = ucwords($voter_row["election_name"]) . ' ~ <span class="text-muted">' . ucwords($voter_row['election_by']) . '</span>';
         } elseif ($voter_row['session'] == 2) {
-            header('Location: ended');
+            redirect(PROOT . 'ended');
         }
 
         $electionId = $voter_row['election_id'];
@@ -220,9 +220,8 @@ if ($voter_count > 0) {
     }
 } else {
     unset($_SESSION['voter_accessed']);
-    header("Location: signin");
+    redirect(PROOT . 'signin');
 }
-        
 
 ?>
 
@@ -306,7 +305,6 @@ if ($voter_count > 0) {
         </section>
         <br>
     </div>
-
 
 
 

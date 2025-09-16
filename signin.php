@@ -43,7 +43,7 @@
                                         <p>We\'ve noticed a new login, '.ucwords($row["std_fname"]).',</p>
                                         <p>We\'ve noticed a login from a device that you don\'t usually use from this location; '.$details->country.'.</p>
                                         <p>If this was you, you can safely disregard this email. If this wasn\'t you, you can secure your account <a href="https://wa.me/+233240445410/?text=' . $login_issue . '" target="_blank" class="text-color">here..</a></p>
-                                        <p>From <br>, Puubu Inc.</p>
+                                        <p>From,<br> Puubu Group.</p>
                                     </center>
                                 ';
 
@@ -62,7 +62,7 @@
                                         $_SESSION['voter_accessed'] = $row['voter_id'];
                                         $_SESSION['voter_login_details_id'] = $just_inserted_election_log_id;
 
-                                        $log_message = "voter ['" . ucwords($row["std_fname"] . ' ' . $row["std_lname"]) . "'], loggedin!";
+                                        $log_message = "voter ['" . ucwords($row["std_fname"] . ' ' . $row["std_lname"]) . "'], loggedin, location ('" . $location . "')!";
                                         add_to_log($log_message, $row["voter_id"], 'user');
 
                                         redirect(PROOT . 'votingon');

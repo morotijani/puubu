@@ -564,8 +564,7 @@ function goBack() {
 	if ($statement->rowCount() > 0): 
 		foreach ($rows as $row) {
 			
-			// $persons = explode(' ', $row['admin_fullname']);
-			// $person = ucwords($persons[0]);
+			$person = '';
 			if ($row['log_type'] == 'user') {
 				$person = 'voter';
 				$persons = get_voter_details('std_id', $row["log_person"]);

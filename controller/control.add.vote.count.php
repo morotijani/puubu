@@ -256,27 +256,59 @@ if (!isset($_SESSION["voter_accessed"])) {
 				$statement = $conn->prepare($aftervoteQ);
 	            $statement->execute([$voterId, $election]);
 	            $aftervote_result = $statement->fetchAll();
+				
+				$headers = "MIME-Version: 1.0" . "\r\n";
+				$headers .= "Content-type:text/html;charset=UTF-8" . "\r\n";
 
 				$body = '
-					<p>Dear ' . ucwords($voter_row["std_fname"]) . ',</p>
-					<p>Thank you for participating in the election. Your vote has been successfully recorded.</p>
-    				<p>Below are the candidates you voted for under each position:</p>
-				';
+				 	<html>
+					<head>
+						<style>
+							body { font-family: Arial, sans-serif; color: #333; }
+							.header { font-size: 18px; font-weight: bold; margin-bottom: 10px; }
+							.position { color: #0056b3; font-weight: bold; }
+							.candidate { margin-left: 10px; }
+							.footer { margin-top: 20px; font-size: 14px; color: #666; }
+						</style>
+					</head>
+					<body>
+						<p class="header">Dear ' . ucwords($voter_row["std_fname"]) . ',</p>
+
+						<p>Thank you for casting your vote in the <strong>' . $electionStarted . '</strong> election held on <strong>' . date("F j, Y") . '</strong>.</p>
+
+						<p>Your choices have been recorded successfully. Here\'s a summary of the candidates you voted for:</p>
+
+						<ul style="list-style-type: none; padding-left: 0;">
+					';
+				
+				
 				$positions_shown = [];
 				foreach ($aftervote_result as $aftervote_row) {
 					$position = $aftervote_row['position_name'];
 					// Prevent duplicate display for same position
 					if (!in_array($position, $positions_shown)) {
 						$candidate_name = ucwords($aftervote_row['cont_fname'] . ' ' . $aftervote_row['cont_lname']);
-						$body .= '<span style="color: blue; font-weight: bolder;">' . ucwords($position) . '</span> ~ ' . $candidate_name . '<br>';
-						$positions_shown[] = $position;
+						// $body .= '<span style="color: blue; font-weight: bolder;">' . ucwords($position) . '</span> ~ ' . $candidate_name . '<br>';
+						// $positions_shown[] = $position;
+
+						$body .= '<li><span class="position">' . ucwords($position) . ':</span><span class="candidate">' . $candidate_name . '</span></li>';
+
 					}
 				}
 				$body .= '
-					<p>We appreciate your engagement in shaping the future of our community. Stay tuned—results will be announced shortly after the election concludes.</p>
+						</ul>
 
-					<p>Warm regards,<br>
-					The Electoral Committee</p>
+						<p>We appreciate your participation in shaping the future of our community. The election results will be announced shortly after voting closes.</p>
+
+						<p class="footer">
+							If you have any questions or concerns, feel free to contact the Electoral Committee.<br>
+							<em>This is an automated message. Please do not reply directly to this email.</em>
+						</p>
+
+						<p>Warm regards,<br>
+						The Electoral Committee</p>
+					</body>
+					</html>
 				';
 
                 $to   = $voter_row["std_email"];

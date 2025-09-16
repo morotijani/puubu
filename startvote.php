@@ -14,7 +14,7 @@ if ($voter_count > 0) {
     foreach ($voter_result as $voter_row) {
         
         if ($voter_row['session'] == 0) {
-            $voting_on = "ELection Organizer(s) has not yet started the election... Please come back later!";
+            $voting_on = "Election Organizer(s) has not yet started the election... Please come back later!";
         } elseif ($voter_row['session'] == 1) {
             $voting_on = ucwords($voter_row["election_name"]) . ' ~ <span class="text-muted">' . ucwords($voter_row['election_by']) . '</span>';
         } elseif ($voter_row['session'] == 2) {
@@ -48,7 +48,8 @@ if ($voter_count > 0) {
                         SELECT * FROM cont_details 
                         WHERE cont_position = ?
                         AND contestant_election = ? 
-                        AND del_cont = ?
+                        AND del_cont = ? 
+                        ORDER BY contestant_ballot_number ASC
                     ";
                     $statement = $conn->prepare($contestantQuery);
                     $statement->execute([$positions[$num], $electionId, 'no']);

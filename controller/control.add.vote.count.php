@@ -237,11 +237,11 @@ if (!isset($_SESSION["voter_accessed"])) {
 			}
 			// INSERT VOTER ID TO "voterhasdone" IN ORDER TO PREVENT MULTIPLE VOTES.
 			$voterHasDone = "
-				INSERT INTO voterhasdone (voter_id, election_id) 
-				VALUES (?, ?)
+				INSERT INTO voterhasdone (vhd_id, voter_id, election_id) 
+				VALUES (?, ?, ?)
 			";
 			$statement = $conn->prepare($voterHasDone);
-			$result_voterHasDone = $statement->execute([$voterId, $election]);
+			$result_voterHasDone = $statement->execute([guidv4(), $voterId, $election]);
 
 			if ($result_voterHasDone) {
 				$aftervoteQ = "
@@ -251,59 +251,52 @@ if (!isset($_SESSION["voter_accessed"])) {
                     INNER JOIN positions
                     ON positions.position_id = voted_for.position_id
                     WHERE voted_for.voter_id = ?
-                    AND voted_for.election_id = ?;
+                    AND voted_for.election_id = ?
 				";
 				$statement = $conn->prepare($aftervoteQ);
 	            $statement->execute([$voterId, $election]);
 	            $aftervote_result = $statement->fetchAll();
 
-		            $body = '
-						<p>
-							Cheers, '.ucwords($voter_row["std_fname"]).',
-    						<br>
-    						You have successfully voted.
-    						<br>
-    						Chillax, within some few hours the election will come to an end.
-							<br><br>
-							<b>Your vote details.</b>
-							<br>
-					';
-	            	foreach ($aftervote_result as $aftervote_row) {
-	            	    $body .= '
-	            	        <span style="color: blue; font-weight: bolder;">' . ucwords($aftervote_row['position_name']) . ' </span> ~ ' . ucwords($aftervote_row['cont_fname'] . ' ' . $aftervote_row['cont_lname'])  . '<br>';
-	            	}
-	            	$body .= '
-	            		<br>
-							Greatly appreciated, Puubu Group.
-						</p>
-	            	';
-                $mail = new PHPMailer();
+				$body = '
+					<p>
+						Cheers, '.ucwords($voter_row["std_fname"]).',
+						<br>
+						You have successfully voted.
+						<br>
+						Chillax, within some few hours the election will come to an end.
+						<br><br>
+						<b>Your vote details.</b>
+						<br>
+				';
+				$positions_shown = [];
+				foreach ($aftervote_result as $aftervote_row) {
+					    $position = $aftervote_row['position_name'];
+						// Prevent duplicate display for same position
+    					if (!in_array($position, $positions_shown)) {
+							$candidate_name = ucwords($aftervote_row['cont_fname'] . ' ' . $aftervote_row['cont_lname']);
+							$body .= '<span style="color: blue; font-weight: bolder;">' . ucwords($position) . '</span> ~ ' . $candidate_name . '<br>';
+							$positions_shown[] = $position;
+						}
+
+					// $body .= '
+					// 	<span style="color: blue; font-weight: bolder;">' . ucwords($aftervote_row['position_name']) . ' </span> ~ ' . ucwords($aftervote_row['cont_fname'] . ' ' . $aftervote_row['cont_lname'])  . '<br>'
+					// ;
+					// break;
+				}
+				$body .= '
+					<br>
+						Greatly appreciated, Puubu Group.
+					</p>
+				';
 
                 $to   = $voter_row["std_email"];
-				$from = 'info@puubu.namibra.io';
-				$from_name = 'Puubu Group';
 				$subject = 'Done Voting.';
 
 				try {
-					$mail->IsSMTP();
-					$mail->SMTPAuth = true;
+					send_email($to, $subject, $body);
 
-					$mail->SMTPSecure = 'ssl'; 
-					$mail->Host = 'smtp.namibra.io';
-					$mail->Port = 465;  
-					$mail->Username = 'info@puubu.namibra.io';
-					$mail->Password = 'Ys7eeeeb9'; 
-
-					$mail->IsHTML(true);
-					$mail->WordWrap = 50;
-					$mail->From = "info@puubu.namibra.io";
-					$mail->FromName = $from_name;
-					$mail->Sender = $from;
-					$mail->AddReplyTo($from, $from_name);
-					$mail->Subject = $subject;
-					$mail->Body = $body;
-					$mail->AddAddress($to);
-					$mail->Send();
+					$log_message = "voter ['" . ucwords($voter_row["std_fname"] . ' ' . $voter_row["std_lname"]) . "'], has completed voting!";
+            		add_to_log($log_message, $voterId, 'admin');
 				} catch (Exception $e) {
                     $displayErrors = "Please check you internet connection or contact Puubu.";
     			}
@@ -311,7 +304,7 @@ if (!isset($_SESSION["voter_accessed"])) {
 		}
 	} else {
 			// IF VOTES WERE NOT SUBITTED, REDIRECT TO INDEX PAGE
-		header("Location: ../index");
+		redirect(PROOT . "index");
 	}
 
 }
@@ -375,7 +368,7 @@ if (!isset($_SESSION["voter_accessed"])) {
 
 			<div class="row mt-3">
 				<div class="col-12">
-					<a href="../thankyou.php" class="btn btn-warning">Procceed >>.
+					<a href="<?= PROOT; ?>thankyou" class="btn btn-warning">Procceed >>.
 					</a>
 				</div>
 			</div>

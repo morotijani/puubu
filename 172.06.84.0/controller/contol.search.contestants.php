@@ -5,7 +5,7 @@
 // DATABASE CONNECTION
 require_once("../../connection/conn.php");
 
-$limit = 4;
+$limit = 5;
 $page = 1;
 
 if ($_POST['page'] > 1) {

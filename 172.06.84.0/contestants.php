@@ -233,7 +233,9 @@ if (isset($_POST['createcont'])) {
         }
         if ($findContestant > 0) {
             if (isset($_POST['uploadedPassport']) != '') {
-                unlink($_POST['uploadedPassport']);
+                if (file_exists($_POST['uploadedPassport'])) {
+                    unlink($_POST['uploadedPassport']);
+                }
             }
             $message = '<div class="alert alert-danger">Contestant Identity No Already Exists.</div>';
         } else {
@@ -285,10 +287,13 @@ if (isset($_POST['createcont'])) {
                     $result = $statement->execute();
                     $lastinsetedID = $conn->lastinsertId();
                     if (isset($result)) {
-                        $queryVoteCounts = "INSERT INTO vote_counts (results, contestant_id, position_id, election_id) VALUE (:results, :contestant_id, :position_id, :election_id)";
+                        $queryVoteCounts = "
+                            INSERT INTO vote_counts (vote_count_id, results, contestant_id, position_id, election_id) 
+                            VALUE (:vote_count_id, :results, :contestant_id, :position_id, :election_id)";
                         $statement = $conn->prepare($queryVoteCounts);
                         $statement->execute(
                             array(
+                                ':vote_count_id' => guidv4(),
                                 ':results' => 0,
                                 ':contestant_id' => $unique_id,
                                 ':position_id' => $cont_position,

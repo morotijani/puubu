@@ -222,17 +222,17 @@ if (isset($_POST['createcont'])) {
 
     // CHECK FOR EMPTY FIELDS
     if (empty($_POST['contestant_ballot_number']) || empty($_POST['cont_fname']) || empty($_POST['cont_lname']) || empty($_POST['cont_position']) || empty($_POST['cont_gender'])) {
-        if ($_POST['uploadedPassport'] != '') {
+        if (isset($_POST['uploadedPassport']) && $_POST['uploadedPassport'] != '') {
             unlink($_POST['uploadedPassport']);
         }
-        $message = '<div class="alert alert-danger">Empty Fields are Required</div>';
+        $message = '<div class="alert alert-danger">Empty Fields are Required!</div>';
     } else {
         $findContestant = $conn->query("SELECT * FROM cont_details INNER JOIN election ON election.election_id = cont_details.contestant_election WHERE contestant_ballot_number = '".$_POST['contestant_ballot_number']."' AND election.election_id = '".$_POST['sel_election']."' AND cont_position = '".$_POST['cont_position']."'")->rowCount();
         if (isset($_GET['editcontestant']) && !empty($_GET['editcontestant'])) {
             $findContestant = $conn->query("SELECT * FROM cont_details INNER JOIN election ON election.election_id = cont_details.contestant_election WHERE election.election_id = '".$_POST['sel_election']."' AND contestant_ballot_number = '".$_POST['contestant_ballot_number']."' AND cont_position = '".$_POST['cont_position']."' AND contestant_id != '".$_GET['editcontestant']."'")->rowCount();
         }
         if ($findContestant > 0) {
-            if (isset($_POST['uploadedPassport']) != '') {
+            if (isset($_POST['uploadedPassport']) && $_POST['uploadedPassport'] != '') {
                 if (file_exists($_POST['uploadedPassport'])) {
                     unlink($_POST['uploadedPassport']);
                 }
@@ -241,7 +241,7 @@ if (isset($_POST['createcont'])) {
         } else {
     
             // UPLOAD PASSPORT PICTURE TO uploadedprofile IF FIELD IS NOT EMPTY
-            if ($_POST['cont_up_profile'] == '') {
+            if (isset($_POST['cont_up_profile']) && $_POST['cont_up_profile'] == '') {
                 if ($_FILES["cont_profile"]["name"] != '') {
 
                     // CONTESTANT PROFILE PICTURE UPLOAD DETAILS
@@ -258,7 +258,7 @@ if (isset($_POST['createcont'])) {
                         unlink($_POST['uploadedPassport']);
                     }
                 } else {
-                    if ($_POST['uploadedPassport'] != '') {
+                    if (isset($_POST['uploadedPassport']) && $_POST['uploadedPassport'] != '') {
                         unlink($_POST['uploadedPassport']);
                     }
                     $message = '<div class="alert alert-danger">Passport Picture Can not be Empty</div>';
@@ -309,7 +309,7 @@ if (isset($_POST['createcont'])) {
                     }
                 }
             } else {
-                if ($_POST['uploadedPassport'] != '') {
+                if (isset($_POST['uploadedPassport']) && $_POST['uploadedPassport'] != '') {
                     unlink($_POST['uploadedPassport']);
                 }
                 $message;

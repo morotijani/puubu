@@ -32,8 +32,8 @@
 						$nextYear = date("Y") + 1; 
 						$fontFamily = 'Helvetica';
 						$this->SetFont($fontFamily, 'B', 16);
-						$this->SetFillColor(120,280,0);
-						$this->SetDrawColor(120,280,190);
+						$this->SetFillColor(120,180,0);
+						$this->SetDrawColor(120,180,190);
 						$this->SetTextColor(220,150,50);
 						$this->Cell(0,10,'Puubu Report ' . $year.$nextYear,1,0,'C');
 						$this->Ln(15);
@@ -46,15 +46,13 @@
 						$copyright = 'Copyright © 2020 by Puubu Group.';
 						$this->Cell(0,10,$copyright,0,0,'C');
 						$this->Ln(8);
-						$this->Cell(0,10,'Page ' . $this->PageNo() . " of {AllPages}",0,0,'C');
+						$this->Cell(0,10,'Page ' . $this->PageNo() . " of {nb}",0,0,'C');
 					}
-
-				
 				}
 
 				$pdf = new PDF();
 
-				$pdf->AliasNbPages('{AllPages}');
+				$pdf->AliasNbPages();
 
 				$pdf->AddPage();
 
@@ -157,10 +155,11 @@
 						$pdf->Cell(64,0,$ContID.$ContName,0,0);
 						$profile_picture = '../../media/uploadedprofile/' . $counts['cont_profile'];
 						
-						$v = 0;
-					    if ($ContResult != 0) {
-					       $v = round(($ContResult/$countNumberVotes) * 100,0,PHP_ROUND_HALF_UP);
-					    }
+						// $v = 0;
+					    // if ($ContResult != 0) {
+					    //    $v = round(($ContResult/$countNumberVotes) * 100,0,PHP_ROUND_HALF_UP);
+					    // }
+						$v = ($countNumberVotes > 0) ? round(($ContResult / $countNumberVotes) * 100, 0, PHP_ROUND_HALF_UP) : 0;
 						
 						if (file_exists($profile_picture)) {
 							try {
@@ -184,15 +183,18 @@
 
 						// $pdf->Cell(63,0,$pdf->Image($profile_picture,$pdf->GetX(),$pdf->GetY(),20,22.5),0,0,'R');
 						 foreach ($sql8_result as $row8) {
-						    $v = 0;
-						    if ($ContResult != 0) {
-						       $v = round(($ContResult/$countNumberVotes) * 100,0,PHP_ROUND_HALF_UP);
-						    }
+						    // $v = 0;
+						    // if ($ContResult != 0) {
+						    //    $v = round(($ContResult/$countNumberVotes) * 100,0,PHP_ROUND_HALF_UP);
+						    // }
+							$v = ($countNumberVotes > 0) ? round(($ContResult / $countNumberVotes) * 100, 0, PHP_ROUND_HALF_UP) : 0;
 						     
-						    $nv = 0;
-						    if ($ContResultNO != 0) {
-						      $nv = round(($ContResultNO/$countNumberVotes) * 100,0,PHP_ROUND_HALF_UP);
-						    }
+						    // $nv = 0;
+						    // if ($ContResultNO != 0) {
+						    //   $nv = round(($ContResultNO/$countNumberVotes) * 100,0,PHP_ROUND_HALF_UP);
+						    // }
+
+							$nv = ($countNumberVotes > 0) ? round(($ContResultNO / $countNumberVotes) * 100, 0, PHP_ROUND_HALF_UP) : 0;
 						  
 						 	if ($row8['count_pc'] > 1) {
 								$pdf->Cell(63,0,$ContResult . ' out of ' . $countNumberVotes . ' (' . $v .'%)',0,0,'R');
@@ -210,9 +212,11 @@
 				}
 				ob_clean();
 				$pdf->Output();
+				exit;
 			}
 		} else {
 			redirect('../reports?report=1&election=' . $_GET["election"] . '');
+			exit;
 		}
 				
 	}

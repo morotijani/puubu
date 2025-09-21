@@ -66,7 +66,7 @@
 
 				$pdf->SetDrawColor(50,50,100);
 
-				$pdf = new PDF();
+				// $pdf = new PDF();
 				$pdf->AliasNbPages();
 				$pdf->AddPage();
 				$pdf->SetFont('Times','',12);
@@ -156,6 +156,12 @@
 
 						$pdf->Cell(64,0,$ContID.$ContName,0,0);
 						$profile_picture = '../../media/uploadedprofile/' . $counts['cont_profile'];
+						
+						$v = 0;
+					    if ($ContResult != 0) {
+					       $v = round(($ContResult/$countNumberVotes) * 100,0,PHP_ROUND_HALF_UP);
+					    }
+						
 						if (file_exists($profile_picture)) {
 							try {
 								$safeImage = convertAndOverwriteToJpeg($profile_picture); 
@@ -169,21 +175,31 @@
 
 							} catch (Exception $e) {
 								// echo "Error: " . $e->getMessage();
-								$pdf->Cell(63,0,'Image file not found!' . $countNumberVotes . ' (' . round(($ContResult/$countNumberVotes) * 100,0,PHP_ROUND_HALF_UP) .'%)',0,0,'R');
+								$pdf->Cell(63,0,'Image file not found!' . $countNumberVotes . ' (' . $v .'%)',0,0,'R');
 							}
 
 						} else {
-							$pdf->Cell(63,0,'Image file not found!' . $countNumberVotes . ' (' . round(($ContResult/$countNumberVotes) * 100,0,PHP_ROUND_HALF_UP) .'%)',0,0,'R');
+							$pdf->Cell(63,0,'Image file not found!' . $countNumberVotes . ' (' . $v .'%)',0,0,'R');
 						}
 
 						// $pdf->Cell(63,0,$pdf->Image($profile_picture,$pdf->GetX(),$pdf->GetY(),20,22.5),0,0,'R');
 						 foreach ($sql8_result as $row8) {
+						    $v = 0;
+						    if ($ContResult != 0) {
+						       $v = round(($ContResult/$countNumberVotes) * 100,0,PHP_ROUND_HALF_UP);
+						    }
+						     
+						    $nv = 0;
+						    if ($ContResultNO != 0) {
+						      $nv = round(($ContResultNO/$countNumberVotes) * 100,0,PHP_ROUND_HALF_UP);
+						    }
+						  
 						 	if ($row8['count_pc'] > 1) {
-								$pdf->Cell(63,0,$ContResult . ' out of ' . $countNumberVotes . ' (' . round(($ContResult/$countNumberVotes) * 100,0,PHP_ROUND_HALF_UP) .'%)',0,0,'R');
+								$pdf->Cell(63,0,$ContResult . ' out of ' . $countNumberVotes . ' (' . $v .'%)',0,0,'R');
 						 	} else {
-								$pdf->Cell(63,0,'Yes Votes: '.$ContResult . ' out of ' . $countNumberVotes . ' (' . round(($ContResult/$countNumberVotes) * 100,0,PHP_ROUND_HALF_UP) .'%)',0,0,'R');
+								$pdf->Cell(63,0,'Yes Votes: '.$ContResult . ' out of ' . $countNumberVotes . ' (' . $v .'%)',0,0,'R');
 								$pdf->Ln(10);
-								$pdf->Cell(190,0,'No Votes: '.$ContResultNO . ' out of ' . $countNumberVotes . ' (' . round(($ContResultNO/$countNumberVotes) * 100,0,PHP_ROUND_HALF_UP) .'%)',0,0,'R');
+								$pdf->Cell(190,0,'No Votes: '.$ContResultNO . ' out of ' . $countNumberVotes . ' (' . $nv .'%)',0,0,'R');
 						 	}
 						}
 
@@ -192,6 +208,7 @@
 					}
 					$pdf->Ln(15);
 				}
+				ob_clean();
 				$pdf->Output();
 			}
 		} else {
@@ -200,3 +217,4 @@
 				
 	}
 	ob_end_flush();
+?>

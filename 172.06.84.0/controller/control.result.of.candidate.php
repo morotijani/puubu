@@ -114,7 +114,7 @@ if (isset($_POST['election_id'])) {
                                                         <div class='ms-4'>
                                                             <div class='fw-bold'> ". ucwords($contestantName) . "</div>
                                                             <div class=''>Ballot no: <span class=''>".$contestantBallotNo . "</span></div>
-                                                            <div>Votes: <span class='badge bg-warning'>" . $countVotes . "</span> out of <span class='badge bg-primary'>" . $registrars_count . "</span></div>
+                                                            <div>Votes: <span class='badge bg-warning'>" . $countVotes . "</span></div>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -126,7 +126,7 @@ if (isset($_POST['election_id'])) {
                                     <!-- <div class='card'>
                                         <img src='../media/uploadedprofile/".$contestantPicture."' class='img-fluid' style='height: 150px; object-fit: contain; object-position: center;'>
                                         <div class='card-body'>
-                                            <p class='text-center text-secondary lead'><u>".ucwords($contestantName)."</u>: <span class='badge badge-danger'>".$countVotes."</span> out of <spa class='badge badge-warning'>". $registrars_count ."</span></p>
+                                            <p class='text-center text-secondary lead'><u>".ucwords($contestantName)."</u>: <span class='badge badge-danger'>".$countVotes."</span></p>
                                         </div>
                                     </div> -->
                                 </div>
@@ -145,8 +145,8 @@ if (isset($_POST['election_id'])) {
                                                         <div class='ms-4'>
                                                             <div class='fw-bold'> ". ucwords($contestantName) . "</div>
                                                             <div class=''>Ballot no: <span class=''>".$contestantBallotNo . "</span></div>
-                                                            <div>Yes votes: <span class='badge bg-warning'>" . $countVotes . "</span> out of <span class='badge bg-primary'>" . $registrars_count . "</span></div>
-                                                            <div>No votes: <span class='badge bg-warning'>" . $countVotesNO . "</span> out of <span class='badge bg-primary'>" . $registrars_count . "</span></div>
+                                                            <div>Yes: <span class='badge bg-warning'>" . $countVotes . "</div>
+                                                            <div>No: <span class='badge bg-warning'>" . $countVotesNO . "</div>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -161,10 +161,10 @@ if (isset($_POST['election_id'])) {
                                             <p class='lead text-center text-secondary'>
                                                 <u>".ucwords($contestantName)."</u>
                                                 <br>
-                                                <span class='text-danger'>Yes votes</span> = <span class='badge badge-danger'>".$countVotes."</span> out of <spa class='badge badge-warning'>". $registrars_count ."</span>
+                                                <span class='text-danger'>Yes</span> = <span class='badge badge-danger'>".$countVotes."</span>
                                             </p>
                                             <p class='lead text-center text-secondary'>
-                                                <span class='text-info'>No votes</span> = <span class='badge badge-info'>".$countVotesNO."</span> out of <spa class='badge badge-warning'>". $registrars_count ."</span>
+                                                <span class='text-info'>No</span> = <span class='badge badge-info'>".$countVotesNO."</span>
                                             </p>
                                         </div>
                                     </div> -->

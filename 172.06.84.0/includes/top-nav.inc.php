@@ -64,7 +64,7 @@
       <nav class="navbar navbar-expand-xl navbar-vertical">
         <div class="container-lg">
           <!-- Brand -->
-          <a class="navbar-brand fs-5 fw-bold text-xl-center mb-xl-4" href="./index.html">
+          <a class="navbar-brand fs-5 fw-bold text-xl-center mb-xl-4" href="<?= ADROOT; ?>">
             <i class="fs-4 text-secondary" data-duoicon="box-2"></i> <span class="d-xl-none ms-1">Dashbrd</span>
           </a>
     

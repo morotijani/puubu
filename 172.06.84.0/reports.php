@@ -16,8 +16,8 @@ if (isset($_GET['report']) && !empty($_GET['election'])) {
     $query = "
         SELECT * FROM election 
         WHERE election_id = ? 
-        AND session = ? 
-        OR session = ? 
+        AND (session = ? 
+        OR session = ?) 
         LIMIT 1
     ";
     $statement = $conn->prepare($query);

@@ -353,21 +353,8 @@ if ($voter_count > 0) {
                     // IF COUNT DOWN FINISHES
                     if (distance < 0) {
                         clearInterval(x);
-
-                        var timerStoper = 'timer';
-                        var election = <?= $voter_row['election_id']; ?>;
                         document.getElementById('countDT').innerHTML = "<small><?= $voter_row['stop_timer']; ?> election ended</small>";
-                        $.ajax ({
-                            url : 'controller/control.election.timer.php',
-                            method : 'POST',
-                            data : {
-                                timerStoper : timerStoper,
-                                election : election
-                            },
-                            success : function(data) {
-                                window.location = 'ended';
-                            }
-                        });
+                        window.location = 'ended';
                     }
                 }, 1000);
             <?php endif; ?>

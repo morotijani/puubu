@@ -130,21 +130,8 @@ $count_checkVoterhasdone = $conn->query("SELECT * FROM voterhasdone WHERE voter_
                     // IF COUNT DOWN FINISHES
                     if (distance < 0) {
                         clearInterval(x);
-
-                        var timerStoper = 'timer';
-                        var election = <?= $voter_row['eid']; ?>;
-                         document.getElementById('countDT').innerHTML = "<small><?= $voter_row['stop_timer']; ?> Election ended</small>";
-                        $.ajax ({
-                            url : 'controller/control.election.timer.php',
-                            method : 'POST',
-                            data : {
-                                timerStoper : timerStoper,
-                                election : election
-                            },
-                            success : function(data) {
-                                window.location = 'ended';
-                            }
-                        });
+                        document.getElementById('countDT').innerHTML = "<small><?= $voter_row['stop_timer']; ?> Election ended</small>";
+                        window.location = 'ended';
                     }
                 }, 1000);
             <?php endif; ?>

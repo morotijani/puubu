@@ -21,6 +21,15 @@
     session_start();
 
     date_default_timezone_set('Africa/Accra');
+
+    // Pseudo-Cron: Auto-close expired elections
+    try {
+        $autoCloseQuery = "UPDATE election SET session = 2 WHERE session = 1 AND stop_timer <= NOW()";
+        $conn->exec($autoCloseQuery);
+    } catch (\PDOException $e) {
+        // Log silently or ignore
+    }
+
     require_once($_SERVER['DOCUMENT_ROOT'].'/puubu/config.php');
     require_once(BASEURL.'helpers/helpers.php');
 

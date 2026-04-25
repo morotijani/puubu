@@ -311,8 +311,14 @@ class AdminController {
         $stmt->execute();
         $contestants = $stmt->fetchAll();
 
+        // Fetch all elections for the filter
+        $stmt = $conn->prepare("SELECT * FROM election ORDER BY election_name ASC");
+        $stmt->execute();
+        $elections = $stmt->fetchAll();
+
         echo $this->twig->render('admin/contestants/index.twig', [
-            'contestants' => $contestants
+            'contestants' => $contestants,
+            'elections' => $elections
         ]);
     }
 

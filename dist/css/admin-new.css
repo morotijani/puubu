@@ -256,3 +256,8 @@ body {
     border-radius: 1.5rem;
     box-shadow: 0 25px 50px -12px rgb(0 0 0 / 0.15);
 }
+/* Indigo Utilities */
+.bg-indigo { background-color: var(--admin-primary) !important; }
+.text-indigo { color: var(--admin-primary) !important; }
+.bg-indigo-subtle { background-color: rgba(79, 70, 229, 0.1) !important; }
+.border-indigo-subtle { border-color: rgba(79, 70, 229, 0.2) !important; }

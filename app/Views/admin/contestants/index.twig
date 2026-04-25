@@ -27,10 +27,18 @@
                 <div class="col-md-auto">
                     <h5 class="fw-bold mb-0">Active Candidates</h5>
                 </div>
-                <div class="col-md-4 ms-md-auto">
-                    <div class="input-group">
+                <div class="col-md-3 ms-md-auto">
+                    <select id="electionFilter" class="form-select form-select-sm bg-light border-0 shadow-none">
+                        <option value="all">All Elections</option>
+                        {% for election in elections %}
+                            <option value="{{ election.election_id }}">{{ election.election_name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <div class="input-group input-group-sm">
                         <span class="input-group-text bg-light border-0"><i class="bi bi-search text-muted"></i></span>
-                        <input type="text" id="contestantSearch" class="form-control bg-light border-0" placeholder="Filter by name, office or election...">
+                        <input type="text" id="contestantSearch" class="form-control bg-light border-0" placeholder="Search by name, office...">
                     </div>
                 </div>
             </div>
@@ -47,11 +55,11 @@
                 </thead>
                 <tbody>
                     {% for cont in contestants %}
-                        <tr>
+                        <tr class="contestant-row" data-election-id="{{ cont.contestant_election }}">
                             <td class="ps-4">
                                 <div class="d-flex align-items-center">
                                     <div class="position-relative me-3">
-                                        <img class="rounded-circle border shadow-sm" src="{{ PROOT }}media/uploadedprofile/{{ cont.cont_profile }}" width="42" height="42" alt="{{ cont.cont_fname }}" onerror="this.src='{{ PROOT }}media/default-avatar.png'">
+                                        <img class="rounded-circle border shadow-sm" src="{{ PROOT }}media/uploadedprofile/{{ cont.cont_profile }}" width="42" height="42" alt="{{ cont.cont_fname }}" onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name={{ cont.cont_fname|url_encode }}+{{ cont.cont_lname|url_encode }}&background=6366f1&color=fff'">
                                         <span class="position-absolute bottom-0 end-0 p-1 bg-success border border-white rounded-circle"></span>
                                     </div>
                                     <div>
@@ -63,7 +71,7 @@
                                 </div>
                             </td>
                             <td>
-                                <span class="badge bg-indigo bg-opacity-10 text-indigo px-3 py-1 border border-indigo border-opacity-10 fw-bold">{{ cont.contestant_ballot_number }}</span>
+                                <span class="badge bg-indigo-subtle text-indigo px-3 py-1 border border-indigo-subtle fw-bold">{{ cont.contestant_ballot_number }}</span>
                             </td>
                             <td>
                                 <div class="fw-medium text-dark">{{ cont.position_name }}</div>
@@ -108,12 +116,38 @@
 {% block scripts %}
 <script>
     $(document).ready(function() {
-        $("#contestantSearch").on("keyup", function() {
-            var value = $(this).val().toLowerCase();
-            $("#contestantsTable tbody tr").filter(function() {
-                $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+        function performFiltering() {
+            var searchTerm = $("#contestantSearch").val().toLowerCase();
+            var electionId = $("#electionFilter").val();
+            var visibleRows = 0;
+
+            $(".contestant-row").each(function() {
+                var $row = $(this);
+                var rowText = $row.text().toLowerCase();
+                var rowElectionId = $row.data("election-id");
+
+                var matchesSearch = rowText.indexOf(searchTerm) > -1;
+                var matchesElection = (electionId === "all" || rowElectionId == electionId);
+
+                if (matchesSearch && matchesElection) {
+                    $row.show();
+                    visibleRows++;
+                } else {
+                    $row.hide();
+                }
             });
-        });
+
+            if (visibleRows === 0 && $(".contestant-row").length > 0) {
+                if ($("#noFilterResults").length === 0) {
+                    $("#contestantsTable tbody").append('<tr id="noFilterResults"><td colspan="4" class="text-center py-5 text-muted">No candidates match your criteria.</td></tr>');
+                }
+            } else {
+                $("#noFilterResults").remove();
+            }
+        }
+
+        $("#contestantSearch").on("keyup", performFiltering);
+        $("#electionFilter").on("change", performFiltering);
     });
 </script>
 {% endblock %}

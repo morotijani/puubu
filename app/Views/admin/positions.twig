@@ -14,48 +14,73 @@
         <!-- Main List Section -->
         <div class="col-xl-8">
             <div class="card shadow-none border-0 bg-transparent">
-                <div class="card-header border-0 px-0 pt-0 pb-3 bg-transparent d-flex justify-content-between align-items-center">
-                    <h5 class="fw-bold mb-0">Offices Registry</h5>
+                <div class="card-header border-0 px-0 pt-0 pb-3 bg-transparent">
+                    <div class="row g-3 align-items-center">
+                        <div class="col-md">
+                            <h5 class="fw-bold mb-0">Offices Registry</h5>
+                        </div>
+                        <div class="col-md-4">
+                            <select id="electionFilter" class="form-select form-select-sm bg-white border shadow-sm">
+                                <option value="all">All Elections</option>
+                                {% for election in elections %}
+                                    <option value="{{ election.election_id }}">{{ election.election_name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="input-group input-group-sm">
+                                <span class="input-group-text bg-white border border-end-0 shadow-sm"><i class="bi bi-search text-muted"></i></span>
+                                <input type="text" id="positionSearch" class="form-control bg-white border border-start-0 shadow-sm" placeholder="Search offices...">
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div class="card shadow-none border">
+                <div class="card shadow-none border overflow-hidden">
                     <div class="table-responsive">
-                        <table class="table align-middle">
+                        <table class="table align-middle" id="positionsTable">
                             <thead>
                                 <tr>
+                                    <th class="ps-4">Office Details</th>
                                     <th>Status</th>
-                                    <th>Position Details</th>
-                                    <th class="text-end">Actions</th>
+                                    <th class="text-end pe-4">Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {% for pos in positions %}
-                                    <tr>
+                                    <tr class="position-row" data-election-id="{{ pos.election_id }}">
+                                        <td class="ps-4">
+                                            <div class="d-flex align-items-center">
+                                                <div class="avatar avatar-sm me-3 d-flex align-items-center justify-content-center text-indigo fw-bold" style="width: 40px; height: 40px;">
+                                                    <i class="bi bi-briefcase fs-5"></i>
+                                                </div>
+                                                <div>
+                                                    <div class="fw-bold text-dark fs-6">{{ pos.position_name }}</div>
+                                                    <div class="text-muted extra-small d-flex align-items-center">
+                                                        <i class="bi bi-box-seam me-1"></i> {{ pos.election_name }}
+                                                        <span class="mx-2 opacity-25">|</span>
+                                                        <span class="fw-mono">PID: {{ pos.position_id }}</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </td>
                                         <td style="width: 140px;">
                                             {% if pos.session == 1 %}
-                                                <span class="badge bg-success-subtle text-success px-2 py-1 border border-success-subtle d-inline-flex align-items-center">
+                                                <span class="badge bg-success-subtle text-success px-3 py-1 border border-success-subtle d-inline-flex align-items-center">
                                                     <span class="p-1 bg-success rounded-circle me-2 animate-pulse"></span> Active
                                                 </span>
                                             {% elseif pos.session == 2 %}
-                                                <span class="badge bg-secondary-subtle text-secondary px-2 py-1 border border-secondary-subtle">Completed</span>
+                                                <span class="badge bg-secondary-subtle text-secondary px-3 py-1 border border-secondary-subtle">Completed</span>
                                             {% else %}
-                                                <span class="badge bg-warning-subtle text-warning px-2 py-1 border border-warning-subtle">Draft</span>
+                                                <span class="badge bg-warning-subtle text-warning px-3 py-1 border border-warning-subtle">Draft</span>
                                             {% endif %}
                                         </td>
-                                        <td>
-                                            <div class="fw-bold text-dark fs-6">{{ pos.position_name }}</div>
-                                            <div class="text-muted small d-flex align-items-center">
-                                                <i class="bi bi-box-seam me-1"></i> {{ pos.election_name }}
-                                                <span class="mx-2 opacity-25">|</span>
-                                                <i class="bi bi-building me-1 text-muted"></i> {{ pos.election_by }}
-                                            </div>
-                                        </td>
-                                        <td class="text-end">
+                                        <td class="text-end pe-4">
                                             <div class="btn-group shadow-sm rounded">
                                                 {% if pos.session == 0 %}
-                                                    <a href="{{ PROOT }}admin/positions?edit={{ pos.position_id }}" class="btn btn-sm btn-light border border-end-0" title="Edit Office">
+                                                    <a href="{{ PROOT }}admin/positions?edit={{ pos.position_id }}" class="btn btn-sm btn-white border border-end-0" title="Edit Office">
                                                         <i class="bi bi-pencil-square text-muted"></i>
                                                     </a>
-                                                    <button class="btn btn-sm btn-light border text-danger delete-btn" data-id="{{ pos.position_id }}" title="Purge Office">
+                                                    <button class="btn btn-sm btn-white border text-danger delete-btn" data-id="{{ pos.position_id }}" title="Purge Office">
                                                         <i class="bi bi-trash3"></i>
                                                     </button>
                                                 {% else %}
@@ -65,10 +90,10 @@
                                         </td>
                                     </tr>
                                 {% else %}
-                                    <tr>
+                                    <tr id="noResults">
                                         <td colspan="3" class="text-center py-5 text-muted">
                                             <div class="mb-2"><i class="bi bi-journal-x fs-1 opacity-25"></i></div>
-                                            No positions defined in the registry.
+                                            No positions found in the registry.
                                         </td>
                                     </tr>
                                 {% endfor %}
@@ -136,6 +161,10 @@
 
 {% block styles %}
 <style>
+    .extra-small { font-size: 0.75rem; }
+    .fw-mono { font-family: 'JetBrains Mono', 'Fira Code', monospace; }
+    .btn-white { background: #fff; }
+    .btn-white:hover { background: #f8fafc; color: var(--admin-primary); }
     .animate-pulse {
         animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
     }
@@ -149,6 +178,41 @@
 {% block scripts %}
 <script>
     $(document).ready(function() {
+        // Combined Filter and Search Logic
+        function performFiltering() {
+            var searchTerm = $("#positionSearch").val().toLowerCase();
+            var electionId = $("#electionFilter").val();
+            var visibleRows = 0;
+
+            $(".position-row").each(function() {
+                var $row = $(this);
+                var rowText = $row.text().toLowerCase();
+                var rowElectionId = $row.data("election-id");
+
+                var matchesSearch = rowText.indexOf(searchTerm) > -1;
+                var matchesElection = (electionId === "all" || rowElectionId == electionId);
+
+                if (matchesSearch && matchesElection) {
+                    $row.show();
+                    visibleRows++;
+                } else {
+                    $row.hide();
+                }
+            });
+
+            // Handle "No Results" display
+            if (visibleRows === 0 && $(".position-row").length > 0) {
+                if ($("#noFilterResults").length === 0) {
+                    $("#positionsTable tbody").append('<tr id="noFilterResults"><td colspan="3" class="text-center py-5 text-muted">No positions match your criteria.</td></tr>');
+                }
+            } else {
+                $("#noFilterResults").remove();
+            }
+        }
+
+        $("#positionSearch").on("keyup", performFiltering);
+        $("#electionFilter").on("change", performFiltering);
+
         $('.delete-btn').on('click', function() {
             var id = $(this).data('id');
             if (confirm('Are you sure you want to purge this position? All candidates linked to it will be affected.')) {

@@ -76,10 +76,6 @@
 				'timezone' => null
 			];
 		}
-		// Log the error
-    	// file_put_contents(__DIR__ . '/logs/ipinfo_errors.log', date('Y-m-d H:i:s') . " - " . $e->getMessage() . "\n", FILE_APPEND);
-
-
 	} else {
 		try {
 			$details = $client->getDetails();
@@ -104,20 +100,6 @@
 			file_put_contents($logDir . '/ipinfo_errors.log', $logMessage, FILE_APPEND);
 		}
 	}
-
-	// try {
-
-	// 	$details = $client->getDetails();
-	// 	$location = $details->city . ', ' . $details->region . ', ' . $details->country;
-	// } catch (IPinfoException $e) {
-	// 	// Log the error silently
-	// 	error_log("IPinfo error: " . $e->getMessage());
-
-	// 	// Fallback message for user
-	// 	$location = "Location unavailable due to network issue";
-	// }
-
-
 
  	if (isset($_SESSION['crAdmin'])) {
  		$data = array($_SESSION['crAdmin']);
@@ -152,20 +134,7 @@
 		$voter_result = $statement->fetchAll();
  	}
 
-
  	// Display on Messages on Errors And Success
 	$flash = '';
- 	if (isset($_SESSION['flash_success'])) {
- 	 	$flash = '<div class="bg-success" id="temporary" style="color: #fff;"><p class="text-center">'.$_SESSION['flash_success'].'</p></div>';
- 	 	unset($_SESSION['flash_success']);
- 	 }
-
- 	 if (isset($_SESSION['flash_error'])) {
- 	 	$flash = '<div class="bg-danger" id="temporary" style="color: #fff;"><p class="text-center">'.$_SESSION['flash_error'].'</p></div>';
- 	 	unset($_SESSION['flash_error']);
- 	}
-
-
-
 
 ?>

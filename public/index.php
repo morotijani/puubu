@@ -28,6 +28,7 @@ $twig->addFunction(new \Twig\TwigFunction('csrf_field', function() {
 // Global Twig Variables
 $twig->addGlobal('PROOT', PROOT);
 $twig->addGlobal('flash', $flash);
+$twig->addGlobal('session', $_SESSION);
 if (isset($admin_data)) $twig->addGlobal('admin', $admin_data);
 
 // Define Routes
@@ -144,10 +145,22 @@ $router->mount('/admin', function() use ($router, $twig) {
         $controller->electionStore();
     });
 
-    $router->get('/elections/delete/(\w+)', function($id) use ($twig) {
+    $router->get('/elections/delete/([a-zA-Z0-9\-]+)', function($id) use ($twig) {
         require_once __DIR__ . '/../app/Controllers/AdminController.php';
         $controller = new \App\Controllers\AdminController($twig);
         $controller->electionDelete($id);
+    });
+
+    $router->post('/elections/start/([a-zA-Z0-9\-]+)', function($id) use ($twig) {
+        require_once __DIR__ . '/../app/Controllers/AdminController.php';
+        $controller = new \App\Controllers\AdminController($twig);
+        $controller->startElection($id);
+    });
+
+    $router->post('/elections/stop/([a-zA-Z0-9\-]+)', function($id) use ($twig) {
+        require_once __DIR__ . '/../app/Controllers/AdminController.php';
+        $controller = new \App\Controllers\AdminController($twig);
+        $controller->stopElection($id);
     });
 
     // Position Management
@@ -315,3 +328,7 @@ $router->mount('/admin', function() use ($router, $twig) {
 
 // Run it!
 $router->run();
+
+// Clear flash messages after execution
+if (isset($_SESSION['flash_success'])) unset($_SESSION['flash_success']);
+if (isset($_SESSION['flash_error'])) unset($_SESSION['flash_error']);

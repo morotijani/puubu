@@ -7,15 +7,15 @@
 {% block content %}
     <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-5">
         <div>
-            <h1 class="h3 fw-bold mb-1">Contestants Registry</h1>
+            <h1 class="h3 fw-bold mb-1">Contestants Registry 👥</h1>
             <p class="text-muted small mb-0">Manage candidates and their associated electoral campaigns.</p>
         </div>
         <div class="d-flex gap-2 mt-3 mt-md-0">
-            <a href="{{ PROOT }}admin/contestants/archive" class="btn btn-light shadow-sm">
-                <i class="bi bi-archive me-1"></i> Archive
+            <a href="{{ PROOT }}admin/contestants/archive" class="btn btn-light shadow-sm d-flex align-items-center">
+                <span class="material-symbols-outlined me-1 fs-6">archive</span> Archive 📦
             </a>
-            <a href="{{ PROOT }}admin/contestants/add" class="btn btn-indigo shadow-sm">
-                <i class="bi bi-person-plus-fill me-1"></i> Add Candidate
+            <a href="{{ PROOT }}admin/contestants/add" class="btn btn-indigo shadow-sm d-flex align-items-center">
+                <span class="material-symbols-outlined me-1 fs-6">person_add</span> Add Candidate ✨
             </a>
         </div>
     </div>
@@ -25,7 +25,7 @@
         <div class="card-header bg-white border-bottom pt-4 px-4 pb-3">
             <div class="row align-items-center g-3">
                 <div class="col-md-auto">
-                    <h5 class="fw-bold mb-0">Active Candidates</h5>
+                    <h5 class="fw-bold mb-0">Active Candidates 🏆</h5>
                 </div>
                 <div class="col-md-3 ms-md-auto">
                     <select id="electionFilter" class="form-select form-select-sm bg-light border-0 shadow-none">
@@ -37,7 +37,7 @@
                 </div>
                 <div class="col-md-4">
                     <div class="input-group input-group-sm">
-                        <span class="input-group-text bg-light border-0"><i class="bi bi-search text-muted"></i></span>
+                        <span class="input-group-text bg-light border-0"><span class="material-symbols-outlined fs-6 text-muted">search</span></span>
                         <input type="text" id="contestantSearch" class="form-control bg-light border-0" placeholder="Search by name, office...">
                     </div>
                 </div>
@@ -65,7 +65,7 @@
                                     <div>
                                         <div class="fw-bold text-dark fs-6">{{ cont.cont_fname }} {{ cont.cont_lname }}</div>
                                         <div class="text-muted extra-small d-flex align-items-center">
-                                            <i class="bi bi-box-seam me-1"></i> {{ cont.election_name }}
+                                            <span class="material-symbols-outlined me-1 fs-6">inventory_2</span> {{ cont.election_name }}
                                         </div>
                                     </div>
                                 </div>
@@ -80,10 +80,10 @@
                                 <div class="btn-group shadow-sm rounded">
                                     {% if cont.session == 0 %}
                                         <a href="{{ PROOT }}admin/contestants/edit/{{ cont.contestant_id }}" class="btn btn-sm btn-white border border-end-0">
-                                            <i class="bi bi-pencil-square text-muted"></i>
+                                            <span class="material-symbols-outlined fs-6 text-muted">edit</span>
                                         </a>
-                                        <a href="{{ PROOT }}admin/contestants/toggle-delete/{{ cont.contestant_id }}/yes" class="btn btn-sm btn-white border text-danger" onclick="return confirm('Move this candidate to the archive?')">
-                                            <i class="bi bi-archive"></i>
+                                        <a href="{{ PROOT }}admin/contestants/toggle-delete/{{ cont.contestant_id }}/yes" class="btn btn-sm btn-white border text-danger d-flex align-items-center" onclick="return confirm('Move this candidate to the archive?')">
+                                            <span class="material-symbols-outlined fs-6">archive</span>
                                         </a>
                                     {% else %}
                                         <span class="badge bg-light text-muted border px-3">Session Locked</span>
@@ -94,7 +94,7 @@
                     {% else %}
                         <tr>
                             <td colspan="4" class="text-center py-5 text-muted">
-                                <div class="mb-2"><i class="bi bi-person-badge fs-1 opacity-25"></i></div>
+                                <div class="mb-2"><span class="material-symbols-outlined fs-1 opacity-25">badge</span></div>
                                 No active candidates found in the registry.
                             </td>
                         </tr>

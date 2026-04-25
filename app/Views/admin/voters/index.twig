@@ -7,23 +7,23 @@
 {% block content %}
     <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-5">
         <div>
-            <h1 class="h3 fw-bold mb-1">Voters Registrar</h1>
+            <h1 class="h3 fw-bold mb-1">Voters Registrar 👥</h1>
             <p class="text-muted small mb-0">Maintain the identity database for electoral eligibility.</p>
         </div>
         <div class="d-flex gap-2 mt-3 mt-md-0">
             <div class="dropdown">
-                <button class="btn btn-light dropdown-toggle" type="button" data-bs-toggle="dropdown">
-                    Registry Tools
+                <button class="btn btn-light dropdown-toggle d-flex align-items-center" type="button" data-bs-toggle="dropdown">
+                    <span class="material-symbols-outlined me-1 fs-6">construction</span> Registry Tools 🛠️
                 </button>
                 <ul class="dropdown-menu dropdown-menu-end shadow-lg border-0 py-2">
-                    <li><a class="dropdown-item py-2" href="{{ PROOT }}admin/voters/duplicates"><i class="bi bi-stack me-2 text-muted"></i> Identify Duplicates</a></li>
-                    <li><a class="dropdown-item py-2" href="{{ PROOT }}admin/voters/import"><i class="bi bi-file-earmark-arrow-up me-2 text-muted"></i> Import Identities (CSV)</a></li>
+                    <li><a class="dropdown-item py-2 d-flex align-items-center" href="{{ PROOT }}admin/voters/duplicates"><span class="material-symbols-outlined me-2 text-muted fs-6">layers</span> Identify Duplicates</a></li>
+                    <li><a class="dropdown-item py-2 d-flex align-items-center" href="{{ PROOT }}admin/voters/import"><span class="material-symbols-outlined me-2 text-muted fs-6">upload_file</span> Import Identities (CSV)</a></li>
                     <li><hr class="dropdown-divider mx-3"></li>
-                    <li><a class="dropdown-item py-2 text-danger" href="{{ PROOT }}admin/voters/truncate" onclick="return confirm('CRITICAL ACTION: ERASE ALL VOTERS? This cannot be undone!')"><i class="bi bi-exclamation-triangle me-2"></i> Wipe Registry</a></li>
+                    <li><a class="dropdown-item py-2 text-danger d-flex align-items-center" href="{{ PROOT }}admin/voters/truncate" onclick="return confirm('CRITICAL ACTION: ERASE ALL VOTERS? This cannot be undone!')"><span class="material-symbols-outlined me-2 fs-6">warning</span> Wipe Registry 🚨</a></li>
                 </ul>
             </div>
-            <a href="{{ PROOT }}admin/voters/add" class="btn btn-indigo shadow-sm">
-                <i class="bi bi-person-plus-fill me-1"></i> Register Voter
+            <a href="{{ PROOT }}admin/voters/add" class="btn btn-indigo shadow-sm d-flex align-items-center">
+                <span class="material-symbols-outlined me-1 fs-6">person_add</span> Register Voter ✨
             </a>
         </div>
     </div>
@@ -33,11 +33,11 @@
         <div class="card-header bg-white border-bottom pt-4 px-4 pb-3">
             <div class="row align-items-center g-3">
                 <div class="col-md-auto">
-                    <h5 class="fw-bold mb-0">Identity Registry</h5>
+                    <h5 class="fw-bold mb-0">Identity Registry 📋</h5>
                 </div>
                 <div class="col-md-4 ms-md-auto">
                     <div class="input-group">
-                        <span class="input-group-text bg-light border-0"><i class="bi bi-search text-muted"></i></span>
+                        <span class="input-group-text bg-light border-0"><span class="material-symbols-outlined fs-6 text-muted">search</span></span>
                         <input type="text" id="voterSearch" class="form-control bg-light border-0" placeholder="Search names, IDs, emails...">
                     </div>
                 </div>
@@ -67,7 +67,7 @@
                                 </td>
                                 <td>
                                     <div class="d-flex align-items-center">
-                                        <div class="avatar avatar-sm me-3 d-flex align-items-center justify-content-center text-indigo fw-bold" style="width: 38px; height: 38px;">
+                                        <div class="avatar avatar-sm me-3 d-flex align-items-center justify-content-center text-indigo fw-bold bg-indigo-subtle rounded-circle" style="width: 38px; height: 38px;">
                                             {{ voter.std_fname|slice(0, 1) }}{{ voter.std_lname|slice(0, 1) }}
                                         </div>
                                         <div>
@@ -80,16 +80,16 @@
                                     <span class="badge bg-light text-primary fw-mono border">{{ voter.std_id }}</span>
                                 </td>
                                 <td class="text-muted small">
-                                    <i class="bi bi-box-seam me-1"></i> {{ voter.election_name }}
+                                    <span class="material-symbols-outlined me-1 fs-6 align-middle">inventory_2</span> {{ voter.election_name }}
                                 </td>
                                 <td class="text-end pe-4">
                                     <div class="btn-group shadow-sm rounded">
                                         {% if voter.session == 0 %}
                                             <a href="{{ PROOT }}admin/voters/edit/{{ voter.voter_id }}" class="btn btn-sm btn-white border border-end-0">
-                                                <i class="bi bi-pencil-square"></i>
+                                                <span class="material-symbols-outlined fs-6">edit</span>
                                             </a>
                                             <a href="{{ PROOT }}admin/voters/delete/{{ voter.voter_id }}" class="btn btn-sm btn-white border text-danger" onclick="return confirm('Delete this voter?')">
-                                                <i class="bi bi-trash3"></i>
+                                                <span class="material-symbols-outlined fs-6">delete</span>
                                             </a>
                                         {% else %}
                                             <span class="badge bg-light text-muted border px-3">Session Locked</span>
@@ -100,7 +100,7 @@
                         {% else %}
                             <tr>
                                 <td colspan="5" class="text-center py-5 text-muted">
-                                    <div class="mb-2"><i class="bi bi-people fs-1 opacity-25"></i></div>
+                                    <div class="mb-2"><span class="material-symbols-outlined fs-1 opacity-25">group</span></div>
                                     No identities found in the registrar.
                                 </td>
                             </tr>
@@ -116,8 +116,8 @@
                         <span class="badge bg-indigo rounded-pill me-2" id="selectedCount">0</span>
                         <span class="small text-muted fw-medium">Identities selected for action</span>
                     </div>
-                    <button type="submit" class="btn btn-sm btn-danger px-4 fw-bold shadow-sm" onclick="return confirm('Delete selected identities from the registry?')">
-                        Delete Selected <i class="bi bi-trash3 ms-1"></i>
+                    <button type="submit" class="btn btn-sm btn-danger px-4 fw-bold shadow-sm d-flex align-items-center" onclick="return confirm('Delete selected identities from the registry?')">
+                        Delete Selected <span class="material-symbols-outlined ms-1 fs-6">delete</span>
                     </button>
                 </div>
             </div>

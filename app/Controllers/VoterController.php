@@ -41,7 +41,12 @@ class VoterController {
                     if ($statement->rowCount() > 0) {
                         foreach ($result_voterLogin as $row) {
                             if ($row['session'] == 1) {
-                                if (!password_verify($_POST['voter_password'], $row['std_password'])) {
+                                $now = date('Y-m-d H:i:s');
+                                if ($now < $row['start_date']) {
+                                    $displayErrors = "This election has not started yet. Access will be granted on " . date('F j, Y, g:i a', strtotime($row['start_date'])) . ".";
+                                } elseif ($now > $row['end_date']) {
+                                    $displayErrors = "Access Denied: This election ended on " . date('F j, Y, g:i a', strtotime($row['end_date'])) . ".";
+                                } elseif (!password_verify($_POST['voter_password'], $row['std_password'])) {
                                     $displayErrors = "Invalid Voter Details";
                                 } else {
                                     $login_issue_text = "Someone logged in with my account, on this IP: " . $details->ip;
@@ -172,8 +177,17 @@ class VoterController {
         $voter_id = $voter_row['voter_id'];
         $election_id = sanitize($_POST['name-of-election'] ?? '');
         
+        $now = date('Y-m-d H:i:s');
         if ($voter_row['session'] != 1 || $election_id != $voter_row['election_id']) {
             die("Election is not active or invalid.");
+        }
+
+        if ($now < $voter_row['start_date']) {
+            die("Unauthorized: The voting session has not started yet.");
+        }
+
+        if ($now > $voter_row['end_date']) {
+            die("Unauthorized: The voting session has ended.");
         }
 
         $num_positions = intval($_POST['number-of-positions'] ?? 0);

@@ -62,6 +62,11 @@ class AdminController {
             $total_contestants = $conn->query("SELECT COUNT(*) FROM cont_details WHERE del_cont = 'no'")->fetchColumn();
             $total_positions = $conn->query("SELECT COUNT(*) FROM positions")->fetchColumn();
             $total_voters = $conn->query("SELECT COUNT(*) FROM registrars")->fetchColumn();
+            $total_organizers = $conn->query("SELECT COUNT(*) FROM puubu_admin WHERE role = 'organizer'")->fetchColumn();
+            
+            $stmt_orgs = $conn->prepare("SELECT * FROM puubu_admin WHERE role = 'organizer' ORDER BY id DESC LIMIT 5");
+            $stmt_orgs->execute();
+            $recent_organizers = $stmt_orgs->fetchAll();
         } else {
             $statement = $conn->prepare("SELECT * FROM election WHERE session IN (1, 2) AND organizer_id = ?");
             $statement->execute([$admin_id]);
@@ -88,11 +93,13 @@ class AdminController {
         echo $this->twig->render('admin/dashboard.twig', [
             'admin' => $admin_data,
             'elections' => $elections,
+            'recent_organizers' => $recent_organizers ?? [],
             'stats' => [
                 'total_elections' => $total_elections,
                 'total_contestants' => $total_contestants,
                 'total_positions' => $total_positions,
-                'total_voters' => $total_voters
+                'total_voters' => $total_voters,
+                'total_organizers' => $total_organizers ?? 0
             ]
         ]);
     }
@@ -245,6 +252,103 @@ class AdminController {
             }
         }
 
+        redirect(PROOT . 'admin/elections');
+    }
+
+    public function startElection($id) {
+        global $conn, $admin_data;
+        if (!cadminIsLoggedIn() || empty($admin_data)) {
+            cadminLoginErrorRedirect();
+        }
+        $admin_id = $admin_data['admin_id'];
+        $role = $admin_data['role'] ?? 'organizer';
+
+        // Check ownership
+        $stmt = $conn->prepare("SELECT * FROM election WHERE election_id = ?");
+        $stmt->execute([$id]);
+        $election = $stmt->fetch();
+
+        if (!$election || ($role !== 'super_admin' && $election['organizer_id'] !== $admin_id)) {
+            $_SESSION['flash_error'] = "Invalid election or permission denied.";
+            redirect(PROOT . 'admin/elections');
+        }
+
+        if (isset($_POST['start_election'])) {
+            if (!isset($_POST['csrf_token']) || !verify_csrf_token($_POST['csrf_token'])) {
+                $_SESSION['flash_error'] = "Invalid CSRF token.";
+            } else {
+                $start_date = sanitize($_POST['start_date']);
+                $end_date = sanitize($_POST['end_date']);
+                $otp_code = sanitize($_POST['otp_code']);
+
+                if (empty($start_date) || empty($end_date) || empty($otp_code)) {
+                    $_SESSION['flash_error'] = "All fields are required.";
+                } elseif ($start_date >= $end_date) {
+                    $_SESSION['flash_error'] = "Start date must be before end date.";
+                } else {
+                    // Verify 2FA
+                    $g = new GoogleAuthenticator();
+                    if ($g->checkCode($admin_data['google_auth_secret'], $otp_code)) {
+                        $stmt = $conn->prepare("UPDATE election SET session = 1, start_date = ?, end_date = ? WHERE election_id = ?");
+                        if ($stmt->execute([$start_date, $end_date, $id])) {
+                            $_SESSION['flash_success'] = "Election has been started successfully.";
+                            add_to_log("Started election: " . $election['election_name'], $admin_id, 'admin');
+                        } else {
+                            $_SESSION['flash_error'] = "Failed to start election.";
+                        }
+                    } else {
+                        $_SESSION['flash_error'] = "Invalid 2FA code.";
+                    }
+                }
+            }
+        }
+        redirect(PROOT . 'admin/elections');
+    }
+
+    public function stopElection($id) {
+        global $conn, $admin_data;
+        if (!cadminIsLoggedIn() || empty($admin_data)) {
+            cadminLoginErrorRedirect();
+        }
+        $admin_id = $admin_data['admin_id'];
+        $role = $admin_data['role'] ?? 'organizer';
+
+        // Check ownership
+        $stmt = $conn->prepare("SELECT * FROM election WHERE election_id = ?");
+        $stmt->execute([$id]);
+        $election = $stmt->fetch();
+
+        if (!$election || ($role !== 'super_admin' && $election['organizer_id'] !== $admin_id)) {
+            $_SESSION['flash_error'] = "Invalid election or permission denied.";
+            redirect(PROOT . 'admin/elections');
+        }
+
+        if (isset($_POST['stop_election'])) {
+            if (!isset($_POST['csrf_token']) || !verify_csrf_token($_POST['csrf_token'])) {
+                $_SESSION['flash_error'] = "Invalid CSRF token.";
+            } else {
+                $reason = sanitize($_POST['manual_stop_reason']);
+                $otp_code = sanitize($_POST['otp_code']);
+
+                if (empty($reason) || empty($otp_code)) {
+                    $_SESSION['flash_error'] = "Reason and 2FA code are required.";
+                } else {
+                    // Verify 2FA
+                    $g = new GoogleAuthenticator();
+                    if ($g->checkCode($admin_data['google_auth_secret'], $otp_code)) {
+                        $stmt = $conn->prepare("UPDATE election SET session = 2, manual_stop_reason = ? WHERE election_id = ?");
+                        if ($stmt->execute([$reason, $id])) {
+                            $_SESSION['flash_success'] = "Election has been stopped and marked as completed.";
+                            add_to_log("Stopped election: " . $election['election_name'] . " Reason: " . $reason, $admin_id, 'admin');
+                        } else {
+                            $_SESSION['flash_error'] = "Failed to stop election.";
+                        }
+                    } else {
+                        $_SESSION['flash_error'] = "Invalid 2FA code.";
+                    }
+                }
+            }
+        }
         redirect(PROOT . 'admin/elections');
     }
 

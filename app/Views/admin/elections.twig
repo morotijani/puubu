@@ -38,7 +38,7 @@
                                                 <div>
                                                     <div class="fw-bold text-dark fs-6">{{ election.election_name }}</div>
                                                     <div class="text-muted extra-small d-flex align-items-center">
-                                                        <i class="bi bi-building me-1"></i> {{ election.election_by }}
+                                                        <span class="material-symbols-outlined me-1 fs-6">corporate_fare</span> {{ election.election_by }}
                                                         <span class="mx-2 opacity-25">|</span>
                                                         <span class="fw-mono">#{{ election.election_id|slice(0, 8) }}</span>
                                                     </div>
@@ -59,16 +59,22 @@
                                         <td class="text-end pe-4">
                                             <div class="btn-group shadow-sm rounded">
                                                 {% if election.session == 0 %}
+                                                    <button class="btn btn-sm btn-success px-3 fw-bold border-end-0 start-btn" data-id="{{ election.election_id }}" title="Start Election">
+                                                        <span class="material-symbols-outlined me-1 fs-6">play_arrow</span> Start 🚀
+                                                    </button>
                                                     <a href="{{ PROOT }}admin/elections?edit={{ election.election_id }}" class="btn btn-sm btn-white border border-end-0" title="Edit Configuration">
-                                                        <i class="bi bi-gear-fill text-muted"></i>
+                                                        <span class="material-symbols-outlined fs-6 text-muted">settings</span>
                                                     </a>
                                                     <button class="btn btn-sm btn-white border text-danger delete-btn" data-id="{{ election.election_id }}" title="Purge Session">
-                                                        <i class="bi bi-trash3"></i>
+                                                        <span class="material-symbols-outlined fs-6">delete</span>
                                                     </button>
                                                 {% elseif election.session == 1 %}
-                                                    <a href="{{ PROOT }}admin/reports/{{ election.election_id }}" class="btn btn-sm btn-indigo px-3 fw-bold">
-                                                        Live Analytics <i class="bi bi-arrow-right ms-1"></i>
+                                                    <a href="{{ PROOT }}admin/reports/{{ election.election_id }}" class="btn btn-sm btn-indigo px-3 fw-bold border-end-0">
+                                                        Live Analytics 📊 <span class="material-symbols-outlined ms-1 fs-6">arrow_forward</span>
                                                     </a>
+                                                    <button class="btn btn-sm btn-danger px-3 fw-bold stop-btn" data-id="{{ election.election_id }}" title="Stop Election">
+                                                        <span class="material-symbols-outlined me-1 fs-6">stop</span> Stop 🛑
+                                                    </button>
                                                 {% else %}
                                                     <a href="{{ PROOT }}admin/reports/{{ election.election_id }}" class="btn btn-sm btn-white border shadow-sm px-3 fw-bold">
                                                         View Report
@@ -122,8 +128,8 @@
 
                         {% if edit_election %}
                             <div class="mt-3 text-center">
-                                <a href="{{ PROOT }}admin/elections" class="text-muted small text-decoration-none">
-                                    <i class="bi bi-x-circle me-1"></i> Discard Changes
+                                <a href="{{ PROOT }}admin/elections" class="text-muted small text-decoration-none d-flex align-items-center justify-content-center">
+                                    <span class="material-symbols-outlined me-1 fs-6">cancel</span> Discard Changes
                                 </a>
                             </div>
                         {% endif %}
@@ -131,9 +137,175 @@
                 </div>
                 <div class="card-footer bg-light bg-opacity-50 border-top-0 p-4">
                     <div class="d-flex align-items-start">
-                        <i class="bi bi-info-circle text-indigo me-2 mt-1"></i>
+                        <span class="material-symbols-outlined text-indigo me-2 fs-5">info</span>
                         <p class="small text-muted mb-0">Newly created elections are saved as <strong>Drafts</strong>. You can start the session from the dashboard.</p>
                     </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Start Election Modal -->
+    <div class="modal fade glass-modal" id="startElectionModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow-2xl overflow-hidden" style="border-radius: 32px; background: rgba(255, 255, 255, 0.98);">
+                <form id="startElectionForm" method="POST">
+                    {{ csrf_field()|raw }}
+                    <input type="hidden" name="start_election" value="1">
+                    
+                    <!-- Step 1: Configuration -->
+                    <div class="modal-step" id="start-step-1">
+                        <div class="modal-body p-5">
+                            <div class="text-center mb-5">
+                                <div class="bg-indigo-subtle text-indigo d-inline-flex align-items-center justify-content-center rounded-circle mb-3" style="width: 72px; height: 72px;">
+                                    <span class="material-symbols-outlined fs-1">calendar_month</span>
+                                </div>
+                                <h3 class="fw-bold text-dark mb-1">Set Timeline 📅</h3>
+                                <p class="text-muted small px-4">Define when your voting window should open and close.</p>
+                            </div>
+
+                            <div class="mb-3">
+                                <div class="premium-field mb-4">
+                                    <label class="premium-label">STARTING AT</label>
+                                    <input type="datetime-local" class="form-control premium-input form-control-lg" name="start_date" id="start_date_input" required>
+                                </div>
+                                <div class="premium-field mb-4">
+                                    <label class="premium-label">CLOSING AT</label>
+                                    <input type="datetime-local" class="form-control premium-input form-control-lg" name="end_date" id="end_date_input" required>
+                                </div>
+                            </div>
+
+                            <div class="d-grid gap-2">
+                                <button type="button" class="btn btn-indigo btn-lg py-3 fw-bold rounded-4 shadow-lg next-step" data-next="start-step-2">
+                                    Continue to Security <span class="material-symbols-outlined ms-2 fs-5">arrow_forward</span>
+                                </button>
+                                <button type="button" class="btn btn-link text-muted fw-semibold text-decoration-none py-2" data-bs-dismiss="modal">
+                                    Cancel
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Step 2: Security -->
+                    <div class="modal-step d-none" id="start-step-2">
+                        <div class="modal-body p-5 text-center">
+                            <div class="mb-5">
+                                <div class="security-shield-animated mb-4">
+                                    <div class="shield-orb"></div>
+                                    <span class="material-symbols-outlined text-success display-4 position-relative">verified_user</span>
+                                </div>
+                                <h3 class="fw-bold text-dark mb-1">Authorization 🔒</h3>
+                                <p class="text-muted px-4 small">Confirm your identity with your security key to deploy this session.</p>
+                            </div>
+
+                            <div class="otp-modern-wrapper mb-5">
+                                <div class="otp-inputs-display d-flex justify-content-center gap-2">
+                                    <div class="otp-box"></div>
+                                    <div class="otp-box"></div>
+                                    <div class="otp-box"></div>
+                                    <div class="otp-box"></div>
+                                    <div class="otp-box"></div>
+                                    <div class="otp-box"></div>
+                                </div>
+                                <input type="text" class="form-control otp-hidden-input" name="otp_code" placeholder="000000" maxlength="6" required autocomplete="off">
+                            </div>
+
+                            <div class="d-grid gap-2">
+                                <button type="submit" class="btn btn-success btn-lg py-3 fw-bold rounded-4 shadow-lg mb-2" style="font-size: 1.1rem;">
+                                    Authorize & Deploy 🚀
+                                </button>
+                                <button type="button" class="btn btn-link text-muted fw-semibold text-decoration-none py-2 prev-step" data-prev="start-step-1">
+                                    <span class="material-symbols-outlined me-2 fs-5">arrow_back</span> Back to timeline
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+                
+                <!-- Step Indicator -->
+                <div class="step-progress-dots pb-4 text-center">
+                    <span class="dot active"></span>
+                    <span class="dot"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Stop Election Modal -->
+    <div class="modal fade glass-modal" id="stopElectionModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow-2xl overflow-hidden" style="border-radius: 32px; background: rgba(255, 255, 255, 0.98);">
+                <form id="stopElectionForm" method="POST">
+                    {{ csrf_field()|raw }}
+                    <input type="hidden" name="stop_election" value="1">
+                    
+                    <!-- Step 1: Reason -->
+                    <div class="modal-step" id="stop-step-1">
+                        <div class="modal-body p-5">
+                            <div class="text-center mb-5">
+                                <div class="bg-danger-subtle text-danger d-inline-flex align-items-center justify-content-center rounded-circle mb-3" style="width: 72px; height: 72px;">
+                                    <span class="material-symbols-outlined fs-1">report</span>
+                                </div>
+                                <h3 class="fw-bold text-dark mb-1">Termination Audit 🛑</h3>
+                                <p class="text-muted small px-4">State the reason for early closure before proceeding to authorization.</p>
+                            </div>
+
+                            <div class="mb-5">
+                                <label class="premium-label">REASON FOR TERMINATION</label>
+                                <textarea class="form-control premium-input p-3 bg-light rounded-4 border-0" name="manual_stop_reason" id="stop_reason_input" rows="3" placeholder="Briefly explain the cause for early closure..." required style="resize: none;"></textarea>
+                            </div>
+
+                            <div class="d-grid gap-2">
+                                <button type="button" class="btn btn-danger btn-lg py-3 fw-bold rounded-4 shadow-lg next-step" data-next="stop-step-2">
+                                    Proceed to Authorization <span class="material-symbols-outlined ms-2 fs-5">arrow_forward</span>
+                                </button>
+                                <button type="button" class="btn btn-link text-muted fw-semibold text-decoration-none py-2" data-bs-dismiss="modal">
+                                    Abort
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Step 2: Security -->
+                    <div class="modal-step d-none" id="stop-step-2">
+                        <div class="modal-body p-5 text-center">
+                            <div class="mb-5">
+                                <div class="security-shield-animated mb-4">
+                                    <div class="shield-orb" style="background: rgba(220, 53, 69, 0.1);"></div>
+                                    <span class="material-symbols-outlined text-danger display-4 position-relative">lock</span>
+                                </div>
+                                <h3 class="fw-bold text-dark mb-1">Authorization 🔒</h3>
+                                <p class="text-muted px-4 small">Confirm your identity with your security key to permanently terminate this session.</p>
+                            </div>
+
+                            <div class="otp-modern-wrapper mb-5">
+                                <div class="otp-inputs-display d-flex justify-content-center gap-2">
+                                    <div class="otp-box"></div>
+                                    <div class="otp-box"></div>
+                                    <div class="otp-box"></div>
+                                    <div class="otp-box"></div>
+                                    <div class="otp-box"></div>
+                                    <div class="otp-box"></div>
+                                </div>
+                                <input type="text" class="form-control otp-hidden-input" name="otp_code" placeholder="000000" maxlength="6" required autocomplete="off">
+                            </div>
+
+                            <div class="d-grid gap-2">
+                                <button type="submit" class="btn btn-danger btn-lg py-3 fw-bold rounded-4 shadow-lg mb-2" style="font-size: 1.1rem; border: none;">
+                                    Finalize Termination 🛑
+                                </button>
+                                <button type="button" class="btn btn-link text-muted fw-semibold text-decoration-none py-2 prev-step" data-prev="stop-step-1">
+                                    <span class="material-symbols-outlined me-2 fs-5">arrow_back</span> Back to reason
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+
+                <!-- Step Indicator -->
+                <div class="step-progress-dots pb-4 text-center">
+                    <span class="dot active"></span>
+                    <span class="dot"></span>
                 </div>
             </div>
         </div>
@@ -160,12 +332,239 @@
         color: var(--admin-primary);
     }
     .tracking-wider { letter-spacing: 0.05em; }
+    .glass-modal {
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+    }
+    .premium-field {
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 16px;
+        padding: 12px 16px;
+        transition: all 0.2s ease;
+    }
+    .premium-field:focus-within {
+        border-color: var(--admin-primary);
+        background: #fff;
+        box-shadow: 0 4px 12px rgba(var(--admin-primary-rgb), 0.1);
+    }
+    .premium-label {
+        display: block;
+        font-size: 0.65rem;
+        font-weight: 800;
+        color: #64748b;
+        letter-spacing: 0.1em;
+        margin-bottom: 4px;
+        text-transform: uppercase;
+    }
+    .premium-input {
+        background: transparent !important;
+        border: none !important;
+        padding: 0 !important;
+        font-size: 0.95rem;
+        font-weight: 600;
+        color: #1e293b;
+    }
+    .premium-input:focus {
+        box-shadow: none !important;
+    }
+    .otp-container {
+        max-width: 300px;
+        margin: 0 auto;
+    }
+    .otp-premium-input {
+        background: transparent !important;
+        border: none !important;
+        font-size: 2.5rem !important;
+        font-weight: 800 !important;
+        letter-spacing: 0.8rem !important;
+        text-align: center !important;
+        font-family: 'Outfit', sans-serif;
+        color: #0f172a;
+    }
+    .otp-premium-input::placeholder {
+        color: #cbd5e1;
+        letter-spacing: 0.8rem;
+    }
+    .shadow-2xl {
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    }
+    .modal-step {
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .step-progress-dots .dot {
+        width: 8px;
+        height: 8px;
+        background: #e2e8f0;
+        border-radius: 50%;
+        display: inline-block;
+        margin: 0 4px;
+        transition: all 0.3s ease;
+    }
+    .step-progress-dots .dot.active {
+        background: var(--admin-primary);
+        width: 24px;
+        border-radius: 10px;
+    }
+    .bg-indigo-subtle { background: #eef2ff !important; }
+    .text-indigo { color: #4f46e5 !important; }
+    .btn-indigo { background: #4f46e5; border-color: #4f46e5; color: white; }
+    .btn-indigo:hover { background: #4338ca; border-color: #4338ca; color: white; }
+
+    /* Animated Security Shield */
+    .security-shield-animated {
+        position: relative;
+        display: inline-block;
+    }
+    .shield-orb {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 120px;
+        height: 120px;
+        background: rgba(25, 135, 84, 0.1);
+        border-radius: 50%;
+        animation: pulse-orb 2s infinite;
+    }
+    @keyframes pulse-orb {
+        0% { transform: translate(-50%, -50%) scale(0.8); opacity: 0.5; }
+        50% { transform: translate(-50%, -50%) scale(1.2); opacity: 0.2; }
+        100% { transform: translate(-50%, -50%) scale(0.8); opacity: 0.5; }
+    }
+
+    /* Modern OTP UI */
+    .otp-modern-wrapper {
+        position: relative;
+        max-width: 340px;
+        margin: 0 auto;
+    }
+    .otp-hidden-input {
+        position: absolute !important;
+        top: 0 !important;
+        left: 0 !important;
+        width: 100% !important;
+        height: 100% !important;
+        opacity: 0 !important;
+        cursor: text !important;
+        z-index: 10 !important;
+        border: none !important;
+        background: transparent !important;
+        color: transparent !important;
+        caret-color: transparent !important;
+    }
+    .otp-box {
+        width: 48px;
+        height: 64px;
+        background: #f1f5f9;
+        border: 2px solid #e2e8f0;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.75rem;
+        font-weight: 800;
+        color: #0f172a;
+        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        font-family: 'Outfit', sans-serif;
+    }
+    .otp-box.active {
+        border-color: var(--admin-primary);
+        background: #fff;
+        box-shadow: 0 0 0 4px rgba(var(--admin-primary-rgb), 0.1);
+        transform: translateY(-2px);
+    }
+    .otp-box.filled {
+        background: #fff;
+        border-color: #cbd5e1;
+    }
 </style>
 {% endblock %}
 
 {% block scripts %}
 <script>
     $(document).ready(function() {
+        // Multi-step navigation
+        $('.next-step').on('click', function() {
+            var currentStepId = $(this).closest('.modal-step').attr('id');
+            var nextStepId = $(this).data('next');
+            var $form = $(this).closest('form');
+            
+            // Basic validation for Step 1
+            var valid = true;
+            if (currentStepId === 'start-step-1') {
+                if (!$('#start_date_input').val() || !$('#end_date_input').val()) {
+                    valid = false;
+                    Toast.fire({ icon: 'warning', title: 'Please set both dates' });
+                }
+            } else if (currentStepId === 'stop-step-1') {
+                if (!$('#stop_reason_input').val()) {
+                    valid = false;
+                    Toast.fire({ icon: 'warning', title: 'Please provide a reason' });
+                }
+            }
+
+            if (valid) {
+                $('#' + currentStepId).addClass('d-none');
+                $('#' + nextStepId).removeClass('d-none');
+                $(this).closest('.modal-content').find('.dot').last().addClass('active').siblings().removeClass('active');
+            }
+        });
+
+        $('.prev-step').on('click', function() {
+            var currentStepId = $(this).closest('.modal-step').attr('id');
+            var prevStepId = $(this).data('prev');
+            $('#' + currentStepId).addClass('d-none');
+            $('#' + prevStepId).removeClass('d-none');
+            $(this).closest('.modal-content').find('.dot').first().addClass('active').siblings().removeClass('active');
+        });
+
+        // Reset modals on close
+        $('.modal').on('hidden.bs.modal', function () {
+            $(this).find('.modal-step').addClass('d-none').first().removeClass('d-none');
+            $(this).find('.dot').first().addClass('active').siblings().removeClass('active');
+            $(this).find('form')[0].reset();
+            $(this).find('.otp-box').text('').removeClass('active filled');
+        });
+
+        // OTP Input Sync
+        $('.otp-hidden-input').on('input', function() {
+            var val = $(this).val();
+            var $boxes = $(this).siblings('.otp-inputs-display').find('.otp-box');
+            
+            $boxes.each(function(index) {
+                if (index < val.length) {
+                    $(this).text(val[index]).addClass('filled').removeClass('active');
+                } else if (index === val.length) {
+                    $(this).text('').addClass('active').removeClass('filled');
+                } else {
+                    $(this).text('').removeClass('active filled');
+                }
+            });
+        });
+
+        $('.otp-hidden-input').on('focus', function() {
+            var val = $(this).val();
+            var $boxes = $(this).siblings('.otp-inputs-display').find('.otp-box');
+            if (val.length < 6) {
+                $boxes.eq(val.length).addClass('active');
+            }
+        }).on('blur', function() {
+            $(this).siblings('.otp-inputs-display').find('.otp-box').removeClass('active');
+        });
+
+        $('.start-btn').on('click', function() {
+            var id = $(this).data('id');
+            $('#startElectionForm').attr('action', '{{ PROOT }}admin/elections/start/' + id);
+            $('#startElectionModal').modal('show');
+        });
+
+        $('.stop-btn').on('click', function() {
+            var id = $(this).data('id');
+            $('#stopElectionForm').attr('action', '{{ PROOT }}admin/elections/stop/' + id);
+            $('#stopElectionModal').modal('show');
+        });
+
         $('.delete-btn').on('click', function() {
             var id = $(this).data('id');
             if (confirm('Are you sure you want to purge this session? All associated data will be removed.')) {

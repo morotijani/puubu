@@ -1,5 +1,7 @@
 composer.phar
+vendor
 vendor/
+connection/cache/
 .env
 .idea
 .DS_Store

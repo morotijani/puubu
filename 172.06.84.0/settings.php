@@ -257,4 +257,25 @@
         </div>
     </div>
 
+    <div class="card mb-6 mb-xxl-0 mt-5">
+        <div class="card-header">
+            <h3 class="fs-6 mb-0">Security (2FA)</h3>
+        </div>
+        <div class="card-body py-3">
+            <div class="d-flex align-items-center justify-content-between">
+                <div>
+                    <h5 class="mb-1">Google Authenticator</h5>
+                    <p class="text-secondary small mb-0">
+                        Status: 
+                        <?php if($admin_data['is_2fa_enabled']): ?>
+                            <span class="badge bg-success-subtle text-success">Enabled</span>
+                        <?php else: ?>
+                            <span class="badge bg-danger-subtle text-danger">Disabled</span>
+                        <?php endif; ?>
+                    </p>
+                </div>
+                <a href="setup_2fa" class="btn btn-outline-dark btn-sm">Configure</a>
+            </div>
+        </div>
+    </div>
 <?php } include ('includes/footer.inc.php');?>

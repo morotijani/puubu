@@ -342,6 +342,13 @@ function goBack() {
 	function cAdminLoggedInID($admin_id) {
 		$_SESSION['crAdmin'] = $admin_id;
 		global $conn;
+		
+		// Check for 2FA status
+		$query2fa = "SELECT is_2fa_enabled, google_auth_secret FROM puubu_admin WHERE admin_id = :admin_id";
+		$stmt2fa = $conn->prepare($query2fa);
+		$stmt2fa->execute([':admin_id' => $admin_id]);
+		$adminData = $stmt2fa->fetch();
+
 		$data = array(
 			':last_login' => date("Y-m-d H:i:s"),
 			':id' => $admin_id
@@ -349,17 +356,25 @@ function goBack() {
 		$query = "UPDATE puubu_admin SET last_login = :last_login WHERE id = :id";
 		$statement = $conn->prepare($query);
 		$result = $statement->execute($data);
+		
 		if (isset($result)) {
-			$message = "logged into the system";
-			add_to_log($message, $admin_id, 'admin');
-
-			$_SESSION['flash_success'] = 'You are now logged in!';
-			redirect(PROOT . '172.06.84.0/index');
+			if ($adminData['is_2fa_enabled'] == 1) {
+				$_SESSION['2fa_pending'] = true;
+				redirect(PROOT . '172.06.84.0/verify_2fa');
+			} else {
+				$message = "logged into the system";
+				add_to_log($message, $admin_id, 'admin');
+				$_SESSION['flash_success'] = 'You are now logged in! Please consider setting up 2FA in settings.';
+				redirect(PROOT . '172.06.84.0/index');
+			}
 		}
 	}
 
 	function cadminIsLoggedIn() {
 		if (isset($_SESSION['crAdmin']) && $_SESSION['crAdmin'] > 0) {
+			if (isset($_SESSION['2fa_pending']) && $_SESSION['2fa_pending'] === true) {
+				return false;
+			}
 			return true;
 		}
 		return false;

@@ -1,7 +1,18 @@
 <?php 
-
     require_once("../connection/conn.php");
-    // dnd(password_hash('password', PASSWORD_BCRYPT));
+
+    // Gatekeeper: Check for secret URL token if not already logged in
+    if (!cadminIsLoggedIn()) {
+        if (isset($_GET['token']) && $_GET['token'] === ADMIN_ACCESS_TOKEN) {
+            $_SESSION['admin_gate_passed'] = true;
+        }
+        
+        if (!isset($_SESSION['admin_gate_passed']) || $_SESSION['admin_gate_passed'] !== true) {
+            header('HTTP/1.0 403 Forbidden');
+            die('<!DOCTYPE html><html><head><title>403 Forbidden</title></head><body style="background:#0f172a; color:#cbd5e1; font-family:sans-serif; display:flex; justify-content:center; align-items:center; height:100vh; margin:0;"><div><h1>403 Forbidden</h1><p>Access to this administrative area is restricted. Please use the correct access token.</p></div></body></html>');
+        }
+    }
+
     if (cadminIsLoggedIn()) {
         redirect(ADROOT);
     }

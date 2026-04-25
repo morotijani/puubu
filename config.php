@@ -17,5 +17,7 @@
 
 	define('IPINFO_PRIVATE_KEY', $_ENV['IPINFO_KEY']);
 
+    define('ADMIN_ACCESS_TOKEN', $_ENV['ADMIN_ACCESS_TOKEN']);
+
 	// Define the idle timeout period (e.g., 5 minutes = 300 seconds)
 	define('IDLE_TIMEOUT', 600); // 600 seconds = 10 minutes

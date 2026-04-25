@@ -59,6 +59,7 @@
                 $errorsMsg = 'Invalid details';
             }
         }
+        }
     }
 
  ?>

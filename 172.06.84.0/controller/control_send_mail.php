@@ -6,12 +6,23 @@ if (isset($_POST['email_data'])) {
 
     foreach ($_POST['email_data'] as $row) {
         $to   = $row["email"];
+        
+        // Generate new password
+        $string = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKMNOPQRSTUVWXYZ0123456789!@#$%^&*()-_';
+        $generatedpassword = substr(str_shuffle($string), 0, 8);
+        $hashed_password = password_hash($generatedpassword, PASSWORD_DEFAULT);
+        
+        // Update database
+        $updateQuery = "UPDATE registrars SET std_password = ? WHERE std_email = ?";
+        $updateStmt = $conn->prepare($updateQuery);
+        $updateStmt->execute([$hashed_password, $to]);
+
         $from = 'info@puubu.namibra.io';
         $from_name = 'Puubu Group';
-        $subject = 'Your password for Voting';
+        $subject = 'Your NEW password for Voting';
         $body = '
             <p>Hola, '.$row["email"].',</p>
-            <p>Your voting password is this: <b>'.$row["password"].'</b></p>
+            <p>Your voting password has been reset. Your new password is: <b>'.$generatedpassword.'</b></p>
             <br>
             <p>Visit this link to vote https://puubu.namibra.io</p>
             <p>Best Regards, Puubu Group.</p>
@@ -22,9 +33,9 @@ if (isset($_POST['email_data'])) {
         
         try {
             send_email($to, $subject, $body);
-            echo 'Message has been sent';
+            echo 'ok';
         } catch (Exception $e) {
-           // echo "Message could not be sent. Mailer Error: {$mail->ErrorInfo}";
+           echo "Message could not be sent. Mailer Error";
         }
     }
 }

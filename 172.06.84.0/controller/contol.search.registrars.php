@@ -41,7 +41,7 @@
 			            <th></th>
 			            <th>Full Name</th>
 			            <th>Identity Number</th>
-						<th>Send Mail</th>
+						<th>Reset Password</th>
 			            <th>Election Type</th>
 			            <th>
 			              	<span id="delete_checkedDisplay" style="display: none;">
@@ -76,7 +76,7 @@
                     <td>' . $i . '</td>
 					<td style="width: 0px">
 						<div class="form-check">
-							<input type="checkbox" name="single_select" class="form-check-input single_select" data-email="'.$row["std_email"].'" data-password="'.$row["std_password"].'">&nbsp;&nbsp;&nbsp;
+							<input type="checkbox" name="single_select" class="form-check-input single_select" data-email="'.$row["std_email"].'">&nbsp;&nbsp;&nbsp;
 							<label class="form-check-label" for="tableCheckOne"></label>
 						</div>
                     </td>
@@ -96,8 +96,8 @@
 						</span>
 					</td>
                     <td>
-                    	<span name="email_button" class="btn btn-sm btn-dark email_button" id="'.$count.'" data-email="'.$row["std_email"].'" data-password="'.$row["std_password"].'" data-action="single" style="cursor: pointer;">
-							<span class="material-symbols-outlined">send</span>
+                    	<span name="email_button" class="btn btn-sm btn-dark email_button" id="'.$count.'" data-email="'.$row["std_email"].'" data-action="single" style="cursor: pointer;" title="Reset Password & Send Email">
+							<span class="material-symbols-outlined">restart_alt</span>
 						</span>
                     </td>
                     <td>
@@ -114,7 +114,7 @@
 				<tr>
       				<td colspan="2" align="right">
       					<button type="button" name="bulk_email" class="btn btn-sm btn-warning email_button" id="bulk_email" data-action="bulk">
-							<span class="material-symbols-outlined me-1">send</span> Send bulk email
+							<span class="material-symbols-outlined me-1">restart_alt</span> Reset & Send Bulk
 						</button>
       				</td>
      			</tr>';

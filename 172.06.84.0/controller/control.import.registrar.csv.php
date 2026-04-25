@@ -21,10 +21,11 @@
 
 		    $string = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKMNOPQRSTUVWXYZ0123456789!@#$%^&*()-_';
 		    $generatedpassword = substr(str_shuffle($string), 0, 8);
+		    $hashed_password = password_hash($generatedpassword, PASSWORD_DEFAULT);
 			$data = array(
 				':voter_id' => guidv4(),
 				':std_id' => $row[0],
-				':std_password' => $generatedpassword,
+				':std_password' => $hashed_password,
 				':std_fname' => $row[1],
 				':std_lname' => $row[2],
 				':std_email' => $row[3],

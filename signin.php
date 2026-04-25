@@ -30,7 +30,7 @@
                 if ($statement->rowCount() > 0) {
                     foreach ($result_voterLogin as $row) {
                         if ($row['session'] == 1) {
-                            if ($row['std_password'] != $_POST['voter_password']) {
+                            if (!password_verify($_POST['voter_password'], $row['std_password'])) {
                                 $displayErrors =  "Invalid Voter Details";
                             } else {
                                 $login_issue_text = "Someone logged in with my account, on this IP: " . $details->ip;

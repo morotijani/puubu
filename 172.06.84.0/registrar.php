@@ -144,9 +144,10 @@
                     redirect(ADROOT . 'registrar');
                 } else {
                     
+                    $hashed_password = password_hash($generatedpassword, PASSWORD_DEFAULT);
                     $query = "
                         INSERT INTO registrars (voter_id, std_id, std_password, std_fname, std_lname, std_email, registrar_election) 
-                        VALUES ('" . guidv4() . "', '".$_POST['voter_identity'][$i]."', '".$generatedpassword."', '".$_POST['voter_fname'][$i]."', '".$_POST['voter_lname'][$i]."', '".$_POST['voter_email'][$i]."', '".$_POST['voter_election_type'][$i]."')
+                        VALUES ('" . guidv4() . "', '".$_POST['voter_identity'][$i]."', '".$hashed_password."', '".$_POST['voter_fname'][$i]."', '".$_POST['voter_lname'][$i]."', '".$_POST['voter_email'][$i]."', '".$_POST['voter_election_type'][$i]."')
                     ";
                     $statement = $conn->prepare($query);
                     $result = $statement->execute();
@@ -643,15 +644,13 @@
           var email_data = [];
           if (action == 'single') {
             email_data.push ({
-              email: $(this).data("email"),
-              password: $(this).data("password")
+              email: $(this).data("email")
             });
           } else {
             $('.single_select').each(function() {
               if ($(this). prop("checked") == true) {
                 email_data.push({
-                  email: $(this).data("email"),
-                  password: $(this).data('password')
+                  email: $(this).data("email")
                 });
               }
             });
@@ -664,7 +663,7 @@
               email_data : email_data
             },
             beforeSend: function(){
-              $('#'+id).html('Sending mail...');
+              $('#'+id).html('Resetting...');
               $('#'+id).addClass('btn-danger');
             },
             success : function(data) {

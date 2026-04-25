@@ -11,7 +11,9 @@
     $displayErrors = '';
 
     if (isset($_POST['submitVoter'])) {
-        if (empty($_POST['voter_id']) || empty($_POST['voter_password'])) {
+        if (!isset($_POST['csrf_token']) || !verify_csrf_token($_POST['csrf_token'])) {
+            $displayErrors = "Invalid request token. Please refresh and try again.";
+        } elseif (empty($_POST['voter_id']) || empty($_POST['voter_password'])) {
             $displayErrors =  "Invalid Details";
         } else {
             if (isset($_SESSION['crAdmin'])) {
@@ -138,6 +140,7 @@
                     <p class="lead text-secondary mb-5">We have the power to make a difference. But we need to VOTE.</p>
                     <div class="row align-items-center g-3">
                         <form action="" method="POST">
+                            <?= csrf_field(); ?>
                             <code id="displayErrors"><?= $displayErrors; ?></code>
                             <div class="form-group mb-1">
                                 <label for="voter_id" class="form-label">Your ID</label>

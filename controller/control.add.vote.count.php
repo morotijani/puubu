@@ -40,6 +40,10 @@ if (!isset($_SESSION["voter_accessed"])) {
 
 		// SUBMITED VOTES
 	if (isset($_POST['submitVotes'])) {
+	    if (!isset($_POST['csrf_token']) || !verify_csrf_token($_POST['csrf_token'])) {
+	        redirect(PROOT . 'signin');
+	        exit();
+	    }
 		$election = $_POST['name-of-election'];
 
 		// SELECT FROM "votehasdone" TO CHECK IF VOTER HAS ALREADY VOTED

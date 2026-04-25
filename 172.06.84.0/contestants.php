@@ -219,9 +219,9 @@ if (isset($_GET['editcontestant']) && !empty($_GET['editcontestant'])) {
 
 // CREATE NEW CONTESTANT
 if (isset($_POST['createcont'])) {
-
-    // CHECK FOR EMPTY FIELDS
-    if (empty($_POST['contestant_ballot_number']) || empty($_POST['cont_fname']) || empty($_POST['cont_lname']) || empty($_POST['cont_position']) || empty($_POST['cont_gender'])) {
+    if (!isset($_POST['csrf_token']) || !verify_csrf_token($_POST['csrf_token'])) {
+        $message = '<div class="alert alert-danger">Invalid request token. Please refresh and try again.</div>';
+    } elseif (empty($_POST['contestant_ballot_number']) || empty($_POST['cont_fname']) || empty($_POST['cont_lname']) || empty($_POST['cont_position']) || empty($_POST['cont_gender'])) {
         if (isset($_POST['uploadedPassport']) && $_POST['uploadedPassport'] != '') {
             unlink($_POST['uploadedPassport']);
         }
@@ -408,6 +408,7 @@ if (isset($_POST['createcont'])) {
         <div class="card-body">
             <h4 class="mt-2"><?= ((isset($_GET['editcontestant']))?'Edit':'Add new') ?> contestant</h4>
             <form class="" action="contestants.php?<?= ((isset($_GET['editcontestant']))?'editcontestant='.$editid:'createcontestant=1'); ?>" method="post" id="submitcontestant" enctype="multipart/form-data">
+                <?= csrf_field(); ?>
                 <div class="container">
                     <span><?= $message; ?></span>
                     <div class="row">

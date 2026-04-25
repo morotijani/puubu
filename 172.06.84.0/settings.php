@@ -13,7 +13,9 @@
 
     $errors = '';
     if (isset($_POST["submit_settings"])) {
-        if (empty($_POST['email']) || empty($_POST['fname']) || empty($_POST['lname'])) {
+        if (!isset($_POST['csrf_token']) || !verify_csrf_token($_POST['csrf_token'])) {
+            $errors = 'Invalid request token. Please refresh and try again.';
+        } elseif (empty($_POST['email']) || empty($_POST['fname']) || empty($_POST['lname'])) {
             $errors = 'Fill out all empty fileds';
         }
 
@@ -132,7 +134,9 @@
         $new_hashed = password_hash($password, PASSWORD_BCRYPT);
 
         if (isset($_POST['edit_pasword'])) {
-            if (empty($_POST['old_password']) || empty($_POST['password']) || empty($_POST['confirm'])) {
+            if (!isset($_POST['csrf_token']) || !verify_csrf_token($_POST['csrf_token'])) {
+                $errors = 'Invalid request token. Please refresh and try again.';
+            } elseif (empty($_POST['old_password']) || empty($_POST['password']) || empty($_POST['confirm'])) {
                 $errors = 'You must fill out all fields';
             } else {
 
@@ -194,6 +198,7 @@
         </div>
         <div class="card-body py-3">
             <form method="POST" action="settings.php?cp=1" id="edit_passwordForm">
+                <?= csrf_field(); ?>
                 <span class="text-danger lead"><?= $errors; ?></span>
                 <div class="mb-3">
                     <label for="old_password" class="form-label">Old password</label>
@@ -232,6 +237,7 @@
         </div>
         <div class="card-body py-3">
             <form method="POST" action="" id="settingsForm">
+                <?= csrf_field(); ?>
                 <span class="text-danger lead"><?= $errors; ?></span>
                 <div class="mb-3">
                     <label for="fname" class="form-label">First Name</label>

@@ -100,7 +100,9 @@ foreach ($conn->query("SELECT * FROM positions INNER JOIN election WHERE positio
 
 // INSERT IN POSITION TO DATABASE
 if (isset($_POST['addposition'])) {
-    if (empty($_POST['position_name']) || empty($_POST['sel_election'])) {
+    if (!isset($_POST['csrf_token']) || !verify_csrf_token($_POST['csrf_token'])) {
+        $message = '<div class="alert alert-danger" id="temporary">Invalid request token. Please refresh and try again.</div>';
+    } elseif (empty($_POST['position_name']) || empty($_POST['sel_election'])) {
         $message = '<div class="alert alert-danger" id="temporary">Empty Fields are Required</div>';
     } else {
 
@@ -227,6 +229,7 @@ if (isset($_POST['addposition'])) {
             <section class="card bg-body-tertiary border-transparent card-line mb-5" id="billing">
                 <div class="card-body">
                     <form action="positions?<?= ((isset($_GET['editposition']))?'editposition='.$edit_id:'addnewposition=1'); ?>" method="post">
+                        <?= csrf_field(); ?>
                         <div class="row align-items-center mb-4">
                             <div class="col">
                                 <h2 class="fs-5 mb-1"><?= ((isset($_GET["editposition"]))? 'Edit' : 'Add'); ?> position</h2>

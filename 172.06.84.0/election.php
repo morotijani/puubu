@@ -131,7 +131,9 @@
 
     // INSERT IN POSITION TO DATABASE
     if (isset($_POST['addelection'])) {
-        if (empty($_POST['election_name']) || empty($_POST['election_name'])) {
+        if (!isset($_POST['csrf_token']) || !verify_csrf_token($_POST['csrf_token'])) {
+            $message = '<div class="alert alert-danger" id="temporary">Invalid request token. Please refresh and try again.</div>';
+        } elseif (empty($_POST['election_name']) || empty($_POST['election_by'])) {
             $message = '<div class="text-danger" id="temporary">Empty Fields are Required</div>';
         } else {
 
@@ -262,6 +264,7 @@
             <section class="card bg-body-tertiary border-transparent card-line mb-5" id="billing">
                 <div class="card-body">
                     <form class="" action="election.php?<?= ((isset($_GET['edit_election']))?'edit_election='.$edit_election_id:'addnewposition=1'); ?>" method="post">
+                        <?= csrf_field(); ?>
                         <div class="row align-items-center mb-4">
                             <div class="col">
                                 <h2 class="fs-5 mb-1"><?= ((isset($_GET["edit_election"])) ? 'Edit' : 'Add'); ?> election</h2>

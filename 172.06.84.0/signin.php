@@ -15,8 +15,11 @@
     $pswd = trim($pswd);
 
     if (isset($_POST['submitAdmin'])) {
-        $email = sanitize($_POST['admin_email']);
-        $pswd = sanitize($_POST['admin_pass']);
+        if (!isset($_POST['csrf_token']) || !verify_csrf_token($_POST['csrf_token'])) {
+            $errorsMsg = "Invalid request token. Please refresh and try again.";
+        } else {
+            $email = sanitize($_POST['admin_email']);
+            $pswd = sanitize($_POST['admin_pass']);
 
         if (!empty($pswd) && !empty($email)) {
           
@@ -73,6 +76,7 @@
 
                     <!-- Form -->
                     <form class="mb-5" method="POST">
+                        <?= csrf_field(); ?>
                         <span class="badge badge-sm bg-danger" id="displayErrors"><?= $errorsMsg; ?></span>
                         <div class="mb-4 mt-2">
                             <label class="visually-hidden" for="email">Email Address</label>

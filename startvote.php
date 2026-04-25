@@ -42,6 +42,7 @@ if ($voter_count > 0) {
                 }
 
                 $out .= "<form action='controller/control.add.vote.count.php' method='POST'>";
+                $out .= csrf_field();
                 for ($num = 0; $num < $position_count; $num++) {
 
                     $contestantQuery = "

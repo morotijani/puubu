@@ -105,8 +105,10 @@
 
     // ADD A NEW VOTER
     if (isset($_POST['submitVoters'])) {
-
-        for ($i = 0; $i < $_POST['total_fields']; $i++) {
+        if (!isset($_POST['csrf_token']) || !verify_csrf_token($_POST['csrf_token'])) {
+            $message = '<div class="alert alert-danger" id="temporary">Invalid request token. Please refresh and try again.</div>';
+        } else {
+            for ($i = 0; $i < $_POST['total_fields']; $i++) {
 
             $query = "SELECT * FROM registrars WHERE std_id = '".$_POST['voter_identity'][$i]."'";
             if (isset($_GET['editvoter']) && !empty($_GET['editvoter'])) {
@@ -283,6 +285,7 @@
         <div class="card-body">
             <h4 class="mt-2"><?= ((isset($_GET['editvoter'])? 'Edit' : 'Add new')); ?> voter</h4>
             <form action="?<?= ((isset($_GET['editvoter']))?'editvoter='.$editid:'addnewvoter=1') ?>" method="post" id="AddVoter">
+                <?= csrf_field(); ?>
                 <span id="errorMsg"><?= $message; ?></span>
                 <div id="dynamic_field">
                     <div class="row">

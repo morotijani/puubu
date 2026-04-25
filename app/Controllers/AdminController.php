@@ -47,22 +47,52 @@ class AdminController {
     }
 
     public function index() {
-        global $conn, $admin_data, $listall_election;
+        global $conn, $admin_data;
+        if (!cadminIsLoggedIn() || empty($admin_data)) {
+            cadminLoginErrorRedirect();
+        }
+        $admin_id = $admin_data['admin_id'];
+        $role = $admin_data['role'] ?? 'organizer';
 
-        // Fetch running/ended elections
-        $started_election_query = "SELECT * FROM election WHERE session = ? OR session = ?";
-        $statement = $conn->prepare($started_election_query);
-        $statement->execute([1, 2]);
+        if ($role === 'super_admin') {
+            $statement = $conn->prepare("SELECT * FROM election WHERE session IN (1, 2)");
+            $statement->execute();
+            
+            $total_elections = $conn->query("SELECT COUNT(*) FROM election")->fetchColumn();
+            $total_contestants = $conn->query("SELECT COUNT(*) FROM cont_details WHERE del_cont = 'no'")->fetchColumn();
+            $total_positions = $conn->query("SELECT COUNT(*) FROM positions")->fetchColumn();
+            $total_voters = $conn->query("SELECT COUNT(*) FROM registrars")->fetchColumn();
+        } else {
+            $statement = $conn->prepare("SELECT * FROM election WHERE session IN (1, 2) AND organizer_id = ?");
+            $statement->execute([$admin_id]);
+            
+            $stmt = $conn->prepare("SELECT COUNT(*) FROM election WHERE organizer_id = ?");
+            $stmt->execute([$admin_id]);
+            $total_elections = $stmt->fetchColumn();
+            
+            $stmt = $conn->prepare("SELECT COUNT(c.id) FROM cont_details c INNER JOIN election e ON c.contestant_election = e.election_id WHERE c.del_cont = 'no' AND e.organizer_id = ?");
+            $stmt->execute([$admin_id]);
+            $total_contestants = $stmt->fetchColumn();
+            
+            $stmt = $conn->prepare("SELECT COUNT(p.id) FROM positions p INNER JOIN election e ON p.election_id = e.election_id WHERE e.organizer_id = ?");
+            $stmt->execute([$admin_id]);
+            $total_positions = $stmt->fetchColumn();
+            
+            $stmt = $conn->prepare("SELECT COUNT(r.id) FROM registrars r INNER JOIN election e ON r.registrar_election = e.election_id WHERE e.organizer_id = ?");
+            $stmt->execute([$admin_id]);
+            $total_voters = $stmt->fetchColumn();
+        }
+
         $elections = $statement->fetchAll();
 
         echo $this->twig->render('admin/dashboard.twig', [
             'admin' => $admin_data,
             'elections' => $elections,
             'stats' => [
-                'total_elections' => $listall_election,
-                'total_contestants' => count_contestants(),
-                'total_positions' => count_positions(),
-                'total_voters' => count_voters()
+                'total_elections' => $total_elections,
+                'total_contestants' => $total_contestants,
+                'total_positions' => $total_positions,
+                'total_voters' => $total_voters
             ]
         ]);
     }
@@ -141,17 +171,29 @@ class AdminController {
     }
 
     public function elections() {
-        global $conn;
+        global $conn, $admin_data;
+        $admin_id = $admin_data['admin_id'];
+        $role = $admin_data['role'] ?? 'organizer';
         
-        $stmt = $conn->prepare("SELECT * FROM election ORDER BY election_id DESC");
-        $stmt->execute();
+        if ($role === 'super_admin') {
+            $stmt = $conn->prepare("SELECT * FROM election ORDER BY election_id DESC");
+            $stmt->execute();
+        } else {
+            $stmt = $conn->prepare("SELECT * FROM election WHERE organizer_id = ? ORDER BY election_id DESC");
+            $stmt->execute([$admin_id]);
+        }
         $elections = $stmt->fetchAll();
 
         $edit_id = $_GET['edit'] ?? null;
         $edit_election = null;
         if ($edit_id) {
-            $stmt = $conn->prepare("SELECT * FROM election WHERE election_id = ? AND session = 0");
-            $stmt->execute([$edit_id]);
+            if ($role === 'super_admin') {
+                $stmt = $conn->prepare("SELECT * FROM election WHERE election_id = ? AND session = 0");
+                $stmt->execute([$edit_id]);
+            } else {
+                $stmt = $conn->prepare("SELECT * FROM election WHERE election_id = ? AND session = 0 AND organizer_id = ?");
+                $stmt->execute([$edit_id, $admin_id]);
+            }
             $edit_election = $stmt->fetch();
         }
 
@@ -178,17 +220,25 @@ class AdminController {
             redirect(PROOT . 'admin/elections' . ($edit_id ? '?edit=' . $edit_id : ''));
         }
 
+        $admin_id_to_use = $admin_id; // Default organizer is current user
+        // Super admins can assign organizers (future feature), for now default to self
+        
         if ($edit_id) {
-            $stmt = $conn->prepare("UPDATE election SET election_name = ?, election_by = ? WHERE election_id = ? AND session = 0");
-            $result = $stmt->execute([$name, $by, $edit_id]);
+            if (($admin_data['role'] ?? 'organizer') === 'super_admin') {
+                $stmt = $conn->prepare("UPDATE election SET election_name = ?, election_by = ? WHERE election_id = ? AND session = 0");
+                $result = $stmt->execute([$name, $by, $edit_id]);
+            } else {
+                $stmt = $conn->prepare("UPDATE election SET election_name = ?, election_by = ? WHERE election_id = ? AND session = 0 AND organizer_id = ?");
+                $result = $stmt->execute([$name, $by, $edit_id, $admin_id]);
+            }
             if ($result) {
                 add_to_log("Updated election: $name", $admin_id, 'admin');
                 $_SESSION['flash_success'] = "Election updated successfully.";
             }
         } else {
             $unique_id = guidv4();
-            $stmt = $conn->prepare("INSERT INTO election (election_id, election_name, election_by) VALUES (?, ?, ?)");
-            $result = $stmt->execute([$unique_id, $name, $by]);
+            $stmt = $conn->prepare("INSERT INTO election (election_id, election_name, election_by, organizer_id) VALUES (?, ?, ?, ?)");
+            $result = $stmt->execute([$unique_id, $name, $by, $admin_id_to_use]);
             if ($result) {
                 add_to_log("Created new election: $name", $admin_id, 'admin');
                 $_SESSION['flash_success'] = "Election created successfully.";
@@ -199,10 +249,17 @@ class AdminController {
     }
 
     public function electionDelete($id) {
-        global $conn, $admin_id;
+        global $conn, $admin_id, $admin_data;
+        $role = $admin_data['role'] ?? 'organizer';
         
-        $stmt = $conn->prepare("SELECT * FROM election WHERE election_id = ? AND session = 0");
-        $stmt->execute([$id]);
+        if ($role === 'super_admin') {
+            $stmt = $conn->prepare("SELECT * FROM election WHERE election_id = ? AND session = 0");
+            $stmt->execute([$id]);
+        } else {
+            $stmt = $conn->prepare("SELECT * FROM election WHERE election_id = ? AND session = 0 AND organizer_id = ?");
+            $stmt->execute([$id, $admin_id]);
+        }
+        
         if ($stmt->rowCount() > 0) {
             $conn->prepare("DELETE FROM election WHERE election_id = ?")->execute([$id]);
             add_to_log("Deleted election: $id", $admin_id, 'admin');
@@ -215,16 +272,27 @@ class AdminController {
     }
 
     public function positions() {
-        global $conn;
+        global $conn, $admin_data;
+        $admin_id = $admin_data['admin_id'];
+        $role = $admin_data['role'] ?? 'organizer';
         
-        // Fetch positions with election names
-        $stmt = $conn->prepare("SELECT p.*, e.election_name, e.election_by, e.session FROM positions p INNER JOIN election e ON p.election_id = e.election_id ORDER BY p.position_id DESC");
-        $stmt->execute();
+        if ($role === 'super_admin') {
+            $stmt = $conn->prepare("SELECT p.*, e.election_name, e.election_by, e.session FROM positions p INNER JOIN election e ON p.election_id = e.election_id ORDER BY p.position_id DESC");
+            $stmt->execute();
+        } else {
+            $stmt = $conn->prepare("SELECT p.*, e.election_name, e.election_by, e.session FROM positions p INNER JOIN election e ON p.election_id = e.election_id WHERE e.organizer_id = ? ORDER BY p.position_id DESC");
+            $stmt->execute([$admin_id]);
+        }
         $positions = $stmt->fetchAll();
 
         // Fetch draft elections for the dropdown
-        $stmt = $conn->prepare("SELECT * FROM election WHERE session = 0 ORDER BY election_name ASC");
-        $stmt->execute();
+        if ($role === 'super_admin') {
+            $stmt = $conn->prepare("SELECT * FROM election WHERE session = 0 ORDER BY election_name ASC");
+            $stmt->execute();
+        } else {
+            $stmt = $conn->prepare("SELECT * FROM election WHERE session = 0 AND organizer_id = ? ORDER BY election_name ASC");
+            $stmt->execute([$admin_id]);
+        }
         $elections = $stmt->fetchAll();
 
         $edit_id = $_GET['edit'] ?? null;
@@ -279,11 +347,17 @@ class AdminController {
     }
 
     public function positionDelete($id) {
-        global $conn, $admin_id;
+        global $conn, $admin_id, $admin_data;
+        $role = $admin_data['role'] ?? 'organizer';
         
         // Security: Ensure position is for a draft election before deleting
-        $stmt = $conn->prepare("SELECT p.* FROM positions p INNER JOIN election e ON p.election_id = e.election_id WHERE p.position_id = ? AND e.session = 0");
-        $stmt->execute([$id]);
+        if ($role === 'super_admin') {
+            $stmt = $conn->prepare("SELECT p.* FROM positions p INNER JOIN election e ON p.election_id = e.election_id WHERE p.position_id = ? AND e.session = 0");
+            $stmt->execute([$id]);
+        } else {
+            $stmt = $conn->prepare("SELECT p.* FROM positions p INNER JOIN election e ON p.election_id = e.election_id WHERE p.position_id = ? AND e.session = 0 AND e.organizer_id = ?");
+            $stmt->execute([$id, $admin_id]);
+        }
         
         if ($stmt->rowCount() > 0) {
             $conn->prepare("DELETE FROM positions WHERE position_id = ?")->execute([$id]);
@@ -297,23 +371,43 @@ class AdminController {
     }
 
     public function contestants() {
-        global $conn;
+        global $conn, $admin_data;
+        $admin_id = $admin_data['admin_id'];
+        $role = $admin_data['role'] ?? 'organizer';
         
-        $query = "
-            SELECT c.*, p.position_name, e.election_name, e.election_by, e.session 
-            FROM cont_details c
-            INNER JOIN positions p ON c.cont_position = p.position_id
-            INNER JOIN election e ON c.contestant_election = e.election_id
-            WHERE c.del_cont = 'no'
-            ORDER BY c.contestant_id DESC
-        ";
-        $stmt = $conn->prepare($query);
-        $stmt->execute();
+        if ($role === 'super_admin') {
+            $query = "
+                SELECT c.*, p.position_name, e.election_name, e.election_by, e.session 
+                FROM cont_details c
+                INNER JOIN positions p ON c.cont_position = p.position_id
+                INNER JOIN election e ON c.contestant_election = e.election_id
+                WHERE c.del_cont = 'no'
+                ORDER BY c.contestant_id DESC
+            ";
+            $stmt = $conn->prepare($query);
+            $stmt->execute();
+        } else {
+            $query = "
+                SELECT c.*, p.position_name, e.election_name, e.election_by, e.session 
+                FROM cont_details c
+                INNER JOIN positions p ON c.cont_position = p.position_id
+                INNER JOIN election e ON c.contestant_election = e.election_id
+                WHERE c.del_cont = 'no' AND e.organizer_id = ?
+                ORDER BY c.contestant_id DESC
+            ";
+            $stmt = $conn->prepare($query);
+            $stmt->execute([$admin_id]);
+        }
         $contestants = $stmt->fetchAll();
 
         // Fetch all elections for the filter
-        $stmt = $conn->prepare("SELECT * FROM election ORDER BY election_name ASC");
-        $stmt->execute();
+        if ($role === 'super_admin') {
+            $stmt = $conn->prepare("SELECT * FROM election ORDER BY election_name ASC");
+            $stmt->execute();
+        } else {
+            $stmt = $conn->prepare("SELECT * FROM election WHERE organizer_id = ? ORDER BY election_name ASC");
+            $stmt->execute([$admin_id]);
+        }
         $elections = $stmt->fetchAll();
 
         echo $this->twig->render('admin/contestants/index.twig', [
@@ -323,7 +417,9 @@ class AdminController {
     }
 
     public function contestantForm($id = null) {
-        global $conn;
+        global $conn, $admin_data;
+        $admin_id = $admin_data['admin_id'];
+        $role = $admin_data['role'] ?? 'organizer';
         
         $contestant = null;
         $positions = [];
@@ -339,8 +435,13 @@ class AdminController {
             }
         }
 
-        $stmt = $conn->prepare("SELECT * FROM election WHERE session = 0 ORDER BY election_name ASC");
-        $stmt->execute();
+        if ($role === 'super_admin') {
+            $stmt = $conn->prepare("SELECT * FROM election WHERE session = 0 ORDER BY election_name ASC");
+            $stmt->execute();
+        } else {
+            $stmt = $conn->prepare("SELECT * FROM election WHERE session = 0 AND organizer_id = ? ORDER BY election_name ASC");
+            $stmt->execute([$admin_id]);
+        }
         $elections = $stmt->fetchAll();
 
         echo $this->twig->render('admin/contestants/form.twig', [
@@ -411,18 +512,33 @@ class AdminController {
     }
 
     public function contestantArchive() {
-        global $conn;
+        global $conn, $admin_data;
+        $admin_id = $admin_data['admin_id'];
+        $role = $admin_data['role'] ?? 'organizer';
         
-        $query = "
-            SELECT c.*, p.position_name, e.election_name, e.election_by 
-            FROM cont_details c
-            INNER JOIN positions p ON c.cont_position = p.position_id
-            INNER JOIN election e ON c.contestant_election = e.election_id
-            WHERE c.del_cont = 'yes'
-            ORDER BY c.contestant_id DESC
-        ";
-        $stmt = $conn->prepare($query);
-        $stmt->execute();
+        if ($role === 'super_admin') {
+            $query = "
+                SELECT c.*, p.position_name, e.election_name, e.election_by 
+                FROM cont_details c
+                INNER JOIN positions p ON c.cont_position = p.position_id
+                INNER JOIN election e ON c.contestant_election = e.election_id
+                WHERE c.del_cont = 'yes'
+                ORDER BY c.contestant_id DESC
+            ";
+            $stmt = $conn->prepare($query);
+            $stmt->execute();
+        } else {
+            $query = "
+                SELECT c.*, p.position_name, e.election_name, e.election_by 
+                FROM cont_details c
+                INNER JOIN positions p ON c.cont_position = p.position_id
+                INNER JOIN election e ON c.contestant_election = e.election_id
+                WHERE c.del_cont = 'yes' AND e.organizer_id = ?
+                ORDER BY c.contestant_id DESC
+            ";
+            $stmt = $conn->prepare($query);
+            $stmt->execute([$admin_id]);
+        }
         $contestants = $stmt->fetchAll();
 
         echo $this->twig->render('admin/contestants/archive.twig', [
@@ -438,16 +554,30 @@ class AdminController {
     }
 
     public function voters() {
-        global $conn;
+        global $conn, $admin_data;
+        $admin_id = $admin_data['admin_id'];
+        $role = $admin_data['role'] ?? 'organizer';
         
-        $query = "
-            SELECT r.*, e.election_name, e.election_by, e.session 
-            FROM registrars r
-            INNER JOIN election e ON r.registrar_election = e.election_id
-            ORDER BY r.id DESC
-        ";
-        $stmt = $conn->prepare($query);
-        $stmt->execute();
+        if ($role === 'super_admin') {
+            $query = "
+                SELECT r.*, e.election_name, e.election_by, e.session 
+                FROM registrars r
+                INNER JOIN election e ON r.registrar_election = e.election_id
+                ORDER BY r.id DESC
+            ";
+            $stmt = $conn->prepare($query);
+            $stmt->execute();
+        } else {
+            $query = "
+                SELECT r.*, e.election_name, e.election_by, e.session 
+                FROM registrars r
+                INNER JOIN election e ON r.registrar_election = e.election_id
+                WHERE e.organizer_id = ?
+                ORDER BY r.id DESC
+            ";
+            $stmt = $conn->prepare($query);
+            $stmt->execute([$admin_id]);
+        }
         $voters = $stmt->fetchAll();
 
         echo $this->twig->render('admin/voters/index.twig', [
@@ -456,7 +586,9 @@ class AdminController {
     }
 
     public function voterForm($id = null) {
-        global $conn;
+        global $conn, $admin_data;
+        $admin_id = $admin_data['admin_id'];
+        $role = $admin_data['role'] ?? 'organizer';
         
         $voter = null;
         if ($id) {
@@ -465,8 +597,13 @@ class AdminController {
             $voter = $stmt->fetch();
         }
 
-        $stmt = $conn->prepare("SELECT * FROM election WHERE session = 0 ORDER BY election_name ASC");
-        $stmt->execute();
+        if ($role === 'super_admin') {
+            $stmt = $conn->prepare("SELECT * FROM election WHERE session = 0 ORDER BY election_name ASC");
+            $stmt->execute();
+        } else {
+            $stmt = $conn->prepare("SELECT * FROM election WHERE session = 0 AND organizer_id = ? ORDER BY election_name ASC");
+            $stmt->execute([$admin_id]);
+        }
         $elections = $stmt->fetchAll();
 
         echo $this->twig->render('admin/voters/form.twig', [
@@ -540,18 +677,35 @@ class AdminController {
     }
 
     public function voterDuplicates() {
-        global $conn;
-        $query = "
-            SELECT r.*, e.election_name, e.election_by 
-            FROM registrars r
-            INNER JOIN election e ON r.registrar_election = e.election_id
-            WHERE r.std_email IN (
-                SELECT std_email FROM registrars GROUP BY std_email HAVING COUNT(*) > 1
-            )
-            ORDER BY r.std_email ASC
-        ";
-        $stmt = $conn->prepare($query);
-        $stmt->execute();
+        global $conn, $admin_data;
+        $admin_id = $admin_data['admin_id'];
+        $role = $admin_data['role'] ?? 'organizer';
+        
+        if ($role === 'super_admin') {
+            $query = "
+                SELECT r.*, e.election_name, e.election_by 
+                FROM registrars r
+                INNER JOIN election e ON r.registrar_election = e.election_id
+                WHERE r.std_email IN (
+                    SELECT std_email FROM registrars GROUP BY std_email HAVING COUNT(*) > 1
+                )
+                ORDER BY r.std_email ASC
+            ";
+            $stmt = $conn->prepare($query);
+            $stmt->execute();
+        } else {
+            $query = "
+                SELECT r.*, e.election_name, e.election_by 
+                FROM registrars r
+                INNER JOIN election e ON r.registrar_election = e.election_id
+                WHERE e.organizer_id = ? AND r.std_email IN (
+                    SELECT std_email FROM registrars GROUP BY std_email HAVING COUNT(*) > 1
+                )
+                ORDER BY r.std_email ASC
+            ";
+            $stmt = $conn->prepare($query);
+            $stmt->execute([$admin_id]);
+        }
         $duplicates = $stmt->fetchAll();
 
         echo $this->twig->render('admin/voters/duplicates.twig', [
@@ -560,10 +714,17 @@ class AdminController {
     }
 
     public function reports($election_id) {
-        global $conn;
+        global $conn, $admin_data;
+        $admin_id = $admin_data['admin_id'];
+        $role = $admin_data['role'] ?? 'organizer';
         
-        $stmt = $conn->prepare("SELECT * FROM election WHERE election_id = ?");
-        $stmt->execute([$election_id]);
+        if ($role === 'super_admin') {
+            $stmt = $conn->prepare("SELECT * FROM election WHERE election_id = ?");
+            $stmt->execute([$election_id]);
+        } else {
+            $stmt = $conn->prepare("SELECT * FROM election WHERE election_id = ? AND organizer_id = ?");
+            $stmt->execute([$election_id, $admin_id]);
+        }
         $election = $stmt->fetch();
         
         if (!$election || !in_array($election['session'], [1, 2])) {
@@ -621,12 +782,22 @@ class AdminController {
     }
 
     public function endElection($election_id) {
-        global $conn, $admin_id;
+        global $conn, $admin_id, $admin_data;
+        $role = $admin_data['role'] ?? 'organizer';
         
-        $stmt = $conn->prepare("UPDATE election SET session = 2 WHERE election_id = ? AND session = 1");
-        if ($stmt->execute([$election_id])) {
+        if ($role === 'super_admin') {
+            $stmt = $conn->prepare("UPDATE election SET session = 2 WHERE election_id = ? AND session = 1");
+            $result = $stmt->execute([$election_id]);
+        } else {
+            $stmt = $conn->prepare("UPDATE election SET session = 2 WHERE election_id = ? AND session = 1 AND organizer_id = ?");
+            $result = $stmt->execute([$election_id, $admin_id]);
+        }
+        
+        if ($stmt->rowCount() > 0) {
             add_to_log("Election ended: $election_id", $admin_id, 'admin');
             $_SESSION['flash_success'] = "Election ended successfully.";
+        } else {
+            $_SESSION['flash_error'] = "Unable to end election. It may not belong to you or is not currently active.";
         }
         redirect(PROOT . 'admin/reports/' . $election_id);
     }
@@ -699,5 +870,56 @@ class AdminController {
         }
 
         redirect(PROOT . 'admin/settings');
+    }
+    public function organizers() {
+        global $conn, $admin_data;
+        if (($admin_data['role'] ?? 'organizer') !== 'super_admin') {
+            $_SESSION['flash_error'] = "Access Denied.";
+            redirect(PROOT . 'admin');
+        }
+
+        $stmt = $conn->prepare("SELECT * FROM puubu_admin WHERE role = 'organizer' ORDER BY id DESC");
+        $stmt->execute();
+        $organizers = $stmt->fetchAll();
+
+        echo $this->twig->render('admin/organizers.twig', [
+            'organizers' => $organizers
+        ]);
+    }
+
+    public function organizerStore() {
+        global $conn, $admin_data, $admin_id;
+        if (($admin_data['role'] ?? 'organizer') !== 'super_admin') {
+            $_SESSION['flash_error'] = "Access Denied.";
+            redirect(PROOT . 'admin');
+        }
+
+        if (!isset($_POST['csrf_token']) || !verify_csrf_token($_POST['csrf_token'])) {
+            $_SESSION['flash_error'] = "Invalid CSRF token.";
+            redirect(PROOT . 'admin/organizers');
+        }
+
+        $fname = sanitize($_POST['fname']);
+        $lname = sanitize($_POST['lname']);
+        $email = sanitize($_POST['email']);
+        $password = sanitize($_POST['password']);
+
+        if (empty($fname) || empty($email) || empty($password)) {
+            $_SESSION['flash_error'] = "All fields are required.";
+            redirect(PROOT . 'admin/organizers');
+        }
+
+        $new_id = guidv4();
+        $hashed = password_hash($password, PASSWORD_DEFAULT);
+        
+        $stmt = $conn->prepare("INSERT INTO puubu_admin (admin_id, cfname, clname, cemail, ckey, role, trash) VALUES (?, ?, ?, ?, ?, 'organizer', 0)");
+        if ($stmt->execute([$new_id, $fname, $lname, $email, $hashed])) {
+            add_to_log("Created Organizer: $email", $admin_id, 'admin');
+            $_SESSION['flash_success'] = "Organizer account created.";
+        } else {
+            $_SESSION['flash_error'] = "Failed to create organizer.";
+        }
+
+        redirect(PROOT . 'admin/organizers');
     }
 }

@@ -43,6 +43,13 @@
             <a class="nav-link {% if active_page == 'voters' %}active{% endif %}" href="{{ PROOT }}admin/voters">
                 <span class="material-symbols-outlined">crowdsource</span> Voters
             </a>
+            
+            {% if admin.role == 'super_admin' %}
+            <div class="sidebar-heading">System Management</div>
+            <a class="nav-link {% if active_page == 'organizers' %}active{% endif %}" href="{{ PROOT }}admin/organizers">
+                <span class="material-symbols-outlined">admin_panel_settings</span> Organizers
+            </a>
+            {% endif %}
 
             <div class="sidebar-heading">Account</div>
             <a class="nav-link {% if active_page == 'settings' %}active{% endif %}" href="{{ PROOT }}admin/settings">

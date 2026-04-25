@@ -41,7 +41,7 @@
                 <div class="row justify-content-center">
                     <div class="col-md-10">
                         <div class="glass-card p-4 p-md-5 mb-5">
-                            <form action="{{ PROOT }}controller/control.add.vote.count.php" method="POST">
+                            <form action="{{ PROOT }}submitvote" method="POST">
                                 {{ csrf_field() }}
                                 <input type="hidden" name="number-of-positions" value="{{ ballot|length }}">
                                 <input type="hidden" name="name-of-election" value="{{ electionId }}">

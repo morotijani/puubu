@@ -42,8 +42,13 @@ $router->all('/signin', function() use ($twig) {
 });
 
 $router->get('/auth/logout', function() {
+    $gate = $_SESSION['admin_gate_passed'] ?? false;
     session_unset();
     session_destroy();
+    session_start();
+    if ($gate) {
+        $_SESSION['admin_gate_passed'] = $gate;
+    }
     redirect(PROOT . 'signin');
 });
 
@@ -57,6 +62,12 @@ $router->get('/startvote', function() use ($twig) {
     require_once __DIR__ . '/../app/Controllers/VoterController.php';
     $controller = new \App\Controllers\VoterController($twig);
     $controller->ballot();
+});
+
+$router->post('/submitvote', function() use ($twig) {
+    require_once __DIR__ . '/../app/Controllers/VoterController.php';
+    $controller = new \App\Controllers\VoterController($twig);
+    $controller->submitVote();
 });
 
 // Admin Routes
@@ -91,13 +102,18 @@ $router->mount('/admin', function() use ($router, $twig) {
     });
 
     $router->get('/auth/logout', function() {
+        $gate = $_SESSION['admin_gate_passed'] ?? false;
         session_unset();
         session_destroy();
+        session_start();
+        if ($gate) {
+            $_SESSION['admin_gate_passed'] = $gate;
+        }
         redirect(PROOT . 'admin/signin');
     });
 
     // Protected Admin Routes (require login)
-    $router->before('GET|POST', '^/(?!signin|verify-2fa).*', function() {
+    $router->before('GET|POST', '^/?(?!signin|verify-2fa).*', function() {
         if (!cadminIsLoggedIn()) {
             cadminLoginErrorRedirect();
         }
@@ -262,6 +278,19 @@ $router->mount('/admin', function() use ($router, $twig) {
         require_once __DIR__ . '/../app/Controllers/AdminController.php';
         $controller = new \App\Controllers\AdminController($twig);
         $controller->endElection($id);
+    });
+
+    // Organizers
+    $router->get('/organizers', function() use ($twig) {
+        require_once __DIR__ . '/../app/Controllers/AdminController.php';
+        $controller = new \App\Controllers\AdminController($twig);
+        $controller->organizers();
+    });
+
+    $router->post('/organizers/store', function() use ($twig) {
+        require_once __DIR__ . '/../app/Controllers/AdminController.php';
+        $controller = new \App\Controllers\AdminController($twig);
+        $controller->organizerStore();
     });
 
     // Settings

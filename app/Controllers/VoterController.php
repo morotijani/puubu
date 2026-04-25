@@ -156,4 +156,77 @@ class VoterController {
             'electionId' => $electionId
         ]);
     }
+
+    public function submitVote() {
+        global $conn, $voter_result;
+        
+        if (!isset($_SESSION['voter_accessed'])) {
+            redirect(PROOT . 'signin');
+        }
+
+        if (!isset($_POST['csrf_token']) || !verify_csrf_token($_POST['csrf_token'])) {
+            die("Invalid CSRF token.");
+        }
+
+        $voter_row = $voter_result[0];
+        $voter_id = $voter_row['voter_id'];
+        $election_id = sanitize($_POST['name-of-election'] ?? '');
+        
+        if ($voter_row['session'] != 1 || $election_id != $voter_row['election_id']) {
+            die("Election is not active or invalid.");
+        }
+
+        $num_positions = intval($_POST['number-of-positions'] ?? 0);
+
+        try {
+            $conn->beginTransaction();
+
+            for ($i = 0; $i < $num_positions; $i++) {
+                $position_id = sanitize($_POST["name-of-positions{$i}"] ?? '');
+                
+                if (isset($_POST["contestant{$i}"]) && !empty($_POST["contestant{$i}"])) {
+                    $contestant_id = sanitize($_POST["contestant{$i}"]);
+                    // Increment results
+                    $stmt = $conn->prepare("UPDATE vote_counts SET results = results + 1 WHERE contestant_id = ? AND position_id = ? AND election_id = ?");
+                    $stmt->execute([$contestant_id, $position_id, $election_id]);
+                } elseif (isset($_POST["onecont{$i}"]) && !empty($_POST["onecont{$i}"])) {
+                    $val = explode(',', $_POST["onecont{$i}"]);
+                    if (count($val) == 2) {
+                        $choice = sanitize($val[0]);
+                        $contestant_id = sanitize($val[1]);
+                        if ($choice === 'yes') {
+                            $stmt = $conn->prepare("UPDATE vote_counts SET results = results + 1 WHERE contestant_id = ? AND position_id = ? AND election_id = ?");
+                            $stmt->execute([$contestant_id, $position_id, $election_id]);
+                        } else {
+                            $stmt = $conn->prepare("UPDATE vote_counts SET results_no = results_no + 1 WHERE contestant_id = ? AND position_id = ? AND election_id = ?");
+                            $stmt->execute([$contestant_id, $position_id, $election_id]);
+                        }
+                    }
+                } else {
+                    // Skipped
+                    $stmt = $conn->prepare("UPDATE positions SET position_skipped_votes = position_skipped_votes + 1 WHERE position_id = ? AND election_id = ?");
+                    $stmt->execute([$position_id, $election_id]);
+                }
+            }
+
+            // Mark voter as done
+            $vhd_id = guidv4();
+            $stmt = $conn->prepare("INSERT INTO voterhasdone (vhd_id, voter_id, election_id, voterhasdone_status) VALUES (?, ?, ?, 1)");
+            $stmt->execute([$vhd_id, $voter_id, $election_id]);
+
+            add_to_log("Voter casted vote", $voter_id, 'user');
+
+            $conn->commit();
+
+            session_unset();
+            session_destroy();
+
+            redirect(PROOT . 'signin?msg=voted');
+
+        } catch (\Exception $e) {
+            $conn->rollBack();
+            die("An error occurred while saving your vote. Please contact administration. " . $e->getMessage());
+        }
+    }
 }
+

@@ -1,0 +1,103 @@
+{% extends "admin/layout.twig" %}
+
+{% set active_page = 'contestants' %}
+
+{% block title %}Contestants • Puubu Admin{% endblock %}
+
+{% block content %}
+    <div class="row align-items-center mb-7">
+        <div class="col">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-1">
+                    <li class="breadcrumb-item"><a class="text-body-secondary" href="{{ PROOT }}admin">Admin</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Contestants</li>
+                </ol>
+            </nav>
+            <h1 class="fs-4 mb-0">Contestants Manager</h1>
+        </div>
+        <div class="col-12 col-sm-auto mt-4 mt-sm-0">
+            <div class="row gx-2">
+                <div class="col-6 col-sm-auto">
+                    <a class="btn btn-primary w-100" href="{{ PROOT }}admin/contestants/add">
+                        <i class="bi bi-person-plus"></i> Add Contestant
+                    </a>
+                </div>
+                <div class="col-6 col-sm-auto">
+                    <a href="{{ PROOT }}admin/contestants/archive" class="btn btn-outline-secondary w-100">
+                        <i class="bi bi-archive"></i> Archive
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Contestants Table -->
+    <div class="card mb-6">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h3 class="fs-6 mb-0">Active Contestants</h3>
+            <div class="col-md-4">
+                <input type="text" id="contestantSearch" class="form-control form-control-sm" placeholder="Search contestants...">
+            </div>
+        </div>
+        <div class="table-responsive">
+            <table class="table align-middle mb-0" id="contestantsTable">
+                <thead>
+                    <tr>
+                        <th class="fs-sm">Contestant</th>
+                        <th class="fs-sm">Ballot #</th>
+                        <th class="fs-sm">Position</th>
+                        <th class="fs-sm text-end">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for cont in contestants %}
+                        <tr>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <div class="avatar avatar-sm me-3">
+                                        <img class="avatar-img rounded-circle" src="{{ PROOT }}media/uploadedprofile/{{ cont.cont_profile }}" alt="{{ cont.cont_fname }}" onerror="this.src='{{ PROOT }}media/default-avatar.png'">
+                                    </div>
+                                    <div>
+                                        <div class="fw-bold text-heading">{{ cont.cont_fname }} {{ cont.cont_lname }}</div>
+                                        <div class="fs-sm text-muted">{{ cont.election_name }}</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td><span class="badge bg-dark">{{ cont.contestant_ballot_number }}</span></td>
+                            <td>{{ cont.position_name }}</td>
+                            <td class="text-end">
+                                {% if cont.session == 0 %}
+                                    <a href="{{ PROOT }}admin/contestants/edit/{{ cont.contestant_id }}" class="btn btn-sm btn-warning">
+                                        <i class="bi bi-pencil-square"></i>
+                                    </a>
+                                    <a href="{{ PROOT }}admin/contestants/toggle-delete/{{ cont.contestant_id }}/yes" class="btn btn-sm btn-outline-danger ms-1" onclick="return confirm('Move to archive?')">
+                                        <i class="bi bi-archive"></i>
+                                    </a>
+                                {% else %}
+                                    <span class="text-muted small">Locked</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <td colspan="4" class="text-center py-5">No active contestants found.</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    $(document).ready(function() {
+        $("#contestantSearch").on("keyup", function() {
+            var value = $(this).val().toLowerCase();
+            $("#contestantsTable tbody tr").filter(function() {
+                $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+            });
+        });
+    });
+</script>
+{% endblock %}

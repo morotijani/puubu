@@ -1,0 +1,85 @@
+{% extends "layout.twig" %}
+
+{% block title %}Sign In • Puubu{% endblock %}
+
+{% block content %}
+    <nav class="navbar navbar-expand-lg navbar-sticky navbar-dark">
+        <div class="container">
+            <a href="{{ PROOT }}index" class="navbar-brand"><img src="{{ PROOT }}media/puubu.favicon.png" alt="Logo"></a>
+        </div>
+    </nav>
+
+    <section class="overflow-hidden">
+        <div class="container d-flex flex-column py-20.5 min-vh-100 level-3">
+            <div class="row align-items-center justify-content-center justify-content-lg-between my-auto">
+                <div class="col-md-8 col-lg-5 order-lg-2 mb-5 mb-lg-0" data-aos="fade-up">
+                    <img src="{{ PROOT }}media/44100.jpg" class="img-fluid" alt="Illustration">
+                </div>
+                <div class="col-md-10 col-lg-6 col-xl-5 text-center text-lg-start order-lg-1">
+                    <small style="color: #FF9800;">Sign in to, </small><h1>PuuBu</h1>
+                    <p class="lead text-secondary mb-5">We have the power to make a difference. But we need to VOTE.</p>
+                    <div class="row align-items-center g-3">
+                        <form action="" method="POST">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                            {% if displayErrors %}
+                                <code id="displayErrors">{{ displayErrors }}</code>
+                            {% endif %}
+                            
+                            <div class="form-group mb-1">
+                                <label for="voter_id" class="form-label">Your ID</label>
+                                <input type="text" autofocus autocomplete="off" class="form-control form-control-sm" id="voter_id" name="voter_id" placeholder="Your ID" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="voter_password" class="form-label">Your Password</label>
+                                <div class="input-group">
+                                    <input type="password" class="form-control form-control-sm" id="voter_password" name="voter_password" placeholder="**********" required>
+                                    <div class="input-group-append" onclick="controlPassword();" style="cursor: pointer;">
+                                        <span class="input-group-text">
+                                            <i id="show" class="bi bi-eye"></i>
+                                            <i id="hide" class="bi bi-eye-slash" style="display: none;"></i>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-auto mt-1">
+                                <button type="submit" name="submitVoter" id="submitVoter" class="btn btn-light btn-with-icon rounded-pill btn-sm text-color">Let's Go! <i class="bi bi-arrow-right"></i></button>
+                            </div>
+                        </form>
+                        <div class="col text-md-start mb-1">
+                            <p class="text-primary">Can't login contact <span class="fw-bold"><a href="https://wa.me/+233209425285/?text={{ login_issue }}" target="_blank" class="text-color">Puubu administration</a></span> now.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <figure class="background">
+            <svg width="100%" height="100%" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle data-aos="fade-up" data-aos-delay="200" cx="120%" cy="-40%" r="50%" stroke="#dddddd" stroke-opacity="1" />
+                <circle data-aos="fade-up" data-aos-delay="400" cx="85%" cy="125%" r="75%" stroke="#dddddd" stroke-opacity="1" />
+                <circle data-aos="fade-up" data-aos-delay="600" cx="-25%" cy="125%" r="50%" stroke="#dddddd" stroke-opacity="1" />
+            </svg>
+        </figure>
+    </section>
+{% endblock %}
+
+{% block scripts %}
+<script type="text/javascript">
+    function controlPassword() {
+        var x = document.getElementById("voter_password");
+        var show = document.getElementById("show");
+        var hide = document.getElementById("hide");
+        if (x.type === "password") {
+            x.type = "text";
+            show.style.display = "none";
+            hide.style.display = "inline-block";
+        } else {
+            x.type = "password";
+            show.style.display = "inline-block";
+            hide.style.display = "none";
+        }
+    }
+</script>
+{% endblock %}

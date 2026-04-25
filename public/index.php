@@ -1,0 +1,283 @@
+<?php
+/**
+ * Puubu Micro-Framework Entry Point
+ */
+
+require_once __DIR__ . '/../connection/conn.php';
+
+// Create Router instance
+$router = new \Bramus\Router\Router();
+
+// Twig Setup
+$loader = new \Twig\Loader\FilesystemLoader(__DIR__ . '/../app/Views');
+$twig = new \Twig\Environment($loader, [
+    'cache' => __DIR__ . '/../connection/cache',
+    'debug' => true,
+]);
+
+// Register Global Functions
+$twig->addFunction(new \Twig\TwigFunction('csrf_token', function() {
+    return $_SESSION['csrf_token'] ?? '';
+}));
+
+$twig->addFunction(new \Twig\TwigFunction('csrf_field', function() {
+    return csrf_field();
+}));
+
+// Global Twig Variables
+$twig->addGlobal('PROOT', PROOT);
+$twig->addGlobal('flash', $flash);
+if (isset($admin_data)) $twig->addGlobal('admin', $admin_data);
+
+// Define Routes
+$router->get('/', function() {
+    redirect(PROOT . 'signin');
+});
+
+$router->all('/signin', function() use ($twig) {
+    require_once __DIR__ . '/../app/Controllers/VoterController.php';
+    $controller = new \App\Controllers\VoterController($twig);
+    $controller->login();
+});
+
+$router->get('/auth/logout', function() {
+    session_unset();
+    session_destroy();
+    redirect(PROOT . 'signin');
+});
+
+$router->get('/votingon', function() use ($twig) {
+    require_once __DIR__ . '/../app/Controllers/VoterController.php';
+    $controller = new \App\Controllers\VoterController($twig);
+    $controller->dashboard();
+});
+
+$router->get('/startvote', function() use ($twig) {
+    require_once __DIR__ . '/../app/Controllers/VoterController.php';
+    $controller = new \App\Controllers\VoterController($twig);
+    $controller->ballot();
+});
+
+// Admin Routes
+$router->mount('/admin', function() use ($router, $twig) {
+    
+    // Admin URL Secret Token Gatekeeper
+    $router->before('GET|POST', '/.*', function() {
+        if (!isset($_SESSION['admin_gate_passed']) || $_SESSION['admin_gate_passed'] !== true) {
+            if (isset($_GET['token']) && $_GET['token'] === ADMIN_ACCESS_TOKEN) {
+                $_SESSION['admin_gate_passed'] = true;
+            } else {
+                header('HTTP/1.0 403 Forbidden');
+                die('Access Restricted');
+            }
+        }
+    });
+
+    $router->all('/signin', function() use ($twig) {
+        require_once __DIR__ . '/../app/Controllers/AdminController.php';
+        $controller = new \App\Controllers\AdminController($twig);
+        $controller->login();
+    });
+
+    $router->all('/verify-2fa', function() use ($twig) {
+        require_once __DIR__ . '/../app/Controllers/AdminController.php';
+        $controller = new \App\Controllers\AdminController($twig);
+        $controller->verify2fa();
+    });
+
+    $router->get('/auth/logout', function() {
+        session_unset();
+        session_destroy();
+        redirect(PROOT . 'admin/signin');
+    });
+
+    // Protected Admin Routes (require login)
+    $router->before('GET|POST', '/(?!signin|verify-2fa).*', function() {
+        if (!cadminIsLoggedIn()) {
+            cadminLoginErrorRedirect();
+        }
+    });
+
+    $router->get('/', function() use ($twig) {
+        require_once __DIR__ . '/../app/Controllers/AdminController.php';
+        $controller = new \App\Controllers\AdminController($twig);
+        $controller->index();
+    });
+
+    $router->all('/setup-2fa', function() use ($twig) {
+        require_once __DIR__ . '/../app/Controllers/AdminController.php';
+        $controller = new \App\Controllers\AdminController($twig);
+        $controller->setup2fa();
+    });
+
+    // Election Management
+    $router->get('/elections', function() use ($twig) {
+        require_once __DIR__ . '/../app/Controllers/AdminController.php';
+        $controller = new \App\Controllers\AdminController($twig);
+        $controller->elections();
+    });
+
+    $router->post('/elections/store', function() use ($twig) {
+        require_once __DIR__ . '/../app/Controllers/AdminController.php';
+        $controller = new \App\Controllers\AdminController($twig);
+        $controller->electionStore();
+    });
+
+    $router->get('/elections/delete/(\w+)', function($id) use ($twig) {
+        require_once __DIR__ . '/../app/Controllers/AdminController.php';
+        $controller = new \App\Controllers\AdminController($twig);
+        $controller->electionDelete($id);
+    });
+
+    // Position Management
+    $router->get('/positions', function() use ($twig) {
+        require_once __DIR__ . '/../app/Controllers/AdminController.php';
+        $controller = new \App\Controllers\AdminController($twig);
+        $controller->positions();
+    });
+
+    $router->post('/positions/store', function() use ($twig) {
+        require_once __DIR__ . '/../app/Controllers/AdminController.php';
+        $controller = new \App\Controllers\AdminController($twig);
+        $controller->positionStore();
+    });
+
+    $router->get('/positions/delete/(\w+)', function($id) use ($twig) {
+        require_once __DIR__ . '/../app/Controllers/AdminController.php';
+        $controller = new \App\Controllers\AdminController($twig);
+        $controller->positionDelete($id);
+    });
+
+    // Contestant Management
+    $router->get('/contestants', function() use ($twig) {
+        require_once __DIR__ . '/../app/Controllers/AdminController.php';
+        $controller = new \App\Controllers\AdminController($twig);
+        $controller->contestants();
+    });
+
+    $router->get('/contestants/add', function() use ($twig) {
+        require_once __DIR__ . '/../app/Controllers/AdminController.php';
+        $controller = new \App\Controllers\AdminController($twig);
+        $controller->contestantForm();
+    });
+
+    $router->get('/contestants/edit/(\w+)', function($id) use ($twig) {
+        require_once __DIR__ . '/../app/Controllers/AdminController.php';
+        $controller = new \App\Controllers\AdminController($twig);
+        $controller->contestantForm($id);
+    });
+
+    $router->post('/contestants/store', function() use ($twig) {
+        require_once __DIR__ . '/../app/Controllers/AdminController.php';
+        $controller = new \App\Controllers\AdminController($twig);
+        $controller->contestantStore();
+    });
+
+    $router->get('/contestants/archive', function() use ($twig) {
+        require_once __DIR__ . '/../app/Controllers/AdminController.php';
+        $controller = new \App\Controllers\AdminController($twig);
+        $controller->contestantArchive();
+    });
+
+    $router->get('/contestants/toggle-delete/(\w+)/(\w+)', function($id, $status) use ($twig) {
+        require_once __DIR__ . '/../app/Controllers/AdminController.php';
+        $controller = new \App\Controllers\AdminController($twig);
+        $controller->contestantToggleDelete($id, $status);
+    });
+
+    $router->get('/api/positions/(\w+)', function($id) use ($twig) {
+        require_once __DIR__ . '/../app/Controllers/AdminController.php';
+        $controller = new \App\Controllers\AdminController($twig);
+        $controller->getPositionsByElection($id);
+    });
+
+    // Voter Management
+    $router->get('/voters', function() use ($twig) {
+        require_once __DIR__ . '/../app/Controllers/AdminController.php';
+        $controller = new \App\Controllers\AdminController($twig);
+        $controller->voters();
+    });
+
+    $router->get('/voters/add', function() use ($twig) {
+        require_once __DIR__ . '/../app/Controllers/AdminController.php';
+        $controller = new \App\Controllers\AdminController($twig);
+        $controller->voterForm();
+    });
+
+    $router->get('/voters/edit/(\w+)', function($id) use ($twig) {
+        require_once __DIR__ . '/../app/Controllers/AdminController.php';
+        $controller = new \App\Controllers\AdminController($twig);
+        $controller->voterForm($id);
+    });
+
+    $router->post('/voters/store', function() use ($twig) {
+        require_once __DIR__ . '/../app/Controllers/AdminController.php';
+        $controller = new \App\Controllers\AdminController($twig);
+        $controller->voterStore();
+    });
+
+    $router->get('/voters/delete/(\w+)', function($id) use ($twig) {
+        require_once __DIR__ . '/../app/Controllers/AdminController.php';
+        $controller = new \App\Controllers\AdminController($twig);
+        $controller->voterDelete($id);
+    });
+
+    $router->post('/voters/bulk-delete', function() use ($twig) {
+        require_once __DIR__ . '/../app/Controllers/AdminController.php';
+        $controller = new \App\Controllers\AdminController($twig);
+        $controller->voterBulkDelete();
+    });
+
+    $router->get('/voters/truncate', function() use ($twig) {
+        require_once __DIR__ . '/../app/Controllers/AdminController.php';
+        $controller = new \App\Controllers\AdminController($twig);
+        $controller->voterTruncate();
+    });
+
+    $router->get('/voters/duplicates', function() use ($twig) {
+        require_once __DIR__ . '/../app/Controllers/AdminController.php';
+        $controller = new \App\Controllers\AdminController($twig);
+        $controller->voterDuplicates();
+    });
+
+    // Reports
+    $router->get('/reports/(\w+)', function($id) use ($twig) {
+        require_once __DIR__ . '/../app/Controllers/AdminController.php';
+        $controller = new \App\Controllers\AdminController($twig);
+        $controller->reports($id);
+    });
+
+    $router->get('/api/reports/(\w+)', function($id) use ($twig) {
+        require_once __DIR__ . '/../app/Controllers/AdminController.php';
+        $controller = new \App\Controllers\AdminController($twig);
+        $controller->getReportData($id);
+    });
+
+    $router->get('/election/end/(\w+)', function($id) use ($twig) {
+        require_once __DIR__ . '/../app/Controllers/AdminController.php';
+        $controller = new \App\Controllers\AdminController($twig);
+        $controller->endElection($id);
+    });
+
+    // Settings
+    $router->get('/settings', function() use ($twig) {
+        require_once __DIR__ . '/../app/Controllers/AdminController.php';
+        $controller = new \App\Controllers\AdminController($twig);
+        $controller->settings();
+    });
+
+    $router->post('/settings/profile', function() use ($twig) {
+        require_once __DIR__ . '/../app/Controllers/AdminController.php';
+        $controller = new \App\Controllers\AdminController($twig);
+        $controller->profileUpdate();
+    });
+
+    $router->post('/settings/password', function() use ($twig) {
+        require_once __DIR__ . '/../app/Controllers/AdminController.php';
+        $controller = new \App\Controllers\AdminController($twig);
+        $controller->passwordUpdate();
+    });
+});
+
+// Run it!
+$router->run();

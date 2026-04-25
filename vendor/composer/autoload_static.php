@@ -9,16 +9,24 @@ class ComposerStaticInita0c611d223cd5372222a98f837c3a899
     public static $files = array (
         '7b11c4dc42b3b3023073cb14e519683c' => __DIR__ . '/..' . '/ralouphie/getallheaders/src/getallheaders.php',
         '6e3fae29631ef280660b3cdad06f25a8' => __DIR__ . '/..' . '/symfony/deprecation-contracts/function.php',
-        '37a3dc5111fe8f707ab4c132ef1dbc62' => __DIR__ . '/..' . '/guzzlehttp/guzzle/src/functions_include.php',
         '320cde22f66dd4f5d3fd621d3e88b98f' => __DIR__ . '/..' . '/symfony/polyfill-ctype/bootstrap.php',
         '0e6d7bf4a5811bfa5cf40c5ccd6fae6a' => __DIR__ . '/..' . '/symfony/polyfill-mbstring/bootstrap.php',
+        '37a3dc5111fe8f707ab4c132ef1dbc62' => __DIR__ . '/..' . '/guzzlehttp/guzzle/src/functions_include.php',
         'a4a119a56e50fbb293281d9a48007e0e' => __DIR__ . '/..' . '/symfony/polyfill-php80/bootstrap.php',
+        '89efb1254ef2d1c5d80096acd12c4098' => __DIR__ . '/..' . '/twig/twig/src/Resources/core.php',
+        'ffecb95d45175fd40f75be8a23b34f90' => __DIR__ . '/..' . '/twig/twig/src/Resources/debug.php',
+        'c7baa00073ee9c61edf148c51917cfb4' => __DIR__ . '/..' . '/twig/twig/src/Resources/escaper.php',
+        'f844ccf1d25df8663951193c3fc307c8' => __DIR__ . '/..' . '/twig/twig/src/Resources/string_loader.php',
     );
 
     public static $prefixLengthsPsr4 = array (
         'i' =>
         array (
             'ipinfo\\ipinfo\\' => 14,
+        ),
+        'T' =>
+        array (
+            'Twig\\' => 5,
         ),
         'S' =>
         array (
@@ -54,6 +62,10 @@ class ComposerStaticInita0c611d223cd5372222a98f837c3a899
         'ipinfo\\ipinfo\\' =>
         array (
             0 => __DIR__ . '/..' . '/ipinfo/ipinfo/src',
+        ),
+        'Twig\\' =>
+        array (
+            0 => __DIR__ . '/..' . '/twig/twig/src',
         ),
         'Symfony\\Polyfill\\Php80\\' =>
         array (
@@ -122,6 +134,16 @@ class ComposerStaticInita0c611d223cd5372222a98f837c3a899
         ),
     );
 
+    public static $prefixesPsr0 = array (
+        'B' =>
+        array (
+            'Bramus' =>
+            array (
+                0 => __DIR__ . '/..' . '/bramus/router/src',
+            ),
+        ),
+    );
+
     public static $classMap = array (
         'Attribute' => __DIR__ . '/..' . '/symfony/polyfill-php80/Resources/stubs/Attribute.php',
         'Composer\\InstalledVersions' => __DIR__ . '/..' . '/composer/InstalledVersions.php',
@@ -136,6 +158,7 @@ class ComposerStaticInita0c611d223cd5372222a98f837c3a899
         return \Closure::bind(function () use ($loader) {
             $loader->prefixLengthsPsr4 = ComposerStaticInita0c611d223cd5372222a98f837c3a899::$prefixLengthsPsr4;
             $loader->prefixDirsPsr4 = ComposerStaticInita0c611d223cd5372222a98f837c3a899::$prefixDirsPsr4;
+            $loader->prefixesPsr0 = ComposerStaticInita0c611d223cd5372222a98f837c3a899::$prefixesPsr0;
             $loader->classMap = ComposerStaticInita0c611d223cd5372222a98f837c3a899::$classMap;
 
         }, null, ClassLoader::class);

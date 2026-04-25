@@ -360,12 +360,12 @@ function goBack() {
 		if (isset($result)) {
 			if ($adminData['is_2fa_enabled'] == 1) {
 				$_SESSION['2fa_pending'] = true;
-				redirect(PROOT . '172.06.84.0/verify_2fa');
+				redirect(PROOT . 'admin/verify-2fa');
 			} else {
 				$message = "logged into the system";
 				add_to_log($message, $admin_id, 'admin');
 				$_SESSION['flash_success'] = 'You are now logged in! Please consider setting up 2FA in settings.';
-				redirect(PROOT . '172.06.84.0/index');
+				redirect(PROOT . 'admin');
 			}
 		}
 	}
@@ -383,7 +383,7 @@ function goBack() {
 	// Redirect If not Logged in
 	function cadminLoginErrorRedirect($url = 'signin') {
 		$_SESSION['flash_error'] = '<div class="text-center" id="temporary" style="margin-top: 60px;">Oops... you must be logged in to access that page.</div>';
-		redirect(PROOT . '172.06.84.0/' . $url);
+		redirect(PROOT . 'admin/' . $url);
 	}
 
 	function admin_permission_error_redirect($url = 'signin'){

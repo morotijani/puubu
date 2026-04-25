@@ -1,0 +1,211 @@
+{% extends "admin/layout.twig" %}
+
+{% set active_page = 'dashboard' %}
+
+{% block title %}Live Reports • {{ election.election_name }}{% endblock %}
+
+{% block content %}
+    <div class="row align-items-center mb-7">
+        <div class="col">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-1">
+                    <li class="breadcrumb-item"><a class="text-body-secondary" href="{{ PROOT }}admin">Admin</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Live Reports</li>
+                </ol>
+            </nav>
+            <h1 class="fs-4 mb-0">{{ election.election_name }} - Live Results</h1>
+            <p class="text-muted small">Election By: {{ election.election_by }}</p>
+        </div>
+        <div class="col-12 col-sm-auto mt-4 mt-sm-0">
+            <div class="row gx-2">
+                {% if election.session == 1 %}
+                    <div class="col-auto">
+                        <a href="{{ PROOT }}admin/election/end/{{ election.election_id }}" class="btn btn-warning" onclick="return confirm('Are you sure you want to END this election? Voters will no longer be able to cast votes.')">
+                            <i class="bi bi-stop-circle me-1"></i> End Election
+                        </a>
+                    </div>
+                {% endif %}
+                <div class="col-auto">
+                    <button class="btn btn-light" onclick="location.reload()">
+                        <i class="bi bi-arrow-clockwise"></i> Refresh
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Stats Overview -->
+    <div class="row g-4 mb-7">
+        <div class="col-md-4">
+            <div class="card bg-primary text-white border-0 shadow-sm">
+                <div class="card-body p-4">
+                    <h6 class="text-white-50 text-uppercase mb-2 small fw-bold">Total Votes Cast</h6>
+                    <h2 class="mb-0" id="stat-total-votes">0</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card bg-dark text-white border-0 shadow-sm">
+                <div class="card-body p-4">
+                    <h6 class="text-white-50 text-uppercase mb-2 small fw-bold">Turnout Percentage</h6>
+                    <h2 class="mb-0" id="stat-turnout">0%</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card bg-white border-0 shadow-sm">
+                <div class="card-body p-4">
+                    <h6 class="text-muted text-uppercase mb-2 small fw-bold">Status</h6>
+                    <h2 class="mb-0">
+                        {% if election.session == 1 %}
+                            <span class="text-success"><i class="bi bi-record-fill me-1"></i> Running</span>
+                        {% else %}
+                            <span class="text-danger"><i class="bi bi-check-circle-fill me-1"></i> Ended</span>
+                        {% endif %}
+                    </h2>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Live Results Container -->
+    <div id="results-container">
+        <!-- Dynamic content injected via JS -->
+        <div class="text-center py-5">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            <p class="mt-3 text-muted">Gathering live results...</p>
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    const electionId = "{{ election.election_id }}";
+    const proot = "{{ PROOT }}";
+    let charts = {};
+
+    function updateStats(data) {
+        $('#stat-total-votes').text(data.total_votes_cast);
+        const turnout = data.total_voters > 0 ? ((data.total_votes_cast / data.total_voters) * 100).toFixed(1) : 0;
+        $('#stat-turnout').text(turnout + '%');
+    }
+
+    function renderResults(data) {
+        const container = $('#results-container');
+        
+        // Use a temporary storage to compare if we need to redraw
+        data.results.forEach((res, index) => {
+            const posId = res.position.position_id;
+            const posName = res.position.position_name;
+            
+            let cardId = `pos-card-${posId}`;
+            let chartId = `chart-${posId}`;
+            
+            if ($(`#${cardId}`).length === 0) {
+                // Create new card for position
+                const html = `
+                    <div class="card mb-6 shadow-sm border-0" id="${cardId}">
+                        <div class="card-header bg-transparent border-0 pt-4 px-4">
+                            <h3 class="fs-5 mb-0 fw-bold">${posName}</h3>
+                        </div>
+                        <div class="card-body p-4">
+                            <div class="row">
+                                <div class="col-lg-8">
+                                    <div style="height: 300px;">
+                                        <canvas id="${chartId}"></canvas>
+                                    </div>
+                                </div>
+                                <div class="col-lg-4">
+                                    <ul class="list-group list-group-flush" id="list-${posId}">
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                if (index === 0) container.empty();
+                container.append(html);
+            }
+
+            // Update List
+            const list = $(`#list-${posId}`);
+            list.empty();
+            
+            const labels = [];
+            const votes = [];
+            const colors = [
+                '#4e73df', '#1cc88a', '#36b9cc', '#f6c23e', '#e74a3b', 
+                '#858796', '#5a5c69', '#2e59d9', '#17a673', '#2c9faf'
+            ];
+
+            res.contestants.forEach((c, cIndex) => {
+                const name = c.cont_fname + ' ' + c.cont_lname;
+                labels.push(name);
+                votes.push(c.results);
+                
+                list.append(`
+                    <li class="list-group-item d-flex justify-content-between align-items-center bg-transparent px-0 border-0">
+                        <div>
+                            <span class="fw-bold">${name}</span>
+                            <div class="small text-muted">Ballot #${c.contestant_ballot_number}</div>
+                        </div>
+                        <span class="badge bg-primary rounded-pill fs-6 px-3">${c.results}</span>
+                    </li>
+                `);
+            });
+
+            // Update Chart
+            if (!charts[posId]) {
+                const ctx = document.getElementById(chartId).getContext('2d');
+                charts[posId] = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: 'Votes',
+                            data: votes,
+                            backgroundColor: colors.slice(0, labels.length),
+                            borderRadius: 8
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { legend: { display: false } },
+                        scales: {
+                            y: { beginAtZero: true, grid: { display: false } },
+                            x: { grid: { display: false } }
+                        }
+                    }
+                });
+            } else {
+                charts[posId].data.labels = labels;
+                charts[posId].data.datasets[0].data = votes;
+                charts[posId].update();
+            }
+        });
+    }
+
+    function pollData() {
+        $.ajax({
+            url: proot + 'admin/api/reports/' + electionId,
+            method: 'GET',
+            success: function(data) {
+                updateStats(data);
+                renderResults(data);
+            }
+        });
+    }
+
+    $(document).ready(function() {
+        pollData();
+        {% if election.session == 1 %}
+            setInterval(pollData, 5000);
+        {% endif %}
+    });
+</script>
+{% endblock %}

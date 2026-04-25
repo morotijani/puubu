@@ -1,0 +1,100 @@
+{% extends "admin/layout.twig" %}
+
+{% set active_page = 'settings' %}
+
+{% block title %}Settings • Puubu Admin{% endblock %}
+
+{% block content %}
+    <div class="row align-items-center mb-7">
+        <div class="col">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-1">
+                    <li class="breadcrumb-item"><a class="text-body-secondary" href="{{ PROOT }}admin">Admin</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Settings</li>
+                </ol>
+            </nav>
+            <h1 class="fs-4 mb-0">Account Settings</h1>
+        </div>
+    </div>
+
+    <div class="row g-7">
+        <!-- Profile Update -->
+        <div class="col-lg-6">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-transparent border-0 pt-4 px-4">
+                    <h3 class="fs-6 mb-0 fw-bold">Update Profile</h3>
+                </div>
+                <div class="card-body p-4">
+                    <form action="{{ PROOT }}admin/settings/profile" method="POST">
+                        {{ csrf_field() }}
+                        <div class="mb-3">
+                            <label class="form-label">First Name</label>
+                            <input type="text" class="form-control" name="fname" value="{{ admin.cfname }}" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Last Name</label>
+                            <input type="text" class="form-control" name="lname" value="{{ admin.clname }}" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Email Address</label>
+                            <input type="email" class="form-control" name="email" value="{{ admin.cemail }}" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Save Changes</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Password Change -->
+        <div class="col-lg-6">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-transparent border-0 pt-4 px-4">
+                    <h3 class="fs-6 mb-0 fw-bold">Change Password</h3>
+                </div>
+                <div class="card-body p-4">
+                    <form action="{{ PROOT }}admin/settings/password" method="POST">
+                        {{ csrf_field() }}
+                        <div class="mb-3">
+                            <label class="form-label">Old Password</label>
+                            <input type="password" class="form-control" name="old_password" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">New Password</label>
+                            <input type="password" class="form-control" name="password" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Confirm New Password</label>
+                            <input type="password" class="form-control" name="confirm" required>
+                        </div>
+                        <button type="submit" class="btn btn-dark">Update Password</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- 2FA Security -->
+            <div class="card shadow-sm border-0 mt-7">
+                <div class="card-header bg-transparent border-0 pt-4 px-4">
+                    <h3 class="fs-6 mb-0 fw-bold">Security (2FA)</h3>
+                </div>
+                <div class="card-body p-4">
+                    <div class="d-flex align-items-center justify-content-between">
+                        <div>
+                            <h5 class="fs-6 mb-1">Google Authenticator</h5>
+                            <p class="text-muted small mb-0">
+                                Status: 
+                                {% if admin.is_2fa_enabled %}
+                                    <span class="badge bg-success-subtle text-success">Enabled</span>
+                                {% else %}
+                                    <span class="badge bg-danger-subtle text-danger">Disabled</span>
+                                {% endif %}
+                            </p>
+                        </div>
+                        <a href="{{ PROOT }}admin/2fa/setup" class="btn btn-outline-dark btn-sm">
+                            Configure
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

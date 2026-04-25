@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="shortcut icon" href="{{ PROOT }}media/puubu.favicon.png" type="image/x-icon" />
+    <link rel="stylesheet" href="{{ PROOT }}dist/css/libs.bundle.css" />
+    <link rel="stylesheet" href="{{ PROOT }}dist/css/index.bundle.css" />
+    <title>Two-Step Verification • Puubu</title>
+</head>
+<body class="d-flex align-items-center bg-light-subtle">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-12 col-md-5 col-xl-4 my-8">
+                <div class="text-center mb-6">
+                    <h1 class="display-5 fw-bold mb-3">2FA Verification</h1>
+                    <p class="text-body-secondary">Enter the 6-digit code from your Google Authenticator app.</p>
+                </div>
+
+                {% if errorsMsg %}
+                    <div class="alert alert-danger" role="alert">{{ errorsMsg }}</div>
+                {% endif %}
+
+                <form method="POST">
+                    {{ csrf_field() }}
+                    <div class="mb-4 text-center">
+                        <input type="text" name="otp_code" class="form-control form-control-lg text-center" placeholder="000000" maxlength="6" autofocus required>
+                    </div>
+                    <button class="btn btn-lg btn-warning w-100" type="submit" name="verify2fa">Verify Code</button>
+                </form>
+
+                <p class="text-center mt-5">
+                    <a href="{{ PROOT }}auth/logout" class="text-body-secondary small">Back to Login</a>
+                </p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

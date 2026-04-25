@@ -1,0 +1,133 @@
+{% extends "admin/layout.twig" %}
+
+{% set active_page = 'voters' %}
+
+{% block title %}Voters • Puubu Admin{% endblock %}
+
+{% block content %}
+    <div class="row align-items-center mb-7">
+        <div class="col">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-1">
+                    <li class="breadcrumb-item"><a class="text-body-secondary" href="{{ PROOT }}admin">Admin</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Voters</li>
+                </ol>
+            </nav>
+            <h1 class="fs-4 mb-0">Voters Registrar</h1>
+        </div>
+        <div class="col-12 col-sm-auto mt-4 mt-sm-0">
+            <div class="row gx-2">
+                <div class="col-6 col-sm-auto">
+                    <a class="btn btn-primary w-100" href="{{ PROOT }}admin/voters/add">
+                        <i class="bi bi-person-plus"></i> Add Voter
+                    </a>
+                </div>
+                <div class="col-6 col-sm-auto dropdown">
+                    <button class="btn btn-outline-secondary w-100 dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                        More Options
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li><a class="dropdown-item" href="{{ PROOT }}admin/voters/duplicates">Find Duplicates</a></li>
+                        <li><a class="dropdown-item" href="{{ PROOT }}admin/voters/import">Import CSV</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item text-danger" href="{{ PROOT }}admin/voters/truncate" onclick="return confirm('ERASE ALL VOTERS? This cannot be undone!')">Truncate Table</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Voters Table -->
+    <div class="card mb-6">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h3 class="fs-6 mb-0">Registered Voters</h3>
+            <div class="col-md-4">
+                <input type="text" id="voterSearch" class="form-control form-control-sm" placeholder="Search voters...">
+            </div>
+        </div>
+        <form action="{{ PROOT }}admin/voters/bulk-delete" method="POST" id="bulkDeleteForm">
+            {{ csrf_field() }}
+            <div class="table-responsive">
+                <table class="table align-middle mb-0" id="votersTable">
+                    <thead>
+                        <tr>
+                            <th style="width: 40px;">
+                                <input type="checkbox" class="form-check-input" id="selectAll">
+                            </th>
+                            <th class="fs-sm">Voter</th>
+                            <th class="fs-sm">Identity #</th>
+                            <th class="fs-sm">Election</th>
+                            <th class="fs-sm text-end">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for voter in voters %}
+                            <tr>
+                                <td>
+                                    <input type="checkbox" name="voter_ids[]" value="{{ voter.voter_id }}" class="form-check-input voter-checkbox">
+                                </td>
+                                <td>
+                                    <div class="fw-bold text-heading">{{ voter.std_fname }} {{ voter.std_lname }}</div>
+                                    <div class="fs-sm text-muted">{{ voter.std_email }}</div>
+                                </td>
+                                <td><code class="text-primary">{{ voter.std_id }}</code></td>
+                                <td>{{ voter.election_name }}</td>
+                                <td class="text-end">
+                                    {% if voter.session == 0 %}
+                                        <a href="{{ PROOT }}admin/voters/edit/{{ voter.voter_id }}" class="btn btn-sm btn-warning">
+                                            <i class="bi bi-pencil-square"></i>
+                                        </a>
+                                        <a href="{{ PROOT }}admin/voters/delete/{{ voter.voter_id }}" class="btn btn-sm btn-outline-danger ms-1" onclick="return confirm('Delete this voter?')">
+                                            <i class="bi bi-trash"></i>
+                                        </a>
+                                    {% else %}
+                                        <span class="text-muted small">Locked</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% else %}
+                            <tr>
+                                <td colspan="5" class="text-center py-5">No voters found.</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <div class="card-footer" id="bulkActions" style="display: none;">
+                <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Delete selected voters?')">
+                    Delete Selected
+                </button>
+            </div>
+        </form>
+    </div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    $(document).ready(function() {
+        $("#voterSearch").on("keyup", function() {
+            var value = $(this).val().toLowerCase();
+            $("#votersTable tbody tr").filter(function() {
+                $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+            });
+        });
+
+        $('#selectAll').on('change', function() {
+            $('.voter-checkbox').prop('checked', $(this).prop('checked'));
+            toggleBulkActions();
+        });
+
+        $('.voter-checkbox').on('change', function() {
+            toggleBulkActions();
+        });
+
+        function toggleBulkActions() {
+            if ($('.voter-checkbox:checked').length > 0) {
+                $('#bulkActions').slideDown();
+            } else {
+                $('#bulkActions').slideUp();
+            }
+        }
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,63 @@
+{% extends "admin/layout.twig" %}
+
+{% set active_page = 'voters' %}
+
+{% block title %}{{ voter ? 'Edit' : 'Add' }} Voter • Puubu Admin{% endblock %}
+
+{% block content %}
+    <div class="row justify-content-center">
+        <div class="col-12 col-lg-8">
+            <div class="card">
+                <div class="card-body p-5">
+                    <h2 class="mb-4">{{ voter ? 'Edit' : 'Register' }} Voter</h2>
+                    
+                    <form action="{{ PROOT }}admin/voters/store" method="POST">
+                        {{ csrf_field() }}
+                        {% if voter %}
+                            <input type="hidden" name="voter_id" value="{{ voter.voter_id }}">
+                        {% endif %}
+
+                        <div class="row g-4">
+                            <div class="col-md-6">
+                                <label class="form-label">First Name</label>
+                                <input type="text" class="form-control" name="std_fname" value="{{ voter.std_fname }}" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Last Name</label>
+                                <input type="text" class="form-control" name="std_lname" value="{{ voter.std_lname }}" required>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label">Student / Identity ID</label>
+                                <input type="text" class="form-control" name="std_id" value="{{ voter.std_id }}" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Email Address</label>
+                                <input type="email" class="form-control" name="std_email" value="{{ voter.std_email }}" required>
+                            </div>
+
+                            <div class="col-12">
+                                <label class="form-label">Target Election</label>
+                                <select class="form-control" name="registrar_election" required>
+                                    <option value="">Select Election</option>
+                                    {% for election in elections %}
+                                        <option value="{{ election.election_id }}" {{ voter.registrar_election == election.election_id ? 'selected' : '' }}>
+                                            {{ election.election_name }} ({{ election.election_by }})
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="mt-5 d-flex gap-2">
+                            <button type="submit" class="btn btn-primary px-5">
+                                {{ voter ? 'Update Voter' : 'Register Voter' }}
+                            </button>
+                            <a href="{{ PROOT }}admin/voters" class="btn btn-outline-secondary">Cancel</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

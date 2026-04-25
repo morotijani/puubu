@@ -1,0 +1,66 @@
+{% extends "layout.twig" %}
+
+{% block title %}Voter Dashboard • Puubu{% endblock %}
+
+{% block content %}
+    <section class="overflow-hidden">
+        <div class="container d-flex flex-column py-20.5 min-vh-100 level-3">
+            <div class="row align-items-center justify-content-center my-auto">
+                <div class="col-md-10 col-lg-8 col-xl-7 text-center" data-aos="fade-up">
+                    <div class="glass-card p-5">
+                        <div class="mb-5">
+                            <span class="badge bg-warning-subtle text-warning text-uppercase tracking-wider mb-2">Welcome Back</span>
+                            <h1 class="display-4 fw-bold text-white mb-3">{{ voter.std_fname }} {{ voter.std_lname }}</h1>
+                            <p class="lead text-secondary">Ready to make your voice heard? The {{ voter.election_name }} election is waiting for you.</p>
+                        </div>
+
+                        <div class="row g-4 justify-content-center mb-5">
+                            <div class="col-md-6">
+                                <div class="bg-white bg-opacity-5 rounded-4 p-4 border border-white border-opacity-10">
+                                    <h4 class="text-white mb-2">Election Timer</h4>
+                                    <div id="countDT" class="h3 text-color mb-0 font-monospace">Loading...</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="d-grid gap-3 d-md-flex justify-content-md-center">
+                            <a href="{{ PROOT }}startvote" class="btn btn-puubu btn-lg rounded-pill px-5 pulse-button">
+                                Start Voting <i class="bi bi-arrow-right ms-2"></i>
+                            </a>
+                            <a href="{{ PROOT }}auth/logout" class="btn btn-outline-light btn-lg rounded-pill px-5">
+                                Sign Out
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}
+
+{% block scripts %}
+<script type="text/javascript">
+    $(document).ready(function() {
+        {% if started_election > 0 %}
+            var countDownDate = new Date("{{ voter.stop_timer }}").getTime();
+            var x = setInterval(function() {
+                var now = new Date().getTime();
+                var distance = countDownDate - now;
+                
+                var days = Math.floor(distance / (1000 * 60 * 60 * 24));
+                var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+                document.getElementById('countDT').innerHTML = days + "d " + hours + "h " + minutes + "m " + seconds + "s";
+
+                if (distance < 0) {
+                    clearInterval(x);
+                    document.getElementById('countDT').innerHTML = "ELECTION ENDED";
+                    window.location = '{{ PROOT }}ended';
+                }
+            }, 1000);
+        {% endif %}
+    });
+</script>
+{% endblock %}

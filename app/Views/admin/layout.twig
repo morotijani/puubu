@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="light" data-navigation-position="sidenav" data-sidenav-sizing="base">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="shortcut icon" href="{{ PROOT }}media/puubu.favicon.png" type="image/x-icon" />
+    
+    <!-- CSS Libs -->
+    <link rel="stylesheet" href="{{ PROOT }}dist/css/libs.bundle.css" />
+    <link rel="stylesheet" href="{{ PROOT }}dist/css/index.bundle.css" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    
+    <title>{% block title %}Puubu Admin{% endblock %}</title>
+</head>
+<body>
+    <div class="aside aside-base sidenav-base">
+        <nav class="navbar navbar-expand-xl navbar-vertical">
+            <div class="container-lg">
+                <a class="navbar-brand d-flex align-items-center fs-5 fw-bold px-xl-3 mb-xl-4" href="{{ PROOT }}admin">
+                    <i class="bi bi-box-seam text-primary me-2"></i> Puu<span class="text-primary">Bu</span>
+                </a>
+                
+                <div class="collapse navbar-collapse" id="sidenavBaseCollapse">
+                    <nav class="navbar-nav nav-pills mb-7">
+                        <div class="nav-item">
+                            <a class="nav-link {% if active_page == 'dashboard' %}active{% endif %}" href="{{ PROOT }}admin">
+                                <span class="material-symbols-outlined me-3">space_dashboard</span> Dashboards
+                            </a>
+                        </div>
+                        <div class="nav-item">
+                            <a class="nav-link {% if active_page == 'elections' %}active{% endif %}" href="{{ PROOT }}admin/elections">
+                                <span class="material-symbols-outlined me-3">how_to_vote</span> Elections
+                            </a>
+                        </div>
+                        <div class="nav-item">
+                            <a class="nav-link {% if active_page == 'positions' %}active{% endif %}" href="{{ PROOT }}admin/positions">
+                                <span class="material-symbols-outlined me-3">move_selection_up</span> Positions
+                            </a>
+                        </div>
+                        <div class="nav-item">
+                            <a class="nav-link {% if active_page == 'contestants' %}active{% endif %}" href="{{ PROOT }}admin/contestants">
+                                <span class="material-symbols-outlined me-3">groups_2</span> Contestants
+                            </a>
+                        </div>
+                        <div class="nav-item">
+                            <a class="nav-link {% if active_page == 'voters' %}active{% endif %}" href="{{ PROOT }}admin/voters">
+                                <span class="material-symbols-outlined me-3">crowdsource</span> Voters
+                            </a>
+                        </div>
+                    </nav>
+
+                    <h3 class="fs-base px-3 mb-4">Account</h3>
+                    <nav class="navbar-nav nav-pills mt-auto">
+                        <div class="nav-item">
+                            <a class="nav-link {% if active_page == 'settings' %}active{% endif %}" href="{{ PROOT }}admin/settings">
+                                <span class="material-symbols-outlined me-3">settings</span> Settings
+                            </a>
+                        </div>
+                        <div class="nav-item">
+                            <a class="nav-link" href="{{ PROOT }}admin/auth/logout">
+                                <span class="material-symbols-outlined me-3">logout</span> Sign out
+                            </a>
+                        </div>
+                    </nav>
+                </div>
+            </div>
+        </nav>
+    </div>
+
+    <main class="main px-lg-6">
+        <div class="container-lg pt-6">
+            {% block content %}{% endblock %}
+        </div>
+    </main>
+
+    <!-- JS -->
+    <script src="{{ PROOT }}dist/js/vendor.bundle.js"></script>
+    <script src="{{ PROOT }}dist/js/index.bundle.js"></script>
+    {% block scripts %}{% endblock %}
+</body>
+</html>

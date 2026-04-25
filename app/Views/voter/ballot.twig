@@ -1,0 +1,158 @@
+{% extends "layout.twig" %}
+
+{% block title %}{{ voter.std_fname }} {{ voter.std_lname }}, Start Vote • Puubu{% endblock %}
+
+{% block content %}
+    <nav class="navbar navbar-expand-lg navbar-sticky p-2 navbar-dark" style="background: var(--glass-bg); backdrop-filter: blur(16px); border-bottom: 1px solid var(--glass-border);">
+        <div class="container">
+            <a href="{{ PROOT }}votingon" class="navbar-brand">
+                <h3 class="mb-0 text-white brand-text">Puu<span class="text-color">Bu</span></h3>
+            </a>
+            <ul class="navbar-nav navbar-nav-secondary order-lg-3">
+                <li class="nav-item">
+                    <a class="nav-link nav-icon text-light" href="{{ PROOT }}auth/logout">
+                        <span class="bi bi-box-arrow-down-left"></span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="offcanvas-wrap">
+        <section class="cover overflow-hidden" style="background: var(--bg-darker); position: relative;">
+            <div class="d-flex flex-column min-vh-50 py-5 container mt-5" style="position: relative; z-index: 1;">
+                <div class="row justify-content-center my-auto">
+                    <div class="col-lg-8 col-xl-7 text-center">
+                        <span class="badge bg-opaque-white text-white rounded-pill px-3 py-2 mb-3" style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2);">
+                            Voter: {{ voter.std_fname }} {{ voter.std_lname }}
+                        </span>
+                        <h1 class="display-4 fw-bold mb-3 text-white">
+                            {{ voter.election_name }} ~ <span class="text-muted">{{ voter.election_by }}</span>
+                        </h1>
+                        <h2 class="display-6 mb-4 text-color" id="countDT"><i class="bi bi-clock-history"></i></h2>
+                        <a href="{{ PROOT }}auth/logout" class="btn btn-outline-light rounded-pill px-4">Save & Vote Later</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="overflow-hidden pt-3 pt-xl-4">
+            <div class="container">
+                <div class="row justify-content-center">
+                    <div class="col-md-10">
+                        <div class="glass-card p-4 p-md-5 mb-5">
+                            <form action="{{ PROOT }}controller/control.add.vote.count.php" method="POST">
+                                {{ csrf_field() }}
+                                <input type="hidden" name="number-of-positions" value="{{ ballot|length }}">
+                                <input type="hidden" name="name-of-election" value="{{ electionId }}">
+
+                                <div class="accordion accordion-classic" id="ballotAccordion">
+                                    {% for item in ballot %}
+                                        <div class="accordion-item mb-3">
+                                            <div class="accordion-header" id="heading-{{ item.position.position_id }}">
+                                                <div class="accordion-button {% if not loop.first %}collapsed{% endif %}" role="button" data-bs-toggle="collapse" data-bs-target="#collapse-{{ item.position.position_id }}">
+                                                    <div class="d-flex flex-wrap align-items-center w-100">
+                                                        <div class="col-2 text-secondary fs-lg">{{ "%02d"|format(loop.index) }}</div>
+                                                        <div class="col-10 fs-lg fw-bold text-white">{{ item.position.position_name|upper }}</div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div id="collapse-{{ item.position.position_id }}" class="accordion-collapse collapse {% if loop.first %}show{% endif %}" data-bs-parent="#ballotAccordion">
+                                                <div class="accordion-body">
+                                                    <input type="hidden" name="name-of-positions{{ loop.index0 }}" value="{{ item.position.position_id }}">
+                                                    
+                                                    {% if item.count < 1 %}
+                                                        <div class="alert alert-secondary bg-opacity-10 text-center py-4">
+                                                            <p class="mb-0">No contestants found for this position.</p>
+                                                        </div>
+                                                        <input type="hidden" name="contestant{{ loop.index0 }}" value="">
+                                                        <input type="hidden" name="onecont{{ loop.index0 }}" value="">
+                                                    {% else %}
+                                                        <div class="row g-4 justify-content-center">
+                                                            {% for contestant in item.contestants %}
+                                                                <div class="col-md-4 col-lg-3">
+                                                                    <div class="candidate-card glass-card p-3 text-center h-100 position-relative">
+                                                                        <div class="check-badge"><i class="bi bi-check"></i></div>
+                                                                        <figure class="mb-3">
+                                                                            <div class="avatar avatar-xl mx-auto overflow-hidden rounded-circle" style="width: 80px; height: 80px; border: 2px solid var(--glass-border);">
+                                                                                <img src="{{ PROOT }}media/uploadedprofile/{{ contestant.cont_profile }}" alt="Profile" class="w-100 h-100" style="object-fit: cover;">
+                                                                            </div>
+                                                                        </figure>
+                                                                        <h5 class="text-white mb-1">{{ contestant.cont_fname }} {{ contestant.cont_lname }}</h5>
+                                                                        <span class="badge bg-light text-dark mb-3">Ballot #{{ contestant.contestant_ballot_number }}</span>
+                                                                        
+                                                                        <div class="mt-auto">
+                                                                            {% if item.count > 1 %}
+                                                                                <input type="radio" id="cont_{{ contestant.contestant_id }}" name="contestant{{ loop.parent.loop.index0 }}" value="{{ contestant.contestant_id }}" class="form-check-input visually-hidden candidate-radio">
+                                                                                <label for="cont_{{ contestant.contestant_id }}" class="btn btn-outline-light btn-sm rounded-pill w-100 stretched-link">Select</label>
+                                                                            {% else %}
+                                                                                <div class="d-flex justify-content-center gap-2">
+                                                                                    <input type="radio" name="onecont{{ loop.parent.loop.index0 }}" id="cont_{{ contestant.contestant_id }}_yes" value="yes,{{ contestant.contestant_id }}" class="form-check-input visually-hidden candidate-radio">
+                                                                                    <label for="cont_{{ contestant.contestant_id }}_yes" class="btn btn-outline-success btn-sm rounded-pill px-3">Yes</label>
+                                                                                    
+                                                                                    <input type="radio" name="onecont{{ loop.parent.loop.index0 }}" id="cont_{{ contestant.contestant_id }}_no" value="no,{{ contestant.contestant_id }}" class="form-check-input visually-hidden candidate-radio">
+                                                                                    <label for="cont_{{ contestant.contestant_id }}_no" class="btn btn-outline-danger btn-sm rounded-pill px-3">No</label>
+                                                                                </div>
+                                                                            {% endif %}
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            {% endfor %}
+                                                        </div>
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+
+                                <div class="col-12 text-center mt-5">
+                                    <button type="submit" name="submitVotes" id="submitVotes" class="btn btn-puubu btn-lg rounded-pill pulse-button px-5 shadow-lg">
+                                        <i class="bi bi-check2-circle me-2"></i> Submit Ballot
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+{% endblock %}
+
+{% block scripts %}
+<script type="text/javascript">
+    $(document).ready(function() {
+        {% if started_election > 0 %}
+            var countDownDate = new Date("{{ voter.stop_timer }}").getTime();
+            var x = setInterval(function() {
+                var now = new Date().getTime();
+                var distance = countDownDate - now;
+                var days = Math.floor(distance / (1000 * 60 * 60 * 24));
+                var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+                document.getElementById('countDT').innerHTML = days + "d " + hours + "h " + minutes + "m " + seconds + "s <small>to end</small>";
+
+                if (distance < 0) {
+                    clearInterval(x);
+                    document.getElementById('countDT').innerHTML = "ELECTION ENDED";
+                    window.location = '{{ PROOT }}ended';
+                }
+            }, 1000);
+        {% endif %}
+
+        $('.candidate-radio').on('change', function() {
+            var nameGroup = $(this).attr('name');
+            $('input[name="' + nameGroup + '"]').each(function() {
+                $(this).closest('.candidate-card').removeClass('selected');
+            });
+            if($(this).is(':checked')) {
+                $(this).closest('.candidate-card').addClass('selected');
+            }
+        });
+    });
+</script>
+{% endblock %}

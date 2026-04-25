@@ -1,115 +1,117 @@
 <?php
 
-    require_once("connection/conn.php");
+require_once("connection/conn.php");
+if (isset($_SESSION['voter_accessed'])) {
+    redirect(PROOT . 'startvote');
+}
+$login_issue_text = "Problem loggin in to cast my vote. Assist me ASAP!";
+$login_issue = urlencode($login_issue_text);
 
-    if (isset($_SESSION['voter_accessed'])) {
-        redirect(PROOT . 'startvote');
-    }
-    $login_issue_text = "Problem loggin in to cast my vote. Assist me ASAP!";
-    $login_issue = urlencode($login_issue_text);
+$displayErrors = '';
 
-    $displayErrors = '';
-
-    if (isset($_POST['submitVoter'])) {
-        if (!isset($_POST['csrf_token']) || !verify_csrf_token($_POST['csrf_token'])) {
-            $displayErrors = "Invalid request token. Please refresh and try again.";
-        } elseif (empty($_POST['voter_id']) || empty($_POST['voter_password'])) {
-            $displayErrors =  "Invalid Details";
+if (isset($_POST['submitVoter'])) {
+    if (!isset($_POST['csrf_token']) || !verify_csrf_token($_POST['csrf_token'])) {
+        $displayErrors = "Invalid request token. Please refresh and try again.";
+    } elseif (empty($_POST['voter_id']) || empty($_POST['voter_password'])) {
+        $displayErrors = "Invalid Details";
+    } else {
+        if (isset($_SESSION['crAdmin'])) {
+            $displayErrors = "Oops... admin is working on some background checks please come back later ...";
         } else {
-            if (isset($_SESSION['crAdmin'])) {
-                $displayErrors =  "Oops... admin is working on some background checks please come back later ...";
-            } else {
-                $query = "
+            $query = "
                     SELECT * FROM registrars 
                     INNER JOIN election
                     ON election.election_id = registrars.registrar_election
                     WHERE std_id = ?
                 ";
-                $statement = $conn->prepare($query);
-                $statement->execute([$_POST['voter_id']]);
-                $result_voterLogin = $statement->fetchAll();
+            $statement = $conn->prepare($query);
+            $statement->execute([$_POST['voter_id']]);
+            $result_voterLogin = $statement->fetchAll();
 
-                if ($statement->rowCount() > 0) {
-                    foreach ($result_voterLogin as $row) {
-                        if ($row['session'] == 1) {
-                            if (!password_verify($_POST['voter_password'], $row['std_password'])) {
-                                $displayErrors =  "Invalid Voter Details";
-                            } else {
-                                $login_issue_text = "Someone logged in with my account, on this IP: " . $details->ip;
-                                $login_issue = urlencode($login_issue_text);
+            if ($statement->rowCount() > 0) {
+                foreach ($result_voterLogin as $row) {
+                    if ($row['session'] == 1) {
+                        if (!password_verify($_POST['voter_password'], $row['std_password'])) {
+                            $displayErrors = "Invalid Voter Details111";
+                        } else {
+                            $login_issue_text = "Someone logged in with my account, on this IP: " . $details->ip;
+                            $login_issue = urlencode($login_issue_text);
 
-                                $to   = $row["std_email"];
-                                $subject = 'New login on Puubu 🦝.';
-                                $body = '
+                            $to = $row["std_email"];
+                            $subject = 'New login on Puubu 🦝.';
+                            $body = '
                                     <center>
-                                        <p>We\'ve noticed a new login, '.ucwords($row["std_fname"]).',</p>
-                                        <p>We\'ve noticed a login from a device that you don\'t usually use from this location; '.$details->country.'.</p>
+                                        <p>We\'ve noticed a new login, ' . ucwords($row["std_fname"]) . ',</p>
+                                        <p>We\'ve noticed a login from a device that you don\'t usually use from this location; ' . $details->country . '.</p>
                                         <p>If this was you, you can safely disregard this email. If this wasn\'t you, you can secure your account <a href="https://wa.me/+233240445410/?text=' . $login_issue . '" target="_blank" class="text-color">here..</a></p>
                                         <p>From,<br> Puubu Group.</p>
                                     </center>
                                 ';
 
-                                try {
-                                    send_email($to, $subject, $body);
-                                    
-                                    $unique_vld_id = guidv4();
-                                    $election_logs_query = "
+                            try {
+                                send_email($to, $subject, $body);
+
+                                $unique_vld_id = guidv4();
+                                $election_logs_query = "
                                         INSERT INTO voter_login_details (voter_login_details_id, voter_id, details_location) 
                                         VALUES (?, ?, ?)
                                     ";
-                                    $statement = $conn->prepare($election_logs_query);
-                                    $election_logs_result = $statement->execute([$unique_vld_id, $row['voter_id'], $location]);
-                                    $just_inserted_election_log_id = $conn->lastinsertId();
+                                $statement = $conn->prepare($election_logs_query);
+                                $election_logs_result = $statement->execute([$unique_vld_id, $row['voter_id'], $location]);
+                                $just_inserted_election_log_id = $conn->lastinsertId();
 
-                                    if (isset($election_logs_result)) {
-                                        $_SESSION['voter_accessed'] = $row['voter_id'];
-                                        $_SESSION['voter_login_details_id'] = $unique_vld_id;
+                                if (isset($election_logs_result)) {
+                                    $_SESSION['voter_accessed'] = $row['voter_id'];
+                                    $_SESSION['voter_login_details_id'] = $unique_vld_id;
 
-                                        $log_message = "voter ['" . ucwords($row["std_fname"] . ' ' . $row["std_lname"]) . "'], loggedin, location ('" . $location . "')!";
-                                        add_to_log($log_message, $row["voter_id"], 'user');
+                                    $log_message = "voter ['" . ucwords($row["std_fname"] . ' ' . $row["std_lname"]) . "'], loggedin, location ('" . $location . "')!";
+                                    add_to_log($log_message, $row["voter_id"], 'user');
 
-                                        redirect(PROOT . 'votingon');
-                                    }
-
-                                } catch (Exception $e) {
-                                    //echo "Message could not be sent. Mailer Error: {$mail->ErrorInfo}";
-                                    $displayErrors = "Please check you internet connection or contact Puubu Administrator.";
+                                    redirect(PROOT . 'votingon');
                                 }
 
+                            } catch (Exception $e) {
+                                //echo "Message could not be sent. Mailer Error: {$mail->ErrorInfo}";
+                                $displayErrors = "Please check you internet connection or contact Puubu Administrator.";
                             }
-                        } else {
-                            $displayErrors = "Sorry, the election you are choosen to vote under is either not started or it has ended.";
+
                         }
+                    } else {
+                        $displayErrors = "Sorry, the election you are choosen to vote under is either not started or it has ended.";
                     }
-                } else {
-                    $displayErrors =  "Invalid Voter Details";
                 }
+            } else {
+                $displayErrors = "Invalid Voter Details1";
             }
         }
     }
+}
 
 
 ?>
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  
+
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-  
+
     <!-- Favicon -->
     <link rel="shortcut icon" href="media/puubu.favicon.png" type="image/x-icon" />
-  
+
     <!-- Libs CSS -->
     <link rel="stylesheet" href="dist/css/libs.bundle.css" />
-  
+
     <!-- Main CSS -->
     <link rel="stylesheet" href="dist/css/index.bundle.css" />
     <link rel="stylesheet" href="dist/css/puubu.css" />
-  
+
     <!-- Title -->
-    <title>Sign In • Puubu</title></head>
+    <title>Sign In • Puubu</title>
+</head>
+
 <body>
 
 
@@ -117,7 +119,7 @@
     <nav class="navbar navbar-expand-lg navbar-sticky navbar-dark">
         <div class="container">
             <a href="index" class="navbar-brand"><img src="media/puubu.favicon.png" alt="Logo"></a>
-      
+
             <ul class="navbar-nav navbar-nav-secondary order-lg-3">
                 <li class="nav-item">
                     <a class="nav-link nav-icon" data-bs-toggle="offcanvas" href="javascript:;">
@@ -127,7 +129,7 @@
             </ul>
         </div>
     </nav>
-  
+
 
     <section class="overflow-hidden">
         <div class="container d-flex flex-column py-20.5 min-vh-100 level-3">
@@ -181,7 +183,7 @@
         </figure>
     </section>
 
-  <!-- javascript -->
+    <!-- javascript -->
 
     <script type="text/javascript" src="172.06.84.0/media/files/jquery-3.3.1.min.js"></script>
     <script type="text/javascript" src="dist/js/vendor.bundle.js"></script>
@@ -200,7 +202,7 @@
 
         function remcl() {
             let parent = this.parentNode.parentNode;
-            if (this.value == ""){
+            if (this.value == "") {
                 parent.classList.remove("focus");
             }
         }
@@ -228,4 +230,5 @@
     </script>
 
 </body>
+
 </html>

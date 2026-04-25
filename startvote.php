@@ -156,35 +156,40 @@ if ($voter_count > 0) {
                             $sql8_result = $statement->fetchAll();
 
                             $out .= '               
-                                    <div class="col-md-3"> 
-                                        <div class="product">
-                                            <figure class="product-image">
-                                                <a href="javascript:;" class="avatar">
-                                                    <img src="'.PROOT.'media/uploadedprofile/'.$row["cont_profile"].'" alt="Image" class="rounded" style="max-height: 100%; height: 56px; object-fit: cover;">
-                                                </a>
+                                    <div class="col-md-4 col-lg-3 mb-4"> 
+                                        <div class="candidate-card glass-card p-3 text-center h-100 position-relative">
+                                            <div class="check-badge"><i class="bi bi-check"></i></div>
+                                            <figure class="product-image mb-3">
+                                                <div class="avatar avatar-xl mx-auto overflow-hidden rounded-circle" style="width: 80px; height: 80px; border: 2px solid var(--glass-border);">
+                                                    <img src="'.PROOT.'media/uploadedprofile/'.$row["cont_profile"].'" alt="Image" class="w-100 h-100" style="object-fit: cover;">
+                                                </div>
                                             </figure>
-                                            <a class="product-title fs-sm" href="javascript:;">
-                                                '.strtoupper($row["contestant_ballot_number"]).'
-                                            </a>
-                                            <span class="product-price text-muted">
+                                            <h5 class="product-title text-white mb-1">
                                                 '.ucwords($row['cont_fname'] .' '. $row['cont_lname']).'
+                                            </h5>
+                                            <span class="badge bg-light text-dark mb-3">
+                                                Ballot #'.strtoupper($row["contestant_ballot_number"]).'
                                             </span>
+                                            <div>
             
                             ';
                             foreach ($sql8_result as $row8) {
                                 if ($row8['count_pc'] > 1) {
                                     $out .= '
-                                        <input type="radio" id="'.$row["contestant_id"].'" name="contestant'.$num.'" value="'.$row["contestant_id"].'" class="form-check-input">
-                                        <label for="'.$row["contestant_id"].'"></label>
+                                        <input type="radio" id="'.$row["contestant_id"].'" name="contestant'.$num.'" value="'.$row["contestant_id"].'" class="form-check-input visually-hidden candidate-radio">
+                                        <label for="'.$row["contestant_id"].'" class="btn btn-outline-light btn-sm rounded-pill w-100 stretched-link">Select</label>
                                     ';
                                 } else {
-                                    $out .= '<input type="radio" name="onecont'.$num.'" id="'.$row["contestant_id"].'" value="yes,'.$row["contestant_id"].'" class="form-check-input"> <label for="'.$row["contestant_id"].'" class="text-success fs-sm">Yes &nbsp;</label>';
-                                    $out .= '<input type="radio" name="onecont'.$num.'" id="'.$row["contestant_id"].'" value="no,'.$row["contestant_id"].'" class="form-check-input"> <label for="'.$row["contestant_id"].'" class="text-danger fs-sm">No</label>';
+                                    $out .= '<div class="d-flex justify-content-center gap-2">';
+                                    $out .= '<input type="radio" name="onecont'.$num.'" id="'.$row["contestant_id"].'_yes" value="yes,'.$row["contestant_id"].'" class="form-check-input visually-hidden candidate-radio"> <label for="'.$row["contestant_id"].'_yes" class="btn btn-outline-success btn-sm rounded-pill">Yes</label>';
+                                    $out .= '<input type="radio" name="onecont'.$num.'" id="'.$row["contestant_id"].'_no" value="no,'.$row["contestant_id"].'" class="form-check-input visually-hidden"> <label for="'.$row["contestant_id"].'_no" class="btn btn-outline-danger btn-sm rounded-pill">No</label>';
+                                    $out .= '</div>';
                                 }
                             }
                             $out .= '
+                                            </div>
+                                        </div>
                                     </div>
-                                </div>
                             ';
 
                         }
@@ -201,9 +206,8 @@ if ($voter_count > 0) {
                 $sendVotes = "
                             <input type='hidden' name='number-of-positions' value='".$position_count."'>
                             <input type='hidden' name='name-of-election' value='".$electionId."'>
-                            <div class='row'>
-                                <div class='col-12'>
-                                    <button type='submit' name='submitVotes' id='submitVotes' class='btn btn-warning btn-sm shadow'>Send all votes.</button>
+                                <div class='col-12 text-center mt-3'>
+                                    <button type='submit' name='submitVotes' id='submitVotes' class='btn btn-puubu btn-lg rounded-pill pulse-button px-5 shadow-lg'><i class='bi bi-check2-circle me-2'></i> Submit Ballot</button>
                                 </div>
                             </div>
                         </div>
@@ -246,20 +250,15 @@ if ($voter_count > 0) {
     <link rel="stylesheet" href="dist/css/puubu.css" />
   
     <!-- Title -->
-    <title><?= ucwords($voter_row['std_fname'].' '. $voter_row['std_lname']); ?>, Start Vote • Puubu</title></head>
-
-<style type="text/css">
-    body {
-        background-color: #f1f1f1;
-    }
-</style>
-<body>
+    <title><?= ucwords($voter_row['std_fname'].' '. $voter_row['std_lname']); ?>, Start Vote • Puubu</title>
+</head>
+<body style="background: var(--bg-dark); color: var(--text-primary);">
 
     <!-- navbar -->
-    <nav class="navbar navbar-expand-lg navbar-sticky p-1 navbar-dark">
+    <nav class="navbar navbar-expand-lg navbar-sticky p-2 navbar-dark" style="background: var(--glass-bg); backdrop-filter: blur(16px); border-bottom: 1px solid var(--glass-border);">
         <div class="container">
             <a href="votingon" class="navbar-brand">
-                <img src="media/puubu.logo.png" alt="Logo">
+                <h3 class="mb-0 text-white brand-text">Puu<span class="text-color">Bu</span></h3>
             </a>
   
             <ul class="navbar-nav navbar-nav-secondary order-lg-3">
@@ -275,22 +274,23 @@ if ($voter_count > 0) {
     <div class="offcanvas-wrap">
 
         <!-- header -->
-        <section class="cover overflow-hidden inverted" style="background-color: #3A2302;">
-            <div class="d-flex flex-column min-vh-50 py-5 container foreground mt-5">
+        <section class="cover overflow-hidden" style="background: var(--bg-darker); position: relative;">
+            <div style="position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: radial-gradient(circle at 50% 50%, rgba(255, 159, 28, 0.1), transparent 50%); animation: pulseGlow 15s infinite alternate; z-index: 0;"></div>
+            <div class="d-flex flex-column min-vh-50 py-5 container mt-5" style="position: relative; z-index: 1;">
                 <div class="row justify-content-center my-auto">
-                    <div class="col-lg-8 col-xl-6">
-                        <span class="eyebrow text-secondary text-shadow"><?= ucwords($voter_row['std_fname'].' '. $voter_row['std_lname']); ?></span>
-                        <h1 class="display-5 mb-1 text-shadow"><u><?= $voting_on; ?></u></h1>
-                        <h1 class="display-4 mb-1 text-shadow" id="countDT"></h1>
-                        <div class="text-secondary fs-3">
-                            <span data-typed='{"strings": ["your vote start now.", "Every vote counts."]}'></span>
+                    <div class="col-lg-8 col-xl-7 text-center">
+                        <span class="badge bg-opaque-white text-white rounded-pill px-3 py-2 mb-3" style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2);">
+                            Voter: <?= ucwords($voter_row['std_fname'].' '. $voter_row['std_lname']); ?>
+                        </span>
+                        <h1 class="display-4 fw-bold mb-3 text-white"><?= $voting_on; ?></h1>
+                        <h2 class="display-6 mb-4 text-color" id="countDT"><i class="bi bi-clock-history"></i></h2>
+                        <div class="text-secondary fs-4 mb-4">
+                            <span data-typed='{"strings": ["Your vote starts now.", "Every vote counts."]}'></span>
                         </div>
-                        <a href="logout" class="btn btn-outline-white btn-sm">.vote later.</a>
+                        <a href="logout" class="btn btn-outline-light rounded-pill px-4">Save & Vote Later</a>
                     </div>
                 </div>
             </div>
-
-            <figure class="background background-dimm" style="background-image: url('media/elections-990.jpg')" data-top-top="transform: translateY(0%);" data-top-bottom="transform: translateY(20%);"></figure>
             <span class="scroll-down"></span>
         </section>
 
@@ -298,9 +298,14 @@ if ($voter_count > 0) {
         <section class="overflow-hidden pt-3 pt-xl-4">
             <div class="container">
                 <div class="row justify-content-center">
-                    <div class="col-md-8">
-                        <?= $out; ?>
-                        <?= $sendVotes; ?>
+                    <div class="col-md-10">
+                        <div class="glass-card p-4 p-md-5 mb-5">
+                            <?= $out; ?>
+                            
+                            <div class="mt-4 pt-4 border-top" style="border-color: rgba(255,255,255,0.1) !important;">
+                                <?= $sendVotes; ?>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -358,6 +363,19 @@ if ($voter_count > 0) {
                     }
                 }, 1000);
             <?php endif; ?>
+
+            // Handle Candidate Selection Highlighting
+            $('.candidate-radio').on('change', function() {
+                var nameGroup = $(this).attr('name');
+                // Remove selected class from all cards in this position group
+                $('input[name="' + nameGroup + '"]').each(function() {
+                    $(this).closest('.candidate-card').removeClass('selected');
+                });
+                // Add selected class to the chosen card
+                if($(this).is(':checked')) {
+                    $(this).closest('.candidate-card').addClass('selected');
+                }
+            });
         });
     </script>
 </body>

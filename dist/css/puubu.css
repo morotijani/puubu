@@ -1,16 +1,140 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Outfit:wght@400;500;600;700;800&display=swap');
+
+:root {
+    --bg-dark: #0f172a;
+    --bg-darker: #020617;
+    --text-primary: #f8fafc;
+    --text-secondary: #94a3b8;
+    --accent-glow: #ff9f1c;
+    --accent-gradient: linear-gradient(135deg, #ff9f1c 0%, #e07a5f 100%);
+    --glass-bg: rgba(30, 41, 59, 0.7);
+    --glass-border: rgba(255, 255, 255, 0.1);
+}
+
 * {
-	font-family: 'Trebuchet MS';
+	font-family: 'Inter', sans-serif;
+}
+
+h1, h2, h3, h4, h5, h6, .brand-text {
+    font-family: 'Outfit', sans-serif;
+}
+
+body {
+    background-color: var(--bg-dark);
+    color: var(--text-primary);
 }
 
 .text-color {
-	color: #FF9800;
+	color: var(--accent-glow) !important;
 }
 
 .bg-color {
-	background-color: #FF9800;
+	background: var(--accent-gradient) !important;
+}
+
+/* Glassmorphism Utilities */
+.glass-card {
+    background: var(--glass-bg);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid var(--glass-border);
+    border-radius: 1.5rem;
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.glass-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2), 0 0 15px rgba(255, 159, 28, 0.1);
+}
+
+/* Forms */
+.form-control, .form-control:focus {
+    background-color: rgba(15, 23, 42, 0.8);
+    border: 1px solid var(--glass-border);
+    color: var(--text-primary);
+    border-radius: 0.75rem;
+    padding: 0.75rem 1rem;
+    transition: all 0.3s ease;
+}
+
+.form-control:focus {
+    box-shadow: 0 0 0 3px rgba(255, 159, 28, 0.25);
+    border-color: var(--accent-glow);
+}
+
+.form-label {
+    color: var(--text-secondary);
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+}
+
+/* Buttons */
+.btn-yellow, .btn-puubu {
+    background: var(--accent-gradient);
+    color: white;
+    border: none;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    transition: all 0.3s ease;
+}
+
+.btn-puubu:hover, .btn-yellow:hover {
+    box-shadow: 0 0 20px rgba(255, 159, 28, 0.4);
+    transform: scale(1.02);
+    color: white;
 }
 
 .py-20.5 {
-    padding-top: 10rem !important;
-    padding-bottom: 0;
+    padding-top: 8rem !important;
+    padding-bottom: 2rem;
+}
+
+/* Animations */
+@keyframes pulseGlow {
+    0% { box-shadow: 0 0 0 0 rgba(255, 159, 28, 0.4); }
+    70% { box-shadow: 0 0 0 15px rgba(255, 159, 28, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(255, 159, 28, 0); }
+}
+
+.pulse-button {
+    animation: pulseGlow 2s infinite;
+}
+
+/* Candidate Cards */
+.candidate-card {
+    cursor: pointer;
+    overflow: hidden;
+}
+
+.candidate-card img {
+    transition: transform 0.5s ease;
+}
+
+.candidate-card:hover img {
+    transform: scale(1.05);
+}
+
+.candidate-card.selected {
+    border: 2px solid var(--accent-glow) !important;
+    background: rgba(255, 159, 28, 0.05);
+}
+
+.candidate-card .check-badge {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: var(--accent-gradient);
+    color: white;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+}
+
+.candidate-card.selected .check-badge {
+    display: flex;
 }

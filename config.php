@@ -15,9 +15,7 @@
     define('MAIL_HOST', $_ENV['MAIL_HOST']);
     define('MAIL_PORT', $_ENV['MAIL_PORT']);
 
-    define('IPINFO_KEY', $_ENV['IPINFO_KEY']);
-
-	define('IPINFO_PRIVATE_KEY', 'c5c08603163207');
+	define('IPINFO_PRIVATE_KEY', $_ENV['IPINFO_KEY']);
 
 	// Define the idle timeout period (e.g., 5 minutes = 300 seconds)
 	define('IDLE_TIMEOUT', 600); // 600 seconds = 10 minutes

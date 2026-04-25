@@ -68,38 +68,47 @@ $count_checkVoterhasdone = $conn->query("SELECT * FROM voterhasdone WHERE voter_
     </nav>
 
     <div class="offcanvas-wrap">
-        <div data-center-top="@class:inverted bg-color-active;" data-bottom-bottom="@class:inverted bg-color-active;" data-edge-strategy="reset">
-            <span class="bg-color bg-black"></span>
+        <section class="overflow-hidden" style="background: var(--bg-dark); position: relative; min-height: 100vh;">
+            <!-- Animated Background Gradient -->
+            <div style="position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: radial-gradient(circle at 50% 50%, rgba(255, 159, 28, 0.15), transparent 50%); animation: pulseGlow 10s infinite alternate; z-index: 0;"></div>
 
-            <!-- hero -->
-            <section class="overflow-hidden bg-black inverted">
-                <div class="d-flex flex-column container py-20 min-vh-100 level-1">
-                    <div class="row align-items-center justify-content-center justify-content-lg-end my-auto">
-                        <div class="col-md-8 col-lg-5 text-center text-lg-start">
-                            <span class="badge bg-opaque-yellow text-yellow rounded-pill">Ciao, <?= ucwords($voter_row['std_fname'].' '. $voter_row['std_lname']); ?></span>
-                            <h1 class="display-5 fw-bold lh-sm my-2 my-xl-4"><?= $voting_on; ?></h1>
-                            <span class="lead text-danger" id="countDT"></span>
+            <div class="container d-flex flex-column py-20 min-vh-100" style="position: relative; z-index: 1;">
+                <div class="row align-items-center justify-content-center my-auto">
+                    <div class="col-md-10 col-lg-8 col-xl-7 text-center" data-aos="fade-up">
+                        
+                        <div class="glass-card p-5 p-md-6">
+                            <span class="badge bg-opaque-white text-white rounded-pill px-3 py-2 mb-4" style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2);">
+                                👋 Welcome, <?= ucwords($voter_row['std_fname'].' '. $voter_row['std_lname']); ?>
+                            </span>
+                            
+                            <h1 class="display-5 fw-bold lh-sm my-2 mb-4 text-white"><?= $voting_on; ?></h1>
+                            
+                            <div class="d-inline-block px-4 py-2 rounded-pill mb-4" style="background: rgba(255, 159, 28, 0.1); border: 1px solid rgba(255, 159, 28, 0.3);">
+                                <span class="h5 mb-0 text-color fw-bold" id="countDT"><i class="bi bi-clock-history me-2"></i>Loading timer...</span>
+                            </div>
 
-                            <p class="lead my-4">"We have the power to make a difference. But we need to VOTE.”,</p>
-                            <?php if ($count_checkVoterhasdone > 0): ?>
-                                <p class="text-danger text-shadow">Ooops... it seems you have already voted... 😂😂😂</p>
-                                <a href="logout" class="btn btn-with-icon btn-yellow rounded-pill">say your goodbyes 😋😋😋 !!! <i class="bi bi-arrow-right"></i></a>
-                            <?php else: ?>
-                                <a href="startvote" class="btn btn-with-icon btn-yellow rounded-pill">Get Started <i class="bi bi-arrow-right"></i></a>
-                            <?php endif; ?>
+                            <p class="lead my-4 text-secondary">"We have the power to make a difference. But we need to VOTE."</p>
+
+                            <div class="mt-5">
+                                <?php if ($count_checkVoterhasdone > 0): ?>
+                                    <div class="alert alert-success" style="background: rgba(40, 167, 69, 0.1); border: 1px solid rgba(40, 167, 69, 0.2); color: #28a745;">
+                                        <i class="bi bi-check-circle-fill me-2"></i> You have successfully cast your vote!
+                                    </div>
+                                    <a href="logout" class="btn btn-puubu btn-lg rounded-pill pulse-button mt-3">
+                                        Log Out <i class="bi bi-box-arrow-right ms-2"></i>
+                                    </a>
+                                <?php else: ?>
+                                    <a href="startvote" class="btn btn-puubu btn-lg rounded-pill pulse-button px-5">
+                                        Proceed to Ballot <i class="bi bi-arrow-right ms-2"></i>
+                                    </a>
+                                <?php endif; ?>
+                            </div>
                         </div>
+
                     </div>
                 </div>
-
-                <div class="container-fluid back back-background">
-                    <div class="row h-100">
-                        <div class="col-lg-6" data-aos="fade-in">
-                            <figure class="background" style="background-image: url('media/profile-cover.jpg')" data-top-top="transform: translateY(0%);" data-top-bottom="transform: translateY(10%);"></figure>
-                        </div>
-                    </div>
-                </div>
-            </section>
-        </div>
+            </div>
+        </section>
     </div>
 
     <!-- javascript -->

@@ -18,7 +18,9 @@
     } catch (\PDOException $e) {
         exit($e->getMessage());
     }
-    session_start();
+    if (session_status() === PHP_SESSION_NONE) {
+        session_start();
+    }
 
     date_default_timezone_set('Africa/Accra');
 
@@ -45,7 +47,12 @@
 	$client = new IPinfo($access_token, ['timeout' => 5]); // Optional: increase timeout
 
 	// Optional: cache file path
-	$cacheFile = __DIR__ . '/cache/ipinfo_' . $_SERVER['REMOTE_ADDR'] . '.json';
+	$safeIp = str_replace([':', '.'], '_', $_SERVER['REMOTE_ADDR']);
+	$cacheDir = __DIR__ . '/cache';
+	if (!is_dir($cacheDir)) {
+		mkdir($cacheDir, 0777, true);
+	}
+	$cacheFile = $cacheDir . '/ipinfo_' . $safeIp . '.json';
 
 	$location = "Location unavailable due to network issue"; // Default fallback
 	$details = null; // ✅ Ensure it's defined
@@ -89,8 +96,12 @@
 			]));
 		} catch (IPinfoException $e) {
 			// Log error silently
+			$logDir = __DIR__ . '/logs';
+			if (!is_dir($logDir)) {
+				mkdir($logDir, 0777, true);
+			}
 			$logMessage = date('Y-m-d H:i:s') . " - IPinfo error: " . $e->getMessage() . "\n";
-			file_put_contents(__DIR__ . '/logs/ipinfo_errors.log', $logMessage, FILE_APPEND);
+			file_put_contents($logDir . '/ipinfo_errors.log', $logMessage, FILE_APPEND);
 		}
 	}
 
@@ -121,10 +132,7 @@
 			$fullName = ucwords($admin_data['cfname'] . ' ' . $admin_data['clname']);
  			$lName = ucwords($admin_data['clname']);
  			$fname = ucwords($admin_data['cfname']);
-		} else {
-			redirect(PROOT . '172.06.84.0');
 		}
-
  	}
 
  	if (isset($_SESSION['voter_accessed'])) {

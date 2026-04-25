@@ -12,7 +12,7 @@
                     <h2 class="mb-4">{{ voter ? 'Edit' : 'Register' }} Voter</h2>
                     
                     <form action="{{ PROOT }}admin/voters/store" method="POST">
-                        {{ csrf_field() }}
+                        {{ csrf_field()|raw }}
                         {% if voter %}
                             <input type="hidden" name="voter_id" value="{{ voter.voter_id }}">
                         {% endif %}

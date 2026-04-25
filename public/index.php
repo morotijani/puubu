@@ -7,6 +7,7 @@ require_once __DIR__ . '/../connection/conn.php';
 
 // Create Router instance
 $router = new \Bramus\Router\Router();
+$router->setBasePath(PROOT);
 
 // Twig Setup
 $loader = new \Twig\Loader\FilesystemLoader(__DIR__ . '/../app/Views');
@@ -62,13 +63,17 @@ $router->get('/startvote', function() use ($twig) {
 $router->mount('/admin', function() use ($router, $twig) {
     
     // Admin URL Secret Token Gatekeeper
-    $router->before('GET|POST', '/.*', function() {
+    $router->before('GET|POST', '.*', function() {
+        // If we haven't passed the gate yet, check for the token
         if (!isset($_SESSION['admin_gate_passed']) || $_SESSION['admin_gate_passed'] !== true) {
             if (isset($_GET['token']) && $_GET['token'] === ADMIN_ACCESS_TOKEN) {
                 $_SESSION['admin_gate_passed'] = true;
+                // Strip the token from the URL for a cleaner look
+                $cleanUrl = strtok($_SERVER['REQUEST_URI'], '?');
+                redirect($cleanUrl);
             } else {
-                header('HTTP/1.0 403 Forbidden');
-                die('Access Restricted');
+                header('HTTP/1.1 403 Forbidden');
+                die('Access Restricted: Admin secret token required.');
             }
         }
     });
@@ -92,7 +97,7 @@ $router->mount('/admin', function() use ($router, $twig) {
     });
 
     // Protected Admin Routes (require login)
-    $router->before('GET|POST', '/(?!signin|verify-2fa).*', function() {
+    $router->before('GET|POST', '^/(?!signin|verify-2fa).*', function() {
         if (!cadminIsLoggedIn()) {
             cadminLoginErrorRedirect();
         }

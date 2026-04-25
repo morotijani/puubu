@@ -1,3 +1,14 @@
 RewriteEngine On
-RewriteRule ^$ public/ [L]
-RewriteRule (.*) public/$1 [L]
+RewriteBase /puubu/
+
+# Explicitly skip rewriting for asset folders
+RewriteRule ^(dist|media|assets|vendor)/ - [L]
+
+# Also skip for existing files/dirs
+RewriteCond %{REQUEST_FILENAME} -f [OR]
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^ - [L]
+
+# Everything else goes to public/
+RewriteCond %{REQUEST_URI} !^/puubu/public/
+RewriteRule ^(.*)$ public/$1 [L]

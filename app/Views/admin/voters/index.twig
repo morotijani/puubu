@@ -2,109 +2,142 @@
 
 {% set active_page = 'voters' %}
 
-{% block title %}Voters • Puubu Admin{% endblock %}
+{% block title %}Voters Registrar • Puubu{% endblock %}
 
 {% block content %}
-    <div class="row align-items-center mb-7">
-        <div class="col">
-            <nav aria-label="breadcrumb">
-                <ol class="breadcrumb mb-1">
-                    <li class="breadcrumb-item"><a class="text-body-secondary" href="{{ PROOT }}admin">Admin</a></li>
-                    <li class="breadcrumb-item active" aria-current="page">Voters</li>
-                </ol>
-            </nav>
-            <h1 class="fs-4 mb-0">Voters Registrar</h1>
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-5">
+        <div>
+            <h1 class="h3 fw-bold mb-1">Voters Registrar</h1>
+            <p class="text-muted small mb-0">Maintain the identity database for electoral eligibility.</p>
         </div>
-        <div class="col-12 col-sm-auto mt-4 mt-sm-0">
-            <div class="row gx-2">
-                <div class="col-6 col-sm-auto">
-                    <a class="btn btn-primary w-100" href="{{ PROOT }}admin/voters/add">
-                        <i class="bi bi-person-plus"></i> Add Voter
-                    </a>
-                </div>
-                <div class="col-6 col-sm-auto dropdown">
-                    <button class="btn btn-outline-secondary w-100 dropdown-toggle" type="button" data-bs-toggle="dropdown">
-                        More Options
-                    </button>
-                    <ul class="dropdown-menu dropdown-menu-end">
-                        <li><a class="dropdown-item" href="{{ PROOT }}admin/voters/duplicates">Find Duplicates</a></li>
-                        <li><a class="dropdown-item" href="{{ PROOT }}admin/voters/import">Import CSV</a></li>
-                        <li><hr class="dropdown-divider"></li>
-                        <li><a class="dropdown-item text-danger" href="{{ PROOT }}admin/voters/truncate" onclick="return confirm('ERASE ALL VOTERS? This cannot be undone!')">Truncate Table</a></li>
-                    </ul>
-                </div>
+        <div class="d-flex gap-2 mt-3 mt-md-0">
+            <div class="dropdown">
+                <button class="btn btn-light dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                    Registry Tools
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end shadow-lg border-0 py-2">
+                    <li><a class="dropdown-item py-2" href="{{ PROOT }}admin/voters/duplicates"><i class="bi bi-stack me-2 text-muted"></i> Identify Duplicates</a></li>
+                    <li><a class="dropdown-item py-2" href="{{ PROOT }}admin/voters/import"><i class="bi bi-file-earmark-arrow-up me-2 text-muted"></i> Import Identities (CSV)</a></li>
+                    <li><hr class="dropdown-divider mx-3"></li>
+                    <li><a class="dropdown-item py-2 text-danger" href="{{ PROOT }}admin/voters/truncate" onclick="return confirm('CRITICAL ACTION: ERASE ALL VOTERS? This cannot be undone!')"><i class="bi bi-exclamation-triangle me-2"></i> Wipe Registry</a></li>
+                </ul>
             </div>
+            <a href="{{ PROOT }}admin/voters/add" class="btn btn-indigo shadow-sm">
+                <i class="bi bi-person-plus-fill me-1"></i> Register Voter
+            </a>
         </div>
     </div>
 
-    <!-- Voters Table -->
-    <div class="card mb-6">
-        <div class="card-header d-flex justify-content-between align-items-center">
-            <h3 class="fs-6 mb-0">Registered Voters</h3>
-            <div class="col-md-4">
-                <input type="text" id="voterSearch" class="form-control form-control-sm" placeholder="Search voters...">
+    <!-- Voters Registry -->
+    <div class="card border-0 shadow-sm overflow-hidden">
+        <div class="card-header bg-white border-bottom pt-4 px-4 pb-3">
+            <div class="row align-items-center g-3">
+                <div class="col-md-auto">
+                    <h5 class="fw-bold mb-0">Identity Registry</h5>
+                </div>
+                <div class="col-md-4 ms-md-auto">
+                    <div class="input-group">
+                        <span class="input-group-text bg-light border-0"><i class="bi bi-search text-muted"></i></span>
+                        <input type="text" id="voterSearch" class="form-control bg-light border-0" placeholder="Search names, IDs, emails...">
+                    </div>
+                </div>
             </div>
         </div>
+        
         <form action="{{ PROOT }}admin/voters/bulk-delete" method="POST" id="bulkDeleteForm">
-            {{ csrf_field() }}
+            {{ csrf_field()|raw }}
             <div class="table-responsive">
-                <table class="table align-middle mb-0" id="votersTable">
+                <table class="table align-middle" id="votersTable">
                     <thead>
                         <tr>
-                            <th style="width: 40px;">
+                            <th style="width: 50px;" class="ps-4">
                                 <input type="checkbox" class="form-check-input" id="selectAll">
                             </th>
-                            <th class="fs-sm">Voter</th>
-                            <th class="fs-sm">Identity #</th>
-                            <th class="fs-sm">Election</th>
-                            <th class="fs-sm text-end">Actions</th>
+                            <th>Identity & Contact</th>
+                            <th>Registry ID</th>
+                            <th>Target Election</th>
+                            <th class="text-end pe-4">Management</th>
                         </tr>
                     </thead>
                     <tbody>
                         {% for voter in voters %}
                             <tr>
-                                <td>
+                                <td class="ps-4">
                                     <input type="checkbox" name="voter_ids[]" value="{{ voter.voter_id }}" class="form-check-input voter-checkbox">
                                 </td>
                                 <td>
-                                    <div class="fw-bold text-heading">{{ voter.std_fname }} {{ voter.std_lname }}</div>
-                                    <div class="fs-sm text-muted">{{ voter.std_email }}</div>
+                                    <div class="d-flex align-items-center">
+                                        <div class="avatar avatar-sm me-3 d-flex align-items-center justify-content-center text-indigo fw-bold" style="width: 38px; height: 38px;">
+                                            {{ voter.std_fname|slice(0, 1) }}{{ voter.std_lname|slice(0, 1) }}
+                                        </div>
+                                        <div>
+                                            <div class="fw-bold text-dark">{{ voter.std_fname }} {{ voter.std_lname }}</div>
+                                            <div class="text-muted extra-small">{{ voter.std_email }}</div>
+                                        </div>
+                                    </div>
                                 </td>
-                                <td><code class="text-primary">{{ voter.std_id }}</code></td>
-                                <td>{{ voter.election_name }}</td>
-                                <td class="text-end">
-                                    {% if voter.session == 0 %}
-                                        <a href="{{ PROOT }}admin/voters/edit/{{ voter.voter_id }}" class="btn btn-sm btn-warning">
-                                            <i class="bi bi-pencil-square"></i>
-                                        </a>
-                                        <a href="{{ PROOT }}admin/voters/delete/{{ voter.voter_id }}" class="btn btn-sm btn-outline-danger ms-1" onclick="return confirm('Delete this voter?')">
-                                            <i class="bi bi-trash"></i>
-                                        </a>
-                                    {% else %}
-                                        <span class="text-muted small">Locked</span>
-                                    {% endif %}
+                                <td>
+                                    <span class="badge bg-light text-primary fw-mono border">{{ voter.std_id }}</span>
+                                </td>
+                                <td class="text-muted small">
+                                    <i class="bi bi-box-seam me-1"></i> {{ voter.election_name }}
+                                </td>
+                                <td class="text-end pe-4">
+                                    <div class="btn-group shadow-sm rounded">
+                                        {% if voter.session == 0 %}
+                                            <a href="{{ PROOT }}admin/voters/edit/{{ voter.voter_id }}" class="btn btn-sm btn-white border border-end-0">
+                                                <i class="bi bi-pencil-square"></i>
+                                            </a>
+                                            <a href="{{ PROOT }}admin/voters/delete/{{ voter.voter_id }}" class="btn btn-sm btn-white border text-danger" onclick="return confirm('Delete this voter?')">
+                                                <i class="bi bi-trash3"></i>
+                                            </a>
+                                        {% else %}
+                                            <span class="badge bg-light text-muted border px-3">Session Locked</span>
+                                        {% endif %}
+                                    </div>
                                 </td>
                             </tr>
                         {% else %}
                             <tr>
-                                <td colspan="5" class="text-center py-5">No voters found.</td>
+                                <td colspan="5" class="text-center py-5 text-muted">
+                                    <div class="mb-2"><i class="bi bi-people fs-1 opacity-25"></i></div>
+                                    No identities found in the registrar.
+                                </td>
                             </tr>
                         {% endfor %}
                     </tbody>
                 </table>
             </div>
-            <div class="card-footer" id="bulkActions" style="display: none;">
-                <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Delete selected voters?')">
-                    Delete Selected
-                </button>
+
+            <!-- Bulk Actions Footer -->
+            <div class="card-footer bg-light bg-opacity-50 border-top-0 py-3 px-4" id="bulkActions" style="display: none;">
+                <div class="d-flex align-items-center justify-content-between">
+                    <div class="d-flex align-items-center">
+                        <span class="badge bg-indigo rounded-pill me-2" id="selectedCount">0</span>
+                        <span class="small text-muted fw-medium">Identities selected for action</span>
+                    </div>
+                    <button type="submit" class="btn btn-sm btn-danger px-4 fw-bold shadow-sm" onclick="return confirm('Delete selected identities from the registry?')">
+                        Delete Selected <i class="bi bi-trash3 ms-1"></i>
+                    </button>
+                </div>
             </div>
         </form>
     </div>
 {% endblock %}
 
+{% block styles %}
+<style>
+    .extra-small { font-size: 0.75rem; }
+    .fw-mono { font-family: 'JetBrains Mono', 'Fira Code', monospace; }
+    .btn-white { background: #fff; }
+    .btn-white:hover { background: #f8fafc; color: var(--admin-primary); }
+</style>
+{% endblock %}
+
 {% block scripts %}
 <script>
     $(document).ready(function() {
+        // Search Functionality
         $("#voterSearch").on("keyup", function() {
             var value = $(this).val().toLowerCase();
             $("#votersTable tbody tr").filter(function() {
@@ -112,20 +145,23 @@
             });
         });
 
+        // Bulk Selection
         $('#selectAll').on('change', function() {
             $('.voter-checkbox').prop('checked', $(this).prop('checked'));
-            toggleBulkActions();
+            updateBulkStatus();
         });
 
-        $('.voter-checkbox').on('change', function() {
-            toggleBulkActions();
+        $(document).on('change', '.voter-checkbox', function() {
+            updateBulkStatus();
         });
 
-        function toggleBulkActions() {
-            if ($('.voter-checkbox:checked').length > 0) {
-                $('#bulkActions').slideDown();
+        function updateBulkStatus() {
+            var count = $('.voter-checkbox:checked').length;
+            $('#selectedCount').text(count);
+            if (count > 0) {
+                $('#bulkActions').slideDown(200);
             } else {
-                $('#bulkActions').slideUp();
+                $('#bulkActions').slideUp(200);
             }
         }
     });

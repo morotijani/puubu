@@ -14,16 +14,6 @@ class AdminController {
     public function login() {
         global $conn;
 
-        // Gatekeeper Check (handled in router but can be reinforced here)
-        if (!isset($_SESSION['admin_gate_passed']) || $_SESSION['admin_gate_passed'] !== true) {
-             if (isset($_GET['token']) && $_GET['token'] === ADMIN_ACCESS_TOKEN) {
-                $_SESSION['admin_gate_passed'] = true;
-            } else {
-                header('HTTP/1.0 403 Forbidden');
-                die('Access Restricted');
-            }
-        }
-
         if (cadminIsLoggedIn()) {
             redirect(PROOT . 'admin');
         }

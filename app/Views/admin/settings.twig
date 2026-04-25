@@ -5,91 +5,100 @@
 {% block title %}Settings • Puubu Admin{% endblock %}
 
 {% block content %}
-    <div class="row align-items-center mb-7">
-        <div class="col">
-            <nav aria-label="breadcrumb">
-                <ol class="breadcrumb mb-1">
-                    <li class="breadcrumb-item"><a class="text-body-secondary" href="{{ PROOT }}admin">Admin</a></li>
-                    <li class="breadcrumb-item active" aria-current="page">Settings</li>
-                </ol>
-            </nav>
-            <h1 class="fs-4 mb-0">Account Settings</h1>
-        </div>
+    <div class="mb-5">
+        <h1 class="h3 fw-bold mb-1">Account Settings</h1>
+        <p class="text-muted small">Manage your administrative profile and security preferences.</p>
     </div>
 
-    <div class="row g-7">
+    <div class="row g-4">
         <!-- Profile Update -->
         <div class="col-lg-6">
-            <div class="card shadow-sm border-0">
-                <div class="card-header bg-transparent border-0 pt-4 px-4">
-                    <h3 class="fs-6 mb-0 fw-bold">Update Profile</h3>
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-header bg-white border-bottom-0 pt-4 px-4">
+                    <div class="d-flex align-items-center">
+                        <div class="text-indigo p-2 me-2">
+                            <i class="bi bi-person-circle fs-5"></i>
+                        </div>
+                        <h5 class="fw-bold mb-0">Personal Profile</h5>
+                    </div>
                 </div>
                 <div class="card-body p-4">
                     <form action="{{ PROOT }}admin/settings/profile" method="POST">
-                        {{ csrf_field() }}
-                        <div class="mb-3">
+                        {{ csrf_field()|raw }}
+                        <div class="mb-4">
                             <label class="form-label">First Name</label>
-                            <input type="text" class="form-control" name="fname" value="{{ admin.cfname }}" required>
+                            <input type="text" class="form-control bg-light border-0" name="fname" value="{{ admin.cfname }}" required>
                         </div>
-                        <div class="mb-3">
+                        <div class="mb-4">
                             <label class="form-label">Last Name</label>
-                            <input type="text" class="form-control" name="lname" value="{{ admin.clname }}" required>
+                            <input type="text" class="form-control bg-light border-0" name="lname" value="{{ admin.clname }}" required>
                         </div>
-                        <div class="mb-3">
+                        <div class="mb-4">
                             <label class="form-label">Email Address</label>
-                            <input type="email" class="form-control" name="email" value="{{ admin.cemail }}" required>
+                            <input type="email" class="form-control bg-light border-0" name="email" value="{{ admin.cemail }}" required>
                         </div>
-                        <button type="submit" class="btn btn-primary">Save Changes</button>
+                        <button type="submit" class="btn btn-indigo px-4 fw-bold shadow-sm">Save Changes</button>
                     </form>
                 </div>
             </div>
         </div>
 
-        <!-- Password Change -->
+        <!-- Password & Security -->
         <div class="col-lg-6">
-            <div class="card shadow-sm border-0">
-                <div class="card-header bg-transparent border-0 pt-4 px-4">
-                    <h3 class="fs-6 mb-0 fw-bold">Change Password</h3>
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-white border-bottom-0 pt-4 px-4">
+                    <div class="d-flex align-items-center">
+                        <div class="text-warning p-2 me-2">
+                            <i class="bi bi-key-fill fs-5"></i>
+                        </div>
+                        <h5 class="fw-bold mb-0">Authentication</h5>
+                    </div>
                 </div>
                 <div class="card-body p-4">
                     <form action="{{ PROOT }}admin/settings/password" method="POST">
-                        {{ csrf_field() }}
-                        <div class="mb-3">
-                            <label class="form-label">Old Password</label>
-                            <input type="password" class="form-control" name="old_password" required>
+                        {{ csrf_field()|raw }}
+                        <div class="mb-4">
+                            <label class="form-label">Current Password</label>
+                            <input type="password" class="form-control bg-light border-0" name="old_password" required>
                         </div>
-                        <div class="mb-3">
-                            <label class="form-label">New Password</label>
-                            <input type="password" class="form-control" name="password" required>
+                        <div class="row g-3 mb-4">
+                            <div class="col-md-6">
+                                <label class="form-label">New Password</label>
+                                <input type="password" class="form-control bg-light border-0" name="password" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Confirm New</label>
+                                <input type="password" class="form-control bg-light border-0" name="confirm" required>
+                            </div>
                         </div>
-                        <div class="mb-3">
-                            <label class="form-label">Confirm New Password</label>
-                            <input type="password" class="form-control" name="confirm" required>
-                        </div>
-                        <button type="submit" class="btn btn-dark">Update Password</button>
+                        <button type="submit" class="btn btn-dark px-4 fw-bold shadow-sm border-0">Update Password</button>
                     </form>
                 </div>
             </div>
 
-            <!-- 2FA Security -->
-            <div class="card shadow-sm border-0 mt-7">
-                <div class="card-header bg-transparent border-0 pt-4 px-4">
-                    <h3 class="fs-6 mb-0 fw-bold">Security (2FA)</h3>
+            <!-- 2FA Security Status -->
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white border-bottom-0 pt-4 px-4">
+                    <div class="d-flex align-items-center">
+                        <div class="text-success p-2 me-2">
+                            <i class="bi bi-shield-check fs-5"></i>
+                        </div>
+                        <h5 class="fw-bold mb-0">Extra Protection</h5>
+                    </div>
                 </div>
                 <div class="card-body p-4">
-                    <div class="d-flex align-items-center justify-content-between">
+                    <div class="d-flex align-items-center justify-content-between p-3 bg-light rounded-4">
                         <div>
-                            <h5 class="fs-6 mb-1">Google Authenticator</h5>
+                            <h6 class="fw-bold mb-1">Two-Step Verification</h6>
                             <p class="text-muted small mb-0">
-                                Status: 
                                 {% if admin.is_2fa_enabled %}
-                                    <span class="badge bg-success-subtle text-success">Enabled</span>
+                                    <span class="text-success"><i class="bi bi-check-circle-fill me-1"></i> Active and protecting your account.</span>
                                 {% else %}
-                                    <span class="badge bg-danger-subtle text-danger">Disabled</span>
+                                    <span class="text-danger"><i class="bi bi-x-circle-fill me-1"></i> Not enabled. Your account is less secure.</span>
                                 {% endif %}
                             </p>
                         </div>
-                        <a href="{{ PROOT }}admin/2fa/setup" class="btn btn-outline-dark btn-sm">
+                        <a href="{{ PROOT }}admin/2fa/setup" class="btn btn-sm btn-white border shadow-sm px-3 fw-bold">
                             Configure
                         </a>
                     </div>
@@ -97,4 +106,11 @@
             </div>
         </div>
     </div>
+{% endblock %}
+
+{% block styles %}
+<style>
+    .btn-white { background: #fff; }
+    .btn-white:hover { background: #f8fafc; border-color: var(--admin-primary); color: var(--admin-primary); }
+</style>
 {% endblock %}

@@ -12,7 +12,7 @@
                     <h2 class="mb-4">{{ contestant ? 'Edit' : 'Register New' }} Contestant</h2>
                     
                     <form action="{{ PROOT }}admin/contestants/store" method="POST" enctype="multipart/form-data">
-                        {{ csrf_field() }}
+                        {{ csrf_field()|raw }}
                         {% if contestant %}
                             <input type="hidden" name="contestant_id" value="{{ contestant.contestant_id }}">
                             <input type="hidden" name="old_profile" value="{{ contestant.cont_profile }}">

@@ -3,27 +3,55 @@
 {% block title %}Setup 2FA • Puubu Admin{% endblock %}
 
 {% block content %}
-<div class="row justify-content-center">
-    <div class="col-12 col-lg-8">
-        <div class="card card-body p-5 text-center">
-            <h1 class="mb-3">Secure Your Account</h1>
-            <p class="text-muted mb-5">Scan the QR code below with your Google Authenticator app and enter the generated code to activate 2FA.</p>
-
-            <div class="mb-5">
-                <img src="{{ qrCodeUrl }}" alt="QR Code" class="img-fluid border p-3 rounded bg-white">
-            </div>
-
-            {% if errorsMsg %}
-                <div class="alert alert-danger">{{ errorsMsg }}</div>
-            {% endif %}
-
-            <form method="POST" class="mx-auto" style="max-width: 300px;">
+<div class="row justify-content-center mt-5">
+    <div class="col-12 col-md-8 col-xl-6">
+        <div class="card border-0 shadow-sm">
+            <div class="card-body p-5 text-center">
                 <div class="mb-4">
-                    <label class="form-label">Verification Code</label>
-                    <input type="text" name="otp_code" class="form-control text-center fs-4" placeholder="000000" maxlength="6" required>
+                    <span class="d-inline-flex align-items-center justify-content-center bg-indigo bg-opacity-10 text-indigo rounded-circle" style="width: 64px; height: 64px;">
+                        <i class="bi bi-shield-plus fs-2"></i>
+                    </span>
                 </div>
-                <button type="submit" name="activate2fa" class="btn btn-warning w-100">Activate 2FA</button>
-            </form>
+                
+                <h2 class="fw-bold mb-3">Enable Two-Step Verification</h2>
+                <p class="text-muted small mb-5 px-lg-5">Secure your administrator account by adding an extra layer of security. Scan the QR code with Google Authenticator.</p>
+
+                <div class="mb-5 d-inline-block p-3 bg-white border rounded-4 shadow-sm">
+                    <img src="{{ qrCodeUrl }}" alt="QR Code" class="img-fluid" style="width: 200px;">
+                </div>
+
+                {% if errorsMsg %}
+                    <div class="alert alert-danger py-2 small mb-4 border-0 bg-danger bg-opacity-10 text-danger">
+                        {{ errorsMsg }}
+                    </div>
+                {% endif %}
+
+                <form method="POST" class="mx-auto" style="max-width: 320px;">
+                    {{ csrf_field()|raw }}
+                    <div class="mb-4">
+                        <label class="form-label small fw-bold text-uppercase tracking-wider">Verification Code</label>
+                        <input type="text" name="otp_code" class="form-control form-control-lg text-center fw-bold fs-4 bg-light border-0" placeholder="000 000" maxlength="6" required>
+                    </div>
+                    
+                    <button type="submit" name="activate2fa" class="btn btn-indigo w-100 py-3 fw-bold">
+                        Activate Protection <i class="bi bi-check-circle ms-1"></i>
+                    </button>
+                    
+                    <div class="mt-4">
+                        <a href="{{ PROOT }}admin/settings" class="text-muted small text-decoration-none">
+                            <i class="bi bi-x-circle me-1"></i> Cancel Setup
+                        </a>
+                    </div>
+                </form>
+            </div>
+            <div class="card-footer bg-light bg-opacity-50 border-0 p-4 text-start">
+                <h6 class="fw-bold small mb-2"><i class="bi bi-info-circle me-1 text-indigo"></i> Instructions:</h6>
+                <ol class="small text-muted mb-0 ps-3">
+                    <li>Open Google Authenticator on your mobile device.</li>
+                    <li>Tap the "+" icon and select "Scan a QR code".</li>
+                    <li>Scan the image above and enter the 6-digit code.</li>
+                </ol>
+            </div>
         </div>
     </div>
 </div>

@@ -7,7 +7,7 @@
 {% block content %}
     <div class="d-flex justify-content-between align-items-center mb-5">
         <div>
-            <h1 class="h3 fw-bold mb-1">Welcome back, {{ admin.cfname }} 👋</h1>
+            <h1 class="h3 fw-bold mb-1">Welcome back, {{ admin.cfname }}</h1>
             <p class="text-muted small mb-0">Real-time overview of your electoral infrastructure.</p>
         </div>
         <div class="d-none d-md-block">
@@ -25,7 +25,7 @@
                     <div class="card-body p-4">
                         <div class="d-flex justify-content-between align-items-start">
                             <div>
-                                <p class="text-muted small fw-bold text-uppercase tracking-wider mb-1">Total Organizers 🏢</p>
+                                <p class="text-muted small fw-bold text-uppercase tracking-wider mb-1">Total Organizers</p>
                                 <h2 class="fw-bold mb-0">{{ stats.total_organizers }}</h2>
                                 <p class="text-muted small mt-2 mb-0">Registered clients</p>
                             </div>
@@ -42,7 +42,7 @@
                     <div class="card-body p-4">
                         <div class="d-flex justify-content-between align-items-start">
                             <div>
-                                <p class="text-muted small fw-bold text-uppercase tracking-wider mb-1">Total Elections 🗳️</p>
+                                <p class="text-muted small fw-bold text-uppercase tracking-wider mb-1">Total Elections</p>
                                 <h2 class="fw-bold mb-0">{{ stats.total_elections }}</h2>
                                 <span class="badge bg-success bg-opacity-10 text-success mt-2">
                                     <span class="material-symbols-outlined fs-6 me-1">insights</span> Global Scale
@@ -61,7 +61,7 @@
                     <div class="card-body p-4">
                         <div class="d-flex justify-content-between align-items-start">
                             <div>
-                                <p class="text-muted small fw-bold text-uppercase tracking-wider mb-1">Total Elections 🗳️</p>
+                                <p class="text-muted small fw-bold text-uppercase tracking-wider mb-1">Total Elections</p>
                                 <h2 class="fw-bold mb-0">{{ stats.total_elections }}</h2>
                                 <span class="badge bg-success bg-opacity-10 text-success mt-2">
                                     <span class="material-symbols-outlined fs-6 me-1">insights</span> Live Tracking
@@ -80,7 +80,7 @@
                     <div class="card-body p-4">
                         <div class="d-flex justify-content-between align-items-start">
                             <div>
-                                <p class="text-muted small fw-bold text-uppercase tracking-wider mb-1">Total Voters 👥</p>
+                                <p class="text-muted small fw-bold text-uppercase tracking-wider mb-1">Total Voters</p>
                                 <h2 class="fw-bold mb-0">{{ stats.total_voters }}</h2>
                                 <p class="text-muted small mt-2 mb-0">Identity verified</p>
                             </div>
@@ -99,7 +99,7 @@
                 <div class="card-body p-4">
                     <div class="d-flex justify-content-between align-items-start">
                         <div>
-                            <p class="text-muted small fw-bold text-uppercase tracking-wider mb-1">Offices Defined 🏛️</p>
+                            <p class="text-muted small fw-bold text-uppercase tracking-wider mb-1">Offices Defined</p>
                             <h2 class="fw-bold mb-0">{{ stats.total_positions }}</h2>
                             <p class="text-muted small mt-2 mb-0">Across all sessions</p>
                         </div>
@@ -118,11 +118,11 @@
                 <div class="card-body p-4">
                     <div class="d-flex justify-content-between align-items-start">
                         <div>
-                            <p class="text-muted small fw-bold text-uppercase tracking-wider mb-1">Votes Cast ✅</p>
+                            <p class="text-muted small fw-bold text-uppercase tracking-wider mb-1">Votes Cast</p>
                             <h2 class="fw-bold mb-0 text-indigo">{{ stats.total_votes_cast|default(0) }}</h2>
                             <div class="d-flex align-items-center mt-2">
                                 <span class="p-1 bg-warning rounded-circle me-2 animate-pulse"></span>
-                                <span class="extra-small text-warning fw-bold">Live Sync 📡</span>
+                                <span class="extra-small text-warning fw-bold">Live Sync</span>
                             </div>
                         </div>
                         <div class="text-warning p-3">
@@ -240,7 +240,7 @@
                             </td>
                             <td class="text-end pe-4">
                                 <a href="{{ PROOT }}admin/reports/{{ election.election_id }}" class="btn btn-sm btn-white border shadow-sm px-3 fw-bold d-inline-flex align-items-center">
-                                    <span class="material-symbols-outlined me-1 text-indigo fs-6">trending_up</span> Reports 📊
+                                    <span class="material-symbols-outlined me-1 text-indigo fs-6">trending_up</span> Reports
                                 </a>
                             </td>
                         </tr>

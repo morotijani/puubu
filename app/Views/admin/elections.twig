@@ -57,26 +57,26 @@
                                             {% endif %}
                                         </td>
                                         <td class="text-end pe-4">
-                                            <div class="btn-group shadow-sm rounded">
+                                            <div class="d-flex justify-content-end gap-2">
                                                 {% if election.session == 0 %}
-                                                    <button class="btn btn-sm btn-success px-3 fw-bold border-end-0 start-btn" data-id="{{ election.election_id }}" title="Start Election">
-                                                        <span class="material-symbols-outlined me-1 fs-6">play_arrow</span> Start 🚀
+                                                    <button class="btn btn-sm btn-success px-3 fw-bold rounded-3 shadow-sm start-btn d-flex align-items-center" data-id="{{ election.election_id }}" title="Start Election">
+                                                        <span class="material-symbols-outlined me-1 fs-6">play_arrow</span> Start
                                                     </button>
-                                                    <a href="{{ PROOT }}admin/elections?edit={{ election.election_id }}" class="btn btn-sm btn-white border border-end-0" title="Edit Configuration">
+                                                    <a href="{{ PROOT }}admin/elections?edit={{ election.election_id }}" class="btn btn-sm btn-white border rounded-3 shadow-sm d-flex align-items-center" title="Edit Configuration">
                                                         <span class="material-symbols-outlined fs-6 text-muted">settings</span>
                                                     </a>
-                                                    <button class="btn btn-sm btn-white border text-danger delete-btn" data-id="{{ election.election_id }}" title="Purge Session">
+                                                    <button class="btn btn-sm btn-white border text-danger rounded-3 shadow-sm delete-btn d-flex align-items-center" data-id="{{ election.election_id }}" title="Purge Session">
                                                         <span class="material-symbols-outlined fs-6">delete</span>
                                                     </button>
                                                 {% elseif election.session == 1 %}
-                                                    <a href="{{ PROOT }}admin/reports/{{ election.election_id }}" class="btn btn-sm btn-indigo px-3 fw-bold border-end-0">
-                                                        Live Analytics 📊 <span class="material-symbols-outlined ms-1 fs-6">arrow_forward</span>
+                                                    <a href="{{ PROOT }}admin/reports/{{ election.election_id }}" class="btn btn-sm btn-indigo px-3 fw-bold rounded-3 shadow-sm d-flex align-items-center">
+                                                        Live Analytics <span class="material-symbols-outlined ms-1 fs-6">arrow_forward</span>
                                                     </a>
-                                                    <button class="btn btn-sm btn-danger px-3 fw-bold stop-btn" data-id="{{ election.election_id }}" title="Stop Election">
-                                                        <span class="material-symbols-outlined me-1 fs-6">stop</span> Stop 🛑
+                                                    <button class="btn btn-sm btn-danger px-3 fw-bold rounded-3 shadow-sm stop-btn d-flex align-items-center" data-id="{{ election.election_id }}" title="Stop Election">
+                                                        <span class="material-symbols-outlined me-1 fs-6">stop</span> Stop
                                                     </button>
                                                 {% else %}
-                                                    <a href="{{ PROOT }}admin/reports/{{ election.election_id }}" class="btn btn-sm btn-white border shadow-sm px-3 fw-bold">
+                                                    <a href="{{ PROOT }}admin/reports/{{ election.election_id }}" class="btn btn-sm btn-white border px-3 fw-bold rounded-3 shadow-sm d-flex align-items-center">
                                                         View Report
                                                     </a>
                                                 {% endif %}
@@ -160,7 +160,7 @@
                                 <div class="bg-indigo-subtle text-indigo d-inline-flex align-items-center justify-content-center rounded-circle mb-3" style="width: 72px; height: 72px;">
                                     <span class="material-symbols-outlined fs-1">calendar_month</span>
                                 </div>
-                                <h3 class="fw-bold text-dark mb-1">Set Timeline 📅</h3>
+                                <h3 class="fw-bold text-dark mb-1">Set Timeline</h3>
                                 <p class="text-muted small px-4">Define when your voting window should open and close.</p>
                             </div>
 
@@ -212,7 +212,7 @@
 
                             <div class="d-grid gap-2">
                                 <button type="submit" class="btn btn-success btn-lg py-3 fw-bold rounded-4 shadow-lg mb-2" style="font-size: 1.1rem;">
-                                    Authorize & Deploy 🚀
+                                    Authorize & Deploy
                                 </button>
                                 <button type="button" class="btn btn-link text-muted fw-semibold text-decoration-none py-2 prev-step" data-prev="start-step-1">
                                     <span class="material-symbols-outlined me-2 fs-5">arrow_back</span> Back to timeline
@@ -246,7 +246,7 @@
                                 <div class="bg-danger-subtle text-danger d-inline-flex align-items-center justify-content-center rounded-circle mb-3" style="width: 72px; height: 72px;">
                                     <span class="material-symbols-outlined fs-1">report</span>
                                 </div>
-                                <h3 class="fw-bold text-dark mb-1">Termination Audit 🛑</h3>
+                                <h3 class="fw-bold text-dark mb-1">Termination Audit</h3>
                                 <p class="text-muted small px-4">State the reason for early closure before proceeding to authorization.</p>
                             </div>
 
@@ -292,7 +292,7 @@
 
                             <div class="d-grid gap-2">
                                 <button type="submit" class="btn btn-danger btn-lg py-3 fw-bold rounded-4 shadow-lg mb-2" style="font-size: 1.1rem; border: none;">
-                                    Finalize Termination 🛑
+                                    Finalize Termination
                                 </button>
                                 <button type="button" class="btn btn-link text-muted fw-semibold text-decoration-none py-2 prev-step" data-prev="stop-step-1">
                                     <span class="material-symbols-outlined me-2 fs-5">arrow_back</span> Back to reason

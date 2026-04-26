@@ -4,6 +4,105 @@
 
 {% block title %}Live Reports • {{ election.election_name }}{% endblock %}
 
+{% block styles %}
+<style>
+    :root {
+        --admin-primary: #4f46e5;
+        --admin-primary-rgb: 79, 70, 229;
+        --shadow-2xl: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    }
+
+    /* Modal Step Transitions */
+    .modal-step {
+        transition: all 0.3s ease;
+    }
+    .modal-step.d-none {
+        display: none !important;
+        opacity: 0;
+        transform: translateX(20px);
+    }
+
+    /* Premium UI Components */
+    .premium-label {
+        font-size: 0.7rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: #64748b;
+        margin-bottom: 0.75rem;
+        display: block;
+    }
+
+    /* Animated Security Shield */
+    .security-shield-animated {
+        position: relative;
+        display: inline-block;
+    }
+    .shield-orb {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 120px;
+        height: 120px;
+        background: rgba(220, 53, 69, 0.1);
+        border-radius: 50%;
+        animation: pulse-orb 2s infinite;
+    }
+    @keyframes pulse-orb {
+        0% { transform: translate(-50%, -50%) scale(0.8); opacity: 0.5; }
+        50% { transform: translate(-50%, -50%) scale(1.2); opacity: 0.2; }
+        100% { transform: translate(-50%, -50%) scale(0.8); opacity: 0.5; }
+    }
+
+    /* Modern OTP UI */
+    .otp-modern-wrapper {
+        position: relative;
+        max-width: 340px;
+        margin: 0 auto;
+    }
+    .otp-hidden-input {
+        position: absolute !important;
+        top: 0 !important;
+        left: 0 !important;
+        width: 100% !important;
+        height: 100% !important;
+        opacity: 0 !important;
+        cursor: text !important;
+        z-index: 10 !important;
+        border: none !important;
+        background: transparent !important;
+        color: transparent !important;
+        caret-color: transparent !important;
+    }
+    .otp-box {
+        width: 48px;
+        height: 64px;
+        background: #f1f5f9;
+        border: 2px solid #e2e8f0;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.75rem;
+        font-weight: 800;
+        color: #0f172a;
+        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        font-family: 'Outfit', sans-serif;
+    }
+    .otp-box.active {
+        border-color: var(--admin-primary);
+        background: #fff;
+        box-shadow: 0 0 0 4px rgba(var(--admin-primary-rgb), 0.1);
+        transform: translateY(-2px);
+    }
+    .otp-box.filled {
+        background: #fff;
+        border-color: #cbd5e1;
+    }
+</style>
+{% endblock %}
+
 {% block content %}
     <div class="row align-items-center mb-7">
         <div class="col">
@@ -20,8 +119,15 @@
             <div class="row gx-2">
                 {% if election.session == 1 %}
                     <div class="col-auto">
-                        <a href="{{ PROOT }}admin/election/end/{{ election.election_id }}" class="btn btn-warning" onclick="return confirm('Are you sure you want to END this election? Voters will no longer be able to cast votes.')">
-                            <i class="bi bi-stop-circle me-1"></i> End Election
+                        <button type="button" class="btn btn-warning shadow-sm d-flex align-items-center" data-bs-toggle="modal" data-bs-target="#stopElectionModal">
+                            <span class="material-symbols-outlined me-1 fs-6">stop_circle</span> End Election
+                        </button>
+                    </div>
+                {% endif %}
+                {% if election.session == 2 %}
+                    <div class="col-auto">
+                        <a href="{{ PROOT }}admin/reports/download/{{ election.election_id }}" class="btn btn-dark shadow-sm d-flex align-items-center">
+                            <span class="material-symbols-outlined me-1 fs-6">download</span> Download PDF
                         </a>
                     </div>
                 {% endif %}
@@ -79,6 +185,81 @@
         </div>
     </div>
 
+    {% if election.session == 1 %}
+    <!-- Stop Election Modal (2FA Step Form) -->
+    <div class="modal fade" id="stopElectionModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 overflow-hidden" style="border-radius: 32px; background: rgba(255, 255, 255, 0.98); box-shadow: var(--shadow-2xl);">
+                <form action="{{ PROOT }}admin/elections/stop/{{ election.election_id }}" method="POST">
+                    {{ csrf_field()|raw }}
+                    <input type="hidden" name="stop_election" value="1">
+                    
+                    <!-- Step 1: Reason -->
+                    <div class="modal-step" id="stop-step-1">
+                        <div class="modal-body p-5">
+                            <div class="text-center mb-5">
+                                <div class="bg-danger-subtle text-danger d-inline-flex align-items-center justify-content-center rounded-circle mb-3" style="width: 72px; height: 72px;">
+                                    <span class="material-symbols-outlined fs-1">report</span>
+                                </div>
+                                <h3 class="fw-bold text-dark mb-1">Termination Audit</h3>
+                                <p class="text-muted small px-4">State the reason for early closure before proceeding to authorization.</p>
+                            </div>
+
+                            <div class="mb-5">
+                                <label class="premium-label">REASON FOR TERMINATION</label>
+                                <textarea class="form-control premium-input p-3 bg-light rounded-4 border-0" name="manual_stop_reason" id="stop_reason_input" rows="3" placeholder="Briefly explain the cause for early closure..." required style="resize: none;"></textarea>
+                            </div>
+
+                            <div class="d-grid gap-2">
+                                <button type="button" class="btn btn-danger btn-lg py-3 fw-bold rounded-4 shadow-lg next-step" data-next="stop-step-2">
+                                    Proceed to Authorization <span class="material-symbols-outlined ms-2 fs-5">arrow_forward</span>
+                                </button>
+                                <button type="button" class="btn btn-link text-muted fw-semibold text-decoration-none py-2" data-bs-dismiss="modal">
+                                    Abort
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Step 2: Security -->
+                    <div class="modal-step d-none" id="stop-step-2">
+                        <div class="modal-body p-5 text-center">
+                            <div class="mb-5">
+                                <div class="security-shield-animated mb-4">
+                                    <div class="shield-orb"></div>
+                                    <span class="material-symbols-outlined text-danger display-4 position-relative">lock</span>
+                                </div>
+                                <h3 class="fw-bold text-dark mb-1">Authorization 🔒</h3>
+                                <p class="text-muted px-4 small">Confirm your identity with your security key to permanently terminate this session.</p>
+                            </div>
+
+                            <div class="otp-modern-wrapper mb-5">
+                                <input type="text" name="otp_code" class="otp-hidden-input" maxlength="6" pattern="\d*" inputmode="numeric" autocomplete="one-time-code" required>
+                                <div class="d-flex justify-content-between gap-2">
+                                    <div class="otp-box" data-index="0"></div>
+                                    <div class="otp-box" data-index="1"></div>
+                                    <div class="otp-box" data-index="2"></div>
+                                    <div class="otp-box" data-index="3"></div>
+                                    <div class="otp-box" data-index="4"></div>
+                                    <div class="otp-box" data-index="5"></div>
+                                </div>
+                            </div>
+
+                            <div class="d-grid gap-2">
+                                <button type="submit" class="btn btn-dark btn-lg py-3 fw-bold rounded-4 shadow-lg">
+                                    Confirm Termination
+                                </button>
+                                <button type="button" class="btn btn-link text-muted fw-semibold text-decoration-none py-2 prev-step" data-prev="stop-step-1">
+                                    Back to Reason
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    {% endif %}
 {% endblock %}
 
 {% block scripts %}
@@ -202,6 +383,53 @@
     }
 
     $(document).ready(function() {
+        // Multi-step navigation
+        $('.next-step').on('click', function() {
+            var currentStepId = $(this).closest('.modal-step').attr('id');
+            var nextStepId = $(this).data('next');
+            var $form = $(this).closest('form');
+            
+            // Basic validation for Step 1
+            if (currentStepId === 'stop-step-1') {
+                if (!$('#stop_reason_input').val()) {
+                    Toast.fire({ icon: 'warning', title: 'Please provide a reason' });
+                    return;
+                }
+            }
+            
+            $(this).closest('.modal-step').addClass('d-none');
+            $('#' + nextStepId).removeClass('d-none');
+        });
+
+        $('.prev-step').on('click', function() {
+            var prevStepId = $(this).data('prev');
+            $(this).closest('.modal-step').addClass('d-none');
+            $('#' + prevStepId).removeClass('d-none');
+        });
+
+        // OTP Input Logic
+        $('.otp-hidden-input').on('input', function() {
+            const val = $(this).val();
+            const $wrapper = $(this).closest('.otp-modern-wrapper');
+            const $boxes = $wrapper.find('.otp-box');
+            
+            $boxes.removeClass('active filled').text('');
+            
+            for(let i = 0; i < 6; i++) {
+                if(i < val.length) {
+                    $boxes.eq(i).addClass('filled').text(val[i]);
+                }
+                if(i === val.length) {
+                    $boxes.eq(i).addClass('active');
+                }
+            }
+        });
+
+        // Focus hidden input when clicking on boxes
+        $('.otp-box').on('click', function() {
+            $(this).siblings('.otp-hidden-input').focus();
+        });
+
         pollData();
         {% if election.session == 1 %}
             setInterval(pollData, 5000);

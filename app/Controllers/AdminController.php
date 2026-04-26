@@ -211,7 +211,8 @@ class AdminController {
     }
 
     public function electionStore() {
-        global $conn, $admin_id;
+        global $conn, $admin_data;
+        $admin_id = $admin_data['admin_id'] ?? null;
         
         if (!isset($_POST['csrf_token']) || !verify_csrf_token($_POST['csrf_token'])) {
             $_SESSION['flash_error'] = "Invalid CSRF token.";
@@ -238,17 +239,21 @@ class AdminController {
                 $stmt = $conn->prepare("UPDATE election SET election_name = ?, election_by = ? WHERE election_id = ? AND session = 0 AND organizer_id = ?");
                 $result = $stmt->execute([$name, $by, $edit_id, $admin_id]);
             }
-            if ($result) {
+            if ($result && $stmt->rowCount() > 0) {
                 add_to_log("Updated election: $name", $admin_id, 'admin');
                 $_SESSION['flash_success'] = "Election updated successfully.";
+            } else {
+                $_SESSION['flash_error'] = "No changes made. The election may be active, ended, or you don't have permission to edit it.";
             }
         } else {
             $unique_id = guidv4();
             $stmt = $conn->prepare("INSERT INTO election (election_id, election_name, election_by, organizer_id) VALUES (?, ?, ?, ?)");
-            $result = $stmt->execute([$unique_id, $name, $by, $admin_id_to_use]);
+            $result = $stmt->execute([$unique_id, $name, $by, $admin_id]);
             if ($result) {
                 add_to_log("Created new election: $name", $admin_id, 'admin');
                 $_SESSION['flash_success'] = "Election created successfully.";
+            } else {
+                $_SESSION['flash_error'] = "Failed to create election.";
             }
         }
 
@@ -353,7 +358,8 @@ class AdminController {
     }
 
     public function electionDelete($id) {
-        global $conn, $admin_id, $admin_data;
+        global $conn, $admin_data;
+        $admin_id = $admin_data['admin_id'] ?? null;
         $role = $admin_data['role'] ?? 'organizer';
         
         if ($role === 'super_admin') {
@@ -415,7 +421,8 @@ class AdminController {
     }
 
     public function positionStore() {
-        global $conn, $admin_id;
+        global $conn, $admin_data;
+        $admin_id = $admin_data['admin_id'] ?? null;
         
         if (!isset($_POST['csrf_token']) || !verify_csrf_token($_POST['csrf_token'])) {
             $_SESSION['flash_error'] = "Invalid CSRF token.";
@@ -556,7 +563,8 @@ class AdminController {
     }
 
     public function contestantStore() {
-        global $conn, $admin_id;
+        global $conn, $admin_data;
+        $admin_id = $admin_data['admin_id'] ?? null;
         
         if (!isset($_POST['csrf_token']) || !verify_csrf_token($_POST['csrf_token'])) {
             $_SESSION['flash_error'] = "Invalid CSRF token.";
@@ -717,7 +725,8 @@ class AdminController {
     }
 
     public function voterStore() {
-        global $conn, $admin_id;
+        global $conn, $admin_data;
+        $admin_id = $admin_data['admin_id'] ?? null;
         
         if (!isset($_POST['csrf_token']) || !verify_csrf_token($_POST['csrf_token'])) {
             $_SESSION['flash_error'] = "Invalid CSRF token.";
@@ -906,6 +915,80 @@ class AdminController {
         redirect(PROOT . 'admin/reports/' . $election_id);
     }
 
+    public function downloadReport($election_id) {
+        global $conn, $admin_data;
+        $admin_id = $admin_data['admin_id'];
+        $role = $admin_data['role'] ?? 'organizer';
+        
+        // Fetch election details
+        if ($role === 'super_admin') {
+            $stmt = $conn->prepare("SELECT * FROM election WHERE election_id = ?");
+            $stmt->execute([$election_id]);
+        } else {
+            $stmt = $conn->prepare("SELECT * FROM election WHERE election_id = ? AND organizer_id = ?");
+            $stmt->execute([$election_id, $admin_id]);
+        }
+        $election = $stmt->fetch();
+        
+        if (!$election) {
+            $_SESSION['flash_error'] = "Election not found.";
+            redirect(PROOT . 'admin');
+        }
+
+        // Fetch Stats
+        $stmt = $conn->prepare("SELECT COUNT(*) FROM voterhasdone WHERE election_id = ?");
+        $stmt->execute([$election_id]);
+        $total_votes_cast = $stmt->fetchColumn();
+
+        $stmt = $conn->prepare("SELECT COUNT(*) FROM registrars WHERE registrar_election = ?");
+        $stmt->execute([$election_id]);
+        $total_voters = $stmt->fetchColumn();
+
+        // Fetch Results
+        $stmt = $conn->prepare("SELECT * FROM positions WHERE election_id = ? ORDER BY position_id ASC");
+        $stmt->execute([$election_id]);
+        $positions = $stmt->fetchAll();
+
+        $results = [];
+        foreach ($positions as $pos) {
+            $stmt = $conn->prepare("
+                SELECT c.*, v.results, v.results_no
+                FROM cont_details c
+                LEFT JOIN vote_counts v ON c.contestant_id = v.contestant_id
+                WHERE c.cont_position = ? AND c.del_cont = 'no'
+                ORDER BY v.results DESC
+            ");
+            $stmt->execute([$pos['position_id']]);
+            $contestants = $stmt->fetchAll();
+            
+            $results[] = [
+                'position' => $pos,
+                'contestants' => $contestants
+            ];
+        }
+
+        // Generate PDF
+        $html = $this->twig->render('admin/reports/pdf.twig', [
+            'election' => $election,
+            'total_votes_cast' => $total_votes_cast,
+            'total_voters' => $total_voters,
+            'results' => $results
+        ]);
+
+        $options = new \Dompdf\Options();
+        $options->set('isHtml5ParserEnabled', true);
+        $options->set('isRemoteEnabled', true);
+
+        $dompdf = new \Dompdf\Dompdf($options);
+        $dompdf->loadHtml($html);
+        $dompdf->setPaper('A4', 'portrait');
+        $dompdf->render();
+
+        $filename = php_url_slug($election['election_name']) . "-report.pdf";
+        $dompdf->stream($filename, ["Attachment" => true]);
+        exit;
+    }
+
     public function settings() {
         global $admin_data;
         echo $this->twig->render('admin/settings.twig', [
@@ -940,7 +1023,8 @@ class AdminController {
     }
 
     public function passwordUpdate() {
-        global $conn, $admin_id, $admin_data;
+        global $conn, $admin_data;
+        $admin_id = $admin_data['admin_id'] ?? null;
         
         if (!isset($_POST['csrf_token']) || !verify_csrf_token($_POST['csrf_token'])) {
             $_SESSION['flash_error'] = "Invalid CSRF token.";
@@ -992,7 +1076,8 @@ class AdminController {
     }
 
     public function organizerStore() {
-        global $conn, $admin_data, $admin_id;
+        global $conn, $admin_data;
+        $admin_id = $admin_data['admin_id'] ?? null;
         if (($admin_data['role'] ?? 'organizer') !== 'super_admin') {
             $_SESSION['flash_error'] = "Access Denied.";
             redirect(PROOT . 'admin');

@@ -176,7 +176,7 @@ $router->mount('/admin', function() use ($router, $twig) {
         $controller->positionStore();
     });
 
-    $router->get('/positions/delete/(\w+)', function($id) use ($twig) {
+    $router->get('/positions/delete/([a-zA-Z0-9\-]+)', function($id) use ($twig) {
         require_once __DIR__ . '/../app/Controllers/AdminController.php';
         $controller = new \App\Controllers\AdminController($twig);
         $controller->positionDelete($id);
@@ -195,7 +195,7 @@ $router->mount('/admin', function() use ($router, $twig) {
         $controller->contestantForm();
     });
 
-    $router->get('/contestants/edit/(\w+)', function($id) use ($twig) {
+    $router->get('/contestants/edit/([a-zA-Z0-9\-]+)', function($id) use ($twig) {
         require_once __DIR__ . '/../app/Controllers/AdminController.php';
         $controller = new \App\Controllers\AdminController($twig);
         $controller->contestantForm($id);
@@ -213,13 +213,13 @@ $router->mount('/admin', function() use ($router, $twig) {
         $controller->contestantArchive();
     });
 
-    $router->get('/contestants/toggle-delete/(\w+)/(\w+)', function($id, $status) use ($twig) {
+    $router->get('/contestants/toggle-delete/([a-zA-Z0-9\-]+)/(\w+)', function($id, $status) use ($twig) {
         require_once __DIR__ . '/../app/Controllers/AdminController.php';
         $controller = new \App\Controllers\AdminController($twig);
         $controller->contestantToggleDelete($id, $status);
     });
 
-    $router->get('/api/positions/(\w+)', function($id) use ($twig) {
+    $router->get('/api/positions/([a-zA-Z0-9\-]+)', function($id) use ($twig) {
         require_once __DIR__ . '/../app/Controllers/AdminController.php';
         $controller = new \App\Controllers\AdminController($twig);
         $controller->getPositionsByElection($id);
@@ -238,7 +238,7 @@ $router->mount('/admin', function() use ($router, $twig) {
         $controller->voterForm();
     });
 
-    $router->get('/voters/edit/(\w+)', function($id) use ($twig) {
+    $router->get('/voters/edit/([a-zA-Z0-9\-]+)', function($id) use ($twig) {
         require_once __DIR__ . '/../app/Controllers/AdminController.php';
         $controller = new \App\Controllers\AdminController($twig);
         $controller->voterForm($id);
@@ -250,7 +250,7 @@ $router->mount('/admin', function() use ($router, $twig) {
         $controller->voterStore();
     });
 
-    $router->get('/voters/delete/(\w+)', function($id) use ($twig) {
+    $router->get('/voters/delete/([a-zA-Z0-9\-]+)', function($id) use ($twig) {
         require_once __DIR__ . '/../app/Controllers/AdminController.php';
         $controller = new \App\Controllers\AdminController($twig);
         $controller->voterDelete($id);
@@ -275,19 +275,25 @@ $router->mount('/admin', function() use ($router, $twig) {
     });
 
     // Reports
-    $router->get('/reports/(\w+)', function($id) use ($twig) {
+    $router->get('/reports/([a-zA-Z0-9\-]+)', function($id) use ($twig) {
         require_once __DIR__ . '/../app/Controllers/AdminController.php';
         $controller = new \App\Controllers\AdminController($twig);
         $controller->reports($id);
     });
 
-    $router->get('/api/reports/(\w+)', function($id) use ($twig) {
+    $router->get('/reports/download/([a-zA-Z0-9\-]+)', function($id) use ($twig) {
+        require_once __DIR__ . '/../app/Controllers/AdminController.php';
+        $controller = new \App\Controllers\AdminController($twig);
+        $controller->downloadReport($id);
+    });
+
+    $router->get('/api/reports/([a-zA-Z0-9\-]+)', function($id) use ($twig) {
         require_once __DIR__ . '/../app/Controllers/AdminController.php';
         $controller = new \App\Controllers\AdminController($twig);
         $controller->getReportData($id);
     });
 
-    $router->get('/election/end/(\w+)', function($id) use ($twig) {
+    $router->get('/election/end/([a-zA-Z0-9\-]+)', function($id) use ($twig) {
         require_once __DIR__ . '/../app/Controllers/AdminController.php';
         $controller = new \App\Controllers\AdminController($twig);
         $controller->endElection($id);

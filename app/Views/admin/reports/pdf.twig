@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Election Report - {{ election.election_name }}</title>
+    <style>
+        body {
+            font-family: 'Helvetica', 'Arial', sans-serif;
+            color: #333;
+            line-height: 1.5;
+            padding: 20px;
+        }
+        .header {
+            text-align: center;
+            border-bottom: 2px solid #4f46e5;
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+        .header h1 {
+            margin: 0;
+            color: #4f46e5;
+            font-size: 24px;
+        }
+        .header p {
+            margin: 5px 0 0;
+            color: #666;
+            font-size: 14px;
+        }
+        .stats-grid {
+            margin-bottom: 30px;
+            width: 100%;
+        }
+        .stats-box {
+            background: #f8fafc;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+            text-align: center;
+        }
+        .stats-box h4 {
+            margin: 0;
+            font-size: 12px;
+            text-transform: uppercase;
+            color: #64748b;
+        }
+        .stats-box h2 {
+            margin: 5px 0 0;
+            font-size: 20px;
+            color: #0f172a;
+        }
+        .position-section {
+            margin-bottom: 40px;
+            page-break-inside: avoid;
+        }
+        .position-title {
+            background: #f1f5f9;
+            padding: 10px 15px;
+            border-radius: 6px;
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            border-left: 4px solid #4f46e5;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th {
+            text-align: left;
+            font-size: 12px;
+            text-transform: uppercase;
+            color: #64748b;
+            padding: 10px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        td {
+            padding: 12px 10px;
+            border-bottom: 1px solid #f1f5f9;
+            font-size: 14px;
+        }
+        .voter-name {
+            font-weight: bold;
+        }
+        .vote-count {
+            text-align: right;
+            font-weight: bold;
+            color: #4f46e5;
+        }
+        .footer {
+            margin-top: 50px;
+            text-align: center;
+            font-size: 10px;
+            color: #94a3b8;
+            border-top: 1px solid #e2e8f0;
+            padding-top: 20px;
+        }
+        .progress-bar {
+            height: 8px;
+            background: #e2e8f0;
+            border-radius: 4px;
+            margin-top: 5px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: #4f46e5;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Official Election Report</h1>
+        <p>{{ election.election_name }} • Organized by {{ election.election_by }}</p>
+        <p>Generated on {{ "now"|date("F j, Y, g:i a") }}</p>
+    </div>
+
+    <table class="stats-grid">
+        <tr>
+            <td width="50%">
+                <div class="stats-box">
+                    <h4>Total Votes Cast</h4>
+                    <h2>{{ total_votes_cast }}</h2>
+                </div>
+            </td>
+            <td width="50%">
+                <div class="stats-box">
+                    <h4>Turnout Percentage</h4>
+                    <h2>{{ total_voters > 0 ? ((total_votes_cast / total_voters) * 100)|number_format(1) : 0 }}%</h2>
+                </div>
+            </td>
+        </tr>
+    </table>
+
+    {% for res in results %}
+    <div class="position-section">
+        <div class="position-title">{{ res.position.position_name }}</div>
+        <table>
+            <thead>
+                <tr>
+                    <th>Contestant</th>
+                    <th style="text-align: center;">Ballot #</th>
+                    <th style="text-align: right;">Votes</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for c in res.contestants %}
+                <tr>
+                    <td>
+                        <div class="voter-name">{{ c.cont_fname }} {{ c.cont_lname }}</div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: {{ total_votes_cast > 0 ? (c.results / total_votes_cast * 100) : 0 }}%;"></div>
+                        </div>
+                    </td>
+                    <td style="text-align: center;">{{ c.contestant_ballot_number }}</td>
+                    <td class="vote-count">{{ c.results }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% endfor %}
+
+    <div class="footer">
+        <p>This is a system-generated document from Puubu Voting Platform.</p>
+        <p>&copy; {{ "now"|date("Y") }} Puubu. All rights reserved.</p>
+    </div>
+</body>
+</html>

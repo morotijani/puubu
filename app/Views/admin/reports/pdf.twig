@@ -105,6 +105,33 @@
             height: 100%;
             background: #4f46e5;
         }
+        .candidate-img {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            vertical-align: middle;
+            margin-right: 10px;
+            border: 1px solid #e2e8f0;
+        }
+        .candidate-initials {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background-color: #f1f5f9;
+            color: #4f46e5;
+            display: inline-block;
+            text-align: center;
+            line-height: 32px;
+            font-size: 10px;
+            font-weight: bold;
+            vertical-align: middle;
+            margin-right: 10px;
+            border: 1px solid #e2e8f0;
+        }
+        .voter-name-container {
+            display: inline-block;
+            vertical-align: middle;
+        }
     </style>
 </head>
 <body>
@@ -144,9 +171,58 @@
             </thead>
             <tbody>
                 {% for c in res.contestants %}
+                {% if res.contestants|length == 1 %}
                 <tr>
                     <td>
-                        <div class="voter-name">{{ c.cont_fname }} {{ c.cont_lname }}</div>
+                        <div style="margin-bottom: 5px;">
+                            {% if c.cont_profile %}
+                                <img src="{{ DOCUMENT_ROOT }}/media/uploadedprofile/{{ c.cont_profile }}" class="candidate-img">
+                            {% else %}
+                                <div class="candidate-initials">{{ c.cont_fname|slice(0, 1) }}{{ c.cont_lname|slice(0, 1) }}</div>
+                            {% endif %}
+                            <div class="voter-name-container">
+                                <div class="voter-name">{{ c.cont_fname }} {{ c.cont_lname }} (YES)</div>
+                            </div>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: {{ total_votes_cast > 0 ? (c.results / total_votes_cast * 100) : 0 }}; background: #1cc88a;"></div>
+                        </div>
+                    </td>
+                    <td style="text-align: center;">{{ c.contestant_ballot_number }}</td>
+                    <td class="vote-count" style="color: #1cc88a;">{{ c.results }}</td>
+                </tr>
+                <tr>
+                    <td>
+                        <div style="margin-bottom: 5px;">
+                            {% if c.cont_profile %}
+                                <img src="{{ DOCUMENT_ROOT }}/media/uploadedprofile/{{ c.cont_profile }}" class="candidate-img">
+                            {% else %}
+                                <div class="candidate-initials">{{ c.cont_fname|slice(0, 1) }}{{ c.cont_lname|slice(0, 1) }}</div>
+                            {% endif %}
+                            <div class="voter-name-container">
+                                <div class="voter-name">{{ c.cont_fname }} {{ c.cont_lname }} (NO)</div>
+                            </div>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: {{ total_votes_cast > 0 ? (c.results_no / total_votes_cast * 100) : 0 }}; background: #e74a3b;"></div>
+                        </div>
+                    </td>
+                    <td style="text-align: center;">{{ c.contestant_ballot_number }}</td>
+                    <td class="vote-count" style="color: #e74a3b;">{{ c.results_no }}</td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td>
+                        <div style="margin-bottom: 5px;">
+                            {% if c.cont_profile %}
+                                <img src="{{ DOCUMENT_ROOT }}/media/uploadedprofile/{{ c.cont_profile }}" class="candidate-img">
+                            {% else %}
+                                <div class="candidate-initials">{{ c.cont_fname|slice(0, 1) }}{{ c.cont_lname|slice(0, 1) }}</div>
+                            {% endif %}
+                            <div class="voter-name-container">
+                                <div class="voter-name">{{ c.cont_fname }} {{ c.cont_lname }}</div>
+                            </div>
+                        </div>
                         <div class="progress-bar">
                             <div class="progress-fill" style="width: {{ total_votes_cast > 0 ? (c.results / total_votes_cast * 100) : 0 }}%;"></div>
                         </div>
@@ -154,6 +230,7 @@
                     <td style="text-align: center;">{{ c.contestant_ballot_number }}</td>
                     <td class="vote-count">{{ c.results }}</td>
                 </tr>
+                {% endif %}
                 {% endfor %}
             </tbody>
         </table>

@@ -1135,7 +1135,8 @@ class AdminController {
             'election' => $election,
             'total_votes_cast' => $total_votes_cast,
             'total_voters' => $total_voters,
-            'results' => $results
+            'results' => $results,
+            'DOCUMENT_ROOT' => $_SERVER['DOCUMENT_ROOT'] . '/puubu'
         ]);
 
         $options = new \Dompdf\Options();

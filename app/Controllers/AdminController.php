@@ -738,6 +738,7 @@ class AdminController {
         $std_id = sanitize($_POST['std_id']);
         $fname = sanitize($_POST['std_fname']);
         $lname = sanitize($_POST['std_lname']);
+        $gender = sanitize($_POST['std_gender'] ?? 'male');
         $email = sanitize($_POST['std_email']);
         $election_id = sanitize($_POST['registrar_election']);
 
@@ -746,9 +747,25 @@ class AdminController {
             redirect(PROOT . 'admin/voters' . ($id ? '/edit/' . $id : '/add'));
         }
 
+        // Validation: Unique Identity ID and Email within the same election
         if ($id) {
-            $query = "UPDATE registrars SET std_id = ?, std_fname = ?, std_lname = ?, std_email = ?, registrar_election = ? WHERE voter_id = ?";
-            $conn->prepare($query)->execute([$std_id, $fname, $lname, $email, $election_id, $id]);
+            $stmt = $conn->prepare("SELECT * FROM registrars WHERE (std_id = ? OR std_email = ?) AND registrar_election = ? AND voter_id != ?");
+            $stmt->execute([$std_id, $email, $election_id, $id]);
+        } else {
+            $stmt = $conn->prepare("SELECT * FROM registrars WHERE (std_id = ? OR std_email = ?) AND registrar_election = ?");
+            $stmt->execute([$std_id, $email, $election_id]);
+        }
+        
+        $duplicate = $stmt->fetch();
+        if ($duplicate) {
+            $msg = ($duplicate['std_id'] == $std_id) ? "Identity ID '$std_id' is already registered for this election." : "Email '$email' is already registered for this election.";
+            $_SESSION['flash_error'] = $msg;
+            redirect(PROOT . 'admin/voters' . ($id ? '/edit/' . $id : '/add'));
+        }
+
+        if ($id) {
+            $query = "UPDATE registrars SET std_id = ?, std_fname = ?, std_lname = ?, std_gender = ?, std_email = ?, registrar_election = ? WHERE voter_id = ?";
+            $conn->prepare($query)->execute([$std_id, $fname, $lname, $gender, $email, $election_id, $id]);
             $_SESSION['flash_success'] = "Voter updated successfully.";
         } else {
             // Generate password
@@ -757,8 +774,8 @@ class AdminController {
             $hashed = password_hash($password, PASSWORD_DEFAULT);
             
             $new_id = guidv4();
-            $query = "INSERT INTO registrars (voter_id, std_id, std_password, std_fname, std_lname, std_email, registrar_election) VALUES (?, ?, ?, ?, ?, ?, ?)";
-            $conn->prepare($query)->execute([$new_id, $std_id, $hashed, $fname, $lname, $email, $election_id]);
+            $query = "INSERT INTO registrars (voter_id, std_id, std_password, std_fname, std_lname, std_gender, std_email, registrar_election) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+            $conn->prepare($query)->execute([$new_id, $std_id, $hashed, $fname, $lname, $gender, $email, $election_id]);
             
             $_SESSION['flash_success'] = "Voter added successfully. Password is: $password";
         }

@@ -2,62 +2,226 @@
 
 {% set active_page = 'voters' %}
 
-{% block title %}{{ voter ? 'Edit' : 'Add' }} Voter • Puubu Admin{% endblock %}
+{% block title %}{{ voter ? 'Edit' : 'Register' }} Identity • Puubu Admin{% endblock %}
 
 {% block content %}
+    <div class="mb-5">
+        <div class="d-flex align-items-center mb-2">
+            <a href="{{ PROOT }}admin/voters" class="btn btn-sm btn-white border rounded-circle me-3 shadow-sm">
+                <span class="material-symbols-outlined fs-6 pt-1">arrow_back</span>
+            </a>
+            <h1 class="h3 fw-bold mb-0">Identity Registrar</h1>
+        </div>
+        <p class="text-muted small ps-5">Define personal and electoral data for eligible voters.</p>
+    </div>
+
     <div class="row justify-content-center">
-        <div class="col-12 col-lg-8">
-            <div class="card">
-                <div class="card-body p-5">
-                    <h2 class="mb-4">{{ voter ? 'Edit' : 'Register' }} Voter</h2>
-                    
-                    <form action="{{ PROOT }}admin/voters/store" method="POST">
-                        {{ csrf_field()|raw }}
-                        {% if voter %}
-                            <input type="hidden" name="voter_id" value="{{ voter.voter_id }}">
-                        {% endif %}
-
-                        <div class="row g-4">
-                            <div class="col-md-6">
-                                <label class="form-label">First Name</label>
-                                <input type="text" class="form-control" name="std_fname" value="{{ voter.std_fname }}" required>
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label">Last Name</label>
-                                <input type="text" class="form-control" name="std_lname" value="{{ voter.std_lname }}" required>
+        <div class="col-12 col-xl-10">
+            <div class="card border-0 shadow-sm overflow-hidden rounded-4">
+                <div class="card-body p-0">
+                    <div class="row g-0">
+                        <!-- Sidebar Info -->
+                        <div class="col-lg-4 bg-indigo p-5 text-white d-none d-lg-block">
+                            <div class="mb-5">
+                                <span class="material-symbols-outlined fs-1 opacity-50 mb-3">badge</span>
+                                <h4 class="fw-bold">Electoral Identity</h4>
+                                <p class="small opacity-75">Ensure all data matches official institutional records to prevent voting disputes.</p>
                             </div>
 
-                            <div class="col-md-6">
-                                <label class="form-label">Student / Identity ID</label>
-                                <input type="text" class="form-control" name="std_id" value="{{ voter.std_id }}" required>
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label">Email Address</label>
-                                <input type="email" class="form-control" name="std_email" value="{{ voter.std_email }}" required>
+                            <div class="d-flex align-items-start mb-4">
+                                <div class="bg-white bg-opacity-20 rounded-circle p-2 me-3">
+                                    <span class="material-symbols-outlined fs-5">lock_person</span>
+                                </div>
+                                <div>
+                                    <h6 class="fw-bold mb-1">Secure Access</h6>
+                                    <p class="extra-small mb-0 opacity-75">Passwords are generated automatically and hashed for security.</p>
+                                </div>
                             </div>
 
-                            <div class="col-12">
-                                <label class="form-label">Target Election</label>
-                                <select class="form-control" name="registrar_election" required>
-                                    <option value="">Select Election</option>
-                                    {% for election in elections %}
-                                        <option value="{{ election.election_id }}" {{ voter.registrar_election == election.election_id ? 'selected' : '' }}>
-                                            {{ election.election_name }} ({{ election.election_by }})
-                                        </option>
-                                    {% endfor %}
-                                </select>
+                            <div class="d-flex align-items-start mb-4">
+                                <div class="bg-white bg-opacity-20 rounded-circle p-2 me-3">
+                                    <span class="material-symbols-outlined fs-5">mail</span>
+                                </div>
+                                <div>
+                                    <h6 class="fw-bold mb-1">Verification</h6>
+                                    <p class="extra-small mb-0 opacity-75">Notifications will be sent to the registered email address.</p>
+                                </div>
+                            </div>
+                            
+                            <div class="mt-auto pt-5">
+                                <div class="p-3 bg-white bg-opacity-10 rounded-4 border border-white border-opacity-10">
+                                    <p class="extra-small mb-0 opacity-75 italic">"Fairness begins with a clean and accurate voter registrar."</p>
+                                </div>
                             </div>
                         </div>
 
-                        <div class="mt-5 d-flex gap-2">
-                            <button type="submit" class="btn btn-primary px-5">
-                                {{ voter ? 'Update Voter' : 'Register Voter' }}
-                            </button>
-                            <a href="{{ PROOT }}admin/voters" class="btn btn-outline-secondary">Cancel</a>
+                        <!-- Form Section -->
+                        <div class="col-lg-8 p-4 p-md-5 bg-white">
+                            <div class="d-flex align-items-center justify-content-between mb-4">
+                                <h5 class="fw-bold mb-0 text-dark">{{ voter ? 'Update Profile' : 'New Registration' }}</h5>
+                                <span class="badge {{ voter ? 'bg-warning-subtle text-warning' : 'bg-success-subtle text-success' }} px-3 py-2 rounded-pill">
+                                    {{ voter ? 'Edit Mode' : 'Creation Mode' }}
+                                </span>
+                            </div>
+
+                            <form action="{{ PROOT }}admin/voters/store" method="POST" id="voterForm">
+                                {{ csrf_field()|raw }}
+                                {% if voter %}
+                                    <input type="hidden" name="voter_id" value="{{ voter.voter_id }}">
+                                {% endif %}
+
+                                <div class="section-label mb-3 mt-2">Personal Information</div>
+                                <div class="row g-4 mb-4">
+                                    <div class="col-md-6">
+                                        <label class="form-label small fw-bold text-uppercase tracking-wider">First Name</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text bg-light border-0"><span class="material-symbols-outlined fs-6 text-muted">person</span></span>
+                                            <input type="text" class="form-control form-control-lg bg-light border-0" name="std_fname" value="{{ voter.std_fname }}" placeholder="e.g. John" required>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label small fw-bold text-uppercase tracking-wider">Last Name</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text bg-light border-0"><span class="material-symbols-outlined fs-6 text-muted">person</span></span>
+                                            <input type="text" class="form-control form-control-lg bg-light border-0" name="std_lname" value="{{ voter.std_lname }}" placeholder="e.g. Doe" required>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label small fw-bold text-uppercase tracking-wider">Gender</label>
+                                        <div class="d-flex gap-3">
+                                            <div class="form-check card-check p-3 border rounded-3 w-50 text-center cursor-pointer {{ (not voter or voter.std_gender == 'male') ? 'active' : '' }}" onclick="selectGender('male')">
+                                                <input class="form-check-input d-none" type="radio" name="std_gender" id="genderMale" value="male" {{ (not voter or voter.std_gender == 'male') ? 'checked' : '' }}>
+                                                <label class="form-check-label d-block" for="genderMale">
+                                                    <span class="material-symbols-outlined fs-4 d-block mb-1">male</span>
+                                                    <span class="fw-bold small">Male</span>
+                                                </label>
+                                            </div>
+                                            <div class="form-check card-check p-3 border rounded-3 w-50 text-center cursor-pointer {{ voter.std_gender == 'female' ? 'active' : '' }}" onclick="selectGender('female')">
+                                                <input class="form-check-input d-none" type="radio" name="std_gender" id="genderFemale" value="female" {{ voter.std_gender == 'female' ? 'checked' : '' }}>
+                                                <label class="form-check-label d-block" for="genderFemale">
+                                                    <span class="material-symbols-outlined fs-4 d-block mb-1">female</span>
+                                                    <span class="fw-bold small">Female</span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label small fw-bold text-uppercase tracking-wider">Email Address</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text bg-light border-0"><span class="material-symbols-outlined fs-6 text-muted">alternate_email</span></span>
+                                            <input type="email" class="form-control form-control-lg bg-light border-0" name="std_email" value="{{ voter.std_email }}" placeholder="e.g. john@example.com" required>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="section-label mb-3">Institutional Data</div>
+                                <div class="row g-4 mb-5">
+                                    <div class="col-md-6">
+                                        <label class="form-label small fw-bold text-uppercase tracking-wider">Identity ID / Student ID</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text bg-light border-0"><span class="material-symbols-outlined fs-6 text-muted">tag</span></span>
+                                            <input type="text" class="form-control form-control-lg bg-light border-0 fw-mono" name="std_id" value="{{ voter.std_id }}" placeholder="e.g. PUC-2024-001" required>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label small fw-bold text-uppercase tracking-wider">Assign to Election</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text bg-light border-0"><span class="material-symbols-outlined fs-6 text-muted">how_to_vote</span></span>
+                                            <select class="form-select form-control-lg bg-light border-0" name="registrar_election" required>
+                                                <option value="">Select Election...</option>
+                                                {% for election in elections %}
+                                                    <option value="{{ election.election_id }}" {{ voter.registrar_election == election.election_id ? 'selected' : '' }}>
+                                                        {{ election.election_name }}
+                                                    </option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="d-flex flex-column flex-md-row gap-3 pt-3">
+                                    <button type="submit" class="btn btn-indigo btn-lg px-5 fw-bold shadow-sm d-flex align-items-center justify-content-center">
+                                        <span class="material-symbols-outlined me-2">{{ voter ? 'save' : 'person_add' }}</span>
+                                        {{ voter ? 'Update Identity' : 'Register Identity' }}
+                                    </button>
+                                    <a href="{{ PROOT }}admin/voters" class="btn btn-light btn-lg px-4 text-muted fw-bold d-flex align-items-center justify-content-center">
+                                        Discard Changes
+                                    </a>
+                                </div>
+                            </form>
                         </div>
-                    </form>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
+{% endblock %}
+
+{% block styles %}
+<style>
+    .bg-indigo { background: #4f46e5; }
+    .text-indigo { color: #4f46e5; }
+    .btn-indigo { background: #4f46e5; color: white; border: none; }
+    .btn-indigo:hover { background: #4338ca; color: white; }
+    .fw-mono { font-family: 'JetBrains Mono', 'Fira Code', monospace; }
+    .extra-small { font-size: 0.7rem; }
+    .italic { font-style: italic; }
+    .tracking-wider { letter-spacing: 0.05em; }
+    
+    .section-label {
+        font-size: 0.75rem;
+        font-weight: 800;
+        color: #94a3b8;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        display: flex;
+        align-items: center;
+    }
+    .section-label::after {
+        content: '';
+        flex: 1;
+        height: 1px;
+        background: #f1f5f9;
+        margin-left: 1rem;
+    }
+
+    .card-check {
+        transition: all 0.2s ease;
+        background: #f8fafc;
+        border-color: transparent !important;
+        cursor: pointer;
+    }
+    .card-check:hover {
+        background: #f1f5f9;
+    }
+    .card-check.active {
+        background: #eef2ff;
+        border-color: #4f46e5 !important;
+        color: #4f46e5;
+        box-shadow: 0 4px 12px rgba(79, 70, 229, 0.1);
+    }
+    .cursor-pointer { cursor: pointer; }
+    
+    .form-control-lg, .form-select {
+        font-size: 0.95rem;
+    }
+    .input-group-text {
+        padding-right: 0;
+    }
+</style>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    function selectGender(gender) {
+        $('.card-check').removeClass('active');
+        if (gender === 'male') {
+            $('#genderMale').prop('checked', true);
+            $('#genderMale').closest('.card-check').addClass('active');
+        } else {
+            $('#genderFemale').prop('checked', true);
+            $('#genderFemale').closest('.card-check').addClass('active');
+        }
+    }
+</script>
 {% endblock %}

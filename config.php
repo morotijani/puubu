@@ -1,6 +1,6 @@
 <?php
 
-	define('BASEURL', $_SERVER['DOCUMENT_ROOT'].'/puubu/');
+	define('BASEURL', __DIR__ . '/');
 	
 	define('PROOT', '/puubu/');
 	define('ADROOT', '/puubu/172.06.84.0/');

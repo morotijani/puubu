@@ -431,6 +431,7 @@ class AdminController {
 
         $name = sanitize($_POST['position_name']);
         $election_id = sanitize($_POST['election_id']);
+        $gender_restriction = sanitize($_POST['gender_restriction'] ?? 'all');
         $edit_id = $_POST['edit_id'] ?? null;
 
         if (empty($name) || empty($election_id)) {
@@ -439,17 +440,17 @@ class AdminController {
         }
 
         if ($edit_id) {
-            $stmt = $conn->prepare("UPDATE positions SET position_name = ?, election_id = ? WHERE position_id = ?");
-            $result = $stmt->execute([$name, $election_id, $edit_id]);
+            $stmt = $conn->prepare("UPDATE positions SET position_name = ?, election_id = ?, gender_restriction = ? WHERE position_id = ?");
+            $result = $stmt->execute([$name, $election_id, $gender_restriction, $edit_id]);
             if ($result) {
                 add_to_log("Updated position: $name", $admin_id, 'admin');
                 $_SESSION['flash_success'] = "Position updated successfully.";
             }
         } else {
-            $stmt = $conn->prepare("INSERT INTO positions (position_id, position_name, election_id) VALUES (?, ?, ?)");
-            $result = $stmt->execute([guidv4(), $name, $election_id]);
+            $stmt = $conn->prepare("INSERT INTO positions (position_id, position_name, election_id, gender_restriction) VALUES (?, ?, ?, ?)");
+            $result = $stmt->execute([guidv4(), $name, $election_id, $gender_restriction]);
             if ($result) {
-                add_to_log("Created new position: $name", $admin_id, 'admin');
+                add_to_log("Created position: $name", $admin_id, 'admin');
                 $_SESSION['flash_success'] = "Position created successfully.";
             }
         }

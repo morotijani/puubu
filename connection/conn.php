@@ -32,7 +32,7 @@
         // Log silently or ignore
     }
 
-    require_once($_SERVER['DOCUMENT_ROOT'].'/puubu/config.php');
+    require_once(dirname(__DIR__) . '/config.php');
     require_once(BASEURL.'helpers/helpers.php');
 
 	// 
@@ -47,7 +47,8 @@
 	$client = new IPinfo($access_token, ['timeout' => 5]); // Optional: increase timeout
 
 	// Optional: cache file path
-	$safeIp = str_replace([':', '.'], '_', $_SERVER['REMOTE_ADDR']);
+	$remoteAddr = $_SERVER['REMOTE_ADDR'] ?? '127.0.0.1';
+	$safeIp = str_replace([':', '.'], '_', $remoteAddr);
 	$cacheDir = __DIR__ . '/cache';
 	if (!is_dir($cacheDir)) {
 		mkdir($cacheDir, 0777, true);
@@ -67,7 +68,7 @@
 		// If no cache, create a fallback object
 		if (!$details) {
 			$details = (object) [
-				'ip' => $_SERVER['REMOTE_ADDR'],
+				'ip' => $remoteAddr,
 				'city' => null,
 				'region' => null,
 				'country' => null,

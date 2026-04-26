@@ -693,8 +693,18 @@ class AdminController {
         }
         $voters = $stmt->fetchAll();
 
+        if ($role === 'super_admin') {
+            $e_stmt = $conn->prepare("SELECT * FROM election ORDER BY id DESC");
+            $e_stmt->execute();
+        } else {
+            $e_stmt = $conn->prepare("SELECT * FROM election WHERE organizer_id = ? ORDER BY id DESC");
+            $e_stmt->execute([$admin_id]);
+        }
+        $elections = $e_stmt->fetchAll();
+
         echo $this->twig->render('admin/voters/index.twig', [
-            'voters' => $voters
+            'voters' => $voters,
+            'elections' => $elections
         ]);
     }
 
@@ -801,10 +811,124 @@ class AdminController {
     }
 
     public function voterTruncate() {
-        global $conn;
-        $conn->exec("TRUNCATE TABLE registrars");
-        $_SESSION['flash_success'] = "Voters table cleared.";
+        global $conn, $admin_data;
+        $admin_id = $admin_data['admin_id'];
+        
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            if (!isset($_POST['csrf_token']) || !verify_csrf_token($_POST['csrf_token'])) {
+                $_SESSION['flash_error'] = "Invalid CSRF token.";
+                redirect(PROOT . 'admin/voters');
+            }
+
+            $scope = $_POST['wipe_scope'] ?? 'election';
+            $election_id = $_POST['election_id'] ?? null;
+
+            if ($scope === 'all') {
+                $conn->exec("TRUNCATE TABLE registrars");
+                add_to_log("Wiped all voters", $admin_id, 'admin');
+                $_SESSION['flash_success'] = "Entire voter registry cleared.";
+            } else {
+                if (!$election_id) {
+                    $_SESSION['flash_error'] = "Please select an election to wipe.";
+                    redirect(PROOT . 'admin/voters');
+                }
+                $stmt = $conn->prepare("DELETE FROM registrars WHERE registrar_election = ?");
+                $stmt->execute([$election_id]);
+                add_to_log("Wiped voters for election: $election_id", $admin_id, 'admin');
+                $_SESSION['flash_success'] = "Voters for the selected election have been removed.";
+            }
+        }
         redirect(PROOT . 'admin/voters');
+    }
+
+    public function voterImport() {
+        global $conn, $admin_data;
+        $admin_id = $admin_data['admin_id'];
+        $role = $admin_data['role'] ?? 'organizer';
+
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            if (!isset($_POST['csrf_token']) || !verify_csrf_token($_POST['csrf_token'])) {
+                $_SESSION['flash_error'] = "Invalid CSRF token.";
+                redirect(PROOT . 'admin/voters/import');
+            }
+
+            $election_id = $_POST['election_id'] ?? null;
+            $password_verify = $_POST['security_pin'] ?? '';
+
+            // Security check (2FA fallback to password)
+            if (!password_verify($password_verify, $admin_data['ckey'])) {
+                $_SESSION['flash_error'] = "Security verification failed. Incorrect password.";
+                redirect(PROOT . 'admin/voters/import');
+            }
+
+            if (!$election_id || !isset($_FILES['csv_file']) || $_FILES['csv_file']['error'] !== 0) {
+                $_SESSION['flash_error'] = "Please select an election and a valid CSV file.";
+                redirect(PROOT . 'admin/voters/import');
+            }
+
+            $file = $_FILES['csv_file']['tmp_name'];
+            $handle = fopen($file, "r");
+            
+            // Skip header
+            fgetcsv($handle);
+
+            $imported = 0;
+            $errors = 0;
+
+            $conn->beginTransaction();
+            try {
+                while (($data = fgetcsv($handle, 1000, ",")) !== FALSE) {
+                    if (count($data) < 4) continue;
+
+                    $std_id = sanitize($data[0]);
+                    $fname = sanitize($data[1]);
+                    $lname = sanitize($data[2]);
+                    $email = sanitize($data[3]);
+                    $gender = sanitize($data[4] ?? 'male');
+
+                    // Check for duplicate in this election
+                    $stmt = $conn->prepare("SELECT id FROM registrars WHERE (std_id = ? OR std_email = ?) AND registrar_election = ?");
+                    $stmt->execute([$std_id, $email, $election_id]);
+                    if ($stmt->fetch()) {
+                        $errors++;
+                        continue;
+                    }
+
+                    // Generate password
+                    $string = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKMNOPQRSTUVWXYZ0123456789';
+                    $raw_pass = substr(str_shuffle($string), 0, 8);
+                    $hashed = password_hash($raw_pass, PASSWORD_DEFAULT);
+                    
+                    $voter_id = guidv4();
+                    $query = "INSERT INTO registrars (voter_id, std_id, std_password, std_fname, std_lname, std_gender, std_email, registrar_election) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+                    $conn->prepare($query)->execute([$voter_id, $std_id, $hashed, $fname, $lname, $gender, $email, $election_id]);
+                    $imported++;
+                }
+                $conn->commit();
+                $_SESSION['flash_success'] = "Successfully imported $imported voters. " . ($errors > 0 ? "Skipped $errors duplicates." : "");
+                add_to_log("Imported $imported voters to election $election_id", $admin_id, 'admin');
+            } catch (\Exception $e) {
+                $conn->rollBack();
+                $_SESSION['flash_error'] = "Import failed: " . $e->getMessage();
+            }
+
+            fclose($handle);
+            redirect(PROOT . 'admin/voters');
+        }
+
+        // GET: Show form
+        if ($role === 'super_admin') {
+            $stmt = $conn->prepare("SELECT * FROM election WHERE session = 0 ORDER BY id DESC");
+            $stmt->execute();
+        } else {
+            $stmt = $conn->prepare("SELECT * FROM election WHERE session = 0 AND organizer_id = ? ORDER BY id DESC");
+            $stmt->execute([$admin_id]);
+        }
+        $elections = $stmt->fetchAll();
+
+        echo $this->twig->render('admin/voters/import.twig', [
+            'elections' => $elections
+        ]);
     }
 
     public function voterDuplicates() {
@@ -812,35 +936,56 @@ class AdminController {
         $admin_id = $admin_data['admin_id'];
         $role = $admin_data['role'] ?? 'organizer';
         
+        $election_id = $_GET['election'] ?? null;
+        
         if ($role === 'super_admin') {
+            $e_stmt = $conn->prepare("SELECT * FROM election ORDER BY id DESC");
+            $e_stmt->execute();
+            
             $query = "
                 SELECT r.*, e.election_name, e.election_by 
                 FROM registrars r
                 INNER JOIN election e ON r.registrar_election = e.election_id
                 WHERE r.std_email IN (
-                    SELECT std_email FROM registrars GROUP BY std_email HAVING COUNT(*) > 1
+                    SELECT std_email FROM registrars " . ($election_id ? "WHERE registrar_election = ?" : "") . " GROUP BY std_email HAVING COUNT(*) > 1
                 )
+                " . ($election_id ? "AND r.registrar_election = ?" : "") . "
                 ORDER BY r.std_email ASC
             ";
             $stmt = $conn->prepare($query);
-            $stmt->execute();
+            if ($election_id) {
+                $stmt->execute([$election_id, $election_id]);
+            } else {
+                $stmt->execute();
+            }
         } else {
+            $e_stmt = $conn->prepare("SELECT * FROM election WHERE organizer_id = ? ORDER BY id DESC");
+            $e_stmt->execute([$admin_id]);
+
             $query = "
                 SELECT r.*, e.election_name, e.election_by 
                 FROM registrars r
                 INNER JOIN election e ON r.registrar_election = e.election_id
                 WHERE e.organizer_id = ? AND r.std_email IN (
-                    SELECT std_email FROM registrars GROUP BY std_email HAVING COUNT(*) > 1
+                    SELECT std_email FROM registrars WHERE " . ($election_id ? "registrar_election = ?" : "1=1") . " GROUP BY std_email HAVING COUNT(*) > 1
                 )
+                " . ($election_id ? "AND r.registrar_election = ?" : "") . "
                 ORDER BY r.std_email ASC
             ";
             $stmt = $conn->prepare($query);
-            $stmt->execute([$admin_id]);
+            if ($election_id) {
+                $stmt->execute([$admin_id, $election_id, $election_id]);
+            } else {
+                $stmt->execute([$admin_id]);
+            }
         }
         $duplicates = $stmt->fetchAll();
+        $elections = $e_stmt->fetchAll();
 
         echo $this->twig->render('admin/voters/duplicates.twig', [
-            'voters' => $duplicates
+            'voters' => $duplicates,
+            'elections' => $elections,
+            'selected_election' => $election_id
         ]);
     }
 

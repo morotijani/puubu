@@ -268,6 +268,24 @@ $router->mount('/admin', function() use ($router, $twig) {
         $controller->voterTruncate();
     });
 
+    $router->post('/voters/truncate', function() use ($twig) {
+        require_once __DIR__ . '/../app/Controllers/AdminController.php';
+        $controller = new \App\Controllers\AdminController($twig);
+        $controller->voterTruncate();
+    });
+
+    $router->get('/voters/import', function() use ($twig) {
+        require_once __DIR__ . '/../app/Controllers/AdminController.php';
+        $controller = new \App\Controllers\AdminController($twig);
+        $controller->voterImport();
+    });
+
+    $router->post('/voters/import', function() use ($twig) {
+        require_once __DIR__ . '/../app/Controllers/AdminController.php';
+        $controller = new \App\Controllers\AdminController($twig);
+        $controller->voterImport();
+    });
+
     $router->get('/voters/duplicates', function() use ($twig) {
         require_once __DIR__ . '/../app/Controllers/AdminController.php';
         $controller = new \App\Controllers\AdminController($twig);

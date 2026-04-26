@@ -16,10 +16,10 @@
                     <span class="material-symbols-outlined me-1 fs-6">construction</span> Registry Tools
                 </button>
                 <ul class="dropdown-menu dropdown-menu-end shadow-lg border-0 py-2">
-                    <li><a class="dropdown-item py-2 d-flex align-items-center" href="{{ PROOT }}admin/voters/duplicates"><span class="material-symbols-outlined me-2 text-muted fs-6">layers</span> Identify Duplicates</a></li>
+                    <li><a class="dropdown-item py-2 d-flex align-items-center" href="#" data-bs-toggle="modal" data-bs-target="#duplicateAuditModal"><span class="material-symbols-outlined me-2 text-muted fs-6">layers</span> Identify Duplicates</a></li>
                     <li><a class="dropdown-item py-2 d-flex align-items-center" href="{{ PROOT }}admin/voters/import"><span class="material-symbols-outlined me-2 text-muted fs-6">upload_file</span> Import Identities (CSV)</a></li>
                     <li><hr class="dropdown-divider mx-3"></li>
-                    <li><a class="dropdown-item py-2 text-danger d-flex align-items-center" href="{{ PROOT }}admin/voters/truncate" onclick="return confirm('CRITICAL ACTION: ERASE ALL VOTERS? This cannot be undone!')"><span class="material-symbols-outlined me-2 fs-6">warning</span> Wipe Registry</a></li>
+                    <li><a class="dropdown-item py-2 text-danger d-flex align-items-center" href="#" data-bs-toggle="modal" data-bs-target="#wipeRegistryModal"><span class="material-symbols-outlined me-2 fs-6">warning</span> Wipe Registry</a></li>
                 </ul>
             </div>
             <a href="{{ PROOT }}admin/voters/add" class="btn btn-indigo shadow-sm d-flex align-items-center">
@@ -128,6 +128,86 @@
             </div>
         </form>
     </div>
+
+    <!-- Duplicate Audit Modal -->
+    <div class="modal fade" id="duplicateAuditModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow-lg rounded-4">
+                <div class="modal-header border-0 pt-4 px-4">
+                    <h5 class="fw-bold mb-0">Identify Duplicates</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <p class="text-muted small">Select the scope of the duplication audit.</p>
+                    <form action="{{ PROOT }}admin/voters/duplicates" method="GET">
+                        <div class="mb-4">
+                            <label class="form-label small fw-bold text-uppercase">Target Election</label>
+                            <select class="form-select bg-light border-0 shadow-none" name="election">
+                                <option value="">Audit All Elections</option>
+                                {% for election in elections %}
+                                    <option value="{{ election.election_id }}">{{ election.election_name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-dark w-100 fw-bold py-2 shadow-sm">Start Audit</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Wipe Registry Modal -->
+    <div class="modal fade" id="wipeRegistryModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow-lg rounded-4">
+                <div class="modal-header border-0 pt-4 px-4">
+                    <h5 class="fw-bold mb-0 text-danger">Wipe Registry</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <div class="alert alert-danger border-0 rounded-4 mb-4">
+                        <div class="d-flex">
+                            <span class="material-symbols-outlined me-2">report</span>
+                            <div class="small fw-bold">This action is irreversible. All selected voter records and their login credentials will be permanently erased.</div>
+                        </div>
+                    </div>
+
+                    <form action="{{ PROOT }}admin/voters/truncate" method="POST">
+                        {{ csrf_field()|raw }}
+                        <div class="mb-4">
+                            <label class="form-label small fw-bold text-uppercase">Wipe Scope</label>
+                            <div class="d-flex flex-column gap-2">
+                                <div class="form-check p-3 bg-light rounded-3 border-0">
+                                    <input class="form-check-input ms-0 me-3" type="radio" name="wipe_scope" id="wipeElection" value="election" checked onchange="toggleWipeElection(true)">
+                                    <label class="form-check-label fw-bold small text-dark" for="wipeElection">Specific Election</label>
+                                </div>
+                                <div class="form-check p-3 bg-light rounded-3 border-0">
+                                    <input class="form-check-input ms-0 me-3" type="radio" name="wipe_scope" id="wipeAll" value="all" onchange="toggleWipeElection(false)">
+                                    <label class="form-check-label fw-bold small text-danger" for="wipeAll">Entire Registry (Global Wipe)</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="wipeElectionSelect" class="mb-4">
+                            <label class="form-label small fw-bold text-uppercase">Select Election</label>
+                            <select class="form-select bg-light border-0 shadow-none" name="election_id">
+                                <option value="">Select Election...</option>
+                                {% for election in elections %}
+                                    <option value="{{ election.election_id }}">{{ election.election_name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="mt-4">
+                            <button type="submit" class="btn btn-danger w-100 fw-bold py-2 shadow-sm" onclick="return confirm('FINAL WARNING: Proceed with wiping data?')">
+                                Confirm Wipe
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 {% endblock %}
 
 {% block styles %}
@@ -141,6 +221,11 @@
 
 {% block scripts %}
 <script>
+    function toggleWipeElection(show) {
+        const select = document.getElementById('wipeElectionSelect');
+        if (select) select.style.display = show ? 'block' : 'none';
+    }
+
     $(document).ready(function() {
         // Search Functionality
         $("#voterSearch").on("keyup", function() {

@@ -1,0 +1,128 @@
+{% extends "admin/layout.twig" %}
+
+{% set active_page = 'voters' %}
+
+{% block title %}Import Identities • Puubu Admin{% endblock %}
+
+{% block content %}
+    <div class="mb-5">
+        <div class="d-flex align-items-center mb-2">
+            <a href="{{ PROOT }}admin/voters" class="btn btn-sm btn-white border rounded-circle me-3 shadow-sm">
+                <span class="material-symbols-outlined fs-6 pt-1">arrow_back</span>
+            </a>
+            <h1 class="h3 fw-bold mb-0">Import Identities</h1>
+        </div>
+        <p class="text-muted small ps-5">Bulk register voters using a CSV file.</p>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-12 col-xl-10">
+            <div class="card border-0 shadow-sm overflow-hidden rounded-4">
+                <div class="card-body p-0">
+                    <div class="row g-0">
+                        <!-- Sidebar Info -->
+                        <div class="col-lg-4 bg-dark p-5 text-white d-none d-lg-block">
+                            <div class="mb-5">
+                                <span class="material-symbols-outlined fs-1 opacity-50 mb-3">upload_file</span>
+                                <h4 class="fw-bold">CSV Guidelines</h4>
+                                <p class="small opacity-75">Follow these rules to ensure a successful import process.</p>
+                            </div>
+
+                            <div class="mb-4">
+                                <h6 class="fw-bold small text-uppercase opacity-50 mb-3">Column Order</h6>
+                                <ol class="ps-3 extra-small opacity-75">
+                                    <li class="mb-2">Identity ID / Student ID</li>
+                                    <li class="mb-2">First Name</li>
+                                    <li class="mb-2">Last Name</li>
+                                    <li class="mb-2">Email Address</li>
+                                    <li class="mb-2">Gender (male/female)</li>
+                                </ol>
+                            </div>
+
+                            <div class="p-3 bg-white bg-opacity-10 rounded-4 border border-white border-opacity-10 mb-4">
+                                <h6 class="fw-bold small mb-1">Notice</h6>
+                                <p class="extra-small mb-0 opacity-75">Passwords will be automatically generated and must be distributed to voters manually or via email.</p>
+                            </div>
+
+                            <a href="#" class="btn btn-outline-light btn-sm w-100 fw-bold border-opacity-25 mt-4">
+                                Download Sample CSV
+                            </a>
+                        </div>
+
+                        <!-- Form Section -->
+                        <div class="col-lg-8 p-4 p-md-5 bg-white">
+                            <form action="{{ PROOT }}admin/voters/import" method="POST" enctype="multipart/form-data">
+                                {{ csrf_field()|raw }}
+
+                                <div class="mb-5">
+                                    <label class="form-label small fw-bold text-uppercase tracking-wider">1. Target Election</label>
+                                    <p class="text-muted extra-small mb-3">Select which election these identities should be registered for.</p>
+                                    <select class="form-select form-select-lg bg-light border-0" name="election_id" required>
+                                        <option value="">Select Election...</option>
+                                        {% for election in elections %}
+                                            <option value="{{ election.election_id }}">{{ election.election_name }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+
+                                <div class="mb-5">
+                                    <label class="form-label small fw-bold text-uppercase tracking-wider">2. Upload File</label>
+                                    <div class="upload-zone p-5 border-2 border-dashed rounded-4 text-center cursor-pointer bg-light mb-2" onclick="document.getElementById('csvFile').click()">
+                                        <span class="material-symbols-outlined fs-1 text-muted mb-2">csv</span>
+                                        <h6 class="fw-bold text-dark mb-1">Click to upload or drag and drop</h6>
+                                        <p class="text-muted small mb-0">Supported format: .csv only</p>
+                                        <input type="file" id="csvFile" name="csv_file" class="d-none" accept=".csv" required onchange="updateFileName(this)">
+                                    </div>
+                                    <div id="fileName" class="text-indigo small fw-bold text-center"></div>
+                                </div>
+
+                                <div class="mb-5 p-4 bg-warning-subtle rounded-4 border border-warning border-opacity-10">
+                                    <label class="form-label small fw-bold text-uppercase tracking-wider text-warning">3. Security Verification</label>
+                                    <p class="text-dark extra-small mb-3 fw-bold">This is a sensitive operation. Enter your administrator password to proceed.</p>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-white border-0"><span class="material-symbols-outlined fs-6 text-muted">lock</span></span>
+                                        <input type="password" class="form-control form-control-lg border-0 shadow-none" name="security_pin" placeholder="Enter Password" required>
+                                    </div>
+                                </div>
+
+                                <div class="d-grid">
+                                    <button type="submit" class="btn btn-indigo btn-lg fw-bold shadow-sm py-3">
+                                        Confirm and Process Import
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block styles %}
+<style>
+    .bg-indigo { background: #4f46e5; }
+    .text-indigo { color: #4f46e5; }
+    .btn-indigo { background: #4f46e5; color: white; border: none; }
+    .btn-indigo:hover { background: #4338ca; color: white; }
+    .extra-small { font-size: 0.7rem; }
+    .tracking-wider { letter-spacing: 0.05em; }
+    
+    .border-dashed { border-style: dashed !important; }
+    .upload-zone { transition: all 0.2s ease; }
+    .upload-zone:hover { background: #f1f5f9 !important; border-color: #4f46e5 !important; }
+    
+    .form-select-lg { font-size: 1rem; }
+</style>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    function updateFileName(input) {
+        const fileName = input.files[0]?.name;
+        if (fileName) {
+            document.getElementById('fileName').innerText = 'Selected: ' + fileName;
+        }
+    }
+</script>
+{% endblock %}

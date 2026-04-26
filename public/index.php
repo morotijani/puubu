@@ -29,11 +29,14 @@ $twig->addFunction(new \Twig\TwigFunction('csrf_field', function() {
 $twig->addGlobal('PROOT', PROOT);
 $twig->addGlobal('flash', $flash);
 $twig->addGlobal('session', $_SESSION);
+$twig->addGlobal('ADMIN_TOKEN', ADMIN_ACCESS_TOKEN);
 if (isset($admin_data)) $twig->addGlobal('admin', $admin_data);
 
 // Define Routes
-$router->get('/', function() {
-    redirect(PROOT . 'signin');
+$router->get('/', function() use ($twig) {
+    require_once __DIR__ . '/../app/Controllers/VoterController.php';
+    $controller = new \App\Controllers\VoterController($twig);
+    $controller->home();
 });
 
 $router->all('/signin', function() use ($twig) {

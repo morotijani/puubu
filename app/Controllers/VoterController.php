@@ -8,6 +8,10 @@ class VoterController {
         $this->twig = $twig;
     }
 
+    public function home() {
+        echo $this->twig->render('voter/home.twig');
+    }
+
     public function login() {
         global $conn, $details, $location;
         

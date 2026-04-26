@@ -1,14 +1,16 @@
 RewriteEngine On
 RewriteBase /puubu/
 
+# Prevent directory listing
+Options -Indexes
+
 # Explicitly skip rewriting for asset folders
 RewriteRule ^(dist|media|assets|vendor)/ - [L]
 
-# Also skip for existing files/dirs
-RewriteCond %{REQUEST_FILENAME} -f [OR]
-RewriteCond %{REQUEST_FILENAME} -d
+# Skip for existing files (but not directories, so we can rewrite the root)
+RewriteCond %{REQUEST_FILENAME} -f
 RewriteRule ^ - [L]
 
 # Everything else goes to public/
 RewriteCond %{REQUEST_URI} !^/puubu/public/
-RewriteRule ^(.*)$ public/$1 [L]
+RewriteRule ^(.*)$ public/index.php [L]

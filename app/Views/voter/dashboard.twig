@@ -2,32 +2,206 @@
 
 {% block title %}Voter Dashboard • Puubu{% endblock %}
 
+{% block styles %}
+<style>
+    :root {
+        --primary-accent: #dcf3b0;
+        --dark-accent: #1d3d37;
+        --light-bg: #fdfcf5;
+        --card-bg: #ffffff;
+        --border-color: rgba(29, 61, 55, 0.08);
+    }
+
+    body {
+        background: var(--light-bg);
+        color: var(--dark-accent);
+        font-family: 'Outfit', sans-serif;
+    }
+
+    .dashboard-nav {
+        background: var(--light-bg) !important;
+        border-bottom: 1px solid var(--border-color);
+        padding: 1rem 0;
+    }
+
+    .dashboard-section {
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        padding: 100px 0 60px;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .dashboard-section::before {
+        content: '';
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+        background-image: radial-gradient(circle at 80% 20%, rgba(220, 243, 176, 0.25), transparent 40%),
+                          radial-gradient(circle at 20% 80%, rgba(29, 61, 55, 0.03), transparent 40%);
+        z-index: 0;
+    }
+
+    .welcome-card {
+        background: var(--card-bg);
+        border: 1px solid var(--border-color);
+        border-radius: 40px;
+        padding: 60px;
+        position: relative;
+        z-index: 10;
+        box-shadow: 0 40px 80px -20px rgba(29, 61, 55, 0.08);
+        text-align: center;
+    }
+
+    .user-avatar-initials {
+        width: 80px;
+        height: 80px;
+        background: var(--primary-accent);
+        color: var(--dark-accent);
+        border-radius: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2rem;
+        font-weight: 800;
+        margin: 0 auto 32px;
+        box-shadow: 0 10px 20px rgba(220, 243, 176, 0.4);
+    }
+
+    .welcome-badge {
+        background: rgba(29, 61, 55, 0.05);
+        color: #718783;
+        padding: 6px 16px;
+        border-radius: 100px;
+        font-weight: 700;
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        margin-bottom: 20px;
+        display: inline-block;
+    }
+
+    .voter-name {
+        font-size: clamp(2rem, 5vw, 3rem);
+        font-weight: 800;
+        color: var(--dark-accent);
+        letter-spacing: -1.5px;
+        margin-bottom: 16px;
+    }
+
+    .election-info {
+        font-size: 1.15rem;
+        color: #718783;
+        max-width: 500px;
+        margin: 0 auto 40px;
+        line-height: 1.6;
+    }
+
+    .timer-box {
+        background: #f8f9f5;
+        border: 2px solid var(--border-color);
+        border-radius: 24px;
+        padding: 24px;
+        margin-bottom: 48px;
+        display: inline-block;
+        min-width: 300px;
+    }
+
+    .timer-label {
+        font-size: 0.75rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        color: #94a3b8;
+        margin-bottom: 8px;
+    }
+
+    #countDT {
+        font-size: 1.75rem;
+        font-weight: 800;
+        color: #ef4444;
+        font-family: 'Outfit', sans-serif;
+    }
+
+    .btn-start {
+        background: var(--dark-accent);
+        color: white !important;
+        border: none;
+        padding: 20px 50px;
+        border-radius: 18px;
+        font-weight: 700;
+        font-size: 1.2rem;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        display: inline-flex;
+        align-items: center;
+        gap: 12px;
+        text-decoration: none;
+        box-shadow: 0 20px 40px -10px rgba(29, 61, 55, 0.3);
+    }
+
+    .btn-start:hover {
+        background: #132e29;
+        transform: translateY(-4px);
+        box-shadow: 0 25px 50px -10px rgba(29, 61, 55, 0.4);
+    }
+
+    .btn-signout {
+        color: #718783 !important;
+        font-weight: 600;
+        padding: 20px 40px;
+        text-decoration: none;
+        transition: all 0.2s ease;
+    }
+
+    .btn-signout:hover {
+        color: #ef4444 !important;
+    }
+</style>
+{% endblock %}
+
 {% block content %}
-    <section class="overflow-hidden">
-        <div class="container d-flex flex-column py-20.5 min-vh-100 level-3">
-            <div class="row align-items-center justify-content-center my-auto">
-                <div class="col-md-10 col-lg-8 col-xl-7 text-center" data-aos="fade-up">
-                    <div class="glass-card p-5">
-                        <div class="mb-5">
-                            <span class="badge bg-warning-subtle text-warning text-uppercase tracking-wider mb-2">Welcome Back</span>
-                            <h1 class="display-4 fw-bold text-white mb-3">{{ voter.std_fname }} {{ voter.std_lname }}</h1>
-                            <p class="lead text-secondary">Ready to make your voice heard? The {{ voter.election_name }} election is waiting for you.</p>
+    <nav class="navbar navbar-expand-lg dashboard-nav fixed-top">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center text-decoration-none" href="{{ PROOT }}votingon">
+                <span class="material-symbols-outlined text-dark me-2 fs-3">inventory_2</span>
+                <span class="h4 mb-0 brand-text fw-bold">Puu<span style="color: #4ade80 !important;">Bu</span></span>
+            </a>
+            <div class="ms-auto">
+                <a href="{{ PROOT }}auth/logout" class="btn btn-outline-danger border-opacity-25 rounded-pill px-4 fw-bold small text-decoration-none">
+                    Sign Out
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <section class="dashboard-section">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-8 col-xl-7">
+                    <div class="welcome-card">
+                        <div class="user-avatar-initials">
+                            {{ voter.std_fname|first }}{{ voter.std_lname|first }}
+                        </div>
+                        
+                        <span class="welcome-badge">Authentication Verified</span>
+                        <h1 class="voter-name">Welcome, {{ voter.std_fname }}</h1>
+                        <p class="election-info">
+                            You are authorized to vote in the <span class="text-dark fw-700">{{ voter.election_name }}</span>. Your vote is strictly private and encrypted.
+                        </p>
+
+                        <div class="timer-box">
+                            <div class="timer-label">Time Remaining</div>
+                            <div id="countDT">Initializing...</div>
                         </div>
 
-                        <div class="row g-4 justify-content-center mb-5">
-                            <div class="col-md-6">
-                                <div class="bg-white bg-opacity-5 rounded-4 p-4 border border-white border-opacity-10">
-                                    <h4 class="text-white mb-2">Election Timer</h4>
-                                    <div id="countDT" class="h3 text-color mb-0 font-monospace">Loading...</div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="d-grid gap-3 d-md-flex justify-content-md-center">
-                            <a href="{{ PROOT }}startvote" class="btn btn-puubu btn-lg rounded-pill px-5 pulse-button">
-                                Start Voting <i class="bi bi-arrow-right ms-2"></i>
+                        <div class="d-flex flex-column flex-md-row align-items-center justify-content-center gap-3">
+                            <a href="{{ PROOT }}startvote" class="btn-start">
+                                Start Voting
+                                <span class="material-symbols-outlined">how_to_vote</span>
                             </a>
-                            <a href="{{ PROOT }}auth/logout" class="btn btn-outline-light btn-lg rounded-pill px-5">
+                            <a href="{{ PROOT }}auth/logout" class="btn-signout">
                                 Sign Out
                             </a>
                         </div>
@@ -36,13 +210,55 @@
             </div>
         </div>
     </section>
+
+    <footer class="pt-5 pb-0 position-relative overflow-hidden" style="background: #f8f9f5; border-top: 1px solid var(--border-color);">
+        <div class="container position-relative" style="z-index: 10;">
+            <div class="row py-4 small fw-600" style="color: #718783;">
+                <div class="col-md-4 text-center text-md-start mb-3 mb-md-0">
+                    &copy; {{ "now"|date("Y") }} All rights reserved
+                </div>
+                <div class="col-md-4 text-center mb-3 mb-md-0">
+                    <a href="mailto:info@puubu.com" class="text-decoration-none" style="color: inherit;">info@puubu.com</a>
+                </div>
+                <div class="col-md-4 text-center text-md-end">
+                    <a href="#" class="text-decoration-none" style="color: inherit;">Privacy Policy</a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer-giant-text select-none">
+            PUUBU
+        </div>
+
+        <style>
+            .footer-giant-text {
+                font-size: clamp(10rem, 25vw, 30rem);
+                font-weight: 900;
+                color: rgba(29, 61, 55, 0.03);
+                line-height: 0.8;
+                margin-top: -2rem;
+                margin-bottom: -5rem;
+                text-align: center;
+                letter-spacing: -0.05em;
+                pointer-events: none;
+                text-transform: uppercase;
+                width: 100%;
+            }
+            .select-none {
+                user-select: none;
+                -webkit-user-select: none;
+            }
+        </style>
+    </footer>
 {% endblock %}
 
 {% block scripts %}
 <script type="text/javascript">
     $(document).ready(function() {
         {% if started_election > 0 %}
-            var countDownDate = new Date("{{ voter.stop_timer }}").getTime();
+            var dateStr = "{{ voter.stop_timer }}";
+            var t = dateStr.split(/[- :]/);
+            var countDownDate = new Date(t[0], t[1]-1, t[2], t[3], t[4], t[5]).getTime();
             var x = setInterval(function() {
                 var now = new Date().getTime();
                 var distance = countDownDate - now;
@@ -52,7 +268,7 @@
                 var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
                 var seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
-                document.getElementById('countDT').innerHTML = days + "d " + hours + "h " + minutes + "m " + seconds + "s";
+                document.getElementById('countDT').innerHTML = (days > 0 ? days + "d " : "") + hours + "h " + minutes + "m " + seconds + "s";
 
                 if (distance < 0) {
                     clearInterval(x);

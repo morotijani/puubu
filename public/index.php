@@ -18,7 +18,7 @@ $twig = new \Twig\Environment($loader, [
 
 // Register Global Functions
 $twig->addFunction(new \Twig\TwigFunction('csrf_token', function() {
-    return $_SESSION['csrf_token'] ?? '';
+    return csrf_token();
 }));
 
 $twig->addFunction(new \Twig\TwigFunction('csrf_field', function() {

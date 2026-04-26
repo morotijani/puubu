@@ -1,84 +1,243 @@
 {% extends "layout.twig" %}
 
-{% block title %}Sign In • Puubu{% endblock %}
+{% block title %}Sign In • Puubu Secure Voting{% endblock %}
+
+{% block styles %}
+<style>
+    :root {
+        --primary-accent: #dcf3b0;
+        --dark-accent: #1d3d37;
+        --light-bg: #fdfcf5;
+        --card-bg: #ffffff;
+    }
+
+    body {
+        background: var(--light-bg);
+        color: var(--dark-accent);
+        font-family: 'Outfit', sans-serif;
+    }
+
+    .auth-section {
+        min-height: 100vh;
+        background-color: var(--light-bg);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 40px 20px;
+        position: relative;
+    }
+
+    .login-card {
+        background: var(--card-bg);
+        border: 1px solid rgba(0, 0, 0, 0.05);
+        border-radius: 28px;
+        padding: 48px;
+        width: 100%;
+        max-width: 460px;
+        position: relative;
+        z-index: 10;
+        box-shadow: 0 30px 60px -20px rgba(29, 61, 55, 0.08);
+    }
+
+    .brand-logo {
+        width: 60px;
+        height: 60px;
+        background: var(--primary-accent);
+        border-radius: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 28px;
+        color: var(--dark-accent);
+    }
+
+    .premium-input-group {
+        margin-bottom: 24px;
+    }
+
+    .premium-label {
+        font-size: 0.75rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        color: #718783;
+        margin-bottom: 10px;
+        display: block;
+        padding-left: 4px;
+    }
+
+    .premium-input {
+        background: #f8f9f5 !important;
+        border: 2px solid transparent !important;
+        border-radius: 18px !important;
+        padding: 16px 20px !important;
+        color: var(--dark-accent) !important;
+        font-weight: 500 !important;
+        transition: all 0.2s ease !important;
+    }
+
+    .premium-input:focus {
+        border-color: var(--primary-accent) !important;
+        background: white !important;
+        box-shadow: 0 10px 20px -10px rgba(29, 61, 55, 0.1) !important;
+        outline: none !important;
+    }
+
+    .btn-login {
+        background: var(--dark-accent);
+        border: none;
+        padding: 18px;
+        border-radius: 18px;
+        color: white;
+        font-weight: 700;
+        font-size: 1.05rem;
+        width: 100%;
+        margin-top: 12px;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+    }
+
+    .btn-login:hover {
+        background: #132e29;
+        transform: translateY(-2px);
+        box-shadow: 0 15px 30px -5px rgba(29, 61, 55, 0.2);
+        color: white;
+    }
+
+    .password-toggle {
+        position: absolute;
+        right: 18px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #718783;
+        cursor: pointer;
+        background: none;
+        border: none;
+        padding: 0;
+        display: flex;
+        align-items: center;
+    }
+
+    .password-toggle:hover {
+        color: var(--dark-accent);
+    }
+
+    .error-alert {
+        background: #fef2f2;
+        border: 1px solid #fee2e2;
+        color: #ef4444;
+        padding: 16px;
+        border-radius: 18px;
+        font-size: 0.9rem;
+        margin-bottom: 24px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .support-link {
+        color: #718783;
+        font-size: 0.9rem;
+        text-align: center;
+        margin-top: 32px;
+        display: block;
+        text-decoration: none;
+        font-weight: 500;
+    }
+
+    .support-link span { color: var(--dark-accent); font-weight: 700; border-bottom: 2px solid var(--primary-accent); }
+    .support-link:hover { color: var(--dark-accent); }
+
+    .back-to-home {
+        position: absolute;
+        top: 40px;
+        left: 40px;
+        color: #718783;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-weight: 600;
+        z-index: 20;
+        transition: color 0.3s ease;
+    }
+    .back-to-home:hover { color: var(--dark-accent); }
+</style>
+{% endblock %}
 
 {% block content %}
-    <nav class="navbar navbar-expand-lg navbar-sticky navbar-dark">
-        <div class="container">
-            <a href="{{ PROOT }}index" class="navbar-brand"><img src="{{ PROOT }}media/puubu.favicon.png" alt="Logo"></a>
-        </div>
-    </nav>
+    <div class="auth-section">
+        <div class="bg-shape shape-1"></div>
+        <div class="bg-shape shape-2"></div>
 
-    <section class="overflow-hidden">
-        <div class="container d-flex flex-column py-20.5 min-vh-100 level-3">
-            <div class="row align-items-center justify-content-center justify-content-lg-between my-auto">
-                <div class="col-md-8 col-lg-5 order-lg-2 mb-5 mb-lg-0" data-aos="fade-up">
-                    <img src="{{ PROOT }}media/44100.jpg" class="img-fluid" alt="Illustration">
+        <a href="{{ PROOT }}" class="back-to-home">
+            <span class="material-symbols-outlined fs-5">arrow_back</span>
+            Back to Home
+        </a>
+
+        <div class="login-card">
+            <div class="brand-logo">
+                <span class="material-symbols-outlined text-white fs-1">inventory_2</span>
+            </div>
+            
+            <div class="text-center mb-5">
+                <h2 class="fw-800 mb-2">Voter Access</h2>
+                <p class="text-muted small">Enter your credentials to cast your vote</p>
+            </div>
+
+            {% if displayErrors %}
+                <div class="error-alert">
+                    <span class="material-symbols-outlined">error</span>
+                    <span>{{ displayErrors }}</span>
                 </div>
-                <div class="col-md-10 col-lg-6 col-xl-5 text-center text-lg-start order-lg-1">
-                    <small style="color: #FF9800;">Sign in to, </small><h1>PuuBu</h1>
-                    <p class="lead text-secondary mb-5">We have the power to make a difference. But we need to VOTE.</p>
-                    <div class="row align-items-center g-3">
-                        <form action="" method="POST">
-                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                            {% if displayErrors %}
-                                <code id="displayErrors">{{ displayErrors }}</code>
-                            {% endif %}
-                            
-                            <div class="form-group mb-1">
-                                <label for="voter_id" class="form-label">Your ID</label>
-                                <input type="text" autofocus autocomplete="off" class="form-control form-control-sm" id="voter_id" name="voter_id" placeholder="Your ID" required>
-                            </div>
+            {% endif %}
 
-                            <div class="form-group">
-                                <label for="voter_password" class="form-label">Your Password</label>
-                                <div class="input-group">
-                                    <input type="password" class="form-control form-control-sm" id="voter_password" name="voter_password" placeholder="**********" required>
-                                    <div class="input-group-append" onclick="controlPassword();" style="cursor: pointer;">
-                                        <span class="input-group-text">
-                                            <i id="show" class="bi bi-eye"></i>
-                                            <i id="hide" class="bi bi-eye-slash" style="display: none;"></i>
-                                        </span>
-                                    </div>
-                                </div>
-                            </div>
+            <form action="" method="POST">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                
+                <div class="premium-input-group">
+                    <label class="premium-label" for="voter_id">Voter ID Number</label>
+                    <input type="text" id="voter_id" name="voter_id" class="form-control premium-input" placeholder="e.g. ST123456" required autofocus>
+                </div>
 
-                            <div class="col-md-auto mt-1">
-                                <button type="submit" name="submitVoter" id="submitVoter" class="btn btn-light btn-with-icon rounded-pill btn-sm text-color">Let's Go! <i class="bi bi-arrow-right"></i></button>
-                            </div>
-                        </form>
-                        <div class="col text-md-start mb-1">
-                            <p class="text-primary">Can't login contact <span class="fw-bold"><a href="https://wa.me/+233209425285/?text={{ login_issue }}" target="_blank" class="text-color">Puubu administration</a></span> now.</p>
-                        </div>
+                <div class="premium-input-group mb-4">
+                    <label class="premium-label" for="voter_password">Access Password</label>
+                    <div class="position-relative">
+                        <input type="password" id="voter_password" name="voter_password" class="form-control premium-input" placeholder="••••••••" required>
+                        <button type="button" class="password-toggle" onclick="togglePassword()">
+                            <span class="material-symbols-outlined" id="toggleIcon">visibility</span>
+                        </button>
                     </div>
                 </div>
-            </div>
-        </div>
 
-        <figure class="background">
-            <svg width="100%" height="100%" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <circle data-aos="fade-up" data-aos-delay="200" cx="120%" cy="-40%" r="50%" stroke="#dddddd" stroke-opacity="1" />
-                <circle data-aos="fade-up" data-aos-delay="400" cx="85%" cy="125%" r="75%" stroke="#dddddd" stroke-opacity="1" />
-                <circle data-aos="fade-up" data-aos-delay="600" cx="-25%" cy="125%" r="50%" stroke="#dddddd" stroke-opacity="1" />
-            </svg>
-        </figure>
-    </section>
+                <button type="submit" name="submitVoter" class="btn-login">
+                    Authorize & Sign In
+                    <span class="material-symbols-outlined">how_to_vote</span>
+                </button>
+            </form>
+
+            <a href="https://wa.me/+233209425285/?text={{ login_issue }}" target="_blank" class="support-link">
+                Having trouble? <span>Contact Administration</span>
+            </a>
+        </div>
+    </div>
 {% endblock %}
 
 {% block scripts %}
-<script type="text/javascript">
-    function controlPassword() {
-        var x = document.getElementById("voter_password");
-        var show = document.getElementById("show");
-        var hide = document.getElementById("hide");
-        if (x.type === "password") {
-            x.type = "text";
-            show.style.display = "none";
-            hide.style.display = "inline-block";
+<script>
+    function togglePassword() {
+        const passwordInput = document.getElementById('voter_password');
+        const icon = document.getElementById('toggleIcon');
+        
+        if (passwordInput.type === 'password') {
+            passwordInput.type = 'text';
+            icon.textContent = 'visibility_off';
         } else {
-            x.type = "password";
-            show.style.display = "inline-block";
-            hide.style.display = "none";
+            passwordInput.type = 'password';
+            icon.textContent = 'visibility';
         }
     }
 </script>

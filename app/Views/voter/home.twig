@@ -5,33 +5,33 @@
 {% block styles %}
 <style>
     :root {
-        --primary-gradient: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
-        --glass-bg: rgba(255, 255, 255, 0.03);
-        --glass-border: rgba(255, 255, 255, 0.1);
+        --primary-accent: #dcf3b0;
+        --dark-accent: #1d3d37;
+        --light-bg: #fdfcf5;
+        --card-bg: #ffffff;
+        --border-color: rgba(29, 61, 55, 0.08);
     }
 
     .hero-section {
         min-height: 100vh;
-        background: radial-gradient(circle at top right, rgba(79, 70, 229, 0.15), transparent),
-                    radial-gradient(circle at bottom left, rgba(124, 58, 237, 0.1), transparent),
-                    #0f172a;
+        background-color: var(--light-bg);
         position: relative;
         overflow: hidden;
         display: flex;
         align-items: center;
-        padding-top: 120px;
+        padding-top: 100px;
         padding-bottom: 80px;
     }
 
     .hero-section::before {
         content: '';
         position: absolute;
-        width: 200%;
-        height: 200%;
-        top: -50%;
-        left: -50%;
-        background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.02'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
-        animation: rotate-bg 240s linear infinite;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+        background-image: radial-gradient(circle at 80% 20%, rgba(220, 243, 176, 0.3), transparent 40%),
+                          radial-gradient(circle at 20% 80%, rgba(29, 61, 55, 0.03), transparent 40%);
         z-index: 1;
     }
 
@@ -40,87 +40,74 @@
         z-index: 10;
     }
 
-    @keyframes rotate-bg {
-        from { transform: rotate(0deg); }
-        to { transform: rotate(360deg); }
-    }
-
     .glass-nav {
-        background: rgba(15, 23, 42, 0.9) !important;
-        backdrop-filter: blur(20px) saturate(180%);
-        border-bottom: 1px solid var(--glass-border);
+        background: var(--light-bg) !important;
+        border-bottom: 1px solid var(--border-color);
         transition: all 0.3s ease;
-        padding: 1.5rem 0;
+        padding: 1.25rem 0;
     }
 
     .brand-text {
         font-family: 'Outfit', sans-serif;
-        letter-spacing: -1px;
+        letter-spacing: -0.5px;
+        color: var(--dark-accent) !important;
     }
 
     .hero-badge {
-        background: rgba(79, 70, 229, 0.1);
-        border: 1px solid rgba(79, 70, 229, 0.2);
-        padding: 10px 24px;
+        background: var(--primary-accent);
+        border: 1px solid rgba(29, 61, 55, 0.05);
+        padding: 8px 24px;
         border-radius: 100px;
         display: inline-flex;
         align-items: center;
         gap: 12px;
-        color: #818cf8;
+        color: var(--dark-accent);
         font-size: 0.85rem;
-        font-weight: 600;
-        margin-bottom: 40px;
-        backdrop-filter: blur(4px);
+        font-weight: 700;
+        margin-bottom: 32px;
+        box-shadow: 0 4px 12px rgba(220, 243, 176, 0.3);
     }
 
     .hero-title {
         font-size: clamp(2.5rem, 8vw, 4.5rem);
         line-height: 1.05;
         font-weight: 800;
-        color: white;
-        margin-bottom: 30px;
+        color: var(--dark-accent);
+        margin-bottom: 24px;
         letter-spacing: -2px;
     }
 
     .btn-premium {
-        background: var(--primary-gradient);
+        background: var(--dark-accent);
         color: white !important;
         border: none;
         padding: 20px 40px;
         border-radius: 18px;
         font-weight: 700;
         font-size: 1.15rem;
-        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         display: inline-flex;
         align-items: center;
         gap: 14px;
-        box-shadow: 0 20px 40px -12px rgba(79, 70, 229, 0.4);
         text-decoration: none;
         position: relative;
         z-index: 20;
-        pointer-events: auto;
     }
 
     .btn-premium:hover {
-        transform: translateY(-5px) scale(1.02);
-        box-shadow: 0 30px 60px -12px rgba(79, 70, 229, 0.5);
+        background: #132e29;
+        transform: translateY(-3px);
+        box-shadow: 0 15px 30px -5px rgba(29, 61, 55, 0.2);
     }
 
     .floating-card {
-        background: rgba(255, 255, 255, 0.03);
-        border: 1px solid rgba(255, 255, 255, 0.08);
-        backdrop-filter: blur(24px);
+        background: var(--card-bg);
+        border: 1px solid var(--border-color);
         border-radius: 40px;
         padding: 48px;
-        animation: float-anim 6s ease-in-out infinite;
         position: relative;
         z-index: 1;
-        box-shadow: 0 40px 80px -20px rgba(0, 0, 0, 0.5);
-    }
-
-    @keyframes float-anim {
-        0%, 100% { transform: translateY(0) rotate(0deg); }
-        50% { transform: translateY(-20px) rotate(1deg); }
+        box-shadow: 0 40px 80px -20px rgba(29, 61, 55, 0.08);
     }
 
     .feature-item {
@@ -132,14 +119,14 @@
     .feature-icon {
         width: 56px;
         height: 56px;
-        background: linear-gradient(135deg, rgba(79, 70, 229, 0.2) 0%, rgba(124, 58, 237, 0.2) 100%);
-        border-radius: 16px;
+        background: var(--primary-accent);
+        border-radius: 18px;
         display: flex;
         align-items: center;
         justify-content: center;
-        color: #818cf8;
+        color: var(--dark-accent);
         flex-shrink: 0;
-        border: 1px solid rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(0, 0, 0, 0.03);
     }
 </style>
 {% endblock %}
@@ -148,12 +135,12 @@
     <nav class="navbar navbar-expand-lg glass-nav fixed-top py-3">
         <div class="container">
             <a class="navbar-brand d-flex align-items-center text-decoration-none" href="{{ PROOT }}">
-                <span class="material-symbols-outlined text-primary me-2 fs-3">inventory_2</span>
-                <span class="h4 mb-0 text-white brand-text fw-bold">Puu<span class="text-primary">Bu</span></span>
+                <span class="material-symbols-outlined text-dark me-2 fs-3">inventory_2</span>
+                <span class="h4 mb-0 brand-text fw-bold">Puu<span class="text-success" style="color: #4ade80 !important;">Bu</span></span>
             </a>
             <div class="ms-auto">
-                <a href="{{ PROOT }}admin/signin?token={{ ADMIN_TOKEN }}" class="btn btn-outline-primary border-primary border-opacity-25 rounded-pill px-4 fw-bold small text-white text-decoration-none transition-all">
-                    Admin Portal
+                <a href="{{ PROOT }}admin/signin?token={{ ADMIN_TOKEN }}" class="btn btn-outline-dark border-dark border-opacity-25 rounded-pill px-4 fw-bold small text-decoration-none transition-all">
+                    Organizer Portal
                 </a>
             </div>
         </div>
@@ -183,7 +170,7 @@
                                 <div class="avatar avatar-xs rounded-circle bg-warning text-white d-flex align-items-center justify-content-center border border-dark ms-n2" style="width: 32px; height: 32px; font-size: 10px;">+</div>
                             </div>
                             <div class="small text-muted">
-                                <span class="text-white fw-bold">12.5k+</span> Voters trust Puubu
+                                <span class="fw-bold" style="color: var(--dark-accent);">12.5k+</span> Voters trust Puubu
                             </div>
                         </div>
                     </div>
@@ -195,7 +182,7 @@
                                 <span class="material-symbols-outlined">lock</span>
                             </div>
                             <div>
-                                <h6 class="text-white fw-bold mb-1">Encrypted Ballots</h6>
+                                <h6 class="fw-bold mb-1" style="color: var(--dark-accent);">Encrypted Ballots</h6>
                                 <p class="small text-muted mb-0">Your vote is protected by military-grade AES-256 encryption.</p>
                             </div>
                         </div>
@@ -204,7 +191,7 @@
                                 <span class="material-symbols-outlined">analytics</span>
                             </div>
                             <div>
-                                <h6 class="text-white fw-bold mb-1">Real-time Auditing</h6>
+                                <h6 class="fw-bold mb-1" style="color: var(--dark-accent);">Real-time Auditing</h6>
                                 <p class="small text-muted mb-0">Transparent result tracking as votes are cast across the platform.</p>
                             </div>
                         </div>
@@ -213,7 +200,7 @@
                                 <span class="material-symbols-outlined">fingerprint</span>
                             </div>
                             <div>
-                                <h6 class="text-white fw-bold mb-1">Identity Verification</h6>
+                                <h6 class="fw-bold mb-1" style="color: var(--dark-accent);">Identity Verification</h6>
                                 <p class="small text-muted mb-0">Strict multi-factor authentication to ensure "One Person, One Vote".</p>
                             </div>
                         </div>
@@ -223,9 +210,43 @@
         </div>
     </section>
 
-    <footer class="py-4 border-top border-white border-opacity-10 bg-darker">
-        <div class="container text-center">
-            <p class="text-muted small mb-0">&copy; {{ "now"|date("Y") }} Puubu Voting Systems. All rights reserved.</p>
+    <footer class="pt-5 pb-0 position-relative overflow-hidden" style="background: #f8f9f5; border-top: 1px solid var(--border-color);">
+        <div class="container position-relative" style="z-index: 10;">
+            <div class="row py-4 small fw-600" style="color: #718783;">
+                <div class="col-md-4 text-center text-md-start mb-3 mb-md-0">
+                    &copy; {{ "now"|date("Y") }} All rights reserved
+                </div>
+                <div class="col-md-4 text-center mb-3 mb-md-0">
+                    <a href="mailto:info@puubu.com" class="text-decoration-none" style="color: inherit;">info@puubu.com</a>
+                </div>
+                <div class="col-md-4 text-center text-md-end">
+                    <a href="#" class="text-decoration-none" style="color: inherit;">Privacy Policy</a>
+                </div>
+            </div>
         </div>
+        
+        <div class="footer-giant-text select-none">
+            PUUBU
+        </div>
+
+        <style>
+            .footer-giant-text {
+                font-size: clamp(10rem, 25vw, 30rem);
+                font-weight: 900;
+                color: rgba(29, 61, 55, 0.03);
+                line-height: 0.8;
+                margin-top: -2rem;
+                margin-bottom: -5rem;
+                text-align: center;
+                letter-spacing: -0.05em;
+                pointer-events: none;
+                text-transform: uppercase;
+                width: 100%;
+            }
+            .select-none {
+                user-select: none;
+                -webkit-user-select: none;
+            }
+        </style>
     </footer>
 {% endblock %}

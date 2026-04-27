@@ -21,11 +21,11 @@
                 <div class="card-header bg-white border-0 py-4 px-4">
                     <form action="{{ PROOT }}admin/voters/duplicates" method="GET" class="row g-2 align-items-center">
                         <div class="col-md-8">
-                            <select class="form-select border-0 bg-light shadow-none fw-bold" name="election">
+                            <select class="form-select border-0 bg-light shadow-none fw-bold" name="election_uuid">
                                 <option value="">All Elections</option>
                                 {% for election in elections %}
-                                    <option value="{{ election.election_id }}" {{ selected_election == election.election_id ? 'selected' : '' }}>
-                                        {{ election.election_name }}
+                                    <option value="{{ election.uuid }}" {{ selected_election == election.uuid ? 'selected' : '' }}>
+                                        {{ election.title }}
                                     </option>
                                 {% endfor %}
                             </select>
@@ -63,7 +63,7 @@
                                         <span class="badge bg-light text-primary border fw-mono px-2">{{ voter.std_id }}</span>
                                     </td>
                                     <td>
-                                        <span class="extra-small fw-bold text-muted">{{ voter.election_name }}</span>
+                                        <span class="extra-small fw-bold text-muted">{{ voter.title }}</span>
                                     </td>
                                     <td class="pe-4 text-end">
                                         <div class="d-flex justify-content-end gap-2">

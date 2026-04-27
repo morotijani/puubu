@@ -31,7 +31,7 @@
                     <select id="electionFilter" class="form-select form-select-sm bg-light border-0 shadow-none">
                         <option value="all">All Elections</option>
                         {% for election in elections %}
-                            <option value="{{ election.election_id }}">{{ election.election_name }}</option>
+                            <option value="{{ election.uuid }}">{{ election.title }}</option>
                         {% endfor %}
                     </select>
                 </div>
@@ -55,7 +55,7 @@
                 </thead>
                 <tbody>
                     {% for cont in contestants %}
-                        <tr class="contestant-row" data-election-id="{{ cont.contestant_election }}">
+                        <tr class="contestant-row" data-election-id="{{ cont.election_uuid }}">
                             <td class="ps-4">
                                 <div class="d-flex align-items-center">
                                     <div class="position-relative me-3">
@@ -65,7 +65,7 @@
                                     <div>
                                         <div class="fw-bold text-dark fs-6">{{ cont.cont_fname }} {{ cont.cont_lname }}</div>
                                         <div class="text-muted extra-small d-flex align-items-center">
-                                            <span class="material-symbols-outlined me-1 fs-6">inventory_2</span> {{ cont.election_name }}
+                                            <span class="material-symbols-outlined me-1 fs-6">inventory_2</span> {{ cont.title }}
                                         </div>
                                     </div>
                                 </div>
@@ -78,7 +78,7 @@
                             </td>
                             <td class="text-end pe-4">
                                 <div class="d-flex justify-content-end gap-2">
-                                    {% if cont.session == 0 %}
+                                    {% if cont.status == 0 %}
                                         <a href="{{ PROOT }}admin/contestants/edit/{{ cont.contestant_id }}" class="btn btn-sm btn-white border rounded-3 shadow-sm d-flex align-items-center">
                                             <span class="material-symbols-outlined fs-6 text-muted">edit</span>
                                         </a>

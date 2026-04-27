@@ -130,8 +130,8 @@
                                             <select class="form-select form-control-lg bg-light border-0" name="registrar_election" required>
                                                 <option value="">Select Election...</option>
                                                 {% for election in elections %}
-                                                    <option value="{{ election.election_id }}" {{ voter.registrar_election == election.election_id ? 'selected' : '' }}>
-                                                        {{ election.election_name }}
+                                                    <option value="{{ election.uuid }}" {{ voter.election_uuid == election.uuid ? 'selected' : '' }}>
+                                                        {{ election.title }}
                                                     </option>
                                                 {% endfor %}
                                             </select>

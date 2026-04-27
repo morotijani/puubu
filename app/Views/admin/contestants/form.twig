@@ -57,8 +57,8 @@
                                         <select class="form-select form-control-lg bg-light border-0" name="sel_election" id="electionSelect" required>
                                             <option value="">Select Election</option>
                                             {% for election in elections %}
-                                                <option value="{{ election.election_id }}" {{ contestant.contestant_election == election.election_id ? 'selected' : '' }}>
-                                                    {{ election.election_name }}
+                                                <option value="{{ election.uuid }}" {{ contestant.election_uuid == election.uuid ? 'selected' : '' }}>
+                                                    {{ election.title }}
                                                 </option>
                                             {% endfor %}
                                         </select>

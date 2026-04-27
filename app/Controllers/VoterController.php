@@ -35,7 +35,7 @@ class VoterController {
                     $query = "
                         SELECT * FROM registrars 
                         INNER JOIN election
-                        ON election.election_id = registrars.registrar_election
+                        ON election.uuid = registrars.election_uuid
                         WHERE std_id = ?
                     ";
                     $statement = $conn->prepare($query);
@@ -44,12 +44,12 @@ class VoterController {
 
                     if ($statement->rowCount() > 0) {
                         foreach ($result_voterLogin as $row) {
-                            if ($row['session'] == 1) {
+                            if ($row['status'] == 1) {
                                 $now = date('Y-m-d H:i:s');
-                                if ($now < $row['start_date']) {
-                                    $displayErrors = "This election has not started yet. Access will be granted on " . date('F j, Y, g:i a', strtotime($row['start_date'])) . ".";
-                                } elseif ($now > $row['end_date']) {
-                                    $displayErrors = "Access Denied: This election ended on " . date('F j, Y, g:i a', strtotime($row['end_date'])) . ".";
+                                if ($now < $row['starts_at']) {
+                                    $displayErrors = "This election has not started yet. Access will be granted on " . date('F j, Y, g:i a', strtotime($row['starts_at'])) . ".";
+                                } elseif ($now > $row['ends_at']) {
+                                    $displayErrors = "Access Denied: This election ended on " . date('F j, Y, g:i a', strtotime($row['ends_at'])) . ".";
                                 } elseif (!password_verify($_POST['voter_password'], $row['std_password'])) {
                                     $displayErrors = "Invalid Voter Details";
                                 } else {
@@ -125,16 +125,17 @@ class VoterController {
         }
 
         $voter_row = $voter_result[0];
-        if ($voter_row['session'] == 2) {
-            redirect(PROOT . 'ended');
+        $now = date('Y-m-d H:i:s');
+        if ($voter_row['status'] == 2 || $now > $voter_row['ends_at']) {
+            redirect(PROOT . 'votingon');
         }
 
-        $electionId = $voter_row['election_id'];
+        $electionUuid = $voter_row['uuid'];
         
         // Fetch Positions
-        $posQuery = "SELECT * FROM positions WHERE election_id = ?";
+        $posQuery = "SELECT * FROM positions WHERE election_uuid = ?";
         $stmt = $conn->prepare($posQuery);
-        $stmt->execute([$electionId]);
+        $stmt->execute([$electionUuid]);
         $positions = $stmt->fetchAll();
 
         $ballotData = [];
@@ -143,12 +144,12 @@ class VoterController {
             $contQuery = "
                 SELECT * FROM cont_details 
                 WHERE cont_position = ? 
-                AND contestant_election = ? 
+                AND election_uuid = ? 
                 AND del_cont = 'no' 
                 ORDER BY contestant_ballot_number ASC
             ";
             $stmt = $conn->prepare($contQuery);
-            $stmt->execute([$pos['position_id'], $electionId]);
+            $stmt->execute([$pos['position_id'], $electionUuid]);
             $contestants = $stmt->fetchAll();
 
             $ballotData[] = [
@@ -162,7 +163,7 @@ class VoterController {
             'voter' => $voter_row,
             'ballot' => $ballotData,
             'started_election' => $started_election,
-            'electionId' => $electionId
+            'electionUuid' => $electionUuid
         ]);
     }
 
@@ -179,18 +180,17 @@ class VoterController {
 
         $voter_row = $voter_result[0];
         $voter_id = $voter_row['voter_id'];
-        $election_id = sanitize($_POST['name-of-election'] ?? '');
+        $election_uuid = sanitize($_POST['name-of-election'] ?? '');
         
         $now = date('Y-m-d H:i:s');
-        if ($voter_row['session'] != 1 || $election_id != $voter_row['election_id']) {
+        if ($voter_row['status'] != 1 || $election_uuid != $voter_row['uuid']) {
             die("Election is not active or invalid.");
         }
 
-        if ($now < $voter_row['start_date']) {
+        if ($now < $voter_row['starts_at']) {
             die("Unauthorized: The voting session has not started yet.");
         }
-
-        if ($now > $voter_row['end_date']) {
+        if ($now > $voter_row['ends_at']) {
             die("Unauthorized: The voting session has ended.");
         }
 
@@ -205,32 +205,32 @@ class VoterController {
                 if (isset($_POST["contestant{$i}"]) && !empty($_POST["contestant{$i}"])) {
                     $contestant_id = sanitize($_POST["contestant{$i}"]);
                     // Increment results
-                    $stmt = $conn->prepare("UPDATE vote_counts SET results = results + 1 WHERE contestant_id = ? AND position_id = ? AND election_id = ?");
-                    $stmt->execute([$contestant_id, $position_id, $election_id]);
+                    $stmt = $conn->prepare("UPDATE vote_counts SET results = results + 1 WHERE contestant_id = ? AND position_id = ? AND election_uuid = ?");
+                    $stmt->execute([$contestant_id, $position_id, $election_uuid]);
                 } elseif (isset($_POST["onecont{$i}"]) && !empty($_POST["onecont{$i}"])) {
                     $val = explode(',', $_POST["onecont{$i}"]);
                     if (count($val) == 2) {
                         $choice = sanitize($val[0]);
                         $contestant_id = sanitize($val[1]);
                         if ($choice === 'yes') {
-                            $stmt = $conn->prepare("UPDATE vote_counts SET results = results + 1 WHERE contestant_id = ? AND position_id = ? AND election_id = ?");
-                            $stmt->execute([$contestant_id, $position_id, $election_id]);
+                            $stmt = $conn->prepare("UPDATE vote_counts SET results = results + 1 WHERE contestant_id = ? AND position_id = ? AND election_uuid = ?");
+                            $stmt->execute([$contestant_id, $position_id, $election_uuid]);
                         } else {
-                            $stmt = $conn->prepare("UPDATE vote_counts SET results_no = results_no + 1 WHERE contestant_id = ? AND position_id = ? AND election_id = ?");
-                            $stmt->execute([$contestant_id, $position_id, $election_id]);
+                            $stmt = $conn->prepare("UPDATE vote_counts SET results_no = results_no + 1 WHERE contestant_id = ? AND position_id = ? AND election_uuid = ?");
+                            $stmt->execute([$contestant_id, $position_id, $election_uuid]);
                         }
                     }
                 } else {
                     // Skipped
-                    $stmt = $conn->prepare("UPDATE positions SET position_skipped_votes = position_skipped_votes + 1 WHERE position_id = ? AND election_id = ?");
-                    $stmt->execute([$position_id, $election_id]);
+                    $stmt = $conn->prepare("UPDATE positions SET position_skipped_votes = position_skipped_votes + 1 WHERE position_id = ? AND election_uuid = ?");
+                    $stmt->execute([$position_id, $election_uuid]);
                 }
             }
 
             // Mark voter as done
             $vhd_id = guidv4();
-            $stmt = $conn->prepare("INSERT INTO voterhasdone (vhd_id, voter_id, election_id, voterhasdone_status) VALUES (?, ?, ?, 1)");
-            $stmt->execute([$vhd_id, $voter_id, $election_id]);
+            $stmt = $conn->prepare("INSERT INTO voterhasdone (vhd_id, voter_id, election_uuid, voterhasdone_status) VALUES (?, ?, ?, 1)");
+            $stmt->execute([$vhd_id, $voter_id, $election_uuid]);
 
             add_to_log("Voter casted vote", $voter_id, 'user');
 

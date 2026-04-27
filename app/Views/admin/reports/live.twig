@@ -2,7 +2,7 @@
 
 {% set active_page = 'dashboard' %}
 
-{% block title %}Live Reports • {{ election.election_name }}{% endblock %}
+{% block title %}Live Reports • {{ election.title }}{% endblock %}
 
 {% block styles %}
 <style>
@@ -112,21 +112,21 @@
                     <li class="breadcrumb-item active" aria-current="page">Live Reports</li>
                 </ol>
             </nav>
-            <h1 class="fs-4 mb-0">{{ election.election_name }} - Live Results</h1>
-            <p class="text-muted small">Election By: {{ election.election_by }}</p>
+            <h1 class="fs-4 mb-0">{{ election.title }} - Live Results</h1>
+            <p class="text-muted small">Election By: {{ election.organized_by }}</p>
         </div>
         <div class="col-12 col-sm-auto mt-4 mt-sm-0">
             <div class="row gx-2">
-                {% if election.session == 1 %}
+                {% if election.status == 1 %}
                     <div class="col-auto">
                         <button type="button" class="btn btn-warning shadow-sm d-flex align-items-center" data-bs-toggle="modal" data-bs-target="#stopElectionModal">
                             <span class="material-symbols-outlined me-1 fs-6">stop_circle</span> End Election
                         </button>
                     </div>
                 {% endif %}
-                {% if election.session == 2 %}
+                {% if election.status == 2 %}
                     <div class="col-auto">
-                        <a href="{{ PROOT }}admin/reports/download/{{ election.election_id }}" class="btn btn-dark shadow-sm d-flex align-items-center">
+                        <a href="{{ PROOT }}admin/reports/download/{{ election.uuid }}" class="btn btn-dark shadow-sm d-flex align-items-center">
                             <span class="material-symbols-outlined me-1 fs-6">download</span> Download PDF
                         </a>
                     </div>
@@ -163,7 +163,7 @@
                 <div class="card-body p-4">
                     <h6 class="text-muted text-uppercase mb-2 small fw-bold">Status</h6>
                     <h2 class="mb-0">
-                        {% if election.session == 1 %}
+                        {% if election.status == 1 %}
                             <span class="text-success"><i class="bi bi-record-fill me-1"></i> Running</span>
                         {% else %}
                             <span class="text-danger"><i class="bi bi-check-circle-fill me-1"></i> Ended</span>
@@ -185,12 +185,12 @@
         </div>
     </div>
 
-    {% if election.session == 1 %}
+    {% if election.status == 1 %}
     <!-- Stop Election Modal (2FA Step Form) -->
     <div class="modal fade" id="stopElectionModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content border-0 overflow-hidden" style="border-radius: 32px; background: rgba(255, 255, 255, 0.98); box-shadow: var(--shadow-2xl);">
-                <form action="{{ PROOT }}admin/elections/stop/{{ election.election_id }}" method="POST">
+                <form action="{{ PROOT }}admin/elections/stop/{{ election.uuid }}" method="POST">
                     {{ csrf_field()|raw }}
                     <input type="hidden" name="stop_election" value="1">
                     
@@ -265,7 +265,7 @@
 {% block scripts %}
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-    const electionId = "{{ election.election_id }}";
+    const electionId = "{{ election.uuid }}";
     const proot = "{{ PROOT }}";
     let charts = {};
 
@@ -474,7 +474,7 @@
         });
 
         pollData();
-        {% if election.session == 1 %}
+        {% if election.status == 1 %}
             setInterval(pollData, 5000);
         {% endif %}
     });

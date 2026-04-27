@@ -23,7 +23,7 @@
                             <select id="electionFilter" class="form-select form-select-sm bg-white border shadow-sm">
                                 <option value="all">All Elections</option>
                                 {% for election in elections %}
-                                    <option value="{{ election.election_id }}">{{ election.election_name }}</option>
+                                    <option value="{{ election.uuid }}">{{ election.title }}</option>
                                 {% endfor %}
                             </select>
                         </div>
@@ -47,7 +47,7 @@
                             </thead>
                             <tbody>
                                 {% for pos in positions %}
-                                    <tr class="position-row" data-election-id="{{ pos.election_id }}">
+                                    <tr class="position-row" data-election-id="{{ pos.election_uuid }}">
                                         <td class="ps-4">
                                             <div class="d-flex align-items-center">
                                                 <div class="avatar avatar-sm me-3 d-flex align-items-center justify-content-center text-indigo fw-bold bg-indigo-subtle rounded-circle" style="width: 40px; height: 40px;">
@@ -56,7 +56,7 @@
                                                 <div>
                                                     <div class="fw-bold text-dark fs-6">{{ pos.position_name }}</div>
                                                      <div class="text-muted extra-small d-flex align-items-center">
-                                                        <span class="material-symbols-outlined me-1 fs-6">inventory_2</span> {{ pos.election_name }}
+                                                        <span class="material-symbols-outlined me-1 fs-6">inventory_2</span> {{ pos.title }}
                                                         <span class="mx-2 opacity-25">|</span>
                                                         <span class="fw-mono">PID: {{ pos.position_id }}</span>
                                                         <span class="mx-2 opacity-25">|</span>
@@ -68,12 +68,12 @@
                                                 </div>
                                             </div>
                                         </td>
-                                        <td style="width: 140px;">
-                                            {% if pos.session == 1 %}
+                                         <td style="width: 140px;">
+                                            {% if pos.status == 1 %}
                                                 <span class="badge bg-success-subtle text-success px-3 py-1 border border-success-subtle d-inline-flex align-items-center">
                                                     <span class="p-1 bg-success rounded-circle me-2 animate-pulse"></span> Active
                                                 </span>
-                                            {% elseif pos.session == 2 %}
+                                            {% elseif pos.status == 2 %}
                                                 <span class="badge bg-secondary-subtle text-secondary px-3 py-1 border border-secondary-subtle">Completed</span>
                                             {% else %}
                                                 <span class="badge bg-warning-subtle text-warning px-3 py-1 border border-warning-subtle">Draft</span>
@@ -81,7 +81,7 @@
                                         </td>
                                         <td class="text-end pe-4">
                                             <div class="btn-group shadow-sm rounded">
-                                                {% if pos.session == 0 %}
+                                                {% if pos.status == 0 %}
                                                     <a href="{{ PROOT }}admin/positions?edit={{ pos.position_id }}" class="btn btn-sm btn-white border border-end-0" title="Edit Office">
                                                         <span class="material-symbols-outlined fs-6 text-muted">edit</span>
                                                     </a>
@@ -130,11 +130,11 @@
 
                         <div class="mb-4">
                             <label class="form-label small fw-bold text-uppercase tracking-wider">Target Election</label>
-                            <select class="form-select form-control-lg bg-light border-0" name="election_id" required>
+                            <select class="form-select form-control-lg bg-light border-0" name="election_uuid" required>
                                 <option value="">Select Election...</option>
                                 {% for election in elections %}
-                                    <option value="{{ election.election_id }}" {{ edit_position.election_id == election.election_id ? 'selected' : '' }}>
-                                        {{ election.election_name }}
+                                    <option value="{{ election.uuid }}" {{ edit_position.election_uuid == election.uuid ? 'selected' : '' }}>
+                                        {{ election.title }}
                                     </option>
                                 {% endfor %}
                             </select>

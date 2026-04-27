@@ -26,7 +26,7 @@
 
     // Pseudo-Cron: Auto-close expired elections
     try {
-        $autoCloseQuery = "UPDATE election SET session = 2 WHERE session = 1 AND stop_timer <= NOW()";
+        $autoCloseQuery = "UPDATE election SET status = 2 WHERE status = 1 AND ends_at <= NOW()";
         $conn->exec($autoCloseQuery);
     } catch (\PDOException $e) {
         // Log silently or ignore
@@ -124,9 +124,9 @@
 		$voterQuery = "
 		    SELECT * FROM registrars 
 		    INNER JOIN election 
-		    ON election.election_id = registrars.registrar_election 
+		    ON election.uuid = registrars.election_uuid 
 		    WHERE registrars.voter_id = ? 
-		    AND election.election_id = registrars.registrar_election
+		    AND election.uuid = registrars.election_uuid
 		    LIMIT 1
 		";
 		$statement = $conn->prepare($voterQuery);

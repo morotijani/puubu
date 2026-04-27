@@ -36,21 +36,21 @@
                                                     <i class="bi bi-box-seam fs-5"></i>
                                                 </div>
                                                 <div>
-                                                    <div class="fw-bold text-dark fs-6">{{ election.election_name }}</div>
+                                                    <div class="fw-bold text-dark fs-6">{{ election.title }}</div>
                                                     <div class="text-muted extra-small d-flex align-items-center">
-                                                        <span class="material-symbols-outlined me-1 fs-6">corporate_fare</span> {{ election.election_by }}
+                                                        <span class="material-symbols-outlined me-1 fs-6">corporate_fare</span> {{ election.organized_by }}
                                                         <span class="mx-2 opacity-25">|</span>
-                                                        <span class="fw-mono">#{{ election.election_id|slice(0, 8) }}</span>
+                                                        <span class="fw-mono">#{{ election.uuid|slice(0, 8) }}</span>
                                                     </div>
                                                 </div>
                                             </div>
                                         </td>
                                         <td style="width: 160px;">
-                                            {% if election.session == 1 %}
+                                            {% if election.status == 1 %}
                                                 <span class="badge bg-success-subtle text-success px-3 py-1 border border-success-subtle d-inline-flex align-items-center">
                                                     <span class="p-1 bg-success rounded-circle me-2 animate-pulse"></span> Live
                                                 </span>
-                                            {% elseif election.session == 2 %}
+                                            {% elseif election.status == 2 %}
                                                 <span class="badge bg-secondary-subtle text-secondary px-3 py-1 border border-secondary-subtle">Completed</span>
                                             {% else %}
                                                 <span class="badge bg-warning-subtle text-warning px-3 py-1 border border-warning-subtle">Draft</span>
@@ -58,25 +58,25 @@
                                         </td>
                                         <td class="text-end pe-4">
                                             <div class="d-flex justify-content-end gap-2">
-                                                {% if election.session == 0 %}
-                                                    <button class="btn btn-sm btn-success px-3 fw-bold rounded-3 shadow-sm start-btn d-flex align-items-center" data-id="{{ election.election_id }}" title="Start Election">
+                                                {% if election.status == 0 %}
+                                                    <button class="btn btn-sm btn-success px-3 fw-bold rounded-3 shadow-sm start-btn d-flex align-items-center" data-id="{{ election.uuid }}" title="Start Election">
                                                         <span class="material-symbols-outlined me-1 fs-6">play_arrow</span> Start
                                                     </button>
-                                                    <a href="{{ PROOT }}admin/elections?edit={{ election.election_id }}" class="btn btn-sm btn-white border rounded-3 shadow-sm d-flex align-items-center" title="Edit Configuration">
+                                                    <a href="{{ PROOT }}admin/elections?edit={{ election.uuid }}" class="btn btn-sm btn-white border rounded-3 shadow-sm d-flex align-items-center" title="Edit Configuration">
                                                         <span class="material-symbols-outlined fs-6 text-muted">settings</span>
                                                     </a>
-                                                    <button class="btn btn-sm btn-white border text-danger rounded-3 shadow-sm delete-btn d-flex align-items-center" data-id="{{ election.election_id }}" title="Purge Session">
+                                                    <button class="btn btn-sm btn-white border text-danger rounded-3 shadow-sm delete-btn d-flex align-items-center" data-id="{{ election.uuid }}" title="Purge Session">
                                                         <span class="material-symbols-outlined fs-6">delete</span>
                                                     </button>
-                                                {% elseif election.session == 1 %}
-                                                    <a href="{{ PROOT }}admin/reports/{{ election.election_id }}" class="btn btn-sm btn-indigo px-3 fw-bold rounded-3 shadow-sm d-flex align-items-center">
+                                                {% elseif election.status == 1 %}
+                                                    <a href="{{ PROOT }}admin/reports/{{ election.uuid }}" class="btn btn-sm btn-indigo px-3 fw-bold rounded-3 shadow-sm d-flex align-items-center">
                                                         Live Analytics <span class="material-symbols-outlined ms-1 fs-6">arrow_forward</span>
                                                     </a>
-                                                    <button class="btn btn-sm btn-danger px-3 fw-bold rounded-3 shadow-sm stop-btn d-flex align-items-center" data-id="{{ election.election_id }}" title="Stop Election">
+                                                    <button class="btn btn-sm btn-danger px-3 fw-bold rounded-3 shadow-sm stop-btn d-flex align-items-center" data-id="{{ election.uuid }}" title="Stop Election">
                                                         <span class="material-symbols-outlined me-1 fs-6">stop</span> Stop
                                                     </button>
                                                 {% else %}
-                                                    <a href="{{ PROOT }}admin/reports/{{ election.election_id }}" class="btn btn-sm btn-white border px-3 fw-bold rounded-3 shadow-sm d-flex align-items-center">
+                                                    <a href="{{ PROOT }}admin/reports/{{ election.uuid }}" class="btn btn-sm btn-white border px-3 fw-bold rounded-3 shadow-sm d-flex align-items-center">
                                                         View Report
                                                     </a>
                                                 {% endif %}
@@ -109,17 +109,17 @@
                     <form action="{{ PROOT }}admin/elections/store" method="POST">
                         {{ csrf_field()|raw }}
                         {% if edit_election %}
-                            <input type="hidden" name="edit_id" value="{{ edit_election.election_id }}">
+                            <input type="hidden" name="edit_id" value="{{ edit_election.uuid }}">
                         {% endif %}
 
                         <div class="mb-4">
-                            <label class="form-label small fw-bold text-uppercase tracking-wider" for="election_name">Election Title</label>
-                            <input type="text" class="form-control form-control-lg bg-light border-0" name="election_name" id="election_name" value="{{ edit_election.election_name }}" placeholder="e.g. Presidential Elections 2024" required>
+                            <label class="form-label small fw-bold text-uppercase tracking-wider" for="title">Election Title</label>
+                            <input type="text" class="form-control form-control-lg bg-light border-0" name="title" id="title" value="{{ edit_election.title }}" placeholder="e.g. Presidential Elections 2024" required>
                         </div>
 
                         <div class="mb-4">
-                            <label class="form-label small fw-bold text-uppercase tracking-wider" for="election_by">Organizing Body</label>
-                            <input type="text" class="form-control form-control-lg bg-light border-0" name="election_by" id="election_by" value="{{ edit_election.election_by }}" placeholder="e.g. Electoral Commission" required>
+                            <label class="form-label small fw-bold text-uppercase tracking-wider" for="organized_by">Organizing Body</label>
+                            <input type="text" class="form-control form-control-lg bg-light border-0" name="organized_by" id="organized_by" value="{{ edit_election.organized_by }}" placeholder="e.g. Electoral Commission" required>
                         </div>
 
                         <button type="submit" class="btn btn-indigo w-100 py-3 fw-bold">

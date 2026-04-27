@@ -267,8 +267,8 @@
                 <span class="material-symbols-outlined fs-6">person</span>
                 {{ voter.std_fname }} {{ voter.std_lname }}
             </div>
-            <h1 class="election-title display-5">{{ voter.election_name }}</h1>
-            <p class="text-muted fw-500 mb-4">Election organized by <span class="text-dark fw-700">{{ voter.election_by }}</span></p>
+            <h1 class="election-title display-5">{{ voter.title }}</h1>
+            <p class="text-muted fw-500 mb-4">Election organized by <span class="text-dark fw-700">{{ voter.organized_by }}</span></p>
             
             <div id="countDT" class="countdown-timer">
                 <span class="material-symbols-outlined">schedule</span>
@@ -284,7 +284,7 @@
                     <form action="{{ PROOT }}submitvote" method="POST" id="voteForm">
                         {{ csrf_field() }}
                         <input type="hidden" name="number-of-positions" value="{{ ballot|length }}">
-                        <input type="hidden" name="name-of-election" value="{{ electionId }}">
+                        <input type="hidden" name="name-of-election" value="{{ electionUuid }}">
 
                         <div class="accordion" id="ballotAccordion">
                             {% for item in ballot %}
@@ -421,11 +421,9 @@
 
     $(document).ready(function() {
         {% if started_election > 0 %}
-            var dateStr = "{{ voter.stop_timer }}";
-            var t = dateStr.split(/[- :]/);
-            var countDownDate = new Date(t[0], t[1]-1, t[2], t[3], t[4], t[5]).getTime();
+            var countDownDate = {{ voter.ends_at|date('U') }} * 1000;
             var x = setInterval(function() {
-                var now = new Date().getTime();
+                var now = Date.now();
                 var distance = countDownDate - now;
                 var days = Math.floor(distance / (1000 * 60 * 60 * 24));
                 var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
@@ -440,7 +438,7 @@
                     clearInterval(x);
                     document.getElementById('countDT').innerHTML = "ELECTION ENDED";
                     document.getElementById('countDT').style.color = "#94a3b8";
-                    window.location = '{{ PROOT }}ended';
+                    window.location = '{{ PROOT }}votingon';
                 }
             }, 1000);
         {% endif %}

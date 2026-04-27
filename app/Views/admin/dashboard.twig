@@ -219,17 +219,17 @@
                                         <span class="material-symbols-outlined fs-5">inventory_2</span>
                                     </div>
                                     <div>
-                                        <div class="fw-bold text-dark fs-6">{{ election.election_name }}</div>
-                                        <div class="text-muted extra-small">Ref ID: #{{ election.election_id }}</div>
+                                        <div class="fw-bold text-dark fs-6">{{ election.title }}</div>
+                                        <div class="text-muted extra-small">Ref ID: #{{ election.uuid }}</div>
                                     </div>
                                 </div>
                             </td>
                             <td>
-                                {% if election.session == 1 %}
+                                {% if election.status == 1 %}
                                     <span class="badge bg-success-subtle text-success border border-success-subtle px-3 py-1 d-inline-flex align-items-center">
                                         <span class="p-1 bg-success rounded-circle me-2 animate-pulse"></span> Running
                                     </span>
-                                {% elseif election.session == 2 %}
+                                {% elseif election.status == 2 %}
                                     <span class="badge bg-secondary-subtle text-secondary border border-secondary-subtle px-3 py-1">Completed</span>
                                 {% else %}
                                     <span class="badge bg-warning-subtle text-warning border border-warning-subtle px-3 py-1">Draft</span>
@@ -239,7 +239,7 @@
                                 <div class="fw-medium text-dark">{{ election.votes_count|default(0) }} <span class="text-muted fw-normal">votes cast</span></div>
                             </td>
                             <td class="text-end pe-4">
-                                <a href="{{ PROOT }}admin/reports/{{ election.election_id }}" class="btn btn-sm btn-white border shadow-sm px-3 fw-bold d-inline-flex align-items-center">
+                                <a href="{{ PROOT }}admin/reports/{{ election.uuid }}" class="btn btn-sm btn-white border shadow-sm px-3 fw-bold d-inline-flex align-items-center">
                                     <span class="material-symbols-outlined me-1 text-indigo fs-6">trending_up</span> Reports
                                 </a>
                             </td>

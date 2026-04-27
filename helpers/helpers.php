@@ -457,7 +457,7 @@ function goBack() {
   	foreach ($all_elections_result as $main_row) {}
 
   	// 1 = Started, 2 = Ended, 0 = ''
-  	$queryS = "SELECT * FROM election WHERE session = '1' OR session = '2' LIMIT 1";
+  	$queryS = "SELECT * FROM election WHERE status = '1' OR status = '2' LIMIT 1";
   	$statement = $conn->prepare($queryS);
   	$statement->execute();
   	$stated_election_result = $statement->fetchAll();
@@ -467,7 +467,7 @@ function goBack() {
 	// GET THE TOTAL NUMBER OF VOTERS
 	function count_voters() {
 		global $conn;
-		$query = "SELECT * FROM `registrars` INNER JOIN election ON election.election_id = registrars.registrar_election";
+		$query = "SELECT * FROM `registrars` INNER JOIN election ON election.uuid = registrars.election_uuid";
 		$statement = $conn->prepare($query);
 		$statement->execute();
 		return $statement->rowCount();
@@ -477,7 +477,7 @@ function goBack() {
 	// GET THE TOTAL NUMBER OF CONTESTANTS UNDER STARTED ELECTION
 	function count_contestants() {
 		global $conn;
-		$query = "SELECT * FROM cont_details INNER JOIN election WHERE election.election_id = cont_details.contestant_election AND election.session = '1'";
+		$query = "SELECT * FROM cont_details INNER JOIN election WHERE election.uuid = cont_details.election_uuid AND election.status = '1'";
 		$statement = $conn->prepare($query);
 		$statement->execute();
 		return $statement->rowCount();
@@ -486,7 +486,7 @@ function goBack() {
 	// GET THE TOTAL NUMBER OF POSITIONS UNDER STARTED ELECTION
 	function count_positions() {
 		global $conn;
-		$query = "SELECT * FROM positions INNER JOIN election WHERE election.election_id = positions.election_id AND election.session = '1'";
+		$query = "SELECT * FROM positions INNER JOIN election WHERE election.uuid = positions.election_uuid AND election.status = '1'";
 		$statement = $conn->prepare($query);
 		$statement->execute();
 		return $statement->rowCount();
@@ -507,42 +507,42 @@ function goBack() {
 //////////////////////////////
 
 	// GET THE TOTAL NUMBER OF VOTERS
-	function count_voters_on_runing_election($election_id) {
+	function count_voters_on_runing_election($uuid) {
 		global $conn;
-		$query = "SELECT * FROM `registrars` INNER JOIN election ON election.election_id = ? AND registrars.registrar_election = ? WHERE election.session = ? OR election.session = ?";
+		$query = "SELECT * FROM `registrars` INNER JOIN election ON election.uuid = ? AND registrars.election_uuid = ? WHERE election.status = ? OR election.status = ?";
 		$statement = $conn->prepare($query);
-		$statement->execute([$election_id, $election_id, 1, 2]);
+		$statement->execute([$uuid, $uuid, 1, 2]);
 		return $statement->rowCount();
 	}
 
 	// GET THE TOTAL NUMBER OF CONTESTANTS UNDER STARTED ELECTION
-	function count_contestants_on_runing_election($election_id) {
+	function count_contestants_on_runing_election($uuid) {
 		global $conn;
 		$query = "
 		    SELECT * FROM cont_details 
 		    INNER JOIN election 
-		    WHERE election.election_id = ? 
-		    AND cont_details.contestant_election = ?";
+		    WHERE election.uuid = ? 
+		    AND cont_details.election_uuid = ?";
 		$statement = $conn->prepare($query);
-		$statement->execute([$election_id, $election_id]);
+		$statement->execute([$uuid, $uuid]);
 		return $statement->rowCount();
 	}
 
 	// GET THE TOTAL NUMBER OF POSITIONS UNDER STARTED ELECTION
-	function count_positions_on_running_election($election_id) {
+	function count_positions_on_running_election($uuid) {
 		global $conn;
-		$query = "SELECT * FROM positions INNER JOIN election WHERE election.election_id = ? AND positions.election_id = ?";
+		$query = "SELECT * FROM positions INNER JOIN election WHERE election.uuid = ? AND positions.election_uuid = ?";
 		$statement = $conn->prepare($query);
-		$statement->execute([$election_id, $election_id]);
+		$statement->execute([$uuid, $uuid]);
 		return $statement->rowCount();
 	}
 
 	// GET THE NUMBER OF APPLIED APPLICANTS (NOT-VERIFIED)
-	function count_votes_on_runing_election($election_id) {
+	function count_votes_on_runing_election($uuid) {
 		global $conn;
-		$query = "SELECT COUNT(*) as all_voterhasdone FROM voterhasdone INNER JOIN election ON election.election_id = ? WHERE voterhasdone.election_id = ?";
+		$query = "SELECT COUNT(*) as all_voterhasdone FROM voterhasdone INNER JOIN election ON election.uuid = ? WHERE voterhasdone.election_uuid = ?";
 		$statement = $conn->prepare($query);
-		$statement->execute([$election_id, $election_id]);
+		$statement->execute([$uuid, $uuid]);
 		foreach ($statement->fetchAll() as $row) {
 			return $row['all_voterhasdone'];
 		}

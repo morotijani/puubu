@@ -16,7 +16,7 @@
 body {
     background-color: var(--admin-bg);
     color: var(--admin-text-main);
-    font-family: 'Outfit', 'Inter', system-ui, -apple-system, sans-serif;
+    font-family: 'Outfit', system-ui, -apple-system, sans-serif;
     overflow-x: hidden;
     -webkit-font-smoothing: antialiased;
 }
@@ -261,3 +261,16 @@ body {
 .text-indigo { color: var(--admin-primary) !important; }
 .bg-indigo-subtle { background-color: rgba(79, 70, 229, 0.1) !important; }
 .border-indigo-subtle { border-color: rgba(79, 70, 229, 0.2) !important; }
+
+/* Avatar Initials */
+.avatar-initials {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--admin-primary);
+    color: #fff;
+    font-weight: 700;
+    text-transform: uppercase;
+    user-select: none;
+}
+

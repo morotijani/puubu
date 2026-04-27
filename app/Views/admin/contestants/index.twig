@@ -59,7 +59,13 @@
                             <td class="ps-4">
                                 <div class="d-flex align-items-center">
                                     <div class="position-relative me-3">
-                                        <img class="rounded-circle border shadow-sm" src="{{ PROOT }}media/uploadedprofile/{{ cont.cont_profile }}" width="42" height="42" alt="{{ cont.cont_fname }}" onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name={{ cont.cont_fname|url_encode }}+{{ cont.cont_lname|url_encode }}&background=6366f1&color=fff'">
+                                        {% if cont.cont_profile %}
+                                            <img class="rounded-circle border shadow-sm" src="{{ PROOT }}media/uploadedprofile/{{ cont.cont_profile }}" width="42" height="42" alt="{{ cont.cont_fname }}">
+                                        {% else %}
+                                            <div class="avatar-initials rounded-circle border shadow-sm" style="width: 42px; height: 42px; font-size: 0.8rem;">
+                                                {{ cont.cont_fname|first }}{{ cont.cont_lname|first }}
+                                            </div>
+                                        {% endif %}
                                         <span class="position-absolute bottom-0 end-0 p-1 bg-success border border-white rounded-circle"></span>
                                     </div>
                                     <div>

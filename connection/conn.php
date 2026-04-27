@@ -61,21 +61,9 @@
 	// Check if cached data exists and is recent (e.g., within 1 hour)
 	if (file_exists($cacheFile) && (time() - filemtime($cacheFile) < 3600)) {
 		$cached = json_decode(file_get_contents($cacheFile), true);
-		if ($cached && isset($cached['city'], $cached['region'], $cached['country'])) {
-			$location = $cached['city'] . ', ' . $cached['region'] . ', ' . $cached['country'] . ', ' . $cached['ip'];
-		}
-		
-		// If no cache, create a fallback object
-		if (!$details) {
-			$details = (object) [
-				'ip' => $remoteAddr,
-				'city' => null,
-				'region' => null,
-				'country' => null,
-				'loc' => null,
-				'org' => null,
-				'timezone' => null
-			];
+		if ($cached && isset($cached['ip'])) {
+			$location = ($cached['city'] ?? 'Unknown City') . ', ' . ($cached['region'] ?? 'Unknown Region') . ', ' . ($cached['country'] ?? 'Unknown Country') . ', ' . $cached['ip'];
+			$details = (object) $cached;
 		}
 	} else {
 		try {
@@ -91,7 +79,7 @@
 				'country' => $details->country, 
 				'ip' => $details->ip
 			]));
-		} catch (IPinfoException $e) {
+		} catch (\Exception $e) {
 			// Log error silently
 			$logDir = __DIR__ . '/logs';
 			if (!is_dir($logDir)) {
@@ -100,6 +88,16 @@
 			$logMessage = date('Y-m-d H:i:s') . " - IPinfo error: " . $e->getMessage() . "\n";
 			file_put_contents($logDir . '/ipinfo_errors.log', $logMessage, FILE_APPEND);
 		}
+	}
+
+	// ✅ FINAL FALLBACK: Ensure $details is always an object with at least the IP
+	if (!$details || !is_object($details)) {
+		$details = (object) [
+			'ip' => $remoteAddr,
+			'city' => 'Unknown City',
+			'region' => 'Unknown Region',
+			'country' => 'Unknown Country'
+		];
 	}
 
  	if (isset($_SESSION['crAdmin'])) {

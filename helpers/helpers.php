@@ -141,18 +141,11 @@ function sms_otp($msg, $phone) {
 	function send_email($to, $subject, $body) {
 		$mail = new PHPMailer(true);
 		try {
-	        $to = $to;
 	        $from = MAIL_EMAIL;
-	        $from_name = 'Puubu, Group 🤞';
-	        $subject = $subject;
-	        $body = $body;
-
-	        //Create an instance; passing `true` enables exceptions
-	        $mail = new PHPMailer(true);
+	        $from_name = 'Puubu Group';
 
 	        $mail->IsSMTP();
 	        $mail->SMTPAuth = true;
-
 	        $mail->SMTPSecure = 'ssl'; 
 	        $mail->Host = MAIL_HOST;
 	        $mail->Port = MAIL_PORT;  
@@ -170,10 +163,12 @@ function sms_otp($msg, $phone) {
 	        $mail->AddAddress($to);
 	        $mail->send();
 	        return true;
-	    } catch (Exception $e) {
-	    	//return "Message could not be sent. Mailer Error: {$mail->ErrorInfo}";
+	    } catch (\Exception $e) {
+	    	$logDir = dirname(__DIR__) . '/connection/logs';
+	    	if (!is_dir($logDir)) mkdir($logDir, 0777, true);
+	    	$errorMsg = date('Y-m-d H:i:s') . " - Mail Error: " . $mail->ErrorInfo . " (Exception: " . $e->getMessage() . ")\n";
+	    	file_put_contents($logDir . '/mail_errors.log', $errorMsg, FILE_APPEND);
 	    	return false;
-	        //$message = "Please check your internet connection well...";
 	    }
 	}
 

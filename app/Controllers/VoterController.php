@@ -59,15 +59,52 @@ class VoterController {
                                     } elseif (!password_verify($_POST['voter_password'], $row['std_password'])) {
                                         $displayErrors = "Invalid Voter Details";
                                     } else {
-                                        $login_issue_text = "Someone logged in with my account, on this IP: " . $details->ip;
+                                        $current_ip = $details->ip ?? ($_SERVER['REMOTE_ADDR'] ?? 'Unknown IP');
+                                        $login_issue_text = "Someone logged in with my account, on this IP: " . $current_ip;
                                         $login_issue = urlencode($login_issue_text);
 
                                         $to = $row["std_email"];
-                                        $subject = 'New login on Puubu 🦝.';
-                                        $body = '<center><p>We\'ve noticed a new login, ' . ucwords($row["std_fname"]) . ',</p><p>We\'ve noticed a login from a device that you don\'t usually use from this location; ' . $details->country . '.</p><p>If this was you, you can safely disregard this email. If this wasn\'t you, you can secure your account <a href="https://wa.me/+233240445410/?text=' . $login_issue . '" target="_blank" class="text-color">here..</a></p><p>From,<br> Puubu Group.</p></center>';
+                                        $subject = 'Security Alert: New Login on Puubu';
+                                        
+                                        $city = $details->city ?? 'Unknown City';
+                                        $region = $details->region ?? 'Unknown Region';
+                                        $country = $details->country ?? 'Unknown Country';
+                                        $ip = $details->ip ?? 'Unknown IP';
+                                        $device_location = "{$city}, {$region}, {$country} ({$ip})";
+
+                                        $body = "
+                                        <div style='font-family: sans-serif; max-width: 600px; margin: 0 auto; border: 1px solid #e2e8f0; border-radius: 12px; overflow: hidden;'>
+                                            <div style='background: #1d3d37; padding: 24px; text-align: center;'>
+                                                <h2 style='color: #dcf3b0; margin: 0;'>New Login Detected</h2>
+                                            </div>
+                                            <div style='padding: 32px; color: #4a5568; line-height: 1.6;'>
+                                                <p>Hello <strong>" . ucwords($row['std_fname']) . "</strong>,</p>
+                                                <p>We detected a new login to your Puubu account. To ensure your account is secure, we wanted to let you know the details:</p>
+                                                
+                                                <div style='background: #f8fafc; padding: 16px; border-radius: 8px; margin: 24px 0;'>
+                                                    <table style='width: 100%; border-collapse: collapse;'>
+                                                        <tr><td style='padding: 4px 0; color: #718096; width: 100px;'>Location:</td><td style='padding: 4px 0; font-weight: 600;'>$device_location</td></tr>
+                                                        <tr><td style='padding: 4px 0; color: #718096;'>Time:</td><td style='padding: 4px 0; font-weight: 600;'>" . date('F j, Y, g:i a') . "</td></tr>
+                                                    </table>
+                                                </div>
+
+                                                <p>If this was you, you can safely ignore this email. If you don't recognize this activity, please secure your account immediately by contacting our support team.</p>
+                                                
+                                                <div style='text-align: center; margin-top: 32px;'>
+                                                    <a href='https://wa.me/+233240445410/?text=$login_issue' style='background: #1d3d37; color: white; padding: 12px 24px; text-decoration: none; border-radius: 8px; font-weight: bold; display: inline-block;'>Secure My Account</a>
+                                                </div>
+                                            </div>
+                                            <div style='background: #f8fafc; padding: 16px; text-align: center; font-size: 12px; color: #a0aec0; border-top: 1px solid #e2e8f0;'>
+                                                &copy; " . date('Y') . " Puubu Group. All rights reserved.
+                                            </div>
+                                        </div>";
 
                                         try {
-                                            send_email($to, $subject, $body);
+                                            $mailSent = send_email($to, $subject, $body);
+                                            if (!$mailSent) {
+                                                // Log the failure but allow login to proceed or show error?
+                                                // For security alerts, we should probably proceed but maybe show a warning.
+                                            }
 
                                             $unique_vld_id = guidv4();
                                             $election_logs_query = "
@@ -87,7 +124,7 @@ class VoterController {
                                                 redirect(PROOT . 'votingon');
                                             }
                                         } catch (\Exception $e) {
-                                            $displayErrors = "Please check you internet connection or contact Puubu Administrator.";
+                                            $displayErrors = "Login failed: " . $e->getMessage();
                                         }
                                     }
                                 }
@@ -254,12 +291,38 @@ class VoterController {
             $stmt = $conn->prepare("INSERT INTO voterhasdone (vhd_id, voter_id, election_uuid, voterhasdone_status) VALUES (?, ?, ?, 1)");
             $stmt->execute([$vhd_id, $voter_id, $election_uuid]);
 
+            // FETCH ELECTION DETAILS EXPLICITLY FOR RECEIPT
+            $eStmt = $conn->prepare("SELECT title, organized_by FROM election WHERE uuid = ?");
+            $eStmt->execute([$election_uuid]);
+            $election_row = $eStmt->fetch();
+            $eTitle = $election_row['title'] ?? 'Unknown Election';
+            $eOrg = $election_row['organized_by'] ?? 'Unknown Organizer';
+
             // BUILD EMAIL RECEIPT
-            $receipt_html = "<h3>Voting Receipt: {$voter_row['election_name']}</h3>";
-            $receipt_html .= "<p>Hello " . ucwords($voter_row['std_fname']) . ", your ballot has been successfully cast in the <strong>{$voter_row['election_name']}</strong> organized by <strong>{$voter_row['election_by']}</strong>.</p>";
-            $receipt_html .= "<p>Here is a summary of your selections for your reference:</p>";
-            $receipt_html .= "<table border='1' cellpadding='10' style='border-collapse: collapse; width: 100%; font-family: sans-serif;'>";
-            $receipt_html .= "<tr style='background: #f1f5f9;'><th>Position</th><th>Selection</th></tr>";
+            $receipt_html = '
+            <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; border: 1px solid #e2e8f0; border-radius: 12px; overflow: hidden;">
+                <div style="background: #1d3d37; padding: 24px; text-align: center;">
+                    <h2 style="color: #dcf3b0; margin: 0;">Ballot Confirmation</h2>
+                </div>
+                <div style="padding: 32px; color: #4a5568; line-height: 1.6;">
+                    <p>Hello <strong>' . ucwords($voter_row['std_fname']) . '</strong>,</p>
+                    <p>Your ballot has been securely cast and recorded for the <strong>' . $eTitle . '</strong>.</p>
+                    
+                    <div style="background: #f8fafc; padding: 16px; border-radius: 8px; margin: 24px 0;">
+                        <p style="margin-top: 0; font-size: 14px; color: #718096; font-weight: bold; text-transform: uppercase;">Election Details</p>
+                        <table style="width: 100%; border-collapse: collapse;">
+                            <tr><td style="padding: 4px 0; color: #718096; width: 120px;">Election:</td><td style="padding: 4px 0; font-weight: 600;">' . $eTitle . '</td></tr>
+                            <tr><td style="padding: 4px 0; color: #718096;">Organizer:</td><td style="padding: 4px 0; font-weight: 600;">' . $eOrg . '</td></tr>
+                            <tr><td style="padding: 4px 0; color: #718096;">Date Cast:</td><td style="padding: 4px 0; font-weight: 600;">' . date('F j, Y, g:i a') . '</td></tr>
+                        </table>
+                    </div>
+
+                    <p style="font-weight: bold; margin-bottom: 12px;">Your Selections:</p>
+                    <table style="width: 100%; border-collapse: collapse; border: 1px solid #e2e8f0; border-radius: 8px; overflow: hidden;">
+                        <tr style="background: #f1f5f9;">
+                            <th style="padding: 12px; text-align: left; border-bottom: 1px solid #e2e8f0;">Position</th>
+                            <th style="padding: 12px; text-align: left; border-bottom: 1px solid #e2e8f0;">Selection</th>
+                        </tr>';
 
             for ($i = 0; $i < $num_positions; $i++) {
                 $pos_id = sanitize($_POST["name-of-positions{$i}"] ?? '');
@@ -269,7 +332,7 @@ class VoterController {
                 $pStmt->execute([$pos_id]);
                 $pName = $pStmt->fetchColumn();
 
-                $selection = "Abstained / No selection";
+                $selection = "Abstained";
                 
                 if (isset($_POST["contestant{$i}"]) && !empty($_POST["contestant{$i}"])) {
                     $c_id = sanitize($_POST["contestant{$i}"]);
@@ -287,11 +350,24 @@ class VoterController {
                     $selection = ($choice === 'yes' ? "Approve: " : "Reject: ") . $cRow['cont_fname'] . " " . $cRow['cont_lname'];
                 }
 
-                $receipt_html .= "<tr><td>{$pName}</td><td>{$selection}</td></tr>";
+                $receipt_html .= '
+                <tr>
+                    <td style="padding: 12px; border-bottom: 1px solid #e2e8f0;">' . $pName . '</td>
+                    <td style="padding: 12px; border-bottom: 1px solid #e2e8f0; font-weight: 500;">' . $selection . '</td>
+                </tr>';
             }
-            $receipt_html .= "</table><p>Thank you for participating!</p>";
+            
+            $receipt_html .= '
+                    </table>
 
-            send_email($voter_row['std_email'], "Voting Receipt: " . $voter_row['election_name'], $receipt_html);
+                    <p style="margin-top: 32px; font-size: 14px;">Thank you for exercising your right to vote. Your participation helps strengthen our digital democracy.</p>
+                </div>
+                <div style="background: #f8fafc; padding: 16px; text-align: center; font-size: 12px; color: #a0aec0; border-top: 1px solid #e2e8f0;">
+                    &copy; ' . date('Y') . ' Puubu Group. All rights reserved.
+                </div>
+            </div>';
+
+            send_email($voter_row['std_email'], "Voting Receipt: " . $eTitle, $receipt_html);
 
             add_to_log("Voter casted vote and received email receipt", $voter_id, 'user');
 

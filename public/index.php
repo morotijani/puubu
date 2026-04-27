@@ -74,6 +74,12 @@ $router->post('/submitvote', function() use ($twig) {
     $controller->submitVote();
 });
 
+$router->get('/success', function() use ($twig) {
+    require_once __DIR__ . '/../app/Controllers/VoterController.php';
+    $controller = new \App\Controllers\VoterController($twig);
+    $controller->success();
+});
+
 // Admin Routes
 $router->mount('/admin', function() use ($router, $twig) {
     

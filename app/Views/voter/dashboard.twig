@@ -192,20 +192,37 @@
                         </p>
 
                         <div id="activeActions">
-                            <div class="timer-box">
-                                <div class="timer-label">Time Remaining</div>
-                                <div id="countDT">Initializing...</div>
-                            </div>
+                            {% if has_voted %}
+                                <div class="voted-notice-wrapper mb-5">
+                                    <div class="icon-circle mb-4 bg-success-subtle text-success">
+                                        <span class="material-symbols-outlined fs-1">verified</span>
+                                    </div>
+                                    <h2 class="fw-800 mb-3" style="letter-spacing: -1px;">Ballot Cast Successfully</h2>
+                                    <p class="text-secondary lead-sm mb-4">Your vote has been securely recorded and encrypted. Multiple voting is strictly prohibited to maintain electoral integrity.</p>
+                                    
+                                    <div class="d-flex justify-content-center">
+                                        <a href="{{ PROOT }}auth/logout" class="btn-start bg-secondary">
+                                            Logout Securely
+                                            <span class="material-symbols-outlined">logout</span>
+                                        </a>
+                                    </div>
+                                </div>
+                            {% else %}
+                                <div class="timer-box">
+                                    <div class="timer-label">Time Remaining</div>
+                                    <div id="countDT">Initializing...</div>
+                                </div>
 
-                            <div class="d-flex flex-column flex-md-row align-items-center justify-content-center gap-3">
-                                <a href="{{ PROOT }}startvote" class="btn-start">
-                                    Start Voting
-                                    <span class="material-symbols-outlined">how_to_vote</span>
-                                </a>
-                                <a href="{{ PROOT }}auth/logout" class="btn-signout">
-                                    Sign Out
-                                </a>
-                            </div>
+                                <div class="d-flex flex-column flex-md-row align-items-center justify-content-center gap-3">
+                                    <a href="{{ PROOT }}startvote" class="btn-start">
+                                        Start Voting
+                                        <span class="material-symbols-outlined">how_to_vote</span>
+                                    </a>
+                                    <a href="{{ PROOT }}auth/logout" class="btn-signout">
+                                        Sign Out
+                                    </a>
+                                </div>
+                            {% endif %}
                         </div>
 
                         <div id="endedActions" style="display: none;">

@@ -1,0 +1,171 @@
+{% extends "layout.twig" %}
+
+{% block title %}Vote Confirmed • Puubu{% endblock %}
+
+{% block styles %}
+<style>
+    :root {
+        --primary-accent: #dcf3b0;
+        --dark-accent: #1d3d37;
+        --light-bg: #fdfcf5;
+        --card-bg: #ffffff;
+    }
+
+    .success-wrapper {
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: var(--light-bg);
+        padding: 2rem;
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+    }
+
+    /* Background shapes to match login page feel */
+    .bg-shape {
+        position: absolute;
+        border-radius: 50%;
+        filter: blur(80px);
+        z-index: 1;
+        opacity: 0.5;
+    }
+    .shape-1 {
+        width: 400px;
+        height: 400px;
+        background: var(--primary-accent);
+        top: -100px;
+        right: -100px;
+    }
+    .shape-2 {
+        width: 300px;
+        height: 300px;
+        background: #e2f0d9;
+        bottom: -50px;
+        left: -50px;
+    }
+
+    .success-card {
+        max-width: 550px;
+        width: 100%;
+        padding: 4rem 3rem;
+        background: var(--card-bg);
+        border: 1px solid rgba(0, 0, 0, 0.05);
+        border-radius: 2.5rem;
+        box-shadow: 0 30px 60px -20px rgba(29, 61, 55, 0.08);
+        position: relative;
+        z-index: 10;
+        animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .check-animation {
+        width: 80px;
+        height: 80px;
+        background: var(--primary-accent);
+        border-radius: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 2.5rem;
+        color: var(--dark-accent);
+        box-shadow: 0 15px 30px -5px rgba(220, 243, 176, 0.5);
+        animation: scaleIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .celebration-icon {
+        font-size: 40px;
+    }
+
+    h1 {
+        font-weight: 800;
+        letter-spacing: -1px;
+        margin-bottom: 1.5rem;
+        color: var(--dark-accent);
+    }
+
+    p {
+        color: #718783;
+        font-size: 1.1rem;
+        line-height: 1.6;
+        margin-bottom: 3rem;
+    }
+
+    .btn-return {
+        background: var(--dark-accent);
+        color: white;
+        padding: 1.25rem 2.5rem;
+        border-radius: 1.25rem;
+        font-weight: 700;
+        text-decoration: none;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        display: inline-flex;
+        align-items: center;
+        gap: 0.75rem;
+        width: 100%;
+        justify-content: center;
+    }
+
+    .btn-return:hover {
+        background: #132e29;
+        transform: translateY(-2px);
+        box-shadow: 0 15px 30px -5px rgba(29, 61, 55, 0.2);
+        color: white;
+    }
+
+    .email-notice {
+        margin-top: 2rem;
+        font-size: 0.9rem;
+        color: #718783;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        font-weight: 500;
+    }
+
+    .email-notice span.material-symbols-outlined {
+        color: var(--dark-accent);
+    }
+
+    @keyframes scaleIn {
+        0% { transform: scale(0); opacity: 0; }
+        100% { transform: scale(1); opacity: 1; }
+    }
+
+    @keyframes slideUp {
+        0% { transform: translateY(30px); opacity: 0; }
+        100% { transform: translateY(0); opacity: 1; }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="success-wrapper">
+    <div class="bg-shape shape-1"></div>
+    <div class="bg-shape shape-2"></div>
+
+    <div class="success-card">
+        <div class="check-animation">
+            <span class="material-symbols-outlined celebration-icon">verified</span>
+        </div>
+        
+        <h1>Victory for Democracy!</h1>
+        <p>
+            Thank you, <strong>{{ voter.std_fname }}</strong>, for playing your part in shaping the future. 
+            Your voice has been heard, and your ballot is now securely locked in our digital vault. 
+            Citizens like you make this community thrive!
+        </p>
+
+        <a href="{{ PROOT }}votingon" class="btn-return">
+            Return to Dashboard
+            <span class="material-symbols-outlined">arrow_forward</span>
+        </a>
+
+        <div class="email-notice">
+            <span class="material-symbols-outlined">mail</span>
+            A detailed voting receipt has been sent to your email address.
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -133,6 +133,12 @@
 		$statement->execute([$voterId]);
 		$voter_count = $statement->rowCount();
 		$voter_result = $statement->fetchAll();
+
+		// Check if this voter has already voted in this specific election
+		$votedCheck = "SELECT COUNT(*) FROM voterhasdone WHERE voter_id = ? AND election_uuid = ?";
+		$vStmt = $conn->prepare($votedCheck);
+		$vStmt->execute([$voterId, $voter_result[0]['uuid']]);
+		$has_voted = $vStmt->fetchColumn() > 0;
  	}
 
  	// Display on Messages on Errors And Success

@@ -1,20 +1,24 @@
 <?php
 namespace App\Controllers;
 
-class VoterController {
+class VoterController
+{
     protected $twig;
 
-    public function __construct($twig) {
+    public function __construct($twig)
+    {
         $this->twig = $twig;
     }
 
-    public function home() {
+    public function home()
+    {
         echo $this->twig->render('voter/home.twig');
     }
 
-    public function login() {
+    public function login()
+    {
         global $conn, $details, $location;
-        
+
         if (isset($_SESSION['voter_accessed'])) {
             redirect(PROOT . 'votingon');
         }
@@ -45,7 +49,7 @@ class VoterController {
 
                     if ($statement->rowCount() > 0) {
                         foreach ($result_voterLogin as $row) {
-                            if ($row['status'] == 1) {
+                            if ($row['election_status'] == 1) {
                                 $now = date('Y-m-d H:i:s');
                                 if ($now < $row['starts_at']) {
                                     $displayErrors = "This election has not started yet. Access will be granted on " . date('F j, Y, g:i a', strtotime($row['starts_at'])) . ".";
@@ -64,9 +68,9 @@ class VoterController {
                                         $login_issue_text = "Someone logged in with my account, on this IP: " . $current_ip;
                                         $login_issue = urlencode($login_issue_text);
 
-                                        $to = $row["std_email"];
+                                        $to = $row["email"];
                                         $subject = 'Security Alert: New Login on Puubu';
-                                        
+
                                         $city = $details->city ?? 'Unknown City';
                                         $region = $details->region ?? 'Unknown Region';
                                         $country = $details->country ?? 'Unknown Country';
@@ -146,9 +150,10 @@ class VoterController {
         ]);
     }
 
-    public function dashboard() {
+    public function dashboard()
+    {
         global $conn, $voter_result, $started_election, $has_voted;
-        
+
         if (!isset($_SESSION['voter_accessed'])) {
             redirect(PROOT . 'signin');
         }
@@ -162,29 +167,30 @@ class VoterController {
         ]);
     }
 
-    public function ballot() {
+    public function ballot()
+    {
         global $conn, $voter_result, $started_election;
-        
+
         if (!isset($_SESSION['voter_accessed'])) {
             redirect(PROOT . 'signin');
         }
 
         $voter_row = $voter_result[0];
         $now = date('Y-m-d H:i:s');
-        
+
         // Block if already voted
-                                        $checkVoted = $conn->prepare("SELECT COUNT(*) FROM voterhasdone WHERE voter_id = ? AND election_uuid = ?");
-                                        $checkVoted->execute([$voter_row['uuid'], $voter_row['election_uuid']]);
-                                        if ($checkVoted->fetchColumn() > 0) {
-                                            redirect(PROOT . 'votingon');
-                                        }
+        $checkVoted = $conn->prepare("SELECT COUNT(*) FROM voterhasdone WHERE voter_id = ? AND election_uuid = ?");
+        $checkVoted->execute([$voter_row['uuid'], $voter_row['election_uuid']]);
+        if ($checkVoted->fetchColumn() > 0) {
+            redirect(PROOT . 'votingon');
+        }
 
-                                        if ($voter_row['election_status'] == 2 || $now > $voter_row['ends_at']) {
-                                            redirect(PROOT . 'votingon');
-                                        }
+        if ($voter_row['election_status'] == 2 || $now > $voter_row['ends_at']) {
+            redirect(PROOT . 'votingon');
+        }
 
-                                        $electionUuid = $voter_row['election_uuid'];
-        
+        $electionUuid = $voter_row['election_uuid'];
+
         // Fetch Positions
         $posQuery = "SELECT * FROM positions WHERE election_uuid = ?";
         $stmt = $conn->prepare($posQuery);
@@ -220,9 +226,10 @@ class VoterController {
         ]);
     }
 
-    public function submitVote() {
+    public function submitVote()
+    {
         global $conn, $voter_result;
-        
+
         if (!isset($_SESSION['voter_accessed'])) {
             redirect(PROOT . 'signin');
         }
@@ -234,7 +241,7 @@ class VoterController {
         $voter_row = $voter_result[0];
         $voter_uuid = $voter_row['uuid'];
         $election_uuid = sanitize($_POST['name-of-election'] ?? '');
-        
+
         $now = date('Y-m-d H:i:s');
         if ($voter_row['election_status'] != 1 || $election_uuid != $voter_row['election_uuid']) {
             die("Election is not active or invalid.");
@@ -261,7 +268,7 @@ class VoterController {
 
             for ($i = 0; $i < $num_positions; $i++) {
                 $position_id = sanitize($_POST["name-of-positions{$i}"] ?? '');
-                
+
                 if (isset($_POST["contestant{$i}"]) && !empty($_POST["contestant{$i}"])) {
                     $contestant_id = sanitize($_POST["contestant{$i}"]);
                     // Increment results
@@ -327,14 +334,14 @@ class VoterController {
 
             for ($i = 0; $i < $num_positions; $i++) {
                 $pos_id = sanitize($_POST["name-of-positions{$i}"] ?? '');
-                
+
                 // Get position name
                 $pStmt = $conn->prepare("SELECT position_name FROM positions WHERE position_id = ?");
                 $pStmt->execute([$pos_id]);
                 $pName = $pStmt->fetchColumn();
 
                 $selection = "Abstained";
-                
+
                 if (isset($_POST["contestant{$i}"]) && !empty($_POST["contestant{$i}"])) {
                     $c_id = sanitize($_POST["contestant{$i}"]);
                     $cStmt = $conn->prepare("SELECT cont_fname, cont_lname FROM cont_details WHERE contestant_id = ?");
@@ -357,7 +364,7 @@ class VoterController {
                     <td style="padding: 12px; border-bottom: 1px solid #e2e8f0; font-weight: 500;">' . $selection . '</td>
                 </tr>';
             }
-            
+
             $receipt_html .= '
                     </table>
 
@@ -368,7 +375,7 @@ class VoterController {
                 </div>
             </div>';
 
-            send_email($voter_row['std_email'], "Voting Receipt: " . $eTitle, $receipt_html);
+            send_email($voter_row['email'], "Voting Receipt: " . $eTitle, $receipt_html);
 
             add_to_log("Voter casted vote and received email receipt", $voter_id, 'user');
 
@@ -378,12 +385,14 @@ class VoterController {
             redirect(PROOT . 'success');
 
         } catch (\Exception $e) {
-            if ($conn->inTransaction()) $conn->rollBack();
+            if ($conn->inTransaction())
+                $conn->rollBack();
             die("An error occurred while saving your vote. Please contact administration. " . $e->getMessage());
         }
     }
 
-    public function success() {
+    public function success()
+    {
         global $voter_result;
         if (!isset($_SESSION['voter_accessed'])) {
             redirect(PROOT . 'signin');

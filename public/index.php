@@ -45,15 +45,10 @@ $router->all('/signin', function() use ($twig) {
     $controller->login();
 });
 
-$router->get('/auth/logout', function() {
-    $gate = $_SESSION['admin_gate_passed'] ?? false;
-    session_unset();
-    session_destroy();
-    session_start();
-    if ($gate) {
-        $_SESSION['admin_gate_passed'] = $gate;
-    }
-    redirect(PROOT . 'signin');
+$router->get('/auth/logout', function() use ($twig) {
+    require_once __DIR__ . '/../app/Controllers/VoterController.php';
+    $controller = new \App\Controllers\VoterController($twig);
+    $controller->logout();
 });
 
 $router->get('/votingon', function() use ($twig) {

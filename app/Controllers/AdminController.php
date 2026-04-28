@@ -51,7 +51,7 @@ class AdminController {
         if (!cadminIsLoggedIn() || empty($admin_data)) {
             cadminLoginErrorRedirect();
         }
-        $admin_id = $admin_data['admin_id'];
+        $admin_id = $admin_data['uuid'];
         $role = $admin_data['role'] ?? 'organizer';
 
         if ($role === 'super_admin') {
@@ -179,7 +179,7 @@ class AdminController {
 
     public function elections() {
         global $conn, $admin_data;
-        $admin_id = $admin_data['admin_id'];
+        $admin_id = $admin_data['uuid'];
         $role = $admin_data['role'] ?? 'organizer';
         
         if ($role === 'super_admin') {
@@ -212,7 +212,7 @@ class AdminController {
 
     public function electionStore() {
         global $conn, $admin_data;
-        $admin_id = $admin_data['admin_id'] ?? null;
+        $admin_id = $admin_data['uuid'] ?? null;
         
         if (!isset($_POST['csrf_token']) || !verify_csrf_token($_POST['csrf_token'])) {
             $_SESSION['flash_error'] = "Invalid CSRF token.";
@@ -265,7 +265,7 @@ class AdminController {
         if (!cadminIsLoggedIn() || empty($admin_data)) {
             cadminLoginErrorRedirect();
         }
-        $admin_id = $admin_data['admin_id'];
+        $admin_id = $admin_data['uuid'];
         $role = $admin_data['role'] ?? 'organizer';
 
         // Check ownership
@@ -315,7 +315,7 @@ class AdminController {
         if (!cadminIsLoggedIn() || empty($admin_data)) {
             cadminLoginErrorRedirect();
         }
-        $admin_id = $admin_data['admin_id'];
+        $admin_id = $admin_data['uuid'];
         $role = $admin_data['role'] ?? 'organizer';
 
         // Check ownership
@@ -359,7 +359,7 @@ class AdminController {
 
     public function electionDelete($id) {
         global $conn, $admin_data;
-        $admin_id = $admin_data['admin_id'] ?? null;
+        $admin_id = $admin_data['uuid'] ?? null;
         $role = $admin_data['role'] ?? 'organizer';
         
         if ($role === 'super_admin') {
@@ -383,7 +383,7 @@ class AdminController {
 
     public function positions() {
         global $conn, $admin_data;
-        $admin_id = $admin_data['admin_id'];
+        $admin_id = $admin_data['uuid'];
         $role = $admin_data['role'] ?? 'organizer';
         
         if ($role === 'super_admin') {
@@ -422,7 +422,7 @@ class AdminController {
 
     public function positionStore() {
         global $conn, $admin_data;
-        $admin_id = $admin_data['admin_id'] ?? null;
+        $admin_id = $admin_data['uuid'] ?? null;
         
         if (!isset($_POST['csrf_token']) || !verify_csrf_token($_POST['csrf_token'])) {
             $_SESSION['flash_error'] = "Invalid CSRF token.";
@@ -484,7 +484,7 @@ class AdminController {
 
     public function contestants() {
         global $conn, $admin_data;
-        $admin_id = $admin_data['admin_id'];
+        $admin_id = $admin_data['uuid'];
         $role = $admin_data['role'] ?? 'organizer';
         
         if ($role === 'super_admin') {
@@ -530,7 +530,7 @@ class AdminController {
 
     public function contestantForm($id = null) {
         global $conn, $admin_data;
-        $admin_id = $admin_data['admin_id'];
+        $admin_id = $admin_data['uuid'];
         $role = $admin_data['role'] ?? 'organizer';
         
         $contestant = null;
@@ -626,7 +626,7 @@ class AdminController {
 
     public function contestantArchive() {
         global $conn, $admin_data;
-        $admin_id = $admin_data['admin_id'];
+        $admin_id = $admin_data['uuid'];
         $role = $admin_data['role'] ?? 'organizer';
         
         if ($role === 'super_admin') {
@@ -668,7 +668,7 @@ class AdminController {
 
     public function voters() {
         global $conn, $admin_data;
-        $admin_id = $admin_data['admin_id'];
+        $admin_id = $admin_data['uuid'];
         $role = $admin_data['role'] ?? 'organizer';
         
         if ($role === 'super_admin') {
@@ -710,7 +710,7 @@ class AdminController {
 
     public function voterForm($id = null) {
         global $conn, $admin_data;
-        $admin_id = $admin_data['admin_id'];
+        $admin_id = $admin_data['uuid'];
         $role = $admin_data['role'] ?? 'organizer';
         
         $voter = null;
@@ -737,7 +737,7 @@ class AdminController {
 
     public function voterStore() {
         global $conn, $admin_data;
-        $admin_id = $admin_data['admin_id'] ?? null;
+        $admin_id = $admin_data['uuid'] ?? null;
         
         if (!isset($_POST['csrf_token']) || !verify_csrf_token($_POST['csrf_token'])) {
             $_SESSION['flash_error'] = "Invalid CSRF token.";
@@ -812,7 +812,7 @@ class AdminController {
 
     public function voterTruncate() {
         global $conn, $admin_data;
-        $admin_id = $admin_data['admin_id'];
+        $admin_id = $admin_data['uuid'];
         
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if (!isset($_POST['csrf_token']) || !verify_csrf_token($_POST['csrf_token'])) {
@@ -843,7 +843,7 @@ class AdminController {
 
     public function voterImport() {
         global $conn, $admin_data;
-        $admin_id = $admin_data['admin_id'];
+        $admin_id = $admin_data['uuid'];
         $role = $admin_data['role'] ?? 'organizer';
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -933,7 +933,7 @@ class AdminController {
 
     public function voterDuplicates() {
         global $conn, $admin_data;
-        $admin_id = $admin_data['admin_id'];
+        $admin_id = $admin_data['uuid'];
         $role = $admin_data['role'] ?? 'organizer';
         
         $election_id = $_GET['election_uuid'] ?? null;
@@ -991,7 +991,7 @@ class AdminController {
 
     public function reports($election_id) {
         global $conn, $admin_data;
-        $admin_id = $admin_data['admin_id'];
+        $admin_id = $admin_data['uuid'];
         $role = $admin_data['role'] ?? 'organizer';
         
         if ($role === 'super_admin') {
@@ -1080,7 +1080,7 @@ class AdminController {
 
     public function downloadReport($election_id) {
         global $conn, $admin_data;
-        $admin_id = $admin_data['admin_id'];
+        $admin_id = $admin_data['uuid'];
         $role = $admin_data['role'] ?? 'organizer';
         
         // Fetch election details
@@ -1188,7 +1188,7 @@ class AdminController {
 
     public function passwordUpdate() {
         global $conn, $admin_data;
-        $admin_id = $admin_data['admin_id'] ?? null;
+        $admin_id = $admin_data['uuid'] ?? null;
         
         if (!isset($_POST['csrf_token']) || !verify_csrf_token($_POST['csrf_token'])) {
             $_SESSION['flash_error'] = "Invalid CSRF token.";
@@ -1241,7 +1241,7 @@ class AdminController {
 
     public function organizerStore() {
         global $conn, $admin_data;
-        $admin_id = $admin_data['admin_id'] ?? null;
+        $admin_id = $admin_data['uuid'] ?? null;
         if (($admin_data['role'] ?? 'organizer') !== 'super_admin') {
             $_SESSION['flash_error'] = "Access Denied.";
             redirect(PROOT . 'admin');

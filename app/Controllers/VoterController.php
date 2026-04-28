@@ -402,5 +402,22 @@ class VoterController
             'voter' => $voter_row
         ]);
     }
+
+    public function logout()
+    {
+        global $conn;
+        if (isset($_SESSION['voter_login_details_id'])) {
+            $stmt = $conn->prepare("UPDATE voter_security_logs SET logout_at = NOW(), status = 0 WHERE uuid = ?");
+            $stmt->execute([$_SESSION['voter_login_details_id']]);
+        }
+        
+        $voter_uuid = $_SESSION['voter_accessed'] ?? 'Unknown';
+        add_to_log("voter logged out", $voter_uuid, 'user');
+
+        session_unset();
+        session_destroy();
+        session_start();
+        redirect(PROOT . 'signin');
+    }
 }
 

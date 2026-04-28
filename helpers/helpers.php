@@ -571,7 +571,7 @@ function goBack() {
 
 		$log_id = guidv4();
 		$sql = "
-			INSERT INTO `puubu_logs`(`log_id`, `log_message`, `log_person`, `log_type`) 
+			INSERT INTO `activity_logs`(`log_id`, `log_message`, `user_uuid`, `log_type`) 
 			VALUES (?, ?, ?, ?)
 		";
 		$statement = $conn->prepare($sql);
@@ -590,15 +590,15 @@ function goBack() {
 
 		$where = '';
 		// if (!admin_has_permission()) {
-		// 	$where = ' WHERE puubu_logs.log_person = "'.$admin.'" AND CAST(puubu_logs.createdAt AS date) = "' . $today . '"';
+		// 	$where = ' WHERE activity_logs.user_uuid = "'.$admin.'" AND CAST(activity_logs.createdAt AS date) = "' . $today . '"';
 		// }
 
 		$sql = "
-			SELECT * FROM puubu_logs 
+			SELECT * FROM activity_logs 
 			-- INNER JOIN puubu_admin 
-			-- ON puubu_admin.admin_id = puubu_logs.log_person
+			-- ON puubu_admin.admin_id = activity_logs.user_uuid
 		$where 
-			ORDER BY puubu_logs.createdAt DESC
+			ORDER BY activity_logs.createdAt DESC
 			LIMIT 10
 		";
 		$statement = $conn->prepare($sql);
@@ -611,7 +611,7 @@ function goBack() {
 			$person = '';
 			if ($row['log_type'] == 'user') {
 				$person = 'voter';
-				$persons = get_voter_details('std_id', $row["log_person"]);
+				$persons = get_voter_details('std_id', $row["user_uuid"]);
 				if (is_array($persons)) {
 					//dnd($persons);
 					$person = ucwords($persons['std_fname'] . ' ' . $persons['std_lname']);
@@ -621,7 +621,7 @@ function goBack() {
 			$output .= '
 				<li data-icon="account_circle">
 					<div>
-						<h6 class="fs-base mb-1">' . (($row["log_person"] == $admin) ? 'You': $person) . ' <span class="fs-sm fw-normal text-body-secondary ms-1">' . pretty_date($row["createdAt"]) .'</span></h6>
+						<h6 class="fs-base mb-1">' . (($row["user_uuid"] == $admin) ? 'You': $person) . ' <span class="fs-sm fw-normal text-body-secondary ms-1">' . pretty_date($row["createdAt"]) .'</span></h6>
 						<p class="mb-0">' . $row["log_message"] . '</p>
 					</div>
 				</li>
@@ -645,15 +645,15 @@ function count_logs($admin) {
 
     $where = '';
     // if (!admin_has_permission()) {
-    //     $where = ' WHERE puubu_admin.admin_id = "' . $admin . '" AND CAST(puubu_logs.createdAt AS date) = "' . $today . '" ';
+    //     $where = ' WHERE puubu_admin.admin_id = "' . $admin . '" AND CAST(activity_logs.createdAt AS date) = "' . $today . '" ';
     // }
 
     $sql = "
-        SELECT * FROM puubu_logs 
+        SELECT * FROM activity_logs 
         -- INNER JOIN puubu_admin 
-        -- ON puubu_admin.admin_id = puubu_logs.log_person
+        -- ON puubu_admin.admin_id = activity_logs.user_uuid
         $where 
-        -- ORDER BY puubu_logs.createdAt DESC
+        -- ORDER BY activity_logs.createdAt DESC
     ";
     $statement = $conn->prepare($sql);
     $statement->execute();

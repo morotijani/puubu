@@ -19,9 +19,82 @@
     }
 
     .dashboard-nav {
-        background: var(--light-bg) !important;
+        background: rgba(253, 252, 245, 0.8) !important;
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
         border-bottom: 1px solid var(--border-color);
-        padding: 1rem 0;
+        padding: 0.75rem 0;
+        z-index: 1000;
+    }
+
+    .brand-icon {
+        width: 40px;
+        height: 40px;
+        background: var(--dark-accent);
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .nav-user-pill {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 6px 6px 6px 16px;
+        background: white;
+        border: 1px solid var(--border-color);
+        border-radius: 100px;
+        transition: all 0.3s ease;
+    }
+
+    .nav-user-pill:hover {
+        border-color: rgba(29, 61, 55, 0.2);
+        box-shadow: 0 4px 12px rgba(29, 61, 55, 0.05);
+    }
+
+    .nav-avatar {
+        width: 32px;
+        height: 32px;
+        background: var(--primary-accent);
+        color: var(--dark-accent);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 800;
+        font-size: 0.75rem;
+    }
+
+    .nav-signout {
+        color: #ef4444;
+        background: #fef2f2;
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s ease;
+        text-decoration: none;
+    }
+
+    .nav-signout:hover {
+        background: #ef4444;
+        color: white;
+    }
+
+    .brand-text {
+        letter-spacing: -1px;
+        color: var(--dark-accent);
+        font-size: 1.5rem;
+    }
+
+    .brand-text .bu-part {
+        background: linear-gradient(135deg, #4ade80, #10b981);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        font-weight: 900;
     }
 
     .dashboard-section {
@@ -165,12 +238,23 @@
     <nav class="navbar navbar-expand-lg dashboard-nav fixed-top">
         <div class="container">
             <a class="navbar-brand d-flex align-items-center text-decoration-none" href="{{ PROOT }}votingon">
-                <span class="material-symbols-outlined text-dark me-2 fs-3">inventory_2</span>
-                <span class="h4 mb-0 brand-text fw-bold">Puu<span style="color: #4ade80 !important;">Bu</span></span>
+                <div class="brand-icon me-2">
+                    <span class="material-symbols-outlined text-white fs-5">inventory_2</span>
+                </div>
+                <span class="h4 mb-0 brand-text fw-bold">Puu<span class="bu-part">Bu</span></span>
             </a>
-            <div class="ms-auto">
-                <a href="{{ PROOT }}auth/logout" class="btn btn-outline-danger border-opacity-25 rounded-pill px-4 fw-bold small text-decoration-none">
-                    Sign Out
+            <div class="ms-auto d-flex align-items-center gap-3">
+                <div class="nav-user-pill d-none d-md-flex">
+                    <span class="small fw-bold text-muted">{{ voter.first_name }} {{ voter.last_name }}</span>
+                    <div class="nav-avatar">
+                        {{ voter.first_name|first }}{{ voter.last_name|first }}
+                    </div>
+                    <a href="{{ PROOT }}auth/logout" class="nav-signout" title="Sign Out">
+                        <span class="material-symbols-outlined fs-6">logout</span>
+                    </a>
+                </div>
+                <a href="{{ PROOT }}auth/logout" class="nav-signout d-md-none">
+                    <span class="material-symbols-outlined fs-6">logout</span>
                 </a>
             </div>
         </div>

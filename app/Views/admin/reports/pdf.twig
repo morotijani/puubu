@@ -143,15 +143,21 @@
 
     <table class="stats-grid">
         <tr>
-            <td width="50%">
+            <td width="33.33%">
                 <div class="stats-box">
                     <h4>Total Votes Cast</h4>
                     <h2>{{ total_votes_cast }}</h2>
                 </div>
             </td>
-            <td width="50%">
+            <td width="33.33%">
                 <div class="stats-box">
-                    <h4>Turnout Percentage</h4>
+                    <h4>Registered Voters</h4>
+                    <h2>{{ total_voters }}</h2>
+                </div>
+            </td>
+            <td width="33.33%">
+                <div class="stats-box">
+                    <h4>Turnout %</h4>
                     <h2>{{ total_voters > 0 ? ((total_votes_cast / total_voters) * 100)|number_format(1) : 0 }}%</h2>
                 </div>
             </td>
@@ -233,6 +239,16 @@
                 {% endif %}
                 {% endfor %}
             </tbody>
+            <tfoot>
+                <tr style="background: #f8fafc;">
+                    <td colspan="2" style="border-top: 1px solid #e2e8f0; font-weight: bold; color: #64748b; font-size: 12px; text-transform: uppercase;">
+                        Skipped / Abstained Votes
+                    </td>
+                    <td style="border-top: 1px solid #e2e8f0; text-align: right; font-weight: bold; color: #64748b;">
+                        {{ res.position.skipped_votes|default(0) }}
+                    </td>
+                </tr>
+            </tfoot>
         </table>
     </div>
     {% endfor %}

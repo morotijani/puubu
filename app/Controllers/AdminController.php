@@ -3,6 +3,7 @@ namespace App\Controllers;
 
 use Sonata\GoogleAuthenticator\GoogleAuthenticator;
 use Sonata\GoogleAuthenticator\GoogleQrUrl;
+use PDO;
 
 class AdminController {
     protected $twig;
@@ -1274,5 +1275,93 @@ class AdminController {
         }
 
         redirect(PROOT . 'admin/organizers');
+    }
+
+    public function exportVoterParticipation($election_id) {
+        global $conn;
+        
+        $stmt = $conn->prepare("
+            SELECT v.first_name, v.last_name, v.email, v.voter_id, 
+                   IF(vp.status = 1, 'Voted', 'Not Voted') as participation_status,
+                   vp.voted_at as voting_time
+            FROM voters v
+            LEFT JOIN voter_participation vp ON v.uuid = vp.voter_id AND vp.election_uuid = ?
+            WHERE v.election_uuid = ?
+            ORDER BY v.last_name ASC
+        ");
+        $stmt->execute([$election_id, $election_id]);
+        $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        $filename = "voter-participation-" . $election_id . ".csv";
+        header('Content-Type: text/csv');
+        header('Content-Disposition: attachment; filename="' . $filename . '"');
+        
+        $output = fopen('php://output', 'w');
+        fputcsv($output, ['First Name', 'Last Name', 'Email', 'Voter ID', 'Status', 'Voting Time']);
+        
+        foreach ($data as $row) {
+            fputcsv($output, $row);
+        }
+        fclose($output);
+        exit;
+    }
+
+    public function exportSecurityLogs($election_id) {
+        global $conn;
+        
+        $stmt = $conn->prepare("
+            SELECT v.first_name, v.last_name, v.email, 
+                   vsl.location, vsl.login_at, vsl.logout_at,
+                   IF(vsl.status = 1, 'Active', 'Closed') as session_status
+            FROM voter_security_logs vsl
+            JOIN voters v ON vsl.voter_id = v.uuid
+            WHERE v.election_uuid = ?
+            ORDER BY vsl.login_at DESC
+        ");
+        $stmt->execute([$election_id]);
+        $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        $filename = "security-audit-logs-" . $election_id . ".csv";
+        header('Content-Type: text/csv');
+        header('Content-Disposition: attachment; filename="' . $filename . '"');
+        
+        $output = fopen('php://output', 'w');
+        fputcsv($output, ['First Name', 'Last Name', 'Email', 'Location/IP', 'Login Time', 'Logout Time', 'Session Status']);
+        
+        foreach ($data as $row) {
+            fputcsv($output, $row);
+        }
+        fclose($output);
+        exit;
+    }
+
+    public function exportBallots($election_id) {
+        global $conn;
+        
+        $stmt = $conn->prepare("
+            SELECT v.first_name as voter_fname, v.last_name as voter_lname, 
+                   p.position_name, 
+                   vf.candidate_id, vf.voted_datetime, vf.voted_location, vf.voted_ip
+            FROM voted_for vf
+            JOIN voters v ON vf.voter_id = v.uuid
+            JOIN positions p ON vf.position_id = p.position_id
+            WHERE vf.election_id = ?
+            ORDER BY vf.voted_datetime DESC
+        ");
+        $stmt->execute([$election_id]);
+        $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        $filename = "detailed-ballots-" . $election_id . ".csv";
+        header('Content-Type: text/csv');
+        header('Content-Disposition: attachment; filename="' . $filename . '"');
+        
+        $output = fopen('php://output', 'w');
+        fputcsv($output, ['Voter First Name', 'Voter Last Name', 'Position', 'Selection/ID', 'Time', 'Location', 'IP Address']);
+        
+        foreach ($data as $row) {
+            fputcsv($output, $row);
+        }
+        fclose($output);
+        exit;
     }
 }

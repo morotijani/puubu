@@ -315,6 +315,24 @@ $router->mount('/admin', function() use ($router, $twig) {
         $controller->getReportData($id);
     });
 
+    $router->get('/reports/export/voters/([a-zA-Z0-9\-]+)', function($id) use ($twig) {
+        require_once __DIR__ . '/../app/Controllers/AdminController.php';
+        $controller = new \App\Controllers\AdminController($twig);
+        $controller->exportVoterParticipation($id);
+    });
+
+    $router->get('/reports/export/logs/([a-zA-Z0-9\-]+)', function($id) use ($twig) {
+        require_once __DIR__ . '/../app/Controllers/AdminController.php';
+        $controller = new \App\Controllers\AdminController($twig);
+        $controller->exportSecurityLogs($id);
+    });
+
+    $router->get('/reports/export/ballots/([a-zA-Z0-9\-]+)', function($id) use ($twig) {
+        require_once __DIR__ . '/../app/Controllers/AdminController.php';
+        $controller = new \App\Controllers\AdminController($twig);
+        $controller->exportBallots($id);
+    });
+
     $router->get('/election/end/([a-zA-Z0-9\-]+)', function($id) use ($twig) {
         require_once __DIR__ . '/../app/Controllers/AdminController.php';
         $controller = new \App\Controllers\AdminController($twig);

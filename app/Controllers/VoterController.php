@@ -33,10 +33,11 @@ class VoterController {
                     $displayErrors = "Oops... admin is working on some background checks please come back later ...";
                 } else {
                     $query = "
-                        SELECT * FROM registrars 
-                        INNER JOIN election
-                        ON election.uuid = registrars.election_uuid
-                        WHERE std_id = ?
+                        SELECT v.*, e.title as election_title, e.organized_by, e.starts_at, e.ends_at, e.status as election_status, e.uuid as election_uuid 
+                        FROM voters v 
+                        INNER JOIN election e
+                        ON e.uuid = v.election_uuid
+                        WHERE v.voter_id = ?
                     ";
                     $statement = $conn->prepare($query);
                     $statement->execute([$_POST['voter_id']]);
@@ -53,10 +54,10 @@ class VoterController {
                                 } else {
                                     // Check if already voted
                                     $checkVoted = $conn->prepare("SELECT COUNT(*) FROM voterhasdone WHERE voter_id = ? AND election_uuid = ?");
-                                    $checkVoted->execute([$row['voter_id'], $row['uuid']]);
+                                    $checkVoted->execute([$row['uuid'], $row['election_uuid']]);
                                     if ($checkVoted->fetchColumn() > 0) {
                                         $displayErrors = "Access Denied: You have already cast your vote in this election.";
-                                    } elseif (!password_verify($_POST['voter_password'], $row['std_password'])) {
+                                    } elseif (!password_verify($_POST['voter_password'], $row['password'])) {
                                         $displayErrors = "Invalid Voter Details";
                                     } else {
                                         $current_ip = $details->ip ?? ($_SERVER['REMOTE_ADDR'] ?? 'Unknown IP');
@@ -78,7 +79,7 @@ class VoterController {
                                                 <h2 style='color: #dcf3b0; margin: 0;'>New Login Detected</h2>
                                             </div>
                                             <div style='padding: 32px; color: #4a5568; line-height: 1.6;'>
-                                                <p>Hello <strong>" . ucwords($row['std_fname']) . "</strong>,</p>
+                                                <p>Hello <strong>" . ucwords($row['first_name']) . "</strong>,</p>
                                                 <p>We detected a new login to your Puubu account. To ensure your account is secure, we wanted to let you know the details:</p>
                                                 
                                                 <div style='background: #f8fafc; padding: 16px; border-radius: 8px; margin: 24px 0;'>
@@ -112,14 +113,14 @@ class VoterController {
                                                 VALUES (?, ?, ?)
                                             ";
                                             $statement = $conn->prepare($election_logs_query);
-                                            $election_logs_result = $statement->execute([$unique_vld_id, $row['voter_id'], $location]);
+                                            $election_logs_result = $statement->execute([$unique_vld_id, $row['uuid'], $location]);
 
                                             if ($election_logs_result) {
-                                                $_SESSION['voter_accessed'] = $row['voter_id'];
+                                                $_SESSION['voter_accessed'] = $row['uuid'];
                                                 $_SESSION['voter_login_details_id'] = $unique_vld_id;
 
-                                                $log_message = "voter ['" . ucwords($row["std_fname"] . ' ' . $row["std_lname"]) . "'], loggedin, location ('" . $location . "')!";
-                                                add_to_log($log_message, $row["voter_id"], 'user');
+                                                $log_message = "voter ['" . ucwords($row["first_name"] . ' ' . $row["last_name"]) . "'], loggedin, location ('" . $location . "')!";
+                                                add_to_log($log_message, $row["uuid"], 'user');
 
                                                 redirect(PROOT . 'votingon');
                                             }
@@ -172,17 +173,17 @@ class VoterController {
         $now = date('Y-m-d H:i:s');
         
         // Block if already voted
-        $checkVoted = $conn->prepare("SELECT COUNT(*) FROM voterhasdone WHERE voter_id = ? AND election_uuid = ?");
-        $checkVoted->execute([$voter_row['voter_id'], $voter_row['uuid']]);
-        if ($checkVoted->fetchColumn() > 0) {
-            redirect(PROOT . 'votingon');
-        }
+                                        $checkVoted = $conn->prepare("SELECT COUNT(*) FROM voterhasdone WHERE voter_id = ? AND election_uuid = ?");
+                                        $checkVoted->execute([$voter_row['uuid'], $voter_row['election_uuid']]);
+                                        if ($checkVoted->fetchColumn() > 0) {
+                                            redirect(PROOT . 'votingon');
+                                        }
 
-        if ($voter_row['status'] == 2 || $now > $voter_row['ends_at']) {
-            redirect(PROOT . 'votingon');
-        }
+                                        if ($voter_row['election_status'] == 2 || $now > $voter_row['ends_at']) {
+                                            redirect(PROOT . 'votingon');
+                                        }
 
-        $electionUuid = $voter_row['uuid'];
+                                        $electionUuid = $voter_row['election_uuid'];
         
         // Fetch Positions
         $posQuery = "SELECT * FROM positions WHERE election_uuid = ?";
@@ -231,11 +232,11 @@ class VoterController {
         }
 
         $voter_row = $voter_result[0];
-        $voter_id = $voter_row['voter_id'];
+        $voter_uuid = $voter_row['uuid'];
         $election_uuid = sanitize($_POST['name-of-election'] ?? '');
         
         $now = date('Y-m-d H:i:s');
-        if ($voter_row['status'] != 1 || $election_uuid != $voter_row['uuid']) {
+        if ($voter_row['election_status'] != 1 || $election_uuid != $voter_row['election_uuid']) {
             die("Election is not active or invalid.");
         }
 
@@ -248,7 +249,7 @@ class VoterController {
 
         // CRITICAL: Final double-check before recording votes
         $checkVoted = $conn->prepare("SELECT COUNT(*) FROM voterhasdone WHERE voter_id = ? AND election_uuid = ?");
-        $checkVoted->execute([$voter_id, $election_uuid]);
+        $checkVoted->execute([$voter_uuid, $election_uuid]);
         if ($checkVoted->fetchColumn() > 0) {
             die("Critical Error: Your vote has already been recorded for this election.");
         }
@@ -289,7 +290,7 @@ class VoterController {
             // Mark voter as done
             $vhd_id = guidv4();
             $stmt = $conn->prepare("INSERT INTO voterhasdone (vhd_id, voter_id, election_uuid, voterhasdone_status) VALUES (?, ?, ?, 1)");
-            $stmt->execute([$vhd_id, $voter_id, $election_uuid]);
+            $stmt->execute([$vhd_id, $voter_uuid, $election_uuid]);
 
             // FETCH ELECTION DETAILS EXPLICITLY FOR RECEIPT
             $eStmt = $conn->prepare("SELECT title, organized_by FROM election WHERE uuid = ?");

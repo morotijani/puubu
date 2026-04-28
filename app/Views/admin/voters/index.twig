@@ -63,37 +63,37 @@
                         {% for voter in voters %}
                             <tr>
                                 <td class="ps-4">
-                                    <input type="checkbox" name="voter_ids[]" value="{{ voter.voter_id }}" class="form-check-input voter-checkbox">
+                                    <input type="checkbox" name="voter_ids[]" value="{{ voter.uuid }}" class="form-check-input voter-checkbox">
                                 </td>
                                 <td>
                                     <div class="d-flex align-items-center">
                                         <div class="avatar avatar-sm me-3 d-flex align-items-center justify-content-center text-indigo fw-bold bg-indigo-subtle rounded-circle" style="width: 38px; height: 38px;">
-                                            {{ voter.std_fname|slice(0, 1) }}{{ voter.std_lname|slice(0, 1) }}
+                                            {{ voter.first_name|slice(0, 1) }}{{ voter.last_name|slice(0, 1) }}
                                         </div>
                                         <div>
-                                            <div class="fw-bold text-dark">{{ voter.std_fname }} {{ voter.std_lname }}</div>
+                                            <div class="fw-bold text-dark">{{ voter.first_name }} {{ voter.last_name }}</div>
                                             <div class="d-flex align-items-center">
-                                                <div class="text-muted extra-small me-2">{{ voter.std_email }}</div>
-                                                <span class="badge {{ voter.std_gender == 'male' ? 'bg-primary-subtle text-primary' : 'bg-danger-subtle text-danger' }} extra-small px-2 py-0">
-                                                    <span class="material-symbols-outlined" style="font-size: 10px;">{{ voter.std_gender }}</span>
+                                                <div class="text-muted extra-small me-2">{{ voter.email }}</div>
+                                                <span class="badge {{ voter.gender == 'male' ? 'bg-primary-subtle text-primary' : 'bg-danger-subtle text-danger' }} extra-small px-2 py-0">
+                                                    <span class="material-symbols-outlined" style="font-size: 10px;">{{ voter.gender }}</span>
                                                 </span>
                                             </div>
                                         </div>
                                     </div>
                                 </td>
                                 <td>
-                                    <span class="badge bg-light text-primary fw-mono border">{{ voter.std_id }}</span>
+                                    <span class="badge bg-light text-primary fw-mono border">{{ voter.voter_id }}</span>
                                 </td>
                                 <td class="text-muted small">
                                     <span class="material-symbols-outlined me-1 fs-6 align-middle">inventory_2</span> {{ voter.title }}
                                 </td>
                                 <td class="text-end pe-4">
                                     <div class="d-flex justify-content-end gap-2">
-                                        {% if voter.status == 0 %}
-                                            <a href="{{ PROOT }}admin/voters/edit/{{ voter.voter_id }}" class="btn btn-sm btn-white border rounded-3 shadow-sm d-flex align-items-center">
+                                        {% if voter.election_status == 0 %}
+                                            <a href="{{ PROOT }}admin/voters/edit/{{ voter.uuid }}" class="btn btn-sm btn-white border rounded-3 shadow-sm d-flex align-items-center">
                                                 <span class="material-symbols-outlined fs-6">edit</span>
                                             </a>
-                                            <a href="{{ PROOT }}admin/voters/delete/{{ voter.voter_id }}" class="btn btn-sm btn-white border text-danger rounded-3 shadow-sm d-flex align-items-center" onclick="return confirm('Delete this voter?')">
+                                            <a href="{{ PROOT }}admin/voters/delete/{{ voter.uuid }}" class="btn btn-sm btn-white border text-danger rounded-3 shadow-sm d-flex align-items-center" onclick="return confirm('Delete this voter?')">
                                                 <span class="material-symbols-outlined fs-6">delete</span>
                                             </a>
                                         {% else %}

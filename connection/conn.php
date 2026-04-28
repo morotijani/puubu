@@ -117,25 +117,24 @@
  	}
 
  	if (isset($_SESSION['voter_accessed'])) {
- 		// code...
-	 	$voterId = $_SESSION['voter_accessed'];
+	 	$voter_uuid = $_SESSION['voter_accessed'];
 		$voterQuery = "
-		    SELECT * FROM registrars 
-		    INNER JOIN election 
-		    ON election.uuid = registrars.election_uuid 
-		    WHERE registrars.voter_id = ? 
-		    AND election.uuid = registrars.election_uuid
+		    SELECT v.*, e.title as election_title, e.organized_by, e.starts_at, e.ends_at, e.status as election_status, e.uuid as election_uuid 
+		    FROM voters v 
+		    INNER JOIN election e 
+		    ON e.uuid = v.election_uuid 
+		    WHERE v.uuid = ? 
 		    LIMIT 1
 		";
 		$statement = $conn->prepare($voterQuery);
-		$statement->execute([$voterId]);
+		$statement->execute([$voter_uuid]);
 		$voter_count = $statement->rowCount();
 		$voter_result = $statement->fetchAll();
 
 		// Check if this voter has already voted in this specific election
 		$votedCheck = "SELECT COUNT(*) FROM voterhasdone WHERE voter_id = ? AND election_uuid = ?";
 		$vStmt = $conn->prepare($votedCheck);
-		$vStmt->execute([$voterId, $voter_result[0]['uuid']]);
+		$vStmt->execute([$voter_uuid, $voter_result[0]['election_uuid']]);
 		$has_voted = $vStmt->fetchColumn() > 0;
  	}
 

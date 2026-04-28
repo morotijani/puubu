@@ -182,13 +182,13 @@
                 <div class="col-lg-8 col-xl-7">
                     <div class="welcome-card">
                         <div class="user-avatar-initials">
-                            {{ voter.std_fname|first }}{{ voter.std_lname|first }}
+                            {{ voter.first_name|first }}{{ voter.last_name|first }}
                         </div>
                         
                         <span class="welcome-badge">Authentication Verified</span>
-                        <h1 class="voter-name">Welcome, {{ voter.std_fname }}</h1>
+                        <h1 class="voter-name">Welcome, {{ voter.first_name }}</h1>
                         <p class="election-info">
-                            You are authorized to vote in the <span class="text-dark fw-700">{{ voter.title }}</span>. Your vote is strictly private and encrypted.
+                            You are authorized to vote in the <span class="text-dark fw-700">{{ voter.election_title }}</span>. Your vote is strictly private and encrypted.
                         </p>
 
                         <div id="activeActions">
@@ -317,7 +317,7 @@
             var countDownDate = {{ voter.ends_at|date('U') }} * 1000;
             
             // Check initial state
-            if (Date.now() > countDownDate || {{ voter.status }} == 2) {
+            if (Date.now() > countDownDate || {{ voter.election_status }} == 2) {
                 document.getElementById('activeActions').style.display = 'none';
                 document.getElementById('endedActions').style.display = 'block';
             }

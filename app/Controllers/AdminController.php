@@ -61,7 +61,7 @@ class AdminController {
             $total_elections = $conn->query("SELECT COUNT(*) FROM election")->fetchColumn();
             $total_contestants = $conn->query("SELECT COUNT(*) FROM cont_details WHERE del_cont = 'no'")->fetchColumn();
             $total_positions = $conn->query("SELECT COUNT(*) FROM positions")->fetchColumn();
-            $total_voters = $conn->query("SELECT COUNT(*) FROM registrars")->fetchColumn();
+            $total_voters = $conn->query("SELECT COUNT(*) FROM voters")->fetchColumn();
             $total_organizers = $conn->query("SELECT COUNT(*) FROM puubu_admin WHERE role = 'organizer'")->fetchColumn();
             
             $stmt_orgs = $conn->prepare("SELECT * FROM puubu_admin WHERE role = 'organizer' ORDER BY id DESC LIMIT 5");
@@ -83,7 +83,7 @@ class AdminController {
             $stmt->execute([$admin_id]);
             $total_positions = $stmt->fetchColumn();
             
-            $stmt = $conn->prepare("SELECT COUNT(r.id) FROM registrars r INNER JOIN election e ON r.election_uuid = e.uuid WHERE e.organizer_id = ?");
+            $stmt = $conn->prepare("SELECT COUNT(v.id) FROM voters v INNER JOIN election e ON v.election_uuid = e.uuid WHERE e.organizer_id = ?");
             $stmt->execute([$admin_id]);
             $total_voters = $stmt->fetchColumn();
         }
@@ -673,20 +673,20 @@ class AdminController {
         
         if ($role === 'super_admin') {
             $query = "
-                SELECT r.*, e.title, e.organized_by, e.status 
-                FROM registrars r
-                INNER JOIN election e ON r.election_uuid = e.uuid
-                ORDER BY r.id DESC
+                SELECT v.*, e.title, e.organized_by, e.status as election_status 
+                FROM voters v
+                INNER JOIN election e ON v.election_uuid = e.uuid
+                ORDER BY v.id DESC
             ";
             $stmt = $conn->prepare($query);
             $stmt->execute();
         } else {
             $query = "
-                SELECT r.*, e.title, e.organized_by, e.status 
-                FROM registrars r
-                INNER JOIN election e ON r.election_uuid = e.uuid
+                SELECT v.*, e.title, e.organized_by, e.status as election_status 
+                FROM voters v
+                INNER JOIN election e ON v.election_uuid = e.uuid
                 WHERE e.organizer_id = ?
-                ORDER BY r.id DESC
+                ORDER BY v.id DESC
             ";
             $stmt = $conn->prepare($query);
             $stmt->execute([$admin_id]);
@@ -715,7 +715,7 @@ class AdminController {
         
         $voter = null;
         if ($id) {
-            $stmt = $conn->prepare("SELECT * FROM registrars WHERE voter_id = ?");
+            $stmt = $conn->prepare("SELECT * FROM voters WHERE uuid = ?");
             $stmt->execute([$id]);
             $voter = $stmt->fetch();
         }
@@ -744,38 +744,38 @@ class AdminController {
             redirect(PROOT . 'admin/voters');
         }
 
-        $id = $_POST['voter_id'] ?? null;
-        $std_id = sanitize($_POST['std_id']);
-        $fname = sanitize($_POST['std_fname']);
-        $lname = sanitize($_POST['std_lname']);
-        $gender = sanitize($_POST['std_gender'] ?? 'male');
-        $email = sanitize($_POST['std_email']);
+        $id = $_POST['uuid'] ?? null;
+        $voter_id = sanitize($_POST['voter_id']);
+        $first_name = sanitize($_POST['first_name']);
+        $last_name = sanitize($_POST['last_name']);
+        $gender = sanitize($_POST['gender'] ?? 'male');
+        $email = sanitize($_POST['email']);
         $election_id = sanitize($_POST['election_uuid']);
 
-        if (empty($std_id) || empty($fname) || empty($lname) || empty($email) || empty($election_id)) {
+        if (empty($voter_id) || empty($first_name) || empty($last_name) || empty($email) || empty($election_id)) {
             $_SESSION['flash_error'] = "All fields are required.";
             redirect(PROOT . 'admin/voters' . ($id ? '/edit/' . $id : '/add'));
         }
 
         // Validation: Unique Identity ID and Email within the same election
         if ($id) {
-            $stmt = $conn->prepare("SELECT * FROM registrars WHERE (std_id = ? OR std_email = ?) AND election_uuid = ? AND voter_id != ?");
-            $stmt->execute([$std_id, $email, $election_id, $id]);
+            $stmt = $conn->prepare("SELECT * FROM voters WHERE (voter_id = ? OR email = ?) AND election_uuid = ? AND uuid != ?");
+            $stmt->execute([$voter_id, $email, $election_id, $id]);
         } else {
-            $stmt = $conn->prepare("SELECT * FROM registrars WHERE (std_id = ? OR std_email = ?) AND election_uuid = ?");
-            $stmt->execute([$std_id, $email, $election_id]);
+            $stmt = $conn->prepare("SELECT * FROM voters WHERE (voter_id = ? OR email = ?) AND election_uuid = ?");
+            $stmt->execute([$voter_id, $email, $election_id]);
         }
         
         $duplicate = $stmt->fetch();
         if ($duplicate) {
-            $msg = ($duplicate['std_id'] == $std_id) ? "Identity ID '$std_id' is already registered for this election." : "Email '$email' is already registered for this election.";
+            $msg = ($duplicate['voter_id'] == $voter_id) ? "Identity ID '$voter_id' is already registered for this election." : "Email '$email' is already registered for this election.";
             $_SESSION['flash_error'] = $msg;
             redirect(PROOT . 'admin/voters' . ($id ? '/edit/' . $id : '/add'));
         }
 
         if ($id) {
-            $query = "UPDATE registrars SET std_id = ?, std_fname = ?, std_lname = ?, std_gender = ?, std_email = ?, election_uuid = ? WHERE voter_id = ?";
-            $conn->prepare($query)->execute([$std_id, $fname, $lname, $gender, $email, $election_id, $id]);
+            $query = "UPDATE voters SET voter_id = ?, first_name = ?, last_name = ?, gender = ?, email = ?, election_uuid = ? WHERE uuid = ?";
+            $conn->prepare($query)->execute([$voter_id, $first_name, $last_name, $gender, $email, $election_id, $id]);
             $_SESSION['flash_success'] = "Voter updated successfully.";
         } else {
             // Generate password
@@ -783,9 +783,9 @@ class AdminController {
             $password = substr(str_shuffle($string), 0, 8);
             $hashed = password_hash($password, PASSWORD_DEFAULT);
             
-            $new_id = guidv4();
-            $query = "INSERT INTO registrars (voter_id, std_id, std_password, std_fname, std_lname, std_gender, std_email, election_uuid) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-            $conn->prepare($query)->execute([$new_id, $std_id, $hashed, $fname, $lname, $gender, $email, $election_id]);
+            $new_uuid = guidv4();
+            $query = "INSERT INTO voters (uuid, voter_id, password, first_name, last_name, gender, email, election_uuid) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+            $conn->prepare($query)->execute([$new_uuid, $voter_id, $hashed, $first_name, $last_name, $gender, $email, $election_id]);
             
             $_SESSION['flash_success'] = "Voter added successfully. Password is: $password";
         }
@@ -795,7 +795,7 @@ class AdminController {
 
     public function voterDelete($id) {
         global $conn;
-        $conn->prepare("DELETE FROM registrars WHERE voter_id = ?")->execute([$id]);
+        $conn->prepare("DELETE FROM voters WHERE uuid = ?")->execute([$id]);
         $_SESSION['flash_success'] = "Voter deleted.";
         redirect(PROOT . 'admin/voters');
     }
@@ -804,7 +804,7 @@ class AdminController {
         global $conn;
         if (isset($_POST['voter_ids']) && is_array($_POST['voter_ids'])) {
             $placeholders = implode(',', array_fill(0, count($_POST['voter_ids']), '?'));
-            $conn->prepare("DELETE FROM registrars WHERE voter_id IN ($placeholders)")->execute($_POST['voter_ids']);
+            $conn->prepare("DELETE FROM voters WHERE uuid IN ($placeholders)")->execute($_POST['voter_ids']);
             $_SESSION['flash_success'] = count($_POST['voter_ids']) . " voters deleted.";
         }
         redirect(PROOT . 'admin/voters');
@@ -824,7 +824,7 @@ class AdminController {
             $election_id = $_POST['election_uuid'] ?? null;
 
             if ($scope === 'all') {
-                $conn->exec("TRUNCATE TABLE registrars");
+                $conn->exec("TRUNCATE TABLE voters");
                 add_to_log("Wiped all voters", $admin_id, 'admin');
                 $_SESSION['flash_success'] = "Entire voter registry cleared.";
             } else {
@@ -832,7 +832,7 @@ class AdminController {
                     $_SESSION['flash_error'] = "Please select an election to wipe.";
                     redirect(PROOT . 'admin/voters');
                 }
-                $stmt = $conn->prepare("DELETE FROM registrars WHERE election_uuid = ?");
+                $stmt = $conn->prepare("DELETE FROM voters WHERE election_uuid = ?");
                 $stmt->execute([$election_id]);
                 add_to_log("Wiped voters for election: $election_id", $admin_id, 'admin');
                 $_SESSION['flash_success'] = "Voters for the selected election have been removed.";
@@ -880,15 +880,15 @@ class AdminController {
                 while (($data = fgetcsv($handle, 1000, ",")) !== FALSE) {
                     if (count($data) < 4) continue;
 
-                    $std_id = sanitize($data[0]);
-                    $fname = sanitize($data[1]);
-                    $lname = sanitize($data[2]);
+                    $voter_id = sanitize($data[0]);
+                    $first_name = sanitize($data[1]);
+                    $last_name = sanitize($data[2]);
                     $email = sanitize($data[3]);
                     $gender = sanitize($data[4] ?? 'male');
 
                     // Check for duplicate in this election
-                    $stmt = $conn->prepare("SELECT id FROM registrars WHERE (std_id = ? OR std_email = ?) AND election_uuid = ?");
-                    $stmt->execute([$std_id, $email, $election_id]);
+                    $stmt = $conn->prepare("SELECT id FROM voters WHERE (voter_id = ? OR email = ?) AND election_uuid = ?");
+                    $stmt->execute([$voter_id, $email, $election_id]);
                     if ($stmt->fetch()) {
                         $errors++;
                         continue;
@@ -899,9 +899,9 @@ class AdminController {
                     $raw_pass = substr(str_shuffle($string), 0, 8);
                     $hashed = password_hash($raw_pass, PASSWORD_DEFAULT);
                     
-                    $voter_id = guidv4();
-                    $query = "INSERT INTO registrars (voter_id, std_id, std_password, std_fname, std_lname, std_gender, std_email, election_uuid) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-                    $conn->prepare($query)->execute([$voter_id, $std_id, $hashed, $fname, $lname, $gender, $email, $election_id]);
+                    $new_uuid = guidv4();
+                    $query = "INSERT INTO voters (uuid, voter_id, password, first_name, last_name, gender, email, election_uuid) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+                    $conn->prepare($query)->execute([$new_uuid, $voter_id, $hashed, $first_name, $last_name, $gender, $email, $election_id]);
                     $imported++;
                 }
                 $conn->commit();
@@ -943,14 +943,14 @@ class AdminController {
             $e_stmt->execute();
             
             $query = "
-                SELECT r.*, e.title, e.organized_by 
-                FROM registrars r
-                INNER JOIN election e ON r.election_uuid = e.uuid
-                WHERE r.std_email IN (
-                    SELECT std_email FROM registrars " . ($election_id ? "WHERE election_uuid = ?" : "") . " GROUP BY std_email HAVING COUNT(*) > 1
+                SELECT v.*, e.title, e.organized_by 
+                FROM voters v
+                INNER JOIN election e ON v.election_uuid = e.uuid
+                WHERE v.email IN (
+                    SELECT email FROM voters " . ($election_id ? "WHERE election_uuid = ?" : "") . " GROUP BY email HAVING COUNT(*) > 1
                 )
-                " . ($election_id ? "AND r.election_uuid = ?" : "") . "
-                ORDER BY r.std_email ASC
+                " . ($election_id ? "AND v.election_uuid = ?" : "") . "
+                ORDER BY v.email ASC
             ";
             $stmt = $conn->prepare($query);
             if ($election_id) {
@@ -963,14 +963,14 @@ class AdminController {
             $e_stmt->execute([$admin_id]);
 
             $query = "
-                SELECT r.*, e.title, e.organized_by 
-                FROM registrars r
-                INNER JOIN election e ON r.election_uuid = e.uuid
-                WHERE e.organizer_id = ? AND r.std_email IN (
-                    SELECT std_email FROM registrars WHERE " . ($election_id ? "election_uuid = ?" : "1=1") . " GROUP BY std_email HAVING COUNT(*) > 1
+                SELECT v.*, e.title, e.organized_by 
+                FROM voters v
+                INNER JOIN election e ON v.election_uuid = e.uuid
+                WHERE e.organizer_id = ? AND v.email IN (
+                    SELECT email FROM voters WHERE " . ($election_id ? "election_uuid = ?" : "1=1") . " GROUP BY email HAVING COUNT(*) > 1
                 )
-                " . ($election_id ? "AND r.election_uuid = ?" : "") . "
-                ORDER BY r.std_email ASC
+                " . ($election_id ? "AND v.election_uuid = ?" : "") . "
+                ORDER BY v.email ASC
             ";
             $stmt = $conn->prepare($query);
             if ($election_id) {
@@ -1021,7 +1021,7 @@ class AdminController {
         $stmt->execute([$election_id]);
         $total_votes_cast = $stmt->fetchColumn();
 
-        $stmt = $conn->prepare("SELECT COUNT(*) FROM registrars WHERE election_uuid = ?");
+        $stmt = $conn->prepare("SELECT COUNT(*) FROM voters WHERE election_uuid = ?");
         $stmt->execute([$election_id]);
         $total_voters = $stmt->fetchColumn();
 

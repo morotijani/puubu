@@ -462,7 +462,7 @@ function goBack() {
 	// GET THE TOTAL NUMBER OF VOTERS
 	function count_voters() {
 		global $conn;
-		$query = "SELECT * FROM `registrars` INNER JOIN election ON election.uuid = registrars.election_uuid";
+		$query = "SELECT * FROM `voters` INNER JOIN election ON election.uuid = voters.election_uuid";
 		$statement = $conn->prepare($query);
 		$statement->execute();
 		return $statement->rowCount();
@@ -504,7 +504,7 @@ function goBack() {
 	// GET THE TOTAL NUMBER OF VOTERS
 	function count_voters_on_runing_election($uuid) {
 		global $conn;
-		$query = "SELECT * FROM `registrars` INNER JOIN election ON election.uuid = ? AND registrars.election_uuid = ? WHERE election.status = ? OR election.status = ?";
+		$query = "SELECT * FROM `voters` INNER JOIN election ON election.uuid = ? AND voters.election_uuid = ? WHERE election.status = ? OR election.status = ?";
 		$statement = $conn->prepare($query);
 		$statement->execute([$uuid, $uuid, 1, 2]);
 		return $statement->rowCount();
@@ -544,18 +544,17 @@ function goBack() {
 	}
 
 
-	///////////////
 	// get user details
 	function get_voter_details($param, $person) {
 		global $conn;
 
-		$sql = "SELECT * FROM registrars WHERE ";
-		if ($param = 'id') {
+		$sql = "SELECT * FROM voters WHERE ";
+		if ($param == 'id') {
+			$sql .= "uuid = '".$person."'";
+		} else if ($param == 'email') {
+			$sql .= "email = '".$person."'";
+		} else if ($param == 'voter_id') {
 			$sql .= "voter_id = '".$person."'";
-		} else if ($param = 'email') {
-			$sql .= "std_email = '".$person."'";
-		} else if ($param = 'std_id') {
-			$sql .= "std_id = '".$person."'";
 		}
 		$sql .= " AND status = 0 LIMIT 1";
 		$statement = $conn->prepare($sql);

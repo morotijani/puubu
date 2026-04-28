@@ -67,7 +67,7 @@
                             <form action="{{ PROOT }}admin/voters/store" method="POST" id="voterForm">
                                 {{ csrf_field()|raw }}
                                 {% if voter %}
-                                    <input type="hidden" name="voter_id" value="{{ voter.voter_id }}">
+                                    <input type="hidden" name="uuid" value="{{ voter.uuid }}">
                                 {% endif %}
 
                                 <div class="section-label mb-3 mt-2">Personal Information</div>
@@ -76,28 +76,28 @@
                                         <label class="form-label small fw-bold text-uppercase tracking-wider">First Name</label>
                                         <div class="input-group">
                                             <span class="input-group-text bg-light border-0"><span class="material-symbols-outlined fs-6 text-muted">person</span></span>
-                                            <input type="text" class="form-control form-control-lg bg-light border-0" name="std_fname" value="{{ voter.std_fname }}" placeholder="e.g. John" required>
+                                            <input type="text" class="form-control form-control-lg bg-light border-0" name="first_name" value="{{ voter.first_name }}" placeholder="e.g. John" required>
                                         </div>
                                     </div>
                                     <div class="col-md-6">
                                         <label class="form-label small fw-bold text-uppercase tracking-wider">Last Name</label>
                                         <div class="input-group">
                                             <span class="input-group-text bg-light border-0"><span class="material-symbols-outlined fs-6 text-muted">person</span></span>
-                                            <input type="text" class="form-control form-control-lg bg-light border-0" name="std_lname" value="{{ voter.std_lname }}" placeholder="e.g. Doe" required>
+                                            <input type="text" class="form-control form-control-lg bg-light border-0" name="last_name" value="{{ voter.last_name }}" placeholder="e.g. Doe" required>
                                         </div>
                                     </div>
                                     <div class="col-md-6">
                                         <label class="form-label small fw-bold text-uppercase tracking-wider">Gender</label>
                                         <div class="d-flex gap-3">
-                                            <div class="form-check card-check p-3 border rounded-3 w-50 text-center cursor-pointer {{ (not voter or voter.std_gender == 'male') ? 'active' : '' }}" onclick="selectGender('male')">
-                                                <input class="form-check-input d-none" type="radio" name="std_gender" id="genderMale" value="male" {{ (not voter or voter.std_gender == 'male') ? 'checked' : '' }}>
+                                            <div class="form-check card-check p-3 border rounded-3 w-50 text-center cursor-pointer {{ (not voter or voter.gender == 'male') ? 'active' : '' }}" onclick="selectGender('male')">
+                                                <input class="form-check-input d-none" type="radio" name="gender" id="genderMale" value="male" {{ (not voter or voter.gender == 'male') ? 'checked' : '' }}>
                                                 <label class="form-check-label d-block" for="genderMale">
                                                     <span class="material-symbols-outlined fs-4 d-block mb-1">male</span>
                                                     <span class="fw-bold small">Male</span>
                                                 </label>
                                             </div>
-                                            <div class="form-check card-check p-3 border rounded-3 w-50 text-center cursor-pointer {{ voter.std_gender == 'female' ? 'active' : '' }}" onclick="selectGender('female')">
-                                                <input class="form-check-input d-none" type="radio" name="std_gender" id="genderFemale" value="female" {{ voter.std_gender == 'female' ? 'checked' : '' }}>
+                                            <div class="form-check card-check p-3 border rounded-3 w-50 text-center cursor-pointer {{ voter.gender == 'female' ? 'active' : '' }}" onclick="selectGender('female')">
+                                                <input class="form-check-input d-none" type="radio" name="gender" id="genderFemale" value="female" {{ voter.gender == 'female' ? 'checked' : '' }}>
                                                 <label class="form-check-label d-block" for="genderFemale">
                                                     <span class="material-symbols-outlined fs-4 d-block mb-1">female</span>
                                                     <span class="fw-bold small">Female</span>
@@ -109,7 +109,7 @@
                                         <label class="form-label small fw-bold text-uppercase tracking-wider">Email Address</label>
                                         <div class="input-group">
                                             <span class="input-group-text bg-light border-0"><span class="material-symbols-outlined fs-6 text-muted">alternate_email</span></span>
-                                            <input type="email" class="form-control form-control-lg bg-light border-0" name="std_email" value="{{ voter.std_email }}" placeholder="e.g. john@example.com" required>
+                                            <input type="email" class="form-control form-control-lg bg-light border-0" name="email" value="{{ voter.email }}" placeholder="e.g. john@example.com" required>
                                         </div>
                                     </div>
                                 </div>
@@ -120,14 +120,14 @@
                                         <label class="form-label small fw-bold text-uppercase tracking-wider">Identity ID / Student ID</label>
                                         <div class="input-group">
                                             <span class="input-group-text bg-light border-0"><span class="material-symbols-outlined fs-6 text-muted">tag</span></span>
-                                            <input type="text" class="form-control form-control-lg bg-light border-0 fw-mono" name="std_id" value="{{ voter.std_id }}" placeholder="e.g. PUC-2024-001" required>
+                                            <input type="text" class="form-control form-control-lg bg-light border-0 fw-mono" name="voter_id" value="{{ voter.voter_id }}" placeholder="e.g. PUC-2024-001" required>
                                         </div>
                                     </div>
                                     <div class="col-md-6">
                                         <label class="form-label small fw-bold text-uppercase tracking-wider">Assign to Election</label>
                                         <div class="input-group">
                                             <span class="input-group-text bg-light border-0"><span class="material-symbols-outlined fs-6 text-muted">how_to_vote</span></span>
-                                            <select class="form-select form-control-lg bg-light border-0" name="registrar_election" required>
+                                            <select class="form-select form-control-lg bg-light border-0" name="election_uuid" required>
                                                 <option value="">Select Election...</option>
                                                 {% for election in elections %}
                                                     <option value="{{ election.uuid }}" {{ voter.election_uuid == election.uuid ? 'selected' : '' }}>

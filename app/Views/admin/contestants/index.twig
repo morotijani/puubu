@@ -59,17 +59,17 @@
                             <td class="ps-4">
                                 <div class="d-flex align-items-center">
                                     <div class="position-relative me-3">
-                                        {% if cont.cont_profile %}
-                                            <img class="rounded-circle border shadow-sm" src="{{ PROOT }}media/uploadedprofile/{{ cont.cont_profile }}" width="42" height="42" alt="{{ cont.cont_fname }}">
+                                        {% if cont.profile_image %}
+                                            <img class="rounded-circle border shadow-sm" src="{{ PROOT }}media/uploadedprofile/{{ cont.profile_image }}" width="42" height="42" alt="{{ cont.first_name }}">
                                         {% else %}
                                             <div class="avatar-initials rounded-circle border shadow-sm" style="width: 42px; height: 42px; font-size: 0.8rem;">
-                                                {{ cont.cont_fname|first }}{{ cont.cont_lname|first }}
+                                                {{ cont.first_name|first }}{{ cont.last_name|first }}
                                             </div>
                                         {% endif %}
                                         <span class="position-absolute bottom-0 end-0 p-1 bg-success border border-white rounded-circle"></span>
                                     </div>
                                     <div>
-                                        <div class="fw-bold text-dark fs-6">{{ cont.cont_fname }} {{ cont.cont_lname }}</div>
+                                        <div class="fw-bold text-dark fs-6">{{ cont.first_name }} {{ cont.last_name }}</div>
                                         <div class="text-muted extra-small d-flex align-items-center">
                                             <span class="material-symbols-outlined me-1 fs-6">inventory_2</span> {{ cont.title }}
                                         </div>
@@ -85,10 +85,10 @@
                             <td class="text-end pe-4">
                                 <div class="d-flex justify-content-end gap-2">
                                     {% if cont.status == 0 %}
-                                        <a href="{{ PROOT }}admin/contestants/edit/{{ cont.contestant_id }}" class="btn btn-sm btn-white border rounded-3 shadow-sm d-flex align-items-center">
+                                        <a href="{{ PROOT }}admin/contestants/edit/{{ cont.uuid }}" class="btn btn-sm btn-white border rounded-3 shadow-sm d-flex align-items-center">
                                             <span class="material-symbols-outlined fs-6 text-muted">edit</span>
                                         </a>
-                                        <a href="{{ PROOT }}admin/contestants/toggle-delete/{{ cont.contestant_id }}/yes" class="btn btn-sm btn-white border text-danger rounded-3 shadow-sm d-flex align-items-center" onclick="return confirm('Move this candidate to the archive?')">
+                                        <a href="{{ PROOT }}admin/contestants/toggle-delete/{{ cont.uuid }}/yes" class="btn btn-sm btn-white border text-danger rounded-3 shadow-sm d-flex align-items-center" onclick="return confirm('Move this candidate to the archive?')">
                                             <span class="material-symbols-outlined fs-6">archive</span>
                                         </a>
                                     {% else %}

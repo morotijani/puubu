@@ -27,13 +27,13 @@ class AdminController {
                 $pswd = sanitize($_POST['admin_pass']);
 
                 if (!empty($pswd) && !empty($email)) {
-                    $query = "SELECT * FROM puubu_admin WHERE cemail = :cAdminEmail";
+                    $query = "SELECT * FROM admins WHERE email = :email";
                     $statement = $conn->prepare($query);
-                    $statement->execute([':cAdminEmail' => $email]);
+                    $statement->execute([':email' => $email]);
                     $row = $statement->fetch();
 
-                    if ($row && password_verify($pswd, $row['ckey'])) {
-                        cAdminLoggedInID($row['admin_id']); // This helper now handles 2FA redirect
+                    if ($row && password_verify($pswd, $row['password'])) {
+                        cAdminLoggedInID($row['uuid']); // This helper now handles 2FA redirect
                     } else {
                         $errorsMsg = 'Invalid details.';
                     }
@@ -59,12 +59,12 @@ class AdminController {
             $statement->execute();
             
             $total_elections = $conn->query("SELECT COUNT(*) FROM election")->fetchColumn();
-            $total_contestants = $conn->query("SELECT COUNT(*) FROM cont_details WHERE del_cont = 'no'")->fetchColumn();
+            $total_contestants = $conn->query("SELECT COUNT(*) FROM contestants WHERE is_deleted = 'no'")->fetchColumn();
             $total_positions = $conn->query("SELECT COUNT(*) FROM positions")->fetchColumn();
             $total_voters = $conn->query("SELECT COUNT(*) FROM voters")->fetchColumn();
-            $total_organizers = $conn->query("SELECT COUNT(*) FROM puubu_admin WHERE role = 'organizer'")->fetchColumn();
+            $total_organizers = $conn->query("SELECT COUNT(*) FROM admins WHERE role = 'organizer'")->fetchColumn();
             
-            $stmt_orgs = $conn->prepare("SELECT * FROM puubu_admin WHERE role = 'organizer' ORDER BY id DESC LIMIT 5");
+            $stmt_orgs = $conn->prepare("SELECT * FROM admins WHERE role = 'organizer' ORDER BY id DESC LIMIT 5");
             $stmt_orgs->execute();
             $recent_organizers = $stmt_orgs->fetchAll();
         } else {
@@ -75,7 +75,7 @@ class AdminController {
             $stmt->execute([$admin_id]);
             $total_elections = $stmt->fetchColumn();
             
-            $stmt = $conn->prepare("SELECT COUNT(c.id) FROM cont_details c INNER JOIN election e ON c.election_uuid = e.uuid WHERE c.del_cont = 'no' AND e.organizer_id = ?");
+            $stmt = $conn->prepare("SELECT COUNT(c.id) FROM contestants c INNER JOIN election e ON c.election_uuid = e.uuid WHERE c.is_deleted = 'no' AND e.organizer_id = ?");
             $stmt->execute([$admin_id]);
             $total_contestants = $stmt->fetchColumn();
             
@@ -119,7 +119,7 @@ class AdminController {
                 $code = sanitize($_POST['otp_code']);
                 $admin_id = $_SESSION['crAdmin'];
 
-                $query = "SELECT google_auth_secret FROM puubu_admin WHERE admin_id = ?";
+                $query = "SELECT google_auth_secret FROM admins WHERE uuid = ?";
                 $statement = $conn->prepare($query);
                 $statement->execute([$admin_id]);
                 $row = $statement->fetch();
@@ -151,18 +151,18 @@ class AdminController {
         $secret = $admin_data['google_auth_secret'];
         if (empty($secret)) {
             $secret = $g->generateSecret();
-            $conn->prepare("UPDATE puubu_admin SET google_auth_secret = ? WHERE admin_id = ?")
-                 ->execute([$secret, $admin_data['admin_id']]);
+            $conn->prepare("UPDATE admins SET google_auth_secret = ? WHERE uuid = ?")
+                 ->execute([$secret, $admin_data['uuid']]);
         }
 
-        $qrCodeUrl = GoogleQrUrl::generate($admin_data['cemail'], $secret, 'Puubu E-Voting');
+        $qrCodeUrl = GoogleQrUrl::generate($admin_data['email'], $secret, 'Puubu E-Voting');
         
         $errorsMsg = '';
         if (isset($_POST['activate2fa'])) {
             $code = sanitize($_POST['otp_code']);
             if ($g->checkCode($secret, $code)) {
-                $conn->prepare("UPDATE puubu_admin SET is_2fa_enabled = 1 WHERE admin_id = ?")
-                     ->execute([$admin_data['admin_id']]);
+                $conn->prepare("UPDATE admins SET is_2fa_enabled = 1 WHERE uuid = ?")
+                     ->execute([$admin_data['uuid']]);
                 $_SESSION['flash_success'] = '2FA Activated!';
                 redirect(PROOT . 'admin/settings');
             } else {
@@ -490,22 +490,22 @@ class AdminController {
         if ($role === 'super_admin') {
             $query = "
                 SELECT c.*, p.position_name, e.title, e.organized_by, e.status 
-                FROM cont_details c
-                INNER JOIN positions p ON c.cont_position = p.position_id
+                FROM contestants c
+                INNER JOIN positions p ON c.position_id = p.position_id
                 INNER JOIN election e ON c.election_uuid = e.uuid
-                WHERE c.del_cont = 'no'
-                ORDER BY c.contestant_id DESC
+                WHERE c.is_deleted = 'no'
+                ORDER BY c.uuid DESC
             ";
             $stmt = $conn->prepare($query);
             $stmt->execute();
         } else {
             $query = "
                 SELECT c.*, p.position_name, e.title, e.organized_by, e.status 
-                FROM cont_details c
-                INNER JOIN positions p ON c.cont_position = p.position_id
+                FROM contestants c
+                INNER JOIN positions p ON c.position_id = p.position_id
                 INNER JOIN election e ON c.election_uuid = e.uuid
-                WHERE c.del_cont = 'no' AND e.organizer_id = ?
-                ORDER BY c.contestant_id DESC
+                WHERE c.is_deleted = 'no' AND e.organizer_id = ?
+                ORDER BY c.uuid DESC
             ";
             $stmt = $conn->prepare($query);
             $stmt->execute([$admin_id]);
@@ -536,7 +536,7 @@ class AdminController {
         $contestant = null;
         $positions = [];
         if ($id) {
-            $stmt = $conn->prepare("SELECT * FROM cont_details WHERE contestant_id = ?");
+            $stmt = $conn->prepare("SELECT * FROM contestants WHERE uuid = ?");
             $stmt->execute([$id]);
             $contestant = $stmt->fetch();
             
@@ -565,24 +565,24 @@ class AdminController {
 
     public function contestantStore() {
         global $conn, $admin_data;
-        $admin_id = $admin_data['admin_id'] ?? null;
+        $admin_id = $admin_data['uuid'] ?? null;
         
         if (!isset($_POST['csrf_token']) || !verify_csrf_token($_POST['csrf_token'])) {
             $_SESSION['flash_error'] = "Invalid CSRF token.";
             redirect(PROOT . 'admin/contestants');
         }
 
-        $id = $_POST['contestant_id'] ?? null;
-        $fname = sanitize($_POST['cont_fname']);
-        $lname = sanitize($_POST['cont_lname']);
-        $gender = sanitize($_POST['cont_gender']);
+        $id = $_POST['uuid'] ?? null;
+        $fname = sanitize($_POST['first_name']);
+        $lname = sanitize($_POST['last_name']);
+        $gender = sanitize($_POST['gender']);
         $ballot_no = sanitize($_POST['contestant_ballot_number']);
-        $position_id = sanitize($_POST['cont_position']);
+        $position_id = sanitize($_POST['position_id']);
         $election_id = sanitize($_POST['sel_election']);
         $old_profile = $_POST['old_profile'] ?? '';
 
         $profile_img = $old_profile;
-        if (isset($_FILES['cont_profile']) && $_FILES['cont_profile']['error'] == 0) {
+        if (isset($_FILES['profile_image']) && $_FILES['profile_image']['error'] == 0) {
             $ext = pathinfo($_FILES['cont_profile']['name'], PATHINFO_EXTENSION);
             $profile_img = uniqid('', true) . '.' . $ext;
             $target = BASEURL . 'media/uploadedprofile/' . $profile_img;
@@ -595,16 +595,16 @@ class AdminController {
         }
 
         if ($id) {
-            $query = "UPDATE cont_details SET cont_fname = ?, cont_lname = ?, cont_gender = ?, contestant_ballot_number = ?, cont_position = ?, election_uuid = ?, cont_profile = ? WHERE contestant_id = ?";
+            $query = "UPDATE contestants SET first_name = ?, last_name = ?, gender = ?, contestant_ballot_number = ?, position_id = ?, election_uuid = ?, profile_image = ? WHERE uuid = ?";
             $conn->prepare($query)->execute([$fname, $lname, $gender, $ballot_no, $position_id, $election_id, $profile_img, $id]);
             $_SESSION['flash_success'] = "Contestant updated successfully.";
         } else {
             $new_id = guidv4();
-            $query = "INSERT INTO cont_details (contestant_id, cont_fname, cont_lname, cont_gender, contestant_ballot_number, cont_position, election_uuid, cont_profile) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+            $query = "INSERT INTO contestants (uuid, first_name, last_name, gender, contestant_ballot_number, position_id, election_uuid, profile_image) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
             $conn->prepare($query)->execute([$new_id, $fname, $lname, $gender, $ballot_no, $position_id, $election_id, $profile_img]);
             
             // Initialize vote counts
-            $conn->prepare("INSERT INTO vote_counts (vote_count_id, results, contestant_id, position_id, election_uuid) VALUES (?, ?, ?, ?, ?)")
+            $conn->prepare("INSERT INTO results (uuid, votes_for, contestant_id, position_id, election_uuid) VALUES (?, ?, ?, ?, ?)")
                  ->execute([guidv4(), 0, $new_id, $position_id, $election_id]);
             
             $_SESSION['flash_success'] = "Contestant added successfully.";
@@ -632,22 +632,22 @@ class AdminController {
         if ($role === 'super_admin') {
             $query = "
                 SELECT c.*, p.position_name, e.title, e.organized_by 
-                FROM cont_details c
-                INNER JOIN positions p ON c.cont_position = p.position_id
+                FROM contestants c
+                INNER JOIN positions p ON c.position_id = p.position_id
                 INNER JOIN election e ON c.election_uuid = e.uuid
-                WHERE c.del_cont = 'yes'
-                ORDER BY c.contestant_id DESC
+                WHERE c.is_deleted = 'yes'
+                ORDER BY c.uuid DESC
             ";
             $stmt = $conn->prepare($query);
             $stmt->execute();
         } else {
             $query = "
                 SELECT c.*, p.position_name, e.title, e.organized_by 
-                FROM cont_details c
-                INNER JOIN positions p ON c.cont_position = p.position_id
+                FROM contestants c
+                INNER JOIN positions p ON c.position_id = p.position_id
                 INNER JOIN election e ON c.election_uuid = e.uuid
-                WHERE c.del_cont = 'yes' AND e.organizer_id = ?
-                ORDER BY c.contestant_id DESC
+                WHERE c.is_deleted = 'yes' AND e.organizer_id = ?
+                ORDER BY c.uuid DESC
             ";
             $stmt = $conn->prepare($query);
             $stmt->execute([$admin_id]);
@@ -661,7 +661,7 @@ class AdminController {
 
     public function contestantToggleDelete($id, $status) {
         global $conn;
-        $conn->prepare("UPDATE cont_details SET del_cont = ? WHERE contestant_id = ?")->execute([$status, $id]);
+        $conn->prepare("UPDATE contestants SET is_deleted = ? WHERE uuid = ?")->execute([$status, $id]);
         $_SESSION['flash_success'] = ($status == 'yes') ? "Contestant moved to archive." : "Contestant restored.";
         redirect(PROOT . 'admin/contestants' . ($status == 'no' ? '/archive' : ''));
     }
@@ -1017,7 +1017,7 @@ class AdminController {
         global $conn;
         
         // 1. Overall stats
-        $stmt = $conn->prepare("SELECT COUNT(*) FROM voterhasdone WHERE election_uuid = ?");
+        $stmt = $conn->prepare("SELECT COUNT(*) FROM voter_participation WHERE election_uuid = ?");
         $stmt->execute([$election_id]);
         $total_votes_cast = $stmt->fetchColumn();
 
@@ -1033,10 +1033,10 @@ class AdminController {
         $results = [];
         foreach ($positions as $pos) {
             $stmt = $conn->prepare("
-                SELECT c.*, v.results, v.results_no
-                FROM cont_details c
-                INNER JOIN vote_counts v ON c.contestant_id = v.contestant_id
-                WHERE c.cont_position = ? AND c.del_cont = 'no'
+                SELECT c.*, v.votes_for, v.votes_against
+                FROM contestants c
+                INNER JOIN results v ON c.uuid = v.contestant_id
+                WHERE c.position_id = ? AND c.is_deleted = 'no'
                 ORDER BY c.contestant_ballot_number ASC
             ");
             $stmt->execute([$pos['position_id']]);
@@ -1099,11 +1099,11 @@ class AdminController {
         }
 
         // Fetch Stats
-        $stmt = $conn->prepare("SELECT COUNT(*) FROM voterhasdone WHERE election_uuid = ?");
+        $stmt = $conn->prepare("SELECT COUNT(*) FROM voter_participation WHERE election_uuid = ?");
         $stmt->execute([$election_id]);
         $total_votes_cast = $stmt->fetchColumn();
 
-        $stmt = $conn->prepare("SELECT COUNT(*) FROM registrars WHERE election_uuid = ?");
+        $stmt = $conn->prepare("SELECT COUNT(*) FROM voters WHERE election_uuid = ?");
         $stmt->execute([$election_id]);
         $total_voters = $stmt->fetchColumn();
 
@@ -1115,11 +1115,11 @@ class AdminController {
         $results = [];
         foreach ($positions as $pos) {
             $stmt = $conn->prepare("
-                SELECT c.*, v.results, v.results_no
-                FROM cont_details c
-                LEFT JOIN vote_counts v ON c.contestant_id = v.contestant_id
-                WHERE c.cont_position = ? AND c.del_cont = 'no'
-                ORDER BY v.results DESC
+                SELECT c.*, v.votes_for, v.votes_against
+                FROM contestants c
+                LEFT JOIN results v ON c.uuid = v.contestant_id
+                WHERE c.position_id = ? AND c.is_deleted = 'no'
+                ORDER BY v.votes_for DESC
             ");
             $stmt->execute([$pos['position_id']]);
             $contestants = $stmt->fetchAll();
@@ -1177,7 +1177,7 @@ class AdminController {
             redirect(PROOT . 'admin/settings');
         }
 
-        $stmt = $conn->prepare("UPDATE puubu_admin SET cfname = ?, clname = ?, cemail = ? WHERE admin_id = ?");
+        $stmt = $conn->prepare("UPDATE admins SET first_name = ?, last_name = ?, email = ? WHERE uuid = ?");
         if ($stmt->execute([$fname, $lname, $email, $admin_id])) {
             add_to_log("Profile updated", $admin_id, 'admin');
             $_SESSION['flash_success'] = "Profile updated successfully.";
@@ -1209,13 +1209,13 @@ class AdminController {
             redirect(PROOT . 'admin/settings');
         }
 
-        if (!password_verify($old, $admin_data['ckey'])) {
+        if (!password_verify($old, $admin_data['password'])) {
             $_SESSION['flash_error'] = "Incorrect old password.";
             redirect(PROOT . 'admin/settings');
         }
 
         $hashed = password_hash($new, PASSWORD_DEFAULT);
-        $stmt = $conn->prepare("UPDATE puubu_admin SET ckey = ? WHERE admin_id = ?");
+        $stmt = $conn->prepare("UPDATE admins SET password = ? WHERE uuid = ?");
         if ($stmt->execute([$hashed, $admin_id])) {
             add_to_log("Password changed", $admin_id, 'admin');
             $_SESSION['flash_success'] = "Password updated successfully.";
@@ -1230,7 +1230,7 @@ class AdminController {
             redirect(PROOT . 'admin');
         }
 
-        $stmt = $conn->prepare("SELECT * FROM puubu_admin WHERE role = 'organizer' ORDER BY id DESC");
+        $stmt = $conn->prepare("SELECT * FROM admins WHERE role = 'organizer' ORDER BY id DESC");
         $stmt->execute();
         $organizers = $stmt->fetchAll();
 
@@ -1265,7 +1265,7 @@ class AdminController {
         $new_id = guidv4();
         $hashed = password_hash($password, PASSWORD_DEFAULT);
         
-        $stmt = $conn->prepare("INSERT INTO puubu_admin (admin_id, cfname, clname, cemail, ckey, role, trash) VALUES (?, ?, ?, ?, ?, 'organizer', 0)");
+        $stmt = $conn->prepare("INSERT INTO admins (uuid, first_name, last_name, email, password, role, trash) VALUES (?, ?, ?, ?, ?, 'organizer', 0)");
         if ($stmt->execute([$new_id, $fname, $lname, $email, $hashed])) {
             add_to_log("Created Organizer: $email", $admin_id, 'admin');
             $_SESSION['flash_success'] = "Organizer account created.";

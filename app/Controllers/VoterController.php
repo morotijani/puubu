@@ -57,7 +57,7 @@ class VoterController
                                     $displayErrors = "Access Denied: This election ended on " . date('F j, Y, g:i a', strtotime($row['ends_at'])) . ".";
                                 } else {
                                     // Check if already voted
-                                    $checkVoted = $conn->prepare("SELECT COUNT(*) FROM voterhasdone WHERE voter_id = ? AND election_uuid = ?");
+                                    $checkVoted = $conn->prepare("SELECT COUNT(*) FROM voter_participation WHERE voter_id = ? AND election_uuid = ?");
                                     $checkVoted->execute([$row['uuid'], $row['election_uuid']]);
                                     if ($checkVoted->fetchColumn() > 0) {
                                         $displayErrors = "Access Denied: You have already cast your vote in this election.";
@@ -113,7 +113,7 @@ class VoterController
 
                                             $unique_vld_id = guidv4();
                                             $election_logs_query = "
-                                                INSERT INTO voter_login_details (voter_login_details_id, voter_id, details_location) 
+                                                INSERT INTO voter_security_logs (uuid, voter_id, location) 
                                                 VALUES (?, ?, ?)
                                             ";
                                             $statement = $conn->prepare($election_logs_query);
@@ -179,7 +179,7 @@ class VoterController
         $now = date('Y-m-d H:i:s');
 
         // Block if already voted
-        $checkVoted = $conn->prepare("SELECT COUNT(*) FROM voterhasdone WHERE voter_id = ? AND election_uuid = ?");
+        $checkVoted = $conn->prepare("SELECT COUNT(*) FROM voter_participation WHERE voter_id = ? AND election_uuid = ?");
         $checkVoted->execute([$voter_row['uuid'], $voter_row['election_uuid']]);
         if ($checkVoted->fetchColumn() > 0) {
             redirect(PROOT . 'votingon');
@@ -201,10 +201,10 @@ class VoterController
         foreach ($positions as $pos) {
             // Fetch Contestants for this position
             $contQuery = "
-                SELECT * FROM cont_details 
-                WHERE cont_position = ? 
+                SELECT * FROM contestants 
+                WHERE position_id = ? 
                 AND election_uuid = ? 
-                AND del_cont = 'no' 
+                AND is_deleted = 'no' 
                 ORDER BY contestant_ballot_number ASC
             ";
             $stmt = $conn->prepare($contQuery);
@@ -255,7 +255,7 @@ class VoterController
         }
 
         // CRITICAL: Final double-check before recording votes
-        $checkVoted = $conn->prepare("SELECT COUNT(*) FROM voterhasdone WHERE voter_id = ? AND election_uuid = ?");
+        $checkVoted = $conn->prepare("SELECT COUNT(*) FROM voter_participation WHERE voter_id = ? AND election_uuid = ?");
         $checkVoted->execute([$voter_uuid, $election_uuid]);
         if ($checkVoted->fetchColumn() > 0) {
             die("Critical Error: Your vote has already been recorded for this election.");
@@ -269,35 +269,35 @@ class VoterController
             for ($i = 0; $i < $num_positions; $i++) {
                 $position_id = sanitize($_POST["name-of-positions{$i}"] ?? '');
 
-                if (isset($_POST["contestant{$i}"]) && !empty($_POST["contestant{$i}"])) {
-                    $contestant_id = sanitize($_POST["contestant{$i}"]);
-                    // Increment results
-                    $stmt = $conn->prepare("UPDATE vote_counts SET results = results + 1 WHERE contestant_id = ? AND position_id = ? AND election_uuid = ?");
-                    $stmt->execute([$contestant_id, $position_id, $election_uuid]);
-                } elseif (isset($_POST["onecont{$i}"]) && !empty($_POST["onecont{$i}"])) {
-                    $val = explode(',', $_POST["onecont{$i}"]);
-                    if (count($val) == 2) {
-                        $choice = sanitize($val[0]);
-                        $contestant_id = sanitize($val[1]);
-                        if ($choice === 'yes') {
-                            $stmt = $conn->prepare("UPDATE vote_counts SET results = results + 1 WHERE contestant_id = ? AND position_id = ? AND election_uuid = ?");
-                            $stmt->execute([$contestant_id, $position_id, $election_uuid]);
-                        } else {
-                            $stmt = $conn->prepare("UPDATE vote_counts SET results_no = results_no + 1 WHERE contestant_id = ? AND position_id = ? AND election_uuid = ?");
-                            $stmt->execute([$contestant_id, $position_id, $election_uuid]);
-                        }
-                    }
-                } else {
-                    // Skipped
-                    $stmt = $conn->prepare("UPDATE positions SET position_skipped_votes = position_skipped_votes + 1 WHERE position_id = ? AND election_uuid = ?");
-                    $stmt->execute([$position_id, $election_uuid]);
-                }
-            }
-
-            // Mark voter as done
-            $vhd_id = guidv4();
-            $stmt = $conn->prepare("INSERT INTO voterhasdone (vhd_id, voter_id, election_uuid, voterhasdone_status) VALUES (?, ?, ?, 1)");
-            $stmt->execute([$vhd_id, $voter_uuid, $election_uuid]);
+                    if (isset($_POST["contestant{$i}"]) && !empty($_POST["contestant{$i}"])) {
+                                            $contestant_id = sanitize($_POST["contestant{$i}"]);
+                                            // Increment results
+                                            $stmt = $conn->prepare("UPDATE results SET votes_for = votes_for + 1 WHERE contestant_id = ? AND position_id = ? AND election_uuid = ?");
+                                            $stmt->execute([$contestant_id, $position_id, $election_uuid]);
+                                        } elseif (isset($_POST["onecont{$i}"]) && !empty($_POST["onecont{$i}"])) {
+                                            $val = explode(',', $_POST["onecont{$i}"]);
+                                            if (count($val) == 2) {
+                                                $choice = sanitize($val[0]);
+                                                $contestant_id = sanitize($val[1]);
+                                                if ($choice === 'yes') {
+                                                    $stmt = $conn->prepare("UPDATE results SET votes_for = votes_for + 1 WHERE contestant_id = ? AND position_id = ? AND election_uuid = ?");
+                                                    $stmt->execute([$contestant_id, $position_id, $election_uuid]);
+                                                } else {
+                                                    $stmt = $conn->prepare("UPDATE results SET votes_against = votes_against + 1 WHERE contestant_id = ? AND position_id = ? AND election_uuid = ?");
+                                                    $stmt->execute([$contestant_id, $position_id, $election_uuid]);
+                                                }
+                                            }
+                                        } else {
+                                            // Skipped
+                                            $stmt = $conn->prepare("UPDATE positions SET position_skipped_votes = position_skipped_votes + 1 WHERE position_id = ? AND election_uuid = ?");
+                                            $stmt->execute([$position_id, $election_uuid]);
+                                        }
+                                    }
+                        
+                                    // Mark voter as done
+                                    $vhd_id = guidv4();
+                                    $stmt = $conn->prepare("INSERT INTO voter_participation (uuid, voter_id, election_uuid, status) VALUES (?, ?, ?, 1)");
+                                    $stmt->execute([$vhd_id, $voter_uuid, $election_uuid]);
 
             // FETCH ELECTION DETAILS EXPLICITLY FOR RECEIPT
             $eStmt = $conn->prepare("SELECT title, organized_by FROM election WHERE uuid = ?");
@@ -313,7 +313,7 @@ class VoterController
                     <h2 style="color: #dcf3b0; margin: 0;">Ballot Confirmation</h2>
                 </div>
                 <div style="padding: 32px; color: #4a5568; line-height: 1.6;">
-                    <p>Hello <strong>' . ucwords($voter_row['std_fname']) . '</strong>,</p>
+                    <p>Hello <strong>' . ucwords($voter_row['first_name']) . '</strong>,</p>
                     <p>Your ballot has been securely cast and recorded for the <strong>' . $eTitle . '</strong>.</p>
                     
                     <div style="background: #f8fafc; padding: 16px; border-radius: 8px; margin: 24px 0;">
@@ -344,18 +344,18 @@ class VoterController
 
                 if (isset($_POST["contestant{$i}"]) && !empty($_POST["contestant{$i}"])) {
                     $c_id = sanitize($_POST["contestant{$i}"]);
-                    $cStmt = $conn->prepare("SELECT cont_fname, cont_lname FROM cont_details WHERE contestant_id = ?");
+                    $cStmt = $conn->prepare("SELECT first_name, last_name FROM contestants WHERE uuid = ?");
                     $cStmt->execute([$c_id]);
                     $cRow = $cStmt->fetch();
-                    $selection = $cRow['cont_fname'] . " " . $cRow['cont_lname'];
+                    $selection = $cRow['first_name'] . " " . $cRow['last_name'];
                 } elseif (isset($_POST["onecont{$i}"]) && !empty($_POST["onecont{$i}"])) {
                     $val = explode(',', $_POST["onecont{$i}"]);
                     $choice = $val[0] ?? '';
                     $c_id = $val[1] ?? '';
-                    $cStmt = $conn->prepare("SELECT cont_fname, cont_lname FROM cont_details WHERE contestant_id = ?");
+                    $cStmt = $conn->prepare("SELECT first_name, last_name FROM contestants WHERE uuid = ?");
                     $cStmt->execute([$c_id]);
                     $cRow = $cStmt->fetch();
-                    $selection = ($choice === 'yes' ? "Approve: " : "Reject: ") . $cRow['cont_fname'] . " " . $cRow['cont_lname'];
+                    $selection = ($choice === 'yes' ? "Approve: " : "Reject: ") . $cRow['first_name'] . " " . $cRow['last_name'];
                 }
 
                 $receipt_html .= '
@@ -377,7 +377,7 @@ class VoterController
 
             send_email($voter_row['email'], "Voting Receipt: " . $eTitle, $receipt_html);
 
-            add_to_log("Voter casted vote and received email receipt", $voter_id, 'user');
+            add_to_log("Voter casted vote and received email receipt", $voter_uuid, 'user');
 
             $conn->commit();
 

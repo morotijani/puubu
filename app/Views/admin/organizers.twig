@@ -32,11 +32,11 @@
                     {% for org in organizers %}
                         <tr>
                             <td class="ps-4">
-                                <div class="fw-bold text-dark">{{ org.cfname }} {{ org.clname }}</div>
-                                <div class="text-muted small">Joined: {{ org.joined_date|date('M d, Y') }}</div>
+                                <div class="fw-bold text-dark">{{ org.first_name }} {{ org.last_name }}</div>
+                                <div class="text-muted small">Joined: {{ org.created_at|date('M d, Y') }}</div>
                             </td>
                             <td>
-                                <a href="mailto:{{ org.cemail }}" class="text-decoration-none text-primary">{{ org.cemail }}</a>
+                                <a href="mailto:{{ org.email }}" class="text-decoration-none text-primary">{{ org.email }}</a>
                             </td>
                             <td>
                                 <span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-10">Active</span>

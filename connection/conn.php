@@ -102,17 +102,17 @@
 
  	if (isset($_SESSION['crAdmin'])) {
  		$data = array($_SESSION['crAdmin']);
- 		$sql = "SELECT * FROM puubu_admin WHERE admin_id = ? LIMIT 1";
+ 		$sql = "SELECT * FROM admins WHERE uuid = ? LIMIT 1";
  		$statement = $conn->prepare($sql);
  		$statement->execute($data);
 		$admin_dt = $statement->fetchAll();
 
 		if ($statement->rowCount() > 0) {
 			$admin_data = $admin_dt[0];
-			$admin_id = $admin_data['admin_id'];
-			$fullName = ucwords($admin_data['cfname'] . ' ' . $admin_data['clname']);
- 			$lName = ucwords($admin_data['clname']);
- 			$fname = ucwords($admin_data['cfname']);
+			$admin_id = $admin_data['uuid'];
+			$fullName = ucwords($admin_data['first_name'] . ' ' . $admin_data['last_name']);
+ 			$lName = ucwords($admin_data['last_name']);
+ 			$fname = ucwords($admin_data['first_name']);
 		}
  	}
 
@@ -132,7 +132,7 @@
 		$voter_result = $statement->fetchAll();
 
 		// Check if this voter has already voted in this specific election
-		$votedCheck = "SELECT COUNT(*) FROM voterhasdone WHERE voter_id = ? AND election_uuid = ?";
+		$votedCheck = "SELECT COUNT(*) FROM voter_participation WHERE voter_id = ? AND election_uuid = ?";
 		$vStmt = $conn->prepare($votedCheck);
 		$vStmt->execute([$voter_uuid, $voter_result[0]['election_uuid']]);
 		$has_voted = $vStmt->fetchColumn() > 0;

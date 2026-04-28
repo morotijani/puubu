@@ -349,16 +349,16 @@
                             {% if item.count > 1 %}
                                 <div class="candidate-grid">
                                     {% for contestant in item.contestants %}
-                                        <div class="candidate-card" onclick="selectCandidate({{ loop.parent.loop.index0 }}, '{{ contestant.contestant_id }}', '{{ contestant.cont_fname }} {{ contestant.cont_lname }}', '{{ contestant.cont_profile }}')">
-                                            <input type="radio" name="contestant{{ loop.parent.loop.index0 }}" value="{{ contestant.contestant_id }}" class="visually-hidden">
+                                        <div class="candidate-card" onclick="selectCandidate({{ loop.parent.loop.index0 }}, '{{ contestant.uuid }}', '{{ contestant.first_name }} {{ contestant.last_name }}', '{{ contestant.profile_image }}')">
+                                            <input type="radio" name="contestant{{ loop.parent.loop.index0 }}" value="{{ contestant.uuid }}" class="visually-hidden">
                                             <div class="candidate-avatar">
-                                                {% if contestant.cont_profile %}
-                                                    <img src="{{ PROOT }}media/uploadedprofile/{{ contestant.cont_profile }}" alt="Profile">
+                                                {% if contestant.profile_image %}
+                                                    <img src="{{ PROOT }}media/uploadedprofile/{{ contestant.profile_image }}" alt="Profile">
                                                 {% else %}
-                                                    <span class="candidate-initials">{{ contestant.cont_fname|first }}{{ contestant.cont_lname|first }}</span>
+                                                    <span class="candidate-initials">{{ contestant.first_name|first }}{{ contestant.last_name|first }}</span>
                                                 {% endif %}
                                             </div>
-                                            <div class="candidate-name">{{ contestant.cont_fname }} {{ contestant.cont_lname }}</div>
+                                            <div class="candidate-name">{{ contestant.first_name }} {{ contestant.last_name }}</div>
                                             <div class="candidate-tag">Ballot #{{ contestant.contestant_ballot_number }}</div>
                                         </div>
                                     {% endfor %}
@@ -378,26 +378,26 @@
                                 {% set contestant = item.contestants|first %}
                                 <div class="unopposed-container">
                                     <div class="candidate-avatar mx-auto" style="width: 180px; height: 180px;">
-                                        {% if contestant.cont_profile %}
-                                            <img src="{{ PROOT }}media/uploadedprofile/{{ contestant.cont_profile }}" alt="Profile">
+                                        {% if contestant.profile_image %}
+                                            <img src="{{ PROOT }}media/uploadedprofile/{{ contestant.profile_image }}" alt="Profile">
                                         {% else %}
-                                            <span class="candidate-initials" style="font-size: 3.5rem;">{{ contestant.cont_fname|first }}{{ contestant.cont_lname|first }}</span>
+                                            <span class="candidate-initials" style="font-size: 3.5rem;">{{ contestant.first_name|first }}{{ contestant.last_name|first }}</span>
                                         {% endif %}
                                     </div>
-                                    <h3 class="candidate-name mt-3">{{ contestant.cont_fname }} {{ contestant.cont_lname }}</h3>
+                                    <h3 class="candidate-name mt-3">{{ contestant.first_name }} {{ contestant.last_name }}</h3>
                                     <p class="text-muted">Do you approve this candidate for the office of <br><strong>{{ item.position.position_name }}</strong>?</p>
                                     
                                     <div class="unopposed-options">
-                                        <div class="unopposed-btn yes" onclick="selectUnopposed({{ loop.index0 }}, 'yes', '{{ contestant.contestant_id }}', '{{ contestant.cont_fname }} {{ contestant.cont_lname }}', '{{ contestant.cont_profile }}')">
+                                        <div class="unopposed-btn yes" onclick="selectUnopposed({{ loop.index0 }}, 'yes', '{{ contestant.uuid }}', '{{ contestant.first_name }} {{ contestant.last_name }}', '{{ contestant.profile_image }}')">
                                             <span class="material-symbols-outlined icon">thumb_up</span>
                                             <span class="fw-bold">Yes, I Approve</span>
                                         </div>
-                                        <div class="unopposed-btn no" onclick="selectUnopposed({{ loop.index0 }}, 'no', '{{ contestant.contestant_id }}', '{{ contestant.cont_fname }} {{ contestant.cont_lname }}', '{{ contestant.cont_profile }}')">
+                                        <div class="unopposed-btn no" onclick="selectUnopposed({{ loop.index0 }}, 'no', '{{ contestant.uuid }}', '{{ contestant.first_name }} {{ contestant.last_name }}', '{{ contestant.profile_image }}')">
                                             <span class="material-symbols-outlined icon">thumb_down</span>
                                             <span class="fw-bold">No, I Reject</span>
                                         </div>
-                                        <input type="radio" name="onecont{{ loop.index0 }}" id="onecont_yes_{{ loop.index0 }}" value="yes,{{ contestant.contestant_id }}" class="visually-hidden">
-                                        <input type="radio" name="onecont{{ loop.index0 }}" id="onecont_no_{{ loop.index0 }}" value="no,{{ contestant.contestant_id }}" class="visually-hidden">
+                                        <input type="radio" name="onecont{{ loop.index0 }}" id="onecont_yes_{{ loop.index0 }}" value="yes,{{ contestant.uuid }}" class="visually-hidden">
+                                        <input type="radio" name="onecont{{ loop.index0 }}" id="onecont_no_{{ loop.index0 }}" value="no,{{ contestant.uuid }}" class="visually-hidden">
                                     </div>
                                 </div>
                             {% endif %}

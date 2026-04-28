@@ -27,15 +27,15 @@
                         {{ csrf_field()|raw }}
                         <div class="mb-4">
                             <label class="form-label">First Name</label>
-                            <input type="text" class="form-control bg-light border-0" name="fname" value="{{ admin.cfname }}" required>
+                            <input type="text" class="form-control bg-light border-0" name="fname" value="{{ admin.first_name }}" required>
                         </div>
                         <div class="mb-4">
                             <label class="form-label">Last Name</label>
-                            <input type="text" class="form-control bg-light border-0" name="lname" value="{{ admin.clname }}" required>
+                            <input type="text" class="form-control bg-light border-0" name="lname" value="{{ admin.last_name }}" required>
                         </div>
                         <div class="mb-4">
                             <label class="form-label">Email Address</label>
-                            <input type="email" class="form-control bg-light border-0" name="email" value="{{ admin.cemail }}" required>
+                            <input type="email" class="form-control bg-light border-0" name="email" value="{{ admin.email }}" required>
                         </div>
                         <button type="submit" class="btn btn-indigo px-4 fw-bold shadow-sm">Save Changes</button>
                     </form>

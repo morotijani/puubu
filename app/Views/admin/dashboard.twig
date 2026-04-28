@@ -7,7 +7,7 @@
 {% block content %}
     <div class="d-flex justify-content-between align-items-center mb-5">
         <div>
-            <h1 class="h3 fw-bold mb-1">Welcome back, {{ admin.cfname }}</h1>
+            <h1 class="h3 fw-bold mb-1">Welcome back, {{ admin.first_name }}</h1>
             <p class="text-muted small mb-0">Real-time overview of your electoral infrastructure.</p>
         </div>
         <div class="d-none d-md-block">
@@ -161,10 +161,10 @@
                     {% for org in recent_organizers %}
                         <tr>
                             <td class="ps-4">
-                                <div class="fw-bold text-dark">{{ org.cfname }} {{ org.clname }}</div>
+                                <div class="fw-bold text-dark">{{ org.first_name }} {{ org.last_name }}</div>
                             </td>
                             <td>
-                                <a href="mailto:{{ org.cemail }}" class="text-decoration-none text-primary">{{ org.cemail }}</a>
+                                <a href="mailto:{{ org.email }}" class="text-decoration-none text-primary">{{ org.email }}</a>
                             </td>
                             <td>
                                 <span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-10">Active</span>

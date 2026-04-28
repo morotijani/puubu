@@ -324,9 +324,9 @@
             ];
 
             res.contestants.forEach((c, cIndex) => {
-                const name = c.cont_fname + ' ' + c.cont_lname;
-                const initials = c.cont_fname.charAt(0) + c.cont_lname.charAt(0);
-                const profileImg = c.cont_profile ? `${proot}media/uploadedprofile/${c.cont_profile}` : null;
+                const name = c.first_name + ' ' + c.last_name;
+                const initials = c.first_name.charAt(0) + c.last_name.charAt(0);
+                const profileImg = c.profile_image ? `${proot}media/uploadedprofile/${c.profile_image}` : null;
                 const isUnopposed = res.contestants.length === 1;
 
                 const avatarHtml = profileImg 
@@ -335,9 +335,9 @@
 
                 if (isUnopposed) {
                     labels.push(name + ' (YES)');
-                    votes.push(c.results);
+                    votes.push(c.votes_for);
                     labels.push(name + ' (NO)');
-                    votes.push(c.results_no);
+                    votes.push(c.votes_against);
 
                     list.append(`
                         <li class="list-group-item bg-transparent px-0 border-0 mb-4">
@@ -354,18 +354,18 @@
                             <div class="d-flex gap-2">
                                 <div class="flex-grow-1 bg-success-subtle p-3 rounded-4 d-flex justify-content-between align-items-center">
                                     <span class="small fw-bold text-success">YES</span>
-                                    <span class="badge bg-success rounded-pill fs-6">${c.results}</span>
+                                    <span class="badge bg-success rounded-pill fs-6">${c.votes_for}</span>
                                 </div>
                                 <div class="flex-grow-1 bg-danger-subtle p-3 rounded-4 d-flex justify-content-between align-items-center">
                                     <span class="small fw-bold text-danger">NO</span>
-                                    <span class="badge bg-danger rounded-pill fs-6">${c.results_no}</span>
+                                    <span class="badge bg-danger rounded-pill fs-6">${c.votes_against}</span>
                                 </div>
                             </div>
                         </li>
                     `);
                 } else {
                     labels.push(name);
-                    votes.push(c.results);
+                    votes.push(c.votes_for);
                     
                     list.append(`
                         <li class="list-group-item d-flex justify-content-between align-items-center bg-transparent px-0 border-0 mb-3">
@@ -376,7 +376,7 @@
                                     <div class="extra-small text-muted">Ballot #${c.contestant_ballot_number}</div>
                                 </div>
                             </div>
-                            <span class="badge bg-primary rounded-pill fs-6 px-3 shadow-sm">${c.results}</span>
+                            <span class="badge bg-primary rounded-pill fs-6 px-3 shadow-sm">${c.votes_for}</span>
                         </li>
                     `);
                 }

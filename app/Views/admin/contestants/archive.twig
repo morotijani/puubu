@@ -38,16 +38,16 @@
                             <td>
                                 <div class="d-flex align-items-center">
                                     <div class="avatar avatar-sm me-3">
-                                        {% if cont.cont_profile %}
-                                            <img class="avatar-img rounded-circle" src="{{ PROOT }}media/uploadedprofile/{{ cont.cont_profile }}" alt="{{ cont.cont_fname }}">
+                                        {% if cont.profile_image %}
+                                            <img class="avatar-img rounded-circle" src="{{ PROOT }}media/uploadedprofile/{{ cont.profile_image }}" alt="{{ cont.first_name }}">
                                         {% else %}
                                             <div class="avatar-initials rounded-circle" style="width: 32px; height: 32px; font-size: 0.7rem;">
-                                                {{ cont.cont_fname|first }}{{ cont.cont_lname|first }}
+                                                {{ cont.first_name|first }}{{ cont.last_name|first }}
                                             </div>
                                         {% endif %}
                                     </div>
                                     <div>
-                                        <div class="fw-bold text-heading">{{ cont.cont_fname }} {{ cont.cont_lname }}</div>
+                                        <div class="fw-bold text-heading">{{ cont.first_name }} {{ cont.last_name }}</div>
                                         <div class="fs-sm text-muted">{{ cont.title }}</div>
                                     </div>
                                 </div>
@@ -55,7 +55,7 @@
                             <td><span class="badge bg-secondary">{{ cont.contestant_ballot_number }}</span></td>
                             <td>{{ cont.position_name }}</td>
                             <td class="text-end">
-                                <a href="{{ PROOT }}admin/contestants/toggle-delete/{{ cont.contestant_id }}/no" class="btn btn-sm btn-success">
+                                <a href="{{ PROOT }}admin/contestants/toggle-delete/{{ cont.uuid }}/no" class="btn btn-sm btn-success">
                                     <i class="bi bi-arrow-counterclockwise"></i> Restore
                                 </a>
                             </td>

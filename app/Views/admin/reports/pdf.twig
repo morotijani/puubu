@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <title>Election Report - {{ election.election_name }}</title>
+    <title>Election Report - {{ election.title }}</title>
     <style>
         body {
             font-family: 'Helvetica', 'Arial', sans-serif;
@@ -137,7 +137,7 @@
 <body>
     <div class="header">
         <h1>Official Election Report</h1>
-        <p>{{ election.election_name }} • Organized by {{ election.election_by }}</p>
+        <p>{{ election.title }} • Organized by {{ election.organized_by }}</p>
         <p>Generated on {{ "now"|date("F j, Y, g:i a") }}</p>
     </div>
 
@@ -175,60 +175,60 @@
                 <tr>
                     <td>
                         <div style="margin-bottom: 5px;">
-                            {% if c.cont_profile %}
-                                <img src="{{ DOCUMENT_ROOT }}/media/uploadedprofile/{{ c.cont_profile }}" class="candidate-img">
+                            {% if c.profile_image %}
+                                <img src="{{ DOCUMENT_ROOT }}/media/uploadedprofile/{{ c.profile_image }}" class="candidate-img">
                             {% else %}
-                                <div class="candidate-initials">{{ c.cont_fname|slice(0, 1) }}{{ c.cont_lname|slice(0, 1) }}</div>
+                                <div class="candidate-initials">{{ c.first_name|slice(0, 1) }}{{ c.last_name|slice(0, 1) }}</div>
                             {% endif %}
                             <div class="voter-name-container">
-                                <div class="voter-name">{{ c.cont_fname }} {{ c.cont_lname }} (YES)</div>
+                                <div class="voter-name">{{ c.first_name }} {{ c.last_name }} (YES)</div>
                             </div>
                         </div>
                         <div class="progress-bar">
-                            <div class="progress-fill" style="width: {{ total_votes_cast > 0 ? (c.results / total_votes_cast * 100) : 0 }}; background: #1cc88a;"></div>
+                            <div class="progress-fill" style="width: {{ total_votes_cast > 0 ? (c.votes_for / total_votes_cast * 100) : 0 }}; background: #1cc88a;"></div>
                         </div>
                     </td>
                     <td style="text-align: center;">{{ c.contestant_ballot_number }}</td>
-                    <td class="vote-count" style="color: #1cc88a;">{{ c.results }}</td>
+                    <td class="vote-count" style="color: #1cc88a;">{{ c.votes_for }}</td>
                 </tr>
                 <tr>
                     <td>
                         <div style="margin-bottom: 5px;">
-                            {% if c.cont_profile %}
-                                <img src="{{ DOCUMENT_ROOT }}/media/uploadedprofile/{{ c.cont_profile }}" class="candidate-img">
+                            {% if c.profile_image %}
+                                <img src="{{ DOCUMENT_ROOT }}/media/uploadedprofile/{{ c.profile_image }}" class="candidate-img">
                             {% else %}
-                                <div class="candidate-initials">{{ c.cont_fname|slice(0, 1) }}{{ c.cont_lname|slice(0, 1) }}</div>
+                                <div class="candidate-initials">{{ c.first_name|slice(0, 1) }}{{ c.last_name|slice(0, 1) }}</div>
                             {% endif %}
                             <div class="voter-name-container">
-                                <div class="voter-name">{{ c.cont_fname }} {{ c.cont_lname }} (NO)</div>
+                                <div class="voter-name">{{ c.first_name }} {{ c.last_name }} (NO)</div>
                             </div>
                         </div>
                         <div class="progress-bar">
-                            <div class="progress-fill" style="width: {{ total_votes_cast > 0 ? (c.results_no / total_votes_cast * 100) : 0 }}; background: #e74a3b;"></div>
+                            <div class="progress-fill" style="width: {{ total_votes_cast > 0 ? (c.votes_against / total_votes_cast * 100) : 0 }}; background: #e74a3b;"></div>
                         </div>
                     </td>
                     <td style="text-align: center;">{{ c.contestant_ballot_number }}</td>
-                    <td class="vote-count" style="color: #e74a3b;">{{ c.results_no }}</td>
+                    <td class="vote-count" style="color: #e74a3b;">{{ c.votes_against }}</td>
                 </tr>
                 {% else %}
                 <tr>
                     <td>
                         <div style="margin-bottom: 5px;">
-                            {% if c.cont_profile %}
-                                <img src="{{ DOCUMENT_ROOT }}/media/uploadedprofile/{{ c.cont_profile }}" class="candidate-img">
+                            {% if c.profile_image %}
+                                <img src="{{ DOCUMENT_ROOT }}/media/uploadedprofile/{{ c.profile_image }}" class="candidate-img">
                             {% else %}
-                                <div class="candidate-initials">{{ c.cont_fname|slice(0, 1) }}{{ c.cont_lname|slice(0, 1) }}</div>
+                                <div class="candidate-initials">{{ c.first_name|slice(0, 1) }}{{ c.last_name|slice(0, 1) }}</div>
                             {% endif %}
                             <div class="voter-name-container">
-                                <div class="voter-name">{{ c.cont_fname }} {{ c.cont_lname }}</div>
+                                <div class="voter-name">{{ c.first_name }} {{ c.last_name }}</div>
                             </div>
                         </div>
                         <div class="progress-bar">
-                            <div class="progress-fill" style="width: {{ total_votes_cast > 0 ? (c.results / total_votes_cast * 100) : 0 }}%;"></div>
+                            <div class="progress-fill" style="width: {{ total_votes_cast > 0 ? (c.votes_for / total_votes_cast * 100) : 0 }}%;"></div>
                         </div>
                     </td>
                     <td style="text-align: center;">{{ c.contestant_ballot_number }}</td>
-                    <td class="vote-count">{{ c.results }}</td>
+                    <td class="vote-count">{{ c.votes_for }}</td>
                 </tr>
                 {% endif %}
                 {% endfor %}

@@ -41,10 +41,21 @@
     }
 
     .glass-nav {
-        background: var(--light-bg) !important;
+        background: rgba(253, 252, 245, 0.8) !important;
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
         border-bottom: 1px solid var(--border-color);
         transition: all 0.3s ease;
-        padding: 1.25rem 0;
+        padding: 1rem 0;
+    }
+
+    .brand-icon-wrapper {
+        width: 42px;
+        height: 42px;
+        background: var(--dark-accent);
+        color: var(--primary-accent);
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(29, 61, 55, 0.15);
     }
 
     .brand-text {
@@ -135,12 +146,16 @@
     <nav class="navbar navbar-expand-lg glass-nav fixed-top py-3">
         <div class="container">
             <a class="navbar-brand d-flex align-items-center text-decoration-none" href="{{ PROOT }}">
-                <span class="material-symbols-outlined text-dark me-2 fs-3">inventory_2</span>
-                <span class="h4 mb-0 brand-text fw-bold">Puu<span class="text-success" style="color: #4ade80 !important;">Bu</span></span>
+                <div class="brand-icon-wrapper me-2 d-flex align-items-center justify-content-center">
+                    <span class="material-symbols-outlined fs-3">shield_lock</span>
+                </div>
+                <span class="h4 mb-0 brand-text fw-bold text-uppercase" style="letter-spacing: -1px;">KOKURO<span style="color: #a3e635 !important;">MOTIE</span></span>
             </a>
-            <div class="ms-auto">
-                <a href="{{ PROOT }}admin/signin?token={{ ADMIN_TOKEN }}" class="btn btn-outline-dark border-dark border-opacity-25 rounded-pill px-4 fw-bold small text-decoration-none transition-all">
-                    Organizer Portal
+            <div class="ms-auto d-flex align-items-center gap-4">
+                <a href="#features" class="nav-link fw-bold text-dark d-none d-md-block small text-uppercase tracking-wider opacity-75">Intelligence</a>
+                <a href="{{ PROOT }}admin/signin?token={{ ADMIN_TOKEN }}" class="btn btn-dark rounded-pill px-4 py-2 fw-bold small shadow-sm d-flex align-items-center gap-2">
+                    <span class="material-symbols-outlined fs-6">security</span>
+                    Intelligence Portal
                 </a>
             </div>
         </div>

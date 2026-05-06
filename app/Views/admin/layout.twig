@@ -24,38 +24,40 @@
 <body>
     <!-- Sidebar -->
     <aside class="aside">
-        <a class="navbar-brand d-flex align-items-center mb-5" href="{{ PROOT }}admin">
-            <span class="material-symbols-outlined text-primary me-2 fs-3">inventory_2</span> Puu<span class="text-primary">Bu</span>
+        <a class="navbar-brand" href="{{ PROOT }}admin">
+            <span class="material-symbols-outlined me-2 fs-2">how_to_vote</span> KOKURO<span>MOTIE</span>
         </a>
         
         <nav class="navbar-vertical">
-            <div class="sidebar-heading">Main Menu</div>
+            <div class="sidebar-heading">Electoral Intelligence</div>
             <a class="nav-link {% if active_page == 'dashboard' %}active{% endif %}" href="{{ PROOT }}admin">
-                <span class="material-symbols-outlined">space_dashboard</span> Dashboard
+                <span class="material-symbols-outlined">analytics</span> Dashboard
             </a>
             <a class="nav-link {% if active_page == 'elections' %}active{% endif %}" href="{{ PROOT }}admin/elections">
-                <span class="material-symbols-outlined">how_to_vote</span> Elections
+                <span class="material-symbols-outlined">event_note</span> Elections
+            </a>
+            
+            <div class="sidebar-heading">Registry Management</div>
+            <a class="nav-link {% if active_page == 'voters' %}active{% endif %}" href="{{ PROOT }}admin/voters">
+                <span class="material-symbols-outlined">badge</span> Voters Registrar
             </a>
             <a class="nav-link {% if active_page == 'positions' %}active{% endif %}" href="{{ PROOT }}admin/positions">
-                <span class="material-symbols-outlined">move_selection_up</span> Positions
+                <span class="material-symbols-outlined">account_tree</span> Positions
             </a>
             <a class="nav-link {% if active_page == 'contestants' %}active{% endif %}" href="{{ PROOT }}admin/contestants">
-                <span class="material-symbols-outlined">groups_2</span> Contestants
-            </a>
-            <a class="nav-link {% if active_page == 'voters' %}active{% endif %}" href="{{ PROOT }}admin/voters">
-                <span class="material-symbols-outlined">crowdsource</span> Voters
+                <span class="material-symbols-outlined">person_pin</span> Contestants
             </a>
             
             {% if admin.role == 'super_admin' %}
-            <div class="sidebar-heading">System Management</div>
+            <div class="sidebar-heading">System Core</div>
             <a class="nav-link {% if active_page == 'organizers' %}active{% endif %}" href="{{ PROOT }}admin/organizers">
                 <span class="material-symbols-outlined">admin_panel_settings</span> Organizers
             </a>
             {% endif %}
 
-            <div class="sidebar-heading">Account</div>
+            <div class="sidebar-heading">Profile</div>
             <a class="nav-link {% if active_page == 'settings' %}active{% endif %}" href="{{ PROOT }}admin/settings">
-                <span class="material-symbols-outlined">settings</span> Settings
+                <span class="material-symbols-outlined">settings_suggest</span> Settings
             </a>
             <a class="nav-link" href="{{ PROOT }}admin/auth/logout">
                 <span class="material-symbols-outlined">logout</span> Sign out

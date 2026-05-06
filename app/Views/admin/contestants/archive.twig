@@ -5,64 +5,73 @@
 {% block title %}Archived Contestants • Kokuromotie Admin{% endblock %}
 
 {% block content %}
-    <div class="row align-items-center mb-7">
-        <div class="col">
+    <div class="page-header d-flex flex-column flex-md-row justify-content-between align-items-md-center">
+        <div>
             <nav aria-label="breadcrumb">
-                <ol class="breadcrumb mb-1">
-                    <li class="breadcrumb-item"><a class="text-body-secondary" href="{{ PROOT }}admin">Admin</a></li>
-                    <li class="breadcrumb-item"><a class="text-body-secondary" href="{{ PROOT }}admin/contestants">Contestants</a></li>
-                    <li class="breadcrumb-item active" aria-current="page">Archive</li>
+                <ol class="breadcrumb mb-2">
+                    <li class="breadcrumb-item"><a href="{{ PROOT }}admin">Intelligence</a></li>
+                    <li class="breadcrumb-item"><a href="{{ PROOT }}admin/contestants">Registry</a></li>
+                    <li class="breadcrumb-item active">Archive</li>
                 </ol>
             </nav>
-            <h1 class="fs-4 mb-0">Contestant Archive</h1>
+            <h1>Contestant Archive</h1>
+            <p>Review and restore candidates who were removed from active registry.</p>
+        </div>
+        <div class="d-flex gap-2 mt-3 mt-md-0">
+            <a href="{{ PROOT }}admin/contestants" class="btn btn-light shadow-sm">
+                <span class="material-symbols-outlined fs-6">arrow_back</span> Back to Registry
+            </a>
         </div>
     </div>
 
-    <div class="card mb-6">
-        <div class="card-header">
-            <h3 class="fs-6 mb-0">Soft-Deleted Contestants</h3>
+    <div class="card border-0 shadow-sm overflow-hidden">
+        <div class="card-header border-0 pb-3">
+            <h5 class="fw-bold mb-0">Soft-Deleted Profiles</h5>
         </div>
-        <div class="table-responsive">
-            <table class="table align-middle mb-0">
+        <div class="table-container">
+            <table class="table align-middle" id="archiveTable">
                 <thead>
                     <tr>
-                        <th class="fs-sm">Contestant</th>
-                        <th class="fs-sm">Ballot #</th>
-                        <th class="fs-sm">Position</th>
-                        <th class="fs-sm text-end">Actions</th>
+                        <th class="ps-4">Candidate Profile</th>
+                        <th>Ballot No.</th>
+                        <th>Position</th>
+                        <th class="text-end pe-4">Restoration</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for cont in contestants %}
                         <tr>
-                            <td>
+                            <td class="ps-4">
                                 <div class="d-flex align-items-center">
-                                    <div class="avatar avatar-sm me-3">
-                                        {% if cont.profile_image %}
-                                            <img class="avatar-img rounded-circle" src="{{ PROOT }}media/uploadedprofile/{{ cont.profile_image }}" alt="{{ cont.first_name }}">
+                                    <div class="position-relative me-3">
+                                        {% if cont.profile_image and cont.profile_image != '' %}
+                                            <img class="rounded-circle border shadow-sm" src="{{ PROOT }}media/uploadedprofile/{{ cont.profile_image }}" width="40" height="40" alt="{{ cont.first_name }}" style="object-fit: cover;">
                                         {% else %}
-                                            <div class="avatar-initials rounded-circle" style="width: 32px; height: 32px; font-size: 0.7rem;">
-                                                {{ cont.first_name|first }}{{ cont.last_name|first }}
+                                            <div class="stat-icon bg-light text-muted rounded-circle fw-bold" style="width: 40px; height: 40px; font-size: 0.8rem; border: 1px solid #e2e8f0;">
+                                                {{ cont.first_name|first|upper }}{{ cont.last_name|first|upper }}
                                             </div>
                                         {% endif %}
                                     </div>
                                     <div>
-                                        <div class="fw-bold text-heading">{{ cont.first_name }} {{ cont.last_name }}</div>
-                                        <div class="fs-sm text-muted">{{ cont.title }}</div>
+                                        <div class="fw-bold text-dark fs-6">{{ cont.first_name }} {{ cont.last_name }}</div>
+                                        <div class="text-muted extra-small">{{ cont.title }}</div>
                                     </div>
                                 </div>
                             </td>
-                            <td><span class="badge bg-secondary">{{ cont.contestant_ballot_number }}</span></td>
-                            <td>{{ cont.position_name }}</td>
-                            <td class="text-end">
-                                <a href="{{ PROOT }}admin/contestants/toggle-delete/{{ cont.uuid }}/no" class="btn btn-sm btn-success">
-                                    <i class="bi bi-arrow-counterclockwise"></i> Restore
+                            <td><span class="badge bg-light text-muted border px-3">#{{ cont.contestant_ballot_number }}</span></td>
+                            <td><div class="fw-medium">{{ cont.position_name }}</div></td>
+                            <td class="text-end pe-4">
+                                <a href="{{ PROOT }}admin/contestants/toggle-delete/{{ cont.uuid }}/no" class="btn btn-primary btn-sm px-3 shadow-sm">
+                                    <span class="material-symbols-outlined fs-6">settings_backup_restore</span> Restore
                                 </a>
                             </td>
                         </tr>
                     {% else %}
                         <tr>
-                            <td colspan="4" class="text-center py-5">No archived contestants found.</td>
+                            <td colspan="4" class="text-center py-5 text-muted">
+                                <span class="material-symbols-outlined fs-1 opacity-25">inventory_2</span>
+                                <p class="mt-2">The archive is currently empty.</p>
+                            </td>
                         </tr>
                     {% endfor %}
                 </tbody>

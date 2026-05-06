@@ -5,15 +5,15 @@
 {% block title %}Voters Registrar • Kokuromotie{% endblock %}
 
 {% block content %}
-    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-5">
+    <div class="page-header d-flex flex-column flex-md-row justify-content-between align-items-md-center">
         <div>
-            <h1 class="h3 fw-bold mb-1">Voters Registrar</h1>
-            <p class="text-muted small mb-0">Maintain the identity database for electoral eligibility.</p>
+            <h1>Voters Registrar</h1>
+            <p>Maintain the identity database for electoral eligibility.</p>
         </div>
         <div class="d-flex gap-2 mt-3 mt-md-0">
             <div class="dropdown">
-                <button class="btn btn-light dropdown-toggle d-flex align-items-center" type="button" data-bs-toggle="dropdown">
-                    <span class="material-symbols-outlined me-1 fs-6">construction</span> Registry Tools
+                <button class="btn btn-light dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                    <span class="material-symbols-outlined fs-6">construction</span> Registry Tools
                 </button>
                 <ul class="dropdown-menu dropdown-menu-end shadow-lg border-0 py-2">
                     <li><a class="dropdown-item py-2 d-flex align-items-center" href="#" data-bs-toggle="modal" data-bs-target="#duplicateAuditModal"><span class="material-symbols-outlined me-2 text-muted fs-6">layers</span> Identify Duplicates</a></li>
@@ -22,23 +22,23 @@
                     <li><a class="dropdown-item py-2 text-danger d-flex align-items-center" href="#" data-bs-toggle="modal" data-bs-target="#wipeRegistryModal"><span class="material-symbols-outlined me-2 fs-6">warning</span> Wipe Registry</a></li>
                 </ul>
             </div>
-            <a href="{{ PROOT }}admin/voters/add" class="btn btn-indigo shadow-sm d-flex align-items-center">
-                <span class="material-symbols-outlined me-1 fs-6">person_add</span> Register Voter
+            <a href="{{ PROOT }}admin/voters/add" class="btn btn-primary shadow-sm">
+                <span class="material-symbols-outlined fs-6">person_add</span> Register Voter
             </a>
         </div>
     </div>
 
     <!-- Voters Registry -->
     <div class="card border-0 shadow-sm overflow-hidden">
-        <div class="card-header bg-white border-bottom pt-4 px-4 pb-3">
-            <div class="row align-items-center g-3">
+        <div class="card-header border-0 pb-3">
+            <div class="row align-items-center g-3 w-100">
                 <div class="col-md-auto">
                     <h5 class="fw-bold mb-0">Identity Registry</h5>
                 </div>
                 <div class="col-md-4 ms-md-auto">
                     <div class="input-group">
                         <span class="input-group-text bg-light border-0"><span class="material-symbols-outlined fs-6 text-muted">search</span></span>
-                        <input type="text" id="voterSearch" class="form-control bg-light border-0" placeholder="Search names, IDs, emails...">
+                        <input type="text" id="voterSearch" class="form-control bg-light border-0" placeholder="Search identities...">
                     </div>
                 </div>
             </div>
@@ -46,7 +46,7 @@
         
         <form action="{{ PROOT }}admin/voters/bulk-delete" method="POST" id="bulkDeleteForm">
             {{ csrf_field()|raw }}
-            <div class="table-responsive">
+            <div class="table-container">
                 <table class="table align-middle" id="votersTable">
                     <thead>
                         <tr>
@@ -67,7 +67,7 @@
                                 </td>
                                 <td>
                                     <div class="d-flex align-items-center">
-                                        <div class="avatar avatar-sm me-3 d-flex align-items-center justify-content-center text-indigo fw-bold bg-indigo-subtle rounded-circle" style="width: 38px; height: 38px;">
+                                        <div class="stat-icon me-3 bg-indigo-subtle text-indigo rounded-circle" style="width: 42px; height: 42px; font-size: 0.875rem;">
                                             {{ voter.first_name|slice(0, 1) }}{{ voter.last_name|slice(0, 1) }}
                                         </div>
                                         <div>
@@ -83,35 +83,38 @@
                                                         <span class="material-symbols-outlined fs-6 me-1">phone</span> {{ voter.phone }}
                                                     </div>
                                                 {% endif %}
-                                                <span class="badge {{ voter.gender == 'male' ? 'bg-primary-subtle text-primary' : 'bg-danger-subtle text-danger' }} extra-small px-2 py-0">
-                                                    <span class="material-symbols-outlined" style="font-size: 10px;">{{ voter.gender }}</span>
+                                                <span class="badge {{ voter.gender == 'male' ? 'bg-primary-subtle text-primary' : 'bg-danger-subtle text-danger' }} extra-small px-2 py-0" style="font-size: 9px;">
+                                                    {{ voter.gender|upper }}
                                                 </span>
                                             </div>
                                         </div>
                                     </div>
                                 </td>
                                 <td>
-                                    <span class="badge bg-light text-primary fw-mono border">{{ voter.voter_id }}</span>
+                                    <span class="badge bg-light text-primary border fw-bold">{{ voter.voter_id }}</span>
                                 </td>
                                 <td class="text-muted small">
-                                    <span class="material-symbols-outlined me-1 fs-6 align-middle">inventory_2</span> {{ voter.title }}
+                                    <div class="d-flex align-items-center">
+                                        <span class="material-symbols-outlined me-1 fs-6">event_note</span>
+                                        {{ voter.title }}
+                                    </div>
                                 </td>
                                 <td class="text-end pe-4">
                                     <div class="d-flex justify-content-end gap-2">
                                         {% if voter.election_status == 0 %}
                                             {% if voter.allow_direct_link %}
-                                                <button type="button" class="btn btn-sm btn-white border text-indigo rounded-3 shadow-sm d-flex align-items-center btn-copy-link" data-token="{{ voter.voting_token }}" title="Copy Direct Voting Link">
+                                                <button type="button" class="btn btn-light btn-sm px-2 btn-copy-link" data-token="{{ voter.voting_token }}" title="Copy Link">
                                                     <span class="material-symbols-outlined fs-6">link</span>
                                                 </button>
                                             {% endif %}
-                                            <a href="{{ PROOT }}admin/voters/edit/{{ voter.uuid }}" class="btn btn-sm btn-white border rounded-3 shadow-sm d-flex align-items-center">
+                                            <a href="{{ PROOT }}admin/voters/edit/{{ voter.uuid }}" class="btn btn-light btn-sm px-2">
                                                 <span class="material-symbols-outlined fs-6">edit</span>
                                             </a>
-                                            <a href="{{ PROOT }}admin/voters/delete/{{ voter.uuid }}" class="btn btn-sm btn-white border text-danger rounded-3 shadow-sm d-flex align-items-center" onclick="return confirm('Delete this voter?')">
+                                            <a href="{{ PROOT }}admin/voters/delete/{{ voter.uuid }}" class="btn btn-light btn-sm px-2 text-danger" onclick="return confirm('Delete voter?')">
                                                 <span class="material-symbols-outlined fs-6">delete</span>
                                             </a>
                                         {% else %}
-                                            <span class="badge bg-light text-muted border px-3 rounded-pill">Session Locked</span>
+                                            <span class="badge bg-light text-muted border px-3">Session Locked</span>
                                         {% endif %}
                                     </div>
                                 </td>
@@ -119,8 +122,8 @@
                         {% else %}
                             <tr>
                                 <td colspan="5" class="text-center py-5 text-muted">
-                                    <div class="mb-2"><span class="material-symbols-outlined fs-1 opacity-25">group</span></div>
-                                    No identities found in the registrar.
+                                    <span class="material-symbols-outlined fs-1 opacity-25">group_off</span>
+                                    <p class="mt-2">No identities found in the registrar.</p>
                                 </td>
                             </tr>
                         {% endfor %}
@@ -228,8 +231,7 @@
 <style>
     .extra-small { font-size: 0.75rem; }
     .fw-mono { font-family: 'JetBrains Mono', 'Fira Code', monospace; }
-    .btn-white { background: #fff; }
-    .btn-white:hover { background: #f8fafc; color: var(--admin-primary); }
+    .btn-light:hover { background: var(--admin-bg); border-color: #cbd5e1; color: var(--admin-primary); }
 </style>
 {% endblock %}
 
@@ -284,11 +286,11 @@
             const btn = $(this);
             const originalIcon = btn.find('.material-symbols-outlined').text();
             btn.find('.material-symbols-outlined').text('check');
-            btn.addClass('text-success').removeClass('text-indigo');
+            btn.addClass('text-success');
             
             setTimeout(() => {
                 btn.find('.material-symbols-outlined').text(originalIcon);
-                btn.removeClass('text-success').addClass('text-indigo');
+                btn.removeClass('text-success');
             }, 2000);
         });
     });

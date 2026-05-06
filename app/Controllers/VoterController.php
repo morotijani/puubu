@@ -298,11 +298,19 @@ class VoterController
         }
 
         $voter_row = $voter_result[0];
+        $now = date('Y-m-d H:i:s');
+        
+        $has_started = ($voter_row['election_status'] == 1 && $now >= $voter_row['starts_at']);
+        $has_ended = ($voter_row['election_status'] == 2 || $now > $voter_row['ends_at']);
+        $not_started_yet = ($voter_row['election_status'] == 1 && $now < $voter_row['starts_at']);
 
         echo $this->twig->render('voter/dashboard.twig', [
             'voter' => $voter_row,
             'started_election' => $started_election,
-            'has_voted' => $has_voted
+            'has_voted' => $has_voted,
+            'has_started' => $has_started,
+            'has_ended' => $has_ended,
+            'not_started_yet' => $not_started_yet
         ]);
     }
 
@@ -317,6 +325,12 @@ class VoterController
         $voter_row = $voter_result[0];
         $now = date('Y-m-d H:i:s');
 
+        // Block if session not started
+        if ($voter_row['election_status'] == 0 || ($voter_row['starts_at'] && $now < $voter_row['starts_at'])) {
+            $_SESSION['flash_error'] = "The voting session has not started yet. Please check the countdown on your dashboard.";
+            redirect(PROOT . 'votingon');
+        }
+
         // Block if already voted
         $checkVoted = $conn->prepare("SELECT COUNT(*) FROM voter_participation WHERE voter_id = ? AND election_uuid = ?");
         $checkVoted->execute([$voter_row['uuid'], $voter_row['election_uuid']]);
@@ -324,7 +338,7 @@ class VoterController
             redirect(PROOT . 'votingon');
         }
 
-        if ($voter_row['election_status'] == 2 || $now > $voter_row['ends_at']) {
+        if ($voter_row['election_status'] == 2 || ($voter_row['ends_at'] && $now > $voter_row['ends_at'])) {
             redirect(PROOT . 'votingon');
         }
 
@@ -383,14 +397,17 @@ class VoterController
 
         $now = date('Y-m-d H:i:s');
         if ($voter_row['election_status'] != 1 || $election_uuid != $voter_row['election_uuid']) {
-            die("Election is not active or invalid.");
+            $_SESSION['flash_error'] = "The electoral session is not currently active for this identity.";
+            redirect(PROOT . 'votingon');
         }
 
         if ($now < $voter_row['starts_at']) {
-            die("Unauthorized: The voting session has not started yet.");
+            $_SESSION['flash_error'] = "Unauthorized: The voting session has not started yet. Synchronization error detected.";
+            redirect(PROOT . 'votingon');
         }
         if ($now > $voter_row['ends_at']) {
-            die("Unauthorized: The voting session has ended.");
+            $_SESSION['flash_error'] = "Unauthorized: The voting session has concluded.";
+            redirect(PROOT . 'votingon');
         }
 
         // CRITICAL: Final double-check before recording votes
@@ -564,7 +581,7 @@ class VoterController
     {
         global $conn;
         if (isset($_SESSION['voter_login_details_id'])) {
-            $stmt = $conn->prepare("UPDATE voter_security_logs SET logout_at = NOW(), status = 0 WHERE uuid = ?");
+            $stmt = $conn->prepare("UPDATE voter_security_logs SET logout_at = NOW(), voter_login_details_status = 0 WHERE uuid = ?");
             $stmt->execute([$_SESSION['voter_login_details_id']]);
         }
         

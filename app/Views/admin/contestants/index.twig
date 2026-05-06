@@ -5,30 +5,30 @@
 {% block title %}Contestants Registry • Kokuromotie{% endblock %}
 
 {% block content %}
-    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-5">
+    <div class="page-header d-flex flex-column flex-md-row justify-content-between align-items-md-center">
         <div>
-            <h1 class="h3 fw-bold mb-1">Contestants Registry</h1>
-            <p class="text-muted small mb-0">Manage candidates and their associated electoral campaigns.</p>
+            <h1>Contestants Registry</h1>
+            <p>Manage candidates and their associated electoral campaigns.</p>
         </div>
         <div class="d-flex gap-2 mt-3 mt-md-0">
-            <a href="{{ PROOT }}admin/contestants/archive" class="btn btn-light shadow-sm d-flex align-items-center">
-                <span class="material-symbols-outlined me-1 fs-6">archive</span> Archive
+            <a href="{{ PROOT }}admin/contestants/archive" class="btn btn-light shadow-sm">
+                <span class="material-symbols-outlined fs-6">archive</span> View Archive
             </a>
-            <a href="{{ PROOT }}admin/contestants/add" class="btn btn-indigo shadow-sm d-flex align-items-center">
-                <span class="material-symbols-outlined me-1 fs-6">person_add</span> Add Candidate
+            <a href="{{ PROOT }}admin/contestants/add" class="btn btn-primary shadow-sm">
+                <span class="material-symbols-outlined fs-6">person_add</span> Add Candidate
             </a>
         </div>
     </div>
 
     <!-- Contestants Registry -->
     <div class="card border-0 shadow-sm overflow-hidden">
-        <div class="card-header bg-white border-bottom pt-4 px-4 pb-3">
-            <div class="row align-items-center g-3">
+        <div class="card-header border-0 pb-3">
+            <div class="row align-items-center g-3 w-100">
                 <div class="col-md-auto">
                     <h5 class="fw-bold mb-0">Active Candidates</h5>
                 </div>
                 <div class="col-md-3 ms-md-auto">
-                    <select id="electionFilter" class="form-select form-select-sm bg-light border-0 shadow-none">
+                    <select id="electionFilter" class="form-select bg-light border-0">
                         <option value="all">All Elections</option>
                         {% for election in elections %}
                             <option value="{{ election.uuid }}">{{ election.title }}</option>
@@ -36,14 +36,14 @@
                     </select>
                 </div>
                 <div class="col-md-4">
-                    <div class="input-group input-group-sm">
+                    <div class="input-group">
                         <span class="input-group-text bg-light border-0"><span class="material-symbols-outlined fs-6 text-muted">search</span></span>
                         <input type="text" id="contestantSearch" class="form-control bg-light border-0" placeholder="Search by name, office...">
                     </div>
                 </div>
             </div>
         </div>
-        <div class="table-responsive">
+        <div class="table-container">
             <table class="table align-middle" id="contestantsTable">
                 <thead>
                     <tr>
@@ -59,14 +59,14 @@
                             <td class="ps-4">
                                 <div class="d-flex align-items-center">
                                     <div class="position-relative me-3">
-                                        {% if cont.profile_image %}
-                                            <img class="rounded-circle border shadow-sm" src="{{ PROOT }}media/uploadedprofile/{{ cont.profile_image }}" width="42" height="42" alt="{{ cont.first_name }}">
+                                        {% if cont.profile_image and cont.profile_image != '' %}
+                                            <img class="rounded-circle border shadow-sm" src="{{ PROOT }}media/uploadedprofile/{{ cont.profile_image }}" width="45" height="45" alt="{{ cont.first_name }}" style="object-fit: cover;">
                                         {% else %}
-                                            <div class="avatar-initials rounded-circle border shadow-sm" style="width: 42px; height: 42px; font-size: 0.8rem;">
-                                                {{ cont.first_name|first }}{{ cont.last_name|first }}
+                                            <div class="stat-icon bg-primary text-white rounded-circle fw-bold shadow-sm" style="width: 45px; height: 45px; font-size: 0.9rem; border: 2px solid #fff;">
+                                                {{ cont.first_name|first|upper }}{{ cont.last_name|first|upper }}
                                             </div>
                                         {% endif %}
-                                        <span class="position-absolute bottom-0 end-0 p-1 bg-success border border-white rounded-circle"></span>
+                                        <span class="position-absolute bottom-0 end-0 p-1 bg-success border border-white rounded-circle" style="width: 12px; height: 12px;"></span>
                                     </div>
                                     <div>
                                         <div class="fw-bold text-dark fs-6">{{ cont.first_name }} {{ cont.last_name }}</div>
@@ -77,22 +77,22 @@
                                 </div>
                             </td>
                             <td>
-                                <span class="badge bg-indigo-subtle text-indigo px-3 py-1 border border-indigo-subtle fw-bold">{{ cont.contestant_ballot_number }}</span>
+                                <span class="badge bg-light text-primary border fw-bold px-3">#{{ cont.contestant_ballot_number }}</span>
                             </td>
                             <td>
-                                <div class="fw-medium text-dark">{{ cont.position_name }}</div>
+                                <div class="fw-bold text-dark">{{ cont.position_name }}</div>
                             </td>
                             <td class="text-end pe-4">
                                 <div class="d-flex justify-content-end gap-2">
                                     {% if cont.status == 0 %}
-                                        <a href="{{ PROOT }}admin/contestants/edit/{{ cont.uuid }}" class="btn btn-sm btn-white border rounded-3 shadow-sm d-flex align-items-center">
-                                            <span class="material-symbols-outlined fs-6 text-muted">edit</span>
+                                        <a href="{{ PROOT }}admin/contestants/edit/{{ cont.uuid }}" class="btn btn-light btn-sm px-2">
+                                            <span class="material-symbols-outlined fs-6">edit</span>
                                         </a>
-                                        <a href="{{ PROOT }}admin/contestants/toggle-delete/{{ cont.uuid }}/yes" class="btn btn-sm btn-white border text-danger rounded-3 shadow-sm d-flex align-items-center" onclick="return confirm('Move this candidate to the archive?')">
+                                        <a href="{{ PROOT }}admin/contestants/toggle-delete/{{ cont.uuid }}/yes" class="btn btn-light btn-sm px-2 text-danger" onclick="return confirm('Archive candidate?')">
                                             <span class="material-symbols-outlined fs-6">archive</span>
                                         </a>
                                     {% else %}
-                                        <span class="badge bg-light text-muted border px-3 rounded-pill">Session Locked</span>
+                                        <span class="badge badge-secondary px-3">Registry Locked</span>
                                     {% endif %}
                                 </div>
                             </td>
@@ -100,8 +100,8 @@
                     {% else %}
                         <tr>
                             <td colspan="4" class="text-center py-5 text-muted">
-                                <div class="mb-2"><span class="material-symbols-outlined fs-1 opacity-25">badge</span></div>
-                                No active candidates found in the registry.
+                                <span class="material-symbols-outlined fs-1 opacity-25">badge</span>
+                                <p class="mt-2">No active candidates found in the registry.</p>
                             </td>
                         </tr>
                     {% endfor %}

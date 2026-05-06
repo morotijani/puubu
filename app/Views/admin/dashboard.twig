@@ -5,181 +5,144 @@
 {% block title %}Admin Dashboard • Kokuromotie{% endblock %}
 
 {% block content %}
-    <div class="d-flex justify-content-between align-items-center mb-5">
+    <div class="page-header d-flex justify-content-between align-items-center">
         <div>
-            <h1 class="h3 fw-bold mb-1">Welcome back, {{ admin.first_name }}</h1>
-            <p class="text-muted small mb-0">Real-time overview of your electoral infrastructure.</p>
+            <h1>Dashboard</h1>
+            <p>Electoral intelligence and infrastructure overview.</p>
         </div>
         <div class="d-none d-md-block">
-            <div class="px-4 py-2 bg-white border rounded-pill shadow-sm small fw-bold text-indigo d-flex align-items-center">
-                <span class="material-symbols-outlined me-2 fs-5">schedule</span> {{ "now"|date("l, F j") }}
+            <div class="btn btn-light shadow-sm">
+                <span class="material-symbols-outlined fs-5">calendar_today</span> {{ "now"|date("l, F j, Y") }}
             </div>
         </div>
     </div>
 
-    <!-- Enhanced Stats Grid -->
+    <!-- Stats Intelligence Grid -->
     <div class="row g-4 mb-5">
         {% if admin.role == 'super_admin' %}
             <div class="col-12 col-md-6">
-                <div class="card border-0 shadow-sm overflow-hidden animate-up">
-                    <div class="card-body p-4">
-                        <div class="d-flex justify-content-between align-items-start">
-                            <div>
-                                <p class="text-muted small fw-bold text-uppercase tracking-wider mb-1">Total Organizers</p>
-                                <h2 class="fw-bold mb-0">{{ stats.total_organizers }}</h2>
-                                <p class="text-muted small mt-2 mb-0">Registered clients</p>
-                            </div>
-                            <div class="text-indigo p-3">
-                                <span class="material-symbols-outlined fs-2">account_tree</span>
-                            </div>
-                        </div>
+                <div class="card stat-card">
+                    <div class="stat-info">
+                        <h4>Total Organizers</h4>
+                        <h2>{{ stats.total_organizers }}</h2>
+                    </div>
+                    <div class="stat-icon" style="background-color: var(--admin-bg);">
+                        <span class="material-symbols-outlined">corporate_fare</span>
                     </div>
                 </div>
             </div>
 
             <div class="col-12 col-md-6">
-                <div class="card border-0 shadow-sm overflow-hidden animate-up">
-                    <div class="card-body p-4">
-                        <div class="d-flex justify-content-between align-items-start">
-                            <div>
-                                <p class="text-muted small fw-bold text-uppercase tracking-wider mb-1">Total Elections</p>
-                                <h2 class="fw-bold mb-0">{{ stats.total_elections }}</h2>
-                                <span class="badge bg-success bg-opacity-10 text-success mt-2">
-                                    <span class="material-symbols-outlined fs-6 me-1">insights</span> Global Scale
-                                </span>
-                            </div>
-                            <div class="text-indigo p-3">
-                                <span class="material-symbols-outlined fs-2">inventory_2</span>
-                            </div>
-                        </div>
+                <div class="card stat-card">
+                    <div class="stat-info">
+                        <h4>Global Elections</h4>
+                        <h2>{{ stats.total_elections }}</h2>
+                    </div>
+                    <div class="stat-icon" style="background-color: var(--admin-bg);">
+                        <span class="material-symbols-outlined">public</span>
                     </div>
                 </div>
             </div>
         {% else %}
             <div class="col-12 col-md-6 col-xl-3">
-                <div class="card border-0 shadow-sm overflow-hidden animate-up">
-                    <div class="card-body p-4">
-                        <div class="d-flex justify-content-between align-items-start">
-                            <div>
-                                <p class="text-muted small fw-bold text-uppercase tracking-wider mb-1">Total Elections</p>
-                                <h2 class="fw-bold mb-0">{{ stats.total_elections }}</h2>
-                                <span class="badge bg-success bg-opacity-10 text-success mt-2">
-                                    <span class="material-symbols-outlined fs-6 me-1">insights</span> Live Tracking
-                                </span>
-                            </div>
-                            <div class="text-indigo p-3">
-                                <span class="material-symbols-outlined fs-2">inventory_2</span>
-                            </div>
-                        </div>
+                <div class="card stat-card">
+                    <div class="stat-info">
+                        <h4>My Elections</h4>
+                        <h2>{{ stats.total_elections }}</h2>
+                    </div>
+                    <div class="stat-icon" style="background-color: var(--admin-bg);">
+                        <span class="material-symbols-outlined">event_note</span>
                     </div>
                 </div>
             </div>
 
             <div class="col-12 col-md-6 col-xl-3">
-                <div class="card border-0 shadow-sm overflow-hidden animate-up">
-                    <div class="card-body p-4">
-                        <div class="d-flex justify-content-between align-items-start">
-                            <div>
-                                <p class="text-muted small fw-bold text-uppercase tracking-wider mb-1">Total Voters</p>
-                                <h2 class="fw-bold mb-0">{{ stats.total_voters }}</h2>
-                                <p class="text-muted small mt-2 mb-0">Identity verified</p>
-                            </div>
-                            <div class="text-primary p-3">
-                                <span class="material-symbols-outlined fs-2">group</span>
-                            </div>
-                        </div>
+                <div class="card stat-card">
+                    <div class="stat-info">
+                        <h4>Total Voters</h4>
+                        <h2>{{ stats.total_voters }}</h2>
+                    </div>
+                    <div class="stat-icon" style="background-color: var(--admin-bg);">
+                        <span class="material-symbols-outlined">badge</span>
                     </div>
                 </div>
             </div>
-        {% endif %}
 
-        {% if admin.role != 'super_admin' %}
-        <div class="col-12 col-md-6 col-xl-3">
-            <div class="card border-0 shadow-sm overflow-hidden animate-up">
-                <div class="card-body p-4">
-                    <div class="d-flex justify-content-between align-items-start">
-                        <div>
-                            <p class="text-muted small fw-bold text-uppercase tracking-wider mb-1">Offices Defined</p>
-                            <h2 class="fw-bold mb-0">{{ stats.total_positions }}</h2>
-                            <p class="text-muted small mt-2 mb-0">Across all sessions</p>
-                        </div>
-                        <div class="text-info p-3">
-                            <span class="material-symbols-outlined fs-2">badge</span>
-                        </div>
+            <div class="col-12 col-md-6 col-xl-3">
+                <div class="card stat-card">
+                    <div class="stat-info">
+                        <h4>Positions</h4>
+                        <h2>{{ stats.total_positions }}</h2>
+                    </div>
+                    <div class="stat-icon" style="background-color: var(--admin-bg);">
+                        <span class="material-symbols-outlined">account_tree</span>
                     </div>
                 </div>
             </div>
-        </div>
-        {% endif %}
-        
-        {% if admin.role != 'super_admin' %}
-        <div class="col-12 col-md-6 col-xl-3">
-            <div class="card border-0 shadow-sm overflow-hidden animate-up">
-                <div class="card-body p-4">
-                    <div class="d-flex justify-content-between align-items-start">
-                        <div>
-                            <p class="text-muted small fw-bold text-uppercase tracking-wider mb-1">Votes Cast</p>
-                            <h2 class="fw-bold mb-0 text-indigo">{{ stats.total_votes_cast|default(0) }}</h2>
-                            <div class="d-flex align-items-center mt-2">
-                                <span class="p-1 bg-warning rounded-circle me-2 animate-pulse"></span>
-                                <span class="extra-small text-warning fw-bold">Live Sync</span>
-                            </div>
-                        </div>
-                        <div class="text-warning p-3">
-                            <span class="material-symbols-outlined fs-2">bolt</span>
-                        </div>
+
+            <div class="col-12 col-md-6 col-xl-3">
+                <div class="card stat-card">
+                    <div class="stat-info">
+                        <h4>Total Participation</h4>
+                        <h2 class="text-indigo">{{ stats.total_votes_cast|default(0) }}</h2>
+                    </div>
+                    <div class="stat-icon bg-indigo-subtle">
+                        <span class="material-symbols-outlined text-indigo">how_to_vote</span>
                     </div>
                 </div>
             </div>
-        </div>
         {% endif %}
     </div>
 
     {% if admin.role == 'super_admin' %}
-    <!-- Organizers Overview for Super Admin -->
-    <div class="card border-0 shadow-sm overflow-hidden mb-5">
-        <div class="card-header bg-white border-bottom pt-4 px-4 pb-3 d-flex justify-content-between align-items-center">
+    <!-- Recent Organizers -->
+    <div class="card border-0 shadow-sm mb-5">
+        <div class="card-header border-0">
             <div>
-                <h5 class="fw-bold mb-0">Recent Organizers</h5>
-                <p class="text-muted extra-small mb-0">Schools and institutions recently registered.</p>
+                <h5>Recent Institutional Registrations</h5>
             </div>
-            <a href="{{ PROOT }}admin/organizers" class="btn btn-white border shadow-sm btn-sm px-3 fw-bold d-flex align-items-center">
-                View All <span class="material-symbols-outlined ms-1 fs-6">arrow_forward</span>
+            <a href="{{ PROOT }}admin/organizers" class="btn btn-light btn-sm">
+                Management <span class="material-symbols-outlined fs-6">chevron_right</span>
             </a>
         </div>
-        <div class="table-responsive">
+        <div class="table-container">
             <table class="table align-middle">
                 <thead>
                     <tr>
-                        <th class="ps-4">Organizer</th>
-                        <th>Email</th>
+                        <th class="ps-4">Institution/Organizer</th>
+                        <th>Email Address</th>
                         <th>Status</th>
-                        <th class="text-end pe-4">Actions</th>
+                        <th class="text-end pe-4">Management</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for org in recent_organizers %}
                         <tr>
                             <td class="ps-4">
-                                <div class="fw-bold text-dark">{{ org.first_name }} {{ org.last_name }}</div>
+                                <div class="d-flex align-items-center">
+                                    <div class="stat-icon me-3" style="width: 40px; height: 40px; font-size: 1rem;">
+                                        {{ org.first_name|slice(0, 1) }}{{ org.last_name|slice(0, 1) }}
+                                    </div>
+                                    <div class="fw-bold">{{ org.first_name }} {{ org.last_name }}</div>
+                                </div>
                             </td>
                             <td>
-                                <a href="mailto:{{ org.email }}" class="text-decoration-none text-primary">{{ org.email }}</a>
+                                <span class="text-muted">{{ org.email }}</span>
                             </td>
                             <td>
-                                <span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-10">Active</span>
+                                <span class="badge badge-success">Verified</span>
                             </td>
                             <td class="text-end pe-4">
-                                <button class="btn btn-sm btn-light border text-danger d-flex align-items-center">
-                                    <span class="material-symbols-outlined me-1 fs-6">lock</span> Suspend
+                                <button class="btn btn-light btn-sm py-1 px-3">
+                                    <span class="material-symbols-outlined fs-6">settings</span>
                                 </button>
                             </td>
                         </tr>
                     {% else %}
                         <tr>
                             <td colspan="4" class="text-center py-5 text-muted">
-                                <div class="mb-2"><span class="material-symbols-outlined fs-1 opacity-25">contact_page</span></div>
-                                No organizers found.
+                                <span class="material-symbols-outlined fs-1 opacity-25">person_off</span>
+                                <p class="mt-2">No organizers registered yet.</p>
                             </td>
                         </tr>
                     {% endfor %}
@@ -189,25 +152,24 @@
     </div>
     {% endif %}
 
-    <!-- Active Elections Section -->
-    <div class="card border-0 shadow-sm overflow-hidden">
-        <div class="card-header bg-white border-bottom pt-4 px-4 pb-3 d-flex justify-content-between align-items-center">
+    <!-- Election Sessions -->
+    <div class="card border-0 shadow-sm">
+        <div class="card-header border-0">
             <div>
-                <h5 class="fw-bold mb-0">{% if admin.role == 'super_admin' %}Global Election Infrastructure{% else %}Active Election Infrastructure{% endif %}</h5>
-                <p class="text-muted extra-small mb-0">Summary of ongoing and upcoming electoral sessions.</p>
+                <h5>Active Electoral Infrastructure</h5>
             </div>
-            <a href="{{ PROOT }}admin/elections" class="btn btn-white border shadow-sm btn-sm px-3 fw-bold d-flex align-items-center">
-                View All <span class="material-symbols-outlined ms-1 fs-6">arrow_forward</span>
+            <a href="{{ PROOT }}admin/elections" class="btn btn-light btn-sm">
+                Full Registry <span class="material-symbols-outlined fs-6">chevron_right</span>
             </a>
         </div>
-        <div class="table-responsive">
+        <div class="table-container">
             <table class="table align-middle">
                 <thead>
                     <tr>
-                        <th class="ps-4">Election Details</th>
+                        <th class="ps-4">Election Overview</th>
                         <th>Status</th>
-                        <th>Engagement</th>
-                        <th class="text-end pe-4">Management</th>
+                        <th>Participation</th>
+                        <th class="text-end pe-4">Action</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -215,40 +177,38 @@
                         <tr>
                             <td class="ps-4">
                                 <div class="d-flex align-items-center">
-                                    <div class="avatar avatar-sm me-3 d-flex align-items-center justify-content-center text-indigo fw-bold bg-indigo-subtle rounded-circle" style="width: 40px; height: 40px;">
-                                        <span class="material-symbols-outlined fs-5">inventory_2</span>
+                                    <div class="stat-icon me-3 bg-light" style="width: 45px; height: 45px; font-size: 1.25rem;">
+                                        <span class="material-symbols-outlined">ballot</span>
                                     </div>
                                     <div>
-                                        <div class="fw-bold text-dark fs-6">{{ election.title }}</div>
-                                        <div class="text-muted extra-small">Ref ID: #{{ election.uuid }}</div>
+                                        <div class="fw-bold fs-6">{{ election.title }}</div>
+                                        <div class="extra-small text-muted">UUID: {{ election.uuid|slice(0, 8) }}...</div>
                                     </div>
                                 </div>
                             </td>
                             <td>
                                 {% if election.status == 1 %}
-                                    <span class="badge bg-success-subtle text-success border border-success-subtle px-3 py-1 d-inline-flex align-items-center">
-                                        <span class="p-1 bg-success rounded-circle me-2 animate-pulse"></span> Running
-                                    </span>
+                                    <span class="badge badge-success">Running</span>
                                 {% elseif election.status == 2 %}
-                                    <span class="badge bg-secondary-subtle text-secondary border border-secondary-subtle px-3 py-1">Completed</span>
+                                    <span class="badge badge-secondary" style="background: #e2e8f0; color: #475569;">Concluded</span>
                                 {% else %}
-                                    <span class="badge bg-warning-subtle text-warning border border-warning-subtle px-3 py-1">Draft</span>
+                                    <span class="badge badge-warning">Draft Session</span>
                                 {% endif %}
                             </td>
                             <td>
-                                <div class="fw-medium text-dark">{{ election.votes_count|default(0) }} <span class="text-muted fw-normal">votes cast</span></div>
+                                <div class="fw-bold">{{ election.votes_count|default(0) }} <span class="text-muted fw-normal">votes cast</span></div>
                             </td>
                             <td class="text-end pe-4">
-                                <a href="{{ PROOT }}admin/reports/{{ election.uuid }}" class="btn btn-sm btn-white border shadow-sm px-3 fw-bold d-inline-flex align-items-center">
-                                    <span class="material-symbols-outlined me-1 text-indigo fs-6">trending_up</span> Reports
+                                <a href="{{ PROOT }}admin/reports/{{ election.uuid }}" class="btn btn-primary btn-sm px-4">
+                                    Intelligence
                                 </a>
                             </td>
                         </tr>
                     {% else %}
                         <tr>
                             <td colspan="4" class="text-center py-5 text-muted">
-                                <div class="mb-2"><span class="material-symbols-outlined fs-1 opacity-25">inbox</span></div>
-                                No active sessions in the system.
+                                <span class="material-symbols-outlined fs-1 opacity-25">inbox</span>
+                                <p class="mt-2">No active sessions found.</p>
                             </td>
                         </tr>
                     {% endfor %}

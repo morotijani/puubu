@@ -5,23 +5,25 @@
 {% block title %}Import Identities • Kokuromotie Admin{% endblock %}
 
 {% block content %}
-    <div class="mb-5">
-        <div class="d-flex align-items-center mb-2">
-            <a href="{{ PROOT }}admin/voters" class="btn btn-sm btn-white border rounded-circle me-3 shadow-sm">
-                <span class="material-symbols-outlined fs-6 pt-1">arrow_back</span>
-            </a>
-            <h1 class="h3 fw-bold mb-0">Import Identities</h1>
+    <div class="page-header d-flex flex-column flex-md-row justify-content-between align-items-md-center">
+        <div>
+            <h1>Import Identities</h1>
+            <p>Bulk register voters using a secure CSV file.</p>
         </div>
-        <p class="text-muted small ps-5">Bulk register voters using a CSV file.</p>
+        <div class="d-flex gap-2 mt-3 mt-md-0">
+            <a href="{{ PROOT }}admin/voters" class="btn btn-light shadow-sm">
+                <span class="material-symbols-outlined fs-6">arrow_back</span> Back to Registrar
+            </a>
+        </div>
     </div>
 
     <div class="row justify-content-center">
-        <div class="col-12 col-xl-10">
+        <div class="col-12">
             <div class="card border-0 shadow-sm overflow-hidden rounded-4">
                 <div class="card-body p-0">
                     <div class="row g-0">
                         <!-- Sidebar Info -->
-                        <div class="col-lg-4 bg-dark p-5 text-white d-none d-lg-block">
+                        <div class="col-lg-4 sidebar-brand-area p-5 text-white d-none d-lg-block">
                             <div class="mb-5">
                                 <span class="material-symbols-outlined fs-1 opacity-50 mb-3">upload_file</span>
                                 <h4 class="fw-bold">CSV Guidelines</h4>
@@ -55,9 +57,9 @@
                                 {{ csrf_field()|raw }}
 
                                 <div class="mb-5">
-                                    <label class="form-label small fw-bold text-uppercase tracking-wider">1. Target Election</label>
+                                    <label class="form-label premium-label mb-1">1. Target Election</label>
                                     <p class="text-muted extra-small mb-3">Select which election these identities should be registered for.</p>
-                                    <select class="form-select form-select-lg bg-light border-0" name="election_uuid" required>
+                                    <select class="form-select" name="election_uuid" required>
                                         <option value="">Select Election...</option>
                                         {% for election in elections %}
                                             <option value="{{ election.uuid }}">{{ election.title }}</option>
@@ -66,23 +68,20 @@
                                 </div>
 
                                 <div class="mb-5">
-                                    <label class="form-label small fw-bold text-uppercase tracking-wider">2. Upload File</label>
+                                    <label class="form-label premium-label mb-1">2. Upload File</label>
                                     <div class="upload-zone p-5 border-2 border-dashed rounded-4 text-center cursor-pointer bg-light mb-2" onclick="document.getElementById('csvFile').click()">
                                         <span class="material-symbols-outlined fs-1 text-muted mb-2">csv</span>
                                         <h6 class="fw-bold text-dark mb-1">Click to upload or drag and drop</h6>
                                         <p class="text-muted small mb-0">Supported format: .csv only</p>
                                         <input type="file" id="csvFile" name="csv_file" class="d-none" accept=".csv" required onchange="updateFileName(this)">
                                     </div>
-                                    <div id="fileName" class="text-indigo small fw-bold text-center"></div>
+                                    <div id="fileName" class="text-primary small fw-bold text-center"></div>
                                 </div>
 
                                 <div class="mb-5 p-4 bg-warning-subtle rounded-4 border border-warning border-opacity-10">
-                                    <label class="form-label small fw-bold text-uppercase tracking-wider text-warning">3. Security Verification</label>
+                                    <label class="form-label premium-label text-warning mb-1">3. Security Verification</label>
                                     <p class="text-dark extra-small mb-3 fw-bold">This is a sensitive operation. Enter your administrator password to proceed.</p>
-                                    <div class="input-group">
-                                        <span class="input-group-text bg-white border-0"><span class="material-symbols-outlined fs-6 text-muted">lock</span></span>
-                                        <input type="password" class="form-control form-control-lg border-0 shadow-none" name="security_pin" placeholder="Enter Password" required>
-                                    </div>
+                                    <input type="password" class="form-control" name="security_pin" placeholder="Enter Password" required>
                                 </div>
 
                                 <div class="d-grid">
@@ -101,18 +100,18 @@
 
 {% block styles %}
 <style>
-    .bg-indigo { background: #4f46e5; }
-    .text-indigo { color: #4f46e5; }
-    .btn-indigo { background: #4f46e5; color: white; border: none; }
-    .btn-indigo:hover { background: #4338ca; color: white; }
+    .sidebar-brand-area { background: var(--admin-primary); color: white; }
+    .text-indigo { color: var(--admin-primary); }
+    .btn-indigo { background: var(--admin-primary); color: white; border: none; }
+    .btn-indigo:hover { background: var(--admin-primary-hover); color: white; }
     .extra-small { font-size: 0.7rem; }
     .tracking-wider { letter-spacing: 0.05em; }
     
     .border-dashed { border-style: dashed !important; }
-    .upload-zone { transition: all 0.2s ease; }
-    .upload-zone:hover { background: #f1f5f9 !important; border-color: #4f46e5 !important; }
+    .upload-zone { transition: all 0.2s ease; border-color: var(--admin-border) !important; }
+    .upload-zone:hover { background: #f1f5f9 !important; border-color: var(--admin-primary) !important; }
     
-    .form-select-lg { font-size: 1rem; }
+    .form-select-lg { font-size: 1rem; border-radius: 0.75rem; }
 </style>
 {% endblock %}
 

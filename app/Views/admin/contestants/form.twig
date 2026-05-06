@@ -5,20 +5,20 @@
 {% block title %}{{ contestant ? 'Edit' : 'Add' }} Contestant • Kokuromotie Admin{% endblock %}
 
 {% block content %}
-    <div class="row justify-content-center">
-        <div class="col-12 col-xl-10">
-            <div class="d-flex align-items-center mb-5">
-                <a href="{{ PROOT }}admin/contestants" class="btn btn-white border shadow-sm btn-sm me-3">
-                    <i class="bi bi-arrow-left"></i>
-                </a>
-                <div>
-                    <h1 class="h3 fw-bold mb-1">{{ contestant ? 'Edit' : 'Register' }} Candidate</h1>
-                    <p class="text-muted small mb-0">Fill in the details to {{ contestant ? 'update the' : 'register a new' }} candidate for the election.</p>
-                </div>
-            </div>
+    <div class="page-header d-flex align-items-center mb-5">
+        <a href="{{ PROOT }}admin/contestants" class="btn btn-light btn-sm me-3 px-2 shadow-sm">
+            <span class="material-symbols-outlined fs-5">arrow_back</span>
+        </a>
+        <div>
+            <h1>{{ contestant ? 'Candidate Profile Editor' : 'Register New Candidate' }}</h1>
+            <p>{{ contestant ? 'Modify campaign parameters for' : 'Deploy a new candidate profile for' }} the upcoming session.</p>
+        </div>
+    </div>
 
-            <div class="card border-0 shadow-sm">
-                <div class="card-body p-4 p-md-5">
+    <div class="row justify-content-center">
+        <div class="col-xl-11">
+            <div class="card border-0 shadow-sm overflow-hidden">
+                <div class="card-body p-0">
                     <form action="{{ PROOT }}admin/contestants/store" method="POST" enctype="multipart/form-data">
                         {{ csrf_field()|raw }}
                         {% if contestant %}
@@ -26,84 +26,100 @@
                             <input type="hidden" name="old_profile" value="{{ contestant.profile_image }}">
                         {% endif %}
 
-                        <div class="row g-4">
-                            <!-- Left Column: Bio & Identity -->
-                            <div class="col-lg-8">
-                                <div class="row g-4">
-                                    <div class="col-md-6">
-                                        <label class="form-label small fw-bold text-uppercase tracking-wider">First Name</label>
-                                        <input type="text" class="form-control form-control-lg bg-light border-0" name="first_name" value="{{ contestant.first_name }}" placeholder="e.g. John" required>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <label class="form-label small fw-bold text-uppercase tracking-wider">Last Name</label>
-                                        <input type="text" class="form-control form-control-lg bg-light border-0" name="last_name" value="{{ contestant.last_name }}" placeholder="e.g. Doe" required>
-                                    </div>
-
-                                    <div class="col-md-6">
-                                        <label class="form-label small fw-bold text-uppercase tracking-wider">Gender</label>
-                                        <select class="form-select form-control-lg bg-light border-0" name="gender" required>
-                                            <option value="">Select Gender</option>
-                                            <option value="male" {{ contestant.gender == 'male' ? 'selected' : '' }}>Male</option>
-                                            <option value="female" {{ contestant.gender == 'female' ? 'selected' : '' }}>Female</option>
-                                        </select>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <label class="form-label small fw-bold text-uppercase tracking-wider">Ballot / ID Number</label>
-                                        <input type="text" class="form-control form-control-lg bg-light border-0" name="contestant_ballot_number" value="{{ contestant.contestant_ballot_number }}" placeholder="e.g. 001" required>
-                                    </div>
-
-                                    <div class="col-md-6">
-                                        <label class="form-label small fw-bold text-uppercase tracking-wider">Target Election</label>
-                                        <select class="form-select form-control-lg bg-light border-0" name="sel_election" id="electionSelect" required>
-                                            <option value="">Select Election</option>
-                                            {% for election in elections %}
-                                                <option value="{{ election.uuid }}" {{ contestant.election_uuid == election.uuid ? 'selected' : '' }}>
-                                                    {{ election.title }}
-                                                </option>
-                                            {% endfor %}
-                                        </select>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <label class="form-label small fw-bold text-uppercase tracking-wider">Contesting Office</label>
-                                        <select class="form-select form-control-lg bg-light border-0" name="position_id" id="positionSelect" required>
-                                            <option value="">Select Position</option>
-                                            {% for pos in positions %}
-                                                <option value="{{ pos.position_id }}" {{ contestant.position_id == pos.position_id ? 'selected' : '' }}>
-                                                    {{ pos.position_name }}
-                                                </option>
-                                            {% endfor %}
-                                        </select>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Right Column: Profile Picture -->
-                            <div class="col-lg-4">
-                                <div class="bg-light rounded-4 p-4 text-center h-100 d-flex flex-column justify-content-center">
-                                    <label class="form-label small fw-bold text-uppercase tracking-wider d-block mb-3">Candidate Photo</label>
+                        <div class="row g-0">
+                            <!-- Profile Sidebar -->
+                            <div class="col-lg-4 border-end bg-light bg-opacity-50">
+                                <div class="p-5 text-center">
+                                    <h6 class="premium-label mb-4">Candidate Identity</h6>
                                     
                                     <div class="mb-4">
                                         <div class="position-relative d-inline-block">
-                                            <img id="profilePreview" src="{{ contestant.profile_image ? PROOT ~ 'media/uploadedprofile/' ~ contestant.profile_image : 'https://ui-avatars.com/api/?name=' ~ (contestant ? contestant.first_name ~ '+' ~ contestant.last_name : 'Candidate') ~ '&background=6366f1&color=fff' }}" class="rounded-circle border shadow-sm object-fit-cover" width="160" height="160">
-                                            <div class="position-absolute bottom-0 end-0">
-                                                <label for="profile_image" class="btn btn-indigo btn-sm rounded-circle p-2 shadow">
-                                                    <i class="bi bi-camera-fill"></i>
-                                                </label>
+                                            <div class="profile-preview-wrapper shadow-lg rounded-circle border border-4 border-white overflow-hidden" style="width: 180px; height: 180px;">
+                                                <img id="profilePreview" src="{{ contestant.profile_image ? PROOT ~ 'media/uploadedprofile/' ~ contestant.profile_image : 'https://ui-avatars.com/api/?name=' ~ (contestant ? contestant.first_name ~ '+' ~ contestant.last_name : 'Candidate') ~ '&background=064e3b&color=fff&size=200' }}" class="w-100 h-100 object-fit-cover">
                                             </div>
+                                            <label for="profile_image" class="btn btn-primary btn-sm rounded-circle position-absolute bottom-0 end-0 p-2 shadow-lg" style="width: 40px; height: 40px;">
+                                                <span class="material-symbols-outlined fs-5">photo_camera</span>
+                                            </label>
                                         </div>
                                     </div>
 
                                     <input type="file" class="d-none" name="profile_image" id="profile_image" accept="image/*">
-                                    <p class="text-muted extra-small mb-0">Recommended size: 500x500px. JPG, PNG or WebP.</p>
+                                    <div class="px-4">
+                                        <p class="extra-small text-muted mb-0 mt-3">Upload a high-resolution portrait for the digital ballot. Supported: JPG, PNG, WebP.</p>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
 
-                        <div class="mt-5 pt-4 border-top d-flex gap-2">
-                            <button type="submit" class="btn btn-indigo px-5 py-3 fw-bold shadow-sm">
-                                {{ contestant ? 'Update Candidate' : 'Confirm Registration' }}
-                            </button>
-                            <a href="{{ PROOT }}admin/contestants" class="btn btn-white border px-4 py-3 fw-bold">Discard</a>
+                            <!-- Form Content -->
+                            <div class="col-lg-8">
+                                <div class="p-5">
+                                    <div class="row g-4">
+                                        <div class="col-12">
+                                            <h5 class="fw-bold mb-3 d-flex align-items-center">
+                                                <span class="material-symbols-outlined me-2 text-primary">badge</span> Biographical Parameters
+                                            </h5>
+                                        </div>
+                                        
+                                        <div class="col-md-6">
+                                            <label class="form-label">First Name</label>
+                                            <input type="text" class="form-control" name="first_name" value="{{ contestant.first_name }}" placeholder="Legal first name" required>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label">Last Name</label>
+                                            <input type="text" class="form-control" name="last_name" value="{{ contestant.last_name }}" placeholder="Legal surname" required>
+                                        </div>
+
+                                        <div class="col-md-6">
+                                            <label class="form-label">Identity Gender</label>
+                                            <select class="form-select" name="gender" required>
+                                                <option value="">Select gender...</option>
+                                                <option value="male" {{ contestant.gender == 'male' ? 'selected' : '' }}>Male</option>
+                                                <option value="female" {{ contestant.gender == 'female' ? 'selected' : '' }}>Female</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label">Ballot Intelligence ID</label>
+                                            <input type="text" class="form-control" name="contestant_ballot_number" value="{{ contestant.contestant_ballot_number }}" placeholder="e.g. 01" required>
+                                        </div>
+
+                                        <div class="col-12 mt-5">
+                                            <h5 class="fw-bold mb-3 d-flex align-items-center">
+                                                <span class="material-symbols-outlined me-2 text-primary">assignment_ind</span> Deployment Matrix
+                                            </h5>
+                                        </div>
+
+                                        <div class="col-md-6">
+                                            <label class="form-label">Electoral Session</label>
+                                            <select class="form-select" name="sel_election" id="electionSelect" required>
+                                                <option value="">Choose session...</option>
+                                                {% for election in elections %}
+                                                    <option value="{{ election.uuid }}" {{ contestant.election_uuid == election.uuid ? 'selected' : '' }}>
+                                                        {{ election.title }}
+                                                    </option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label">Contesting Office</label>
+                                            <select class="form-select" name="position_id" id="positionSelect" required>
+                                                <option value="">Choose office...</option>
+                                                {% for pos in positions %}
+                                                    <option value="{{ pos.position_id }}" {{ contestant.position_id == pos.position_id ? 'selected' : '' }}>
+                                                        {{ pos.position_name }}
+                                                    </option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div class="mt-5 pt-4 d-flex gap-3">
+                                        <button type="submit" class="btn btn-primary px-5 py-3">
+                                            {{ contestant ? 'Apply Modifications' : 'Initialize Registration' }}
+                                        </button>
+                                        <a href="{{ PROOT }}admin/contestants" class="btn btn-light px-4 py-3">Discard</a>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </form>
                 </div>

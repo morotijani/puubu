@@ -5,14 +5,16 @@
 {% block title %}Identify Duplicates • Kokuromotie Admin{% endblock %}
 
 {% block content %}
-    <div class="mb-5">
-        <div class="d-flex align-items-center mb-2">
-            <a href="{{ PROOT }}admin/voters" class="btn btn-sm btn-white border rounded-circle me-3 shadow-sm">
-                <span class="material-symbols-outlined fs-6 pt-1">arrow_back</span>
-            </a>
-            <h1 class="h3 fw-bold mb-0">Duplication Audit</h1>
+    <div class="page-header d-flex flex-column flex-md-row justify-content-between align-items-md-center">
+        <div>
+            <h1>Duplication Audit</h1>
+            <p>Review and resolve duplicate identity records within the registry.</p>
         </div>
-        <p class="text-muted small ps-5">Review voters sharing identical email addresses across the registry.</p>
+        <div class="d-flex gap-2 mt-3 mt-md-0">
+            <a href="{{ PROOT }}admin/voters" class="btn btn-light shadow-sm">
+                <span class="material-symbols-outlined fs-6">arrow_back</span> Back to Registrar
+            </a>
+        </div>
     </div>
 
     <div class="row g-4 mb-5">
@@ -21,7 +23,7 @@
                 <div class="card-header bg-white border-0 py-4 px-4">
                     <form action="{{ PROOT }}admin/voters/duplicates" method="GET" class="row g-2 align-items-center">
                         <div class="col-md-8">
-                            <select class="form-select border-0 bg-light shadow-none fw-bold" name="election_uuid">
+                            <select class="form-select border-0 bg-light shadow-none fw-bold rounded-3" name="election_uuid">
                                 <option value="">All Elections</option>
                                 {% for election in elections %}
                                     <option value="{{ election.uuid }}" {{ selected_election == election.uuid ? 'selected' : '' }}>

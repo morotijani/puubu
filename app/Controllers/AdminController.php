@@ -604,6 +604,26 @@ class AdminController {
         $old_profile = $_POST['old_profile'] ?? '';
 
         $profile_img = $old_profile;
+
+        // Security Check: Unique Ballot Number per Position/Election
+        $checkQuery = "SELECT * FROM contestants WHERE election_uuid = ? AND position_id = ? AND contestant_ballot_number = ? AND is_deleted = 'no'";
+        $checkParams = [$election_id, $position_id, $ballot_no];
+        if ($id) {
+            $checkQuery .= " AND uuid != ?";
+            $checkParams[] = $id;
+        }
+        $stmtCheck = $conn->prepare($checkQuery);
+        $stmtCheck->execute($checkParams);
+        
+        if ($stmtCheck->rowCount() > 0) {
+            $_SESSION['flash_error'] = "Security Violation: Ballot Intelligence ID #$ballot_no is already deployed for this office in the current session.";
+            if ($id) {
+                redirect(PROOT . "admin/contestants/edit/$id");
+            } else {
+                redirect(PROOT . "admin/contestants/add");
+            }
+        }
+
         if (isset($_FILES['profile_image']) && $_FILES['profile_image']['error'] == 0) {
             $ext = pathinfo($_FILES['profile_image']['name'], PATHINFO_EXTENSION);
             $profile_img = uniqid('', true) . '.' . $ext;

@@ -227,13 +227,14 @@ class AdminController {
         $allow_email = isset($_POST['allow_email_login']) ? 1 : 0;
         $allow_sms = isset($_POST['allow_sms_login']) ? 1 : 0;
         $allow_pin = isset($_POST['allow_pin_login']) ? 1 : 0;
+        $allow_direct = isset($_POST['allow_direct_link']) ? 1 : 0;
 
         if (empty($name) || empty($by)) {
             $_SESSION['flash_error'] = "All fields are required.";
             redirect(PROOT . 'admin/elections' . ($edit_id ? '?edit=' . $edit_id : ''));
         }
         
-        if ($allow_email == 0 && $allow_sms == 0 && $allow_pin == 0) {
+        if ($allow_email == 0 && $allow_sms == 0 && $allow_pin == 0 && $allow_direct == 0) {
             $_SESSION['flash_error'] = "You must select at least one login option.";
             redirect(PROOT . 'admin/elections' . ($edit_id ? '?edit=' . $edit_id : ''));
         }
@@ -243,11 +244,11 @@ class AdminController {
         
         if ($edit_id) {
             if (($admin_data['role'] ?? 'organizer') === 'super_admin') {
-                $stmt = $conn->prepare("UPDATE election SET title = ?, organized_by = ?, allow_email_login = ?, allow_sms_login = ?, allow_pin_login = ? WHERE uuid = ? AND status = 0");
-                $result = $stmt->execute([$name, $by, $allow_email, $allow_sms, $allow_pin, $edit_id]);
+                $stmt = $conn->prepare("UPDATE election SET title = ?, organized_by = ?, allow_email_login = ?, allow_sms_login = ?, allow_pin_login = ?, allow_direct_link = ? WHERE uuid = ? AND status = 0");
+                $result = $stmt->execute([$name, $by, $allow_email, $allow_sms, $allow_pin, $allow_direct, $edit_id]);
             } else {
-                $stmt = $conn->prepare("UPDATE election SET title = ?, organized_by = ?, allow_email_login = ?, allow_sms_login = ?, allow_pin_login = ? WHERE uuid = ? AND status = 0 AND organizer_id = ?");
-                $result = $stmt->execute([$name, $by, $allow_email, $allow_sms, $allow_pin, $edit_id, $admin_id]);
+                $stmt = $conn->prepare("UPDATE election SET title = ?, organized_by = ?, allow_email_login = ?, allow_sms_login = ?, allow_pin_login = ?, allow_direct_link = ? WHERE uuid = ? AND status = 0 AND organizer_id = ?");
+                $result = $stmt->execute([$name, $by, $allow_email, $allow_sms, $allow_pin, $allow_direct, $edit_id, $admin_id]);
             }
             if ($result && $stmt->rowCount() > 0) {
                 add_to_log("Updated election: $name", $admin_id, 'admin');
@@ -257,8 +258,8 @@ class AdminController {
             }
         } else {
             $unique_id = guidv4();
-            $stmt = $conn->prepare("INSERT INTO election (uuid, title, organized_by, organizer_id, allow_email_login, allow_sms_login, allow_pin_login) VALUES (?, ?, ?, ?, ?, ?, ?)");
-            $result = $stmt->execute([$unique_id, $name, $by, $admin_id, $allow_email, $allow_sms, $allow_pin]);
+            $stmt = $conn->prepare("INSERT INTO election (uuid, title, organized_by, organizer_id, allow_email_login, allow_sms_login, allow_pin_login, allow_direct_link, status, is_deleted) VALUES (?, ?, ?, ?, ?, ?, ?, ?, 0, 0)");
+            $result = $stmt->execute([$unique_id, $name, $by, $admin_id, $allow_email, $allow_sms, $allow_pin, $allow_direct]);
             if ($result) {
                 add_to_log("Created new election: $name", $admin_id, 'admin');
                 $_SESSION['flash_success'] = "Election created successfully.";
@@ -397,20 +398,20 @@ class AdminController {
         $role = $admin_data['role'] ?? 'organizer';
         
         if ($role === 'super_admin') {
-            $stmt = $conn->prepare("SELECT p.*, e.title, e.organized_by, e.status FROM positions p INNER JOIN election e ON p.election_uuid = e.uuid ORDER BY p.position_id DESC");
+            $stmt = $conn->prepare("SELECT p.*, e.title, e.organized_by, e.status FROM positions p INNER JOIN election e ON p.election_uuid = e.uuid WHERE e.is_deleted = 0 ORDER BY p.position_id DESC");
             $stmt->execute();
         } else {
-            $stmt = $conn->prepare("SELECT p.*, e.title, e.organized_by, e.status FROM positions p INNER JOIN election e ON p.election_uuid = e.uuid WHERE e.organizer_id = ? ORDER BY p.position_id DESC");
+            $stmt = $conn->prepare("SELECT p.*, e.title, e.organized_by, e.status FROM positions p INNER JOIN election e ON p.election_uuid = e.uuid WHERE e.organizer_id = ? AND e.is_deleted = 0 ORDER BY p.position_id DESC");
             $stmt->execute([$admin_id]);
         }
         $positions = $stmt->fetchAll();
 
-        // Fetch draft elections for the dropdown
+        // Fetch all non-deleted elections for the dropdown and filters
         if ($role === 'super_admin') {
-            $stmt = $conn->prepare("SELECT * FROM election WHERE status = 0 ORDER BY title ASC");
+            $stmt = $conn->prepare("SELECT * FROM election WHERE is_deleted = 0 ORDER BY title ASC");
             $stmt->execute();
         } else {
-            $stmt = $conn->prepare("SELECT * FROM election WHERE status = 0 AND organizer_id = ? ORDER BY title ASC");
+            $stmt = $conn->prepare("SELECT * FROM election WHERE organizer_id = ? AND is_deleted = 0 ORDER BY title ASC");
             $stmt->execute([$admin_id]);
         }
         $elections = $stmt->fetchAll();
@@ -426,6 +427,7 @@ class AdminController {
         echo $this->twig->render('admin/positions.twig', [
             'positions' => $positions,
             'elections' => $elections,
+            'draft_elections' => array_filter($elections, function($e) { return $e['status'] == 0; }),
             'edit_position' => $edit_position
         ]);
     }
@@ -447,6 +449,16 @@ class AdminController {
         if (empty($name) || empty($election_id)) {
             $_SESSION['flash_error'] = "All fields are required.";
             redirect(PROOT . 'admin/positions' . ($edit_id ? '?edit=' . $edit_id : ''));
+        }
+
+        // Security check: only allow adding/editing positions for draft elections
+        $stmtCheck = $conn->prepare("SELECT status FROM election WHERE uuid = ?");
+        $stmtCheck->execute([$election_id]);
+        $election_status = $stmtCheck->fetchColumn();
+        
+        if ($election_status !== false && $election_status != 0) {
+            $_SESSION['flash_error'] = "You cannot add or modify positions for an active or completed election.";
+            redirect(PROOT . 'admin/positions');
         }
 
         if ($edit_id) {
@@ -593,11 +605,11 @@ class AdminController {
 
         $profile_img = $old_profile;
         if (isset($_FILES['profile_image']) && $_FILES['profile_image']['error'] == 0) {
-            $ext = pathinfo($_FILES['cont_profile']['name'], PATHINFO_EXTENSION);
+            $ext = pathinfo($_FILES['profile_image']['name'], PATHINFO_EXTENSION);
             $profile_img = uniqid('', true) . '.' . $ext;
             $target = BASEURL . 'media/uploadedprofile/' . $profile_img;
             
-            if (move_uploaded_file($_FILES['cont_profile']['tmp_name'], $target)) {
+            if (move_uploaded_file($_FILES['profile_image']['tmp_name'], $target)) {
                 if ($old_profile && file_exists(BASEURL . 'media/uploadedprofile/' . $old_profile)) {
                     unlink(BASEURL . 'media/uploadedprofile/' . $old_profile);
                 }
@@ -625,12 +637,12 @@ class AdminController {
 
     public function getElectionLoginSettings($uuid) {
         global $conn;
-        $stmt = $conn->prepare("SELECT allow_email_login, allow_sms_login, allow_pin_login FROM election WHERE uuid = ?");
+        $stmt = $conn->prepare("SELECT allow_email_login, allow_sms_login, allow_pin_login, allow_direct_link FROM election WHERE uuid = ?");
         $stmt->execute([$uuid]);
         $settings = $stmt->fetch(\PDO::FETCH_ASSOC);
         
         if (!$settings) {
-            $settings = ['allow_email_login' => 1, 'allow_sms_login' => 0, 'allow_pin_login' => 0];
+            $settings = ['allow_email_login' => 1, 'allow_sms_login' => 0, 'allow_pin_login' => 0, 'allow_direct_link' => 0];
         }
         
         header('Content-Type: application/json');
@@ -693,7 +705,15 @@ class AdminController {
 
     public function voters() {
         global $conn, $admin_data;
-        $admin_id = $admin_data['uuid'];
+        $admin_id = $admin_data['uuid'] ?? null;
+
+        // Ensure all voters have a token for direct link access
+        $stmtTokens = $conn->query("SELECT uuid FROM voters WHERE voting_token IS NULL OR voting_token = ''");
+        $voters_without_token = $stmtTokens->fetchAll();
+        foreach ($voters_without_token as $v) {
+            $conn->prepare("UPDATE voters SET voting_token = ? WHERE uuid = ?")->execute([guidv4(), $v['uuid']]);
+        }
+        
         $role = $admin_data['role'] ?? 'organizer';
         
         if ($role === 'super_admin') {
@@ -834,8 +854,9 @@ class AdminController {
             $hashed = password_hash($password, PASSWORD_DEFAULT);
             
             $new_uuid = guidv4();
-            $query = "INSERT INTO voters (uuid, voter_id, password, first_name, last_name, gender, email, phone, election_uuid) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
-            $conn->prepare($query)->execute([$new_uuid, $voter_id, $hashed, $first_name, $last_name, $gender, $email, $phone, $election_id]);
+            $voting_token = guidv4();
+            $query = "INSERT INTO voters (uuid, voter_id, password, first_name, last_name, gender, email, phone, election_uuid, voting_token) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            $conn->prepare($query)->execute([$new_uuid, $voter_id, $hashed, $first_name, $last_name, $gender, $email, $phone, $election_id, $voting_token]);
             
             $_SESSION['flash_success'] = "Voter added successfully. Password is: $password";
         }

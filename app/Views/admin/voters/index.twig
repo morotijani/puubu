@@ -99,6 +99,9 @@
                                 <td class="text-end pe-4">
                                     <div class="d-flex justify-content-end gap-2">
                                         {% if voter.election_status == 0 %}
+                                            <button type="button" class="btn btn-sm btn-white border text-indigo rounded-3 shadow-sm d-flex align-items-center btn-copy-link" data-token="{{ voter.voting_token }}" title="Copy Direct Voting Link">
+                                                <span class="material-symbols-outlined fs-6">link</span>
+                                            </button>
                                             <a href="{{ PROOT }}admin/voters/edit/{{ voter.uuid }}" class="btn btn-sm btn-white border rounded-3 shadow-sm d-flex align-items-center">
                                                 <span class="material-symbols-outlined fs-6">edit</span>
                                             </a>
@@ -263,6 +266,29 @@
                 $('#bulkActions').slideUp(200);
             }
         }
+
+        // Copy Link Functionality
+        $('.btn-copy-link').on('click', function() {
+            const token = $(this).data('token');
+            const url = window.location.origin + '{{ PROOT }}v/' + token;
+            
+            const tempInput = document.createElement('input');
+            tempInput.value = url;
+            document.body.appendChild(tempInput);
+            tempInput.select();
+            document.execCommand('copy');
+            document.body.removeChild(tempInput);
+            
+            const btn = $(this);
+            const originalIcon = btn.find('.material-symbols-outlined').text();
+            btn.find('.material-symbols-outlined').text('check');
+            btn.addClass('text-success').removeClass('text-indigo');
+            
+            setTimeout(() => {
+                btn.find('.material-symbols-outlined').text(originalIcon);
+                btn.removeClass('text-success').addClass('text-indigo');
+            }, 2000);
+        });
     });
 </script>
 {% endblock %}

@@ -139,11 +139,18 @@
                                         <span class="text-muted extra-small d-block fw-normal">Voters use Phone & SMS OTP. Ideal for mobile users.</span>
                                     </label>
                                 </div>
-                                <div class="form-check">
+                                <div class="form-check mb-3">
                                     <input class="form-check-input" type="checkbox" name="allow_pin_login" id="allow_pin" value="1" {{ edit_election.allow_pin_login ? 'checked' : '' }}>
                                     <label class="form-check-label small fw-semibold" for="allow_pin">
                                         Allow PIN / Offline Login
                                         <span class="text-muted extra-small d-block fw-normal">Voters use Voter ID & PIN only. Best for elderly voters.</span>
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="allow_direct_link" id="allow_direct" value="1" {{ edit_election.allow_direct_link ? 'checked' : '' }}>
+                                    <label class="form-check-label small fw-semibold" for="allow_direct">
+                                        Allow Direct Link Access
+                                        <span class="text-muted extra-small d-block fw-normal">Voters click a personalized link from WhatsApp. Zero friction.</span>
                                     </label>
                                 </div>
                             </div>

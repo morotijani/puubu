@@ -63,6 +63,12 @@ $router->post('/auth/verify-otp', function() use ($twig) {
     $controller->verifyOtp();
 });
 
+$router->get('/v/([a-zA-Z0-9\-]+)', function($token) use ($twig) {
+    require_once __DIR__ . '/../app/Controllers/VoterController.php';
+    $controller = new \App\Controllers\VoterController($twig);
+    $controller->directLogin($token);
+});
+
 $router->get('/auth/logout', function() use ($twig) {
     require_once __DIR__ . '/../app/Controllers/VoterController.php';
     $controller = new \App\Controllers\VoterController($twig);

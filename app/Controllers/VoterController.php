@@ -25,7 +25,12 @@ class VoterController
 
         $login_issue_text = "Problem loggin in to cast my vote. Assist me ASAP!";
         $login_issue = urlencode($login_issue_text);
-        $displayErrors = '';
+        
+        $flash_error = $_SESSION['flash_error'] ?? null;
+        $flash_success = $_SESSION['flash_success'] ?? null;
+        unset($_SESSION['flash_error'], $_SESSION['flash_success']);
+
+        $displayErrors = $flash_error ?? '';
 
         // Handle legacy form submission if still used, or redirect to dynamic page
         if (isset($_POST['submitVoter'])) {
@@ -79,7 +84,8 @@ class VoterController
         }
 
         echo $this->twig->render('voter/login.twig', [
-            'displayErrors' => $displayErrors,
+            'errorsMsg' => $displayErrors,
+            'successMsg' => $flash_success,
             'login_issue' => $login_issue
         ]);
     }
@@ -189,7 +195,65 @@ class VoterController
         $this->completeLogin($voter);
     }
 
-    private function completeLogin($voter) {
+    public function directLogin($token) {
+        global $conn;
+        
+        $token = sanitize($token);
+        
+        $query = "
+            SELECT v.*, e.status as election_status, e.starts_at, e.ends_at, e.allow_direct_link
+            FROM voters v 
+            INNER JOIN election e ON e.uuid = v.election_uuid
+            WHERE v.voting_token = ?
+        ";
+        $stmt = $conn->prepare($query);
+        $stmt->execute([$token]);
+        $voter = $stmt->fetch();
+
+        if (!$voter) {
+            $_SESSION['flash_error'] = "Invalid or expired voting link.";
+            redirect(PROOT . 'signin');
+        }
+
+        if ($voter['allow_direct_link'] != 1) {
+            $_SESSION['flash_error'] = "Direct link voting is not enabled for this election.";
+            redirect(PROOT . 'signin');
+        }
+
+        if ($voter['election_status'] == 0) {
+            $_SESSION['flash_error'] = "This election has not been started yet. Please check back later.";
+            redirect(PROOT . 'signin');
+        }
+
+        if ($voter['election_status'] == 2) {
+            $_SESSION['flash_error'] = "This election has already ended. Voting is no longer permitted.";
+            redirect(PROOT . 'signin');
+        }
+
+        $now = date('Y-m-d H:i:s');
+        if ($voter['starts_at'] && $now < $voter['starts_at']) {
+            $_SESSION['flash_error'] = "Voting for this election has not started yet. It is scheduled to start on " . date("M j, Y, g:i a", strtotime($voter['starts_at'])) . ".";
+            redirect(PROOT . 'signin');
+        }
+
+        if ($voter['ends_at'] && $now > $voter['ends_at']) {
+            $_SESSION['flash_error'] = "The voting window for this election is closed. It ended on " . date("M j, Y, g:i a", strtotime($voter['ends_at'])) . ".";
+            redirect(PROOT . 'signin');
+        }
+
+        // Check if already voted
+        $checkVoted = $conn->prepare("SELECT COUNT(*) FROM voter_participation WHERE voter_id = ? AND election_uuid = ?");
+        $checkVoted->execute([$voter['uuid'], $voter['election_uuid']]);
+        if ($checkVoted->fetchColumn() > 0) {
+            $_SESSION['flash_error'] = "You have already cast your vote in this election. Thank you for participating!";
+            redirect(PROOT . 'signin');
+        }
+
+        // Complete Login
+        $this->completeLogin($voter, true);
+    }
+
+    public function completeLogin($voter, $redirect = false) {
         global $conn, $location;
         
         $unique_vld_id = guidv4();
@@ -199,10 +263,14 @@ class VoterController
         $_SESSION['voter_accessed'] = $voter['uuid'];
         $_SESSION['voter_login_details_id'] = $unique_vld_id;
 
-        $log_message = "voter ['" . ucwords($voter["first_name"] . ' ' . $voter["last_name"]) . "'], loggedin via alternative method, location ('" . $location . "')!";
+        $log_message = "voter ['" . ucwords($voter["first_name"] . ' ' . $voter["last_name"]) . "'], loggedin via direct link/OTP, location ('" . $location . "')!";
         add_to_log($log_message, $voter["uuid"], 'user');
 
-        $this->jsonResponse(['status' => 'success', 'redirect' => PROOT . 'votingon']);
+        if ($redirect) {
+            redirect(PROOT . 'votingon');
+        } else {
+            $this->jsonResponse(['status' => 'success', 'redirect' => PROOT . 'votingon']);
+        }
     }
 
     private function mockSendSms($phone, $message) {

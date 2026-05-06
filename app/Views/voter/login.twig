@@ -165,6 +165,47 @@
         transition: color 0.3s ease;
     }
     .back-to-home:hover { color: var(--dark-accent); }
+
+    /* Premium Alerts */
+    .premium-alert {
+        border-radius: 20px;
+        padding: 16px 20px;
+        border: none;
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        margin-bottom: 32px;
+        animation: slideDown 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .premium-alert-error {
+        background: #fff5f5;
+        color: #c53030;
+        box-shadow: 0 4px 12px rgba(197, 48, 48, 0.08);
+    }
+
+    .premium-alert-success {
+        background: #f0fff4;
+        color: #2f855a;
+        box-shadow: 0 4px 12px rgba(47, 133, 90, 0.08);
+    }
+
+    .premium-alert-icon {
+        background: white;
+        width: 36px;
+        height: 36px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+
+    @keyframes slideDown {
+        from { transform: translateY(-10px); opacity: 0; }
+        to { transform: translateY(0); opacity: 1; }
+    }
 </style>
 {% endblock %}
 
@@ -177,6 +218,34 @@
             <span class="material-symbols-outlined fs-5">arrow_back</span>
             Back to Home
         </a>
+        <div class="login-card">
+            <div class="brand-logo">
+                <span class="material-symbols-outlined fs-2">how_to_vote</span>
+            </div>
+            <h4 class="fw-bold text-center mb-2">Cast Your Vote</h4>
+            <p class="text-muted text-center small mb-5">Secure your identity to proceed to the ballot.</p>
+
+            {% if errorsMsg or flash_error %}
+                <div class="premium-alert premium-alert-error">
+                    <div class="premium-alert-icon">
+                        <span class="material-symbols-outlined fs-5">error</span>
+                    </div>
+                    <div class="small fw-bold">
+                        {{ (errorsMsg ?: flash_error)|raw }}
+                    </div>
+                </div>
+            {% endif %}
+
+            {% if successMsg %}
+                <div class="premium-alert premium-alert-success">
+                    <div class="premium-alert-icon">
+                        <span class="material-symbols-outlined fs-5">check_circle</span>
+                    </div>
+                    <div class="small fw-bold">
+                        {{ successMsg|raw }}
+                    </div>
+                </div>
+            {% endif %}
 
             <div id="auth-step-1">
                 <div class="premium-input-group">

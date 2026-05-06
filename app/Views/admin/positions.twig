@@ -23,7 +23,9 @@
                             <select id="electionFilter" class="form-select form-select-sm bg-white border shadow-sm">
                                 <option value="all">All Elections</option>
                                 {% for election in elections %}
-                                    <option value="{{ election.uuid }}">{{ election.title }}</option>
+                                    <option value="{{ election.uuid }}">
+                                        {{ election.title }} {% if election.status != 0 %} ({{ election.status == 1 ? 'Active' : 'Ended' }}){% endif %}
+                                    </option>
                                 {% endfor %}
                             </select>
                         </div>
@@ -132,7 +134,7 @@
                             <label class="form-label small fw-bold text-uppercase tracking-wider">Target Election</label>
                             <select class="form-select form-control-lg bg-light border-0" name="election_uuid" required>
                                 <option value="">Select Election...</option>
-                                {% for election in elections %}
+                                {% for election in draft_elections %}
                                     <option value="{{ election.uuid }}" {{ edit_position.election_uuid == election.uuid ? 'selected' : '' }}>
                                         {{ election.title }}
                                     </option>

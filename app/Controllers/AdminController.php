@@ -352,7 +352,7 @@ class AdminController {
                     // Verify 2FA
                     $g = new GoogleAuthenticator();
                     if ($g->checkCode($admin_data['google_auth_secret'], $otp_code)) {
-                        $stmt = $conn->prepare("UPDATE election SET status = 2, manual_stop_reason = ? WHERE uuid = ?");
+                        $stmt = $conn->prepare("UPDATE election SET status = 2, manual_stop_reason = ?, election_manual_stop_time = NOW() WHERE uuid = ?");
                         if ($stmt->execute([$reason, $id])) {
                             $_SESSION['flash_success'] = "Election has been stopped and marked as completed.";
                             add_to_log("Stopped election: " . $election['title'] . " Reason: " . $reason, $admin_id, 'admin');
@@ -646,8 +646,8 @@ class AdminController {
             $conn->prepare($query)->execute([$new_id, $fname, $lname, $gender, $ballot_no, $position_id, $election_id, $profile_img]);
             
             // Initialize vote counts
-            $conn->prepare("INSERT INTO results (uuid, votes_for, contestant_id, position_id, election_uuid) VALUES (?, ?, ?, ?, ?)")
-                 ->execute([guidv4(), 0, $new_id, $position_id, $election_id]);
+            $conn->prepare("INSERT INTO results (uuid, votes_for, votes_against, contestant_id, position_id, election_uuid) VALUES (?, 0, 0, ?, ?, ?)")
+                 ->execute([guidv4(), $new_id, $position_id, $election_id]);
             
             $_SESSION['flash_success'] = "Contestant added successfully.";
         }
@@ -1124,9 +1124,9 @@ class AdminController {
         $results = [];
         foreach ($positions as $pos) {
             $stmt = $conn->prepare("
-                SELECT c.*, v.votes_for, v.votes_against
+                SELECT c.*, IFNULL(v.votes_for, 0) as votes_for, IFNULL(v.votes_against, 0) as votes_against
                 FROM contestants c
-                INNER JOIN results v ON c.uuid = v.contestant_id
+                LEFT JOIN results v ON c.uuid = v.contestant_id
                 WHERE c.position_id = ? AND c.is_deleted = 'no'
                 ORDER BY c.contestant_ballot_number ASC
             ");
@@ -1206,7 +1206,7 @@ class AdminController {
         $results = [];
         foreach ($positions as $pos) {
             $stmt = $conn->prepare("
-                SELECT c.*, v.votes_for, v.votes_against
+                SELECT c.*, IFNULL(v.votes_for, 0) as votes_for, IFNULL(v.votes_against, 0) as votes_against
                 FROM contestants c
                 LEFT JOIN results v ON c.uuid = v.contestant_id
                 WHERE c.position_id = ? AND c.is_deleted = 'no'

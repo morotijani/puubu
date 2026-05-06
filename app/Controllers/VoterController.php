@@ -428,9 +428,18 @@ class VoterController
 
                 if (isset($_POST["contestant{$i}"]) && !empty($_POST["contestant{$i}"])) {
                     $contestant_id = sanitize($_POST["contestant{$i}"]);
-                    // Increment results
-                    $stmt = $conn->prepare("UPDATE results SET votes_for = votes_for + 1 WHERE contestant_id = ? AND position_id = ? AND election_uuid = ?");
-                    $stmt->execute([$contestant_id, $position_id, $election_uuid]);
+                    
+                    // Safe result recording: Check if row exists, if not, create it
+                    $resCheck = $conn->prepare("SELECT id FROM results WHERE contestant_id = ? AND position_id = ? AND election_uuid = ?");
+                    $resCheck->execute([$contestant_id, $position_id, $election_uuid]);
+                    
+                    if ($resCheck->rowCount() == 0) {
+                        $stmt = $conn->prepare("INSERT INTO results (uuid, votes_for, votes_against, contestant_id, position_id, election_uuid) VALUES (?, 1, 0, ?, ?, ?)");
+                        $stmt->execute([guidv4(), $contestant_id, $position_id, $election_uuid]);
+                    } else {
+                        $stmt = $conn->prepare("UPDATE results SET votes_for = IFNULL(votes_for, 0) + 1 WHERE contestant_id = ? AND position_id = ? AND election_uuid = ?");
+                        $stmt->execute([$contestant_id, $position_id, $election_uuid]);
+                    }
 
                     // Record Individual Vote
                     $vfid = guidv4();
@@ -442,11 +451,22 @@ class VoterController
                     if (count($val) == 2) {
                         $choice = sanitize($val[0]);
                         $contestant_id = sanitize($val[1]);
-                        if ($choice === 'yes') {
-                            $stmt = $conn->prepare("UPDATE results SET votes_for = votes_for + 1 WHERE contestant_id = ? AND position_id = ? AND election_uuid = ?");
-                            $stmt->execute([$contestant_id, $position_id, $election_uuid]);
+
+                        // Safe result recording for unopposed
+                        $resCheck = $conn->prepare("SELECT id FROM results WHERE contestant_id = ? AND position_id = ? AND election_uuid = ?");
+                        $resCheck->execute([$contestant_id, $position_id, $election_uuid]);
+
+                        if ($resCheck->rowCount() == 0) {
+                            $vFor = ($choice === 'yes') ? 1 : 0;
+                            $vAgainst = ($choice === 'no') ? 1 : 0;
+                            $stmt = $conn->prepare("INSERT INTO results (uuid, votes_for, votes_against, contestant_id, position_id, election_uuid) VALUES (?, ?, ?, ?, ?, ?)");
+                            $stmt->execute([guidv4(), $vFor, $vAgainst, $contestant_id, $position_id, $election_uuid]);
                         } else {
-                            $stmt = $conn->prepare("UPDATE results SET votes_against = votes_against + 1 WHERE contestant_id = ? AND position_id = ? AND election_uuid = ?");
+                            if ($choice === 'yes') {
+                                $stmt = $conn->prepare("UPDATE results SET votes_for = IFNULL(votes_for, 0) + 1 WHERE contestant_id = ? AND position_id = ? AND election_uuid = ?");
+                            } else {
+                                $stmt = $conn->prepare("UPDATE results SET votes_against = IFNULL(votes_against, 0) + 1 WHERE contestant_id = ? AND position_id = ? AND election_uuid = ?");
+                            }
                             $stmt->execute([$contestant_id, $position_id, $election_uuid]);
                         }
 

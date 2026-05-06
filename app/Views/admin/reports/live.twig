@@ -144,53 +144,55 @@
     <div class="row g-4 mb-5">
         <div class="col-md-3">
             <div class="stat-card">
-                <div class="d-flex justify-content-between align-items-start mb-3">
+                <div class="stat-info">
+                    <h4>Total Ballots Cast</h4>
+                    <h2 id="stat-total-votes">0</h2>
+                </div>
+                <div class="d-flex flex-column align-items-end gap-2">
                     <div class="stat-icon bg-primary-subtle text-primary">
                         <span class="material-symbols-outlined">how_to_vote</span>
                     </div>
                     <span class="badge badge-success">Live</span>
                 </div>
-                <h2 id="stat-total-votes">0</h2>
-                <p>Total Ballots Cast</p>
             </div>
         </div>
         <div class="col-md-3">
             <div class="stat-card">
-                <div class="d-flex justify-content-between align-items-start mb-3">
-                    <div class="stat-icon bg-indigo-subtle text-indigo">
-                        <span class="material-symbols-outlined">group</span>
-                    </div>
+                <div class="stat-info">
+                    <h4>Registered Electorate</h4>
+                    <h2 id="stat-total-voters">0</h2>
                 </div>
-                <h2 id="stat-total-voters">0</h2>
-                <p>Registered Electorate</p>
+                <div class="stat-icon bg-indigo-subtle text-indigo">
+                    <span class="material-symbols-outlined">group</span>
+                </div>
             </div>
         </div>
         <div class="col-md-3">
             <div class="stat-card">
-                <div class="d-flex justify-content-between align-items-start mb-3">
-                    <div class="stat-icon bg-accent-subtle text-accent">
-                        <span class="material-symbols-outlined">analytics</span>
-                    </div>
+                <div class="stat-info">
+                    <h4>Turnout Efficiency</h4>
+                    <h2 id="stat-turnout">0%</h2>
                 </div>
-                <h2 id="stat-turnout">0%</h2>
-                <p>Turnout Efficiency</p>
+                <div class="stat-icon bg-accent-subtle text-accent">
+                    <span class="material-symbols-outlined">analytics</span>
+                </div>
             </div>
         </div>
         <div class="col-md-3">
             <div class="stat-card">
-                <div class="d-flex justify-content-between align-items-start mb-3">
-                    <div class="stat-icon bg-light text-muted">
-                        <span class="material-symbols-outlined">sensors</span>
-                    </div>
+                <div class="stat-info">
+                    <h4>Session Status</h4>
+                    <h2 id="stat-session-status">
+                        {% if election.status == 1 %}
+                            <span class="text-success fs-4 fw-bold">RUNNING</span>
+                        {% else %}
+                            <span class="text-muted fs-4 fw-bold">CONCLUDED</span>
+                        {% endif %}
+                    </h2>
                 </div>
-                <h2>
-                    {% if election.status == 1 %}
-                        <span class="text-success fs-4 fw-bold">RUNNING</span>
-                    {% else %}
-                        <span class="text-muted fs-4 fw-bold">CONCLUDED</span>
-                    {% endif %}
-                </h2>
-                <p>Session Status</p>
+                <div class="stat-icon bg-light text-muted">
+                    <span class="material-symbols-outlined">sensors</span>
+                </div>
             </div>
         </div>
     </div>
@@ -382,15 +384,15 @@
                             </div>
                             <div class="row g-2">
                                 <div class="col-6">
-                                    <div class="p-2 px-3 bg-light rounded-3 d-flex justify-content-between align-items-center">
-                                        <span class="extra-small fw-bold text-success">AFFIRMATIVE</span>
-                                        <span class="fw-bold text-dark">${c.votes_for}</span>
+                                    <div class="p-3 bg-light rounded-4 text-center">
+                                        <div class="premium-label mb-1" style="font-size: 0.6rem; color: #15803d;">AFFIRMATIVE</div>
+                                        <div class="fw-900 text-dark fs-4">${c.votes_for}</div>
                                     </div>
                                 </div>
                                 <div class="col-6">
-                                    <div class="p-2 px-3 bg-light rounded-3 d-flex justify-content-between align-items-center">
-                                        <span class="extra-small fw-bold text-danger">NEGATIVE</span>
-                                        <span class="fw-bold text-dark">${c.votes_against}</span>
+                                    <div class="p-3 bg-light rounded-4 text-center">
+                                        <div class="premium-label mb-1" style="font-size: 0.6rem; color: #dc2626;">NEGATIVE</div>
+                                        <div class="fw-900 text-dark fs-4">${c.votes_against}</div>
                                     </div>
                                 </div>
                             </div>
@@ -410,8 +412,8 @@
                                 </div>
                             </div>
                             <div class="text-end">
-                                <div class="fw-bold text-primary fs-5">${c.votes_for}</div>
-                                <div class="extra-small text-muted">VOTES</div>
+                                <div class="premium-label mb-0" style="font-size: 0.6rem;">VOTES</div>
+                                <div class="fw-900 text-primary fs-4">${c.votes_for}</div>
                             </div>
                         </div>
                     `);

@@ -275,8 +275,27 @@
     .btn-next:hover { background: #132e29; transform: translateX(4px); }
     .btn-next:disabled { opacity: 0.3; cursor: not-allowed; transform: none; }
 
-    .btn-submit { background: var(--success-color); color: white; padding: 16px 48px; }
+    .btn-submit { background: var(--success-color); color: white; padding: 16px 48px; position: relative; overflow: hidden; }
     .btn-submit:hover { background: #16a34a; box-shadow: 0 10px 20px rgba(34, 197, 94, 0.3); }
+    .btn-submit:disabled { opacity: 0.7; cursor: wait; }
+
+    .btn-submit .spinner-border {
+        width: 1.2rem;
+        height: 1.2rem;
+        display: none;
+        border: 2px solid currentColor;
+        border-right-color: transparent;
+        border-radius: 50%;
+        animation: spinner-rotate .75s linear infinite;
+    }
+    @keyframes spinner-rotate {
+        to { transform: rotate(360deg); }
+    }
+    .btn-submit.loading .spinner-border { display: inline-block; }
+    .btn-submit.loading .material-symbols-outlined { display: none; }
+    .btn-submit.loading .btn-text { display: none; }
+    .btn-submit.loading .loading-text { display: inline-block; }
+    .btn-submit .loading-text { display: none; }
 
     /* Review Step */
     .review-grid {
@@ -437,7 +456,10 @@
                     Continue <span class="material-symbols-outlined">arrow_forward</span>
                 </button>
                 <button type="submit" form="voteForm" name="submitVotes" class="btn-nav btn-submit d-none" id="submitBtn">
-                    Confirm & Cast Vote <span class="material-symbols-outlined">how_to_vote</span>
+                    <span class="btn-text">Confirm & Cast Vote</span>
+                    <span class="loading-text">Encrypting & Casting...</span>
+                    <div class="spinner-border spinner-border-sm ms-2" role="status" aria-hidden="true"></div>
+                    <span class="material-symbols-outlined">how_to_vote</span>
                 </button>
             </div>
         </div>
@@ -568,6 +590,18 @@
     }
 
     $(document).ready(function() {
+        // Form submission handling
+        $('#voteForm').on('submit', function() {
+            const $btn = $('#submitBtn');
+            $btn.addClass('loading');
+            $btn.prop('disabled', true);
+            
+            // Also disable the back button to prevent navigation during submission
+            $('#prevBtn').prop('disabled', true);
+            
+            return true; // Continue with form submission
+        });
+
         // Init first step
         document.getElementById('step-0').classList.add('active');
         updateUI();

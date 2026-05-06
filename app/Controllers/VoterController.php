@@ -549,9 +549,12 @@ class VoterController
                 </div>
             </div>';
 
-            send_email($voter_row['email'], "Voting Receipt: " . $eTitle, $receipt_html);
-
-            add_to_log("Voter casted vote and received email receipt", $voter_uuid, 'user');
+            if (isset($voter_row['allow_email_login']) && $voter_row['allow_email_login'] == 1) {
+                send_email($voter_row['email'], "Voting Receipt: " . $eTitle, $receipt_html);
+                add_to_log("Voter casted vote and received email receipt", $voter_uuid, 'user');
+            } else {
+                add_to_log("Voter casted vote (email receipt disabled by auth matrix)", $voter_uuid, 'user');
+            }
 
             $conn->commit();
 

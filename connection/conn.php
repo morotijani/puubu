@@ -119,7 +119,8 @@
  	if (isset($_SESSION['voter_accessed'])) {
 	 	$voter_uuid = $_SESSION['voter_accessed'];
 		$voterQuery = "
-		    SELECT v.*, e.title as election_title, e.organized_by, e.starts_at, e.ends_at, e.status as election_status, e.uuid as election_uuid 
+		    SELECT v.*, e.title as election_title, e.organized_by, e.starts_at, e.ends_at, e.status as election_status, e.uuid as election_uuid,
+                   e.allow_email_login, e.allow_sms_login, e.allow_pin_login, e.allow_direct_link
 		    FROM voters v 
 		    INNER JOIN election e 
 		    ON e.uuid = v.election_uuid 

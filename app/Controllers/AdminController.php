@@ -223,9 +223,18 @@ class AdminController {
         $name = sanitize($_POST['title']);
         $by = sanitize($_POST['organized_by']);
         $edit_id = $_POST['edit_id'] ?? null;
+        
+        $allow_email = isset($_POST['allow_email_login']) ? 1 : 0;
+        $allow_sms = isset($_POST['allow_sms_login']) ? 1 : 0;
+        $allow_pin = isset($_POST['allow_pin_login']) ? 1 : 0;
 
         if (empty($name) || empty($by)) {
             $_SESSION['flash_error'] = "All fields are required.";
+            redirect(PROOT . 'admin/elections' . ($edit_id ? '?edit=' . $edit_id : ''));
+        }
+        
+        if ($allow_email == 0 && $allow_sms == 0 && $allow_pin == 0) {
+            $_SESSION['flash_error'] = "You must select at least one login option.";
             redirect(PROOT . 'admin/elections' . ($edit_id ? '?edit=' . $edit_id : ''));
         }
 
@@ -234,11 +243,11 @@ class AdminController {
         
         if ($edit_id) {
             if (($admin_data['role'] ?? 'organizer') === 'super_admin') {
-                $stmt = $conn->prepare("UPDATE election SET title = ?, organized_by = ? WHERE uuid = ? AND status = 0");
-                $result = $stmt->execute([$name, $by, $edit_id]);
+                $stmt = $conn->prepare("UPDATE election SET title = ?, organized_by = ?, allow_email_login = ?, allow_sms_login = ?, allow_pin_login = ? WHERE uuid = ? AND status = 0");
+                $result = $stmt->execute([$name, $by, $allow_email, $allow_sms, $allow_pin, $edit_id]);
             } else {
-                $stmt = $conn->prepare("UPDATE election SET title = ?, organized_by = ? WHERE uuid = ? AND status = 0 AND organizer_id = ?");
-                $result = $stmt->execute([$name, $by, $edit_id, $admin_id]);
+                $stmt = $conn->prepare("UPDATE election SET title = ?, organized_by = ?, allow_email_login = ?, allow_sms_login = ?, allow_pin_login = ? WHERE uuid = ? AND status = 0 AND organizer_id = ?");
+                $result = $stmt->execute([$name, $by, $allow_email, $allow_sms, $allow_pin, $edit_id, $admin_id]);
             }
             if ($result && $stmt->rowCount() > 0) {
                 add_to_log("Updated election: $name", $admin_id, 'admin');
@@ -248,8 +257,8 @@ class AdminController {
             }
         } else {
             $unique_id = guidv4();
-            $stmt = $conn->prepare("INSERT INTO election (uuid, title, organized_by, organizer_id) VALUES (?, ?, ?, ?)");
-            $result = $stmt->execute([$unique_id, $name, $by, $admin_id]);
+            $stmt = $conn->prepare("INSERT INTO election (uuid, title, organized_by, organizer_id, allow_email_login, allow_sms_login, allow_pin_login) VALUES (?, ?, ?, ?, ?, ?, ?)");
+            $result = $stmt->execute([$unique_id, $name, $by, $admin_id, $allow_email, $allow_sms, $allow_pin]);
             if ($result) {
                 add_to_log("Created new election: $name", $admin_id, 'admin');
                 $_SESSION['flash_success'] = "Election created successfully.";
@@ -614,6 +623,21 @@ class AdminController {
         redirect(PROOT . 'admin/contestants');
     }
 
+    public function getElectionLoginSettings($uuid) {
+        global $conn;
+        $stmt = $conn->prepare("SELECT allow_email_login, allow_sms_login, allow_pin_login FROM election WHERE uuid = ?");
+        $stmt->execute([$uuid]);
+        $settings = $stmt->fetch(\PDO::FETCH_ASSOC);
+        
+        if (!$settings) {
+            $settings = ['allow_email_login' => 1, 'allow_sms_login' => 0, 'allow_pin_login' => 0];
+        }
+        
+        header('Content-Type: application/json');
+        echo json_encode($settings);
+        exit;
+    }
+
     public function getPositionsByElection($uuid) {
         global $conn;
         $stmt = $conn->prepare("SELECT position_id, position_name FROM positions WHERE election_uuid = ? ORDER BY position_name ASC");
@@ -750,33 +774,58 @@ class AdminController {
         $first_name = sanitize($_POST['first_name']);
         $last_name = sanitize($_POST['last_name']);
         $gender = sanitize($_POST['gender'] ?? 'male');
-        $email = sanitize($_POST['email']);
+        $email = sanitize($_POST['email'] ?? '');
+        $phone = sanitize($_POST['phone'] ?? '');
         $election_id = sanitize($_POST['election_uuid']);
 
-        if (empty($voter_id) || empty($first_name) || empty($last_name) || empty($email) || empty($election_id)) {
-            $_SESSION['flash_error'] = "All fields are required.";
+        if (empty($voter_id) || empty($first_name) || empty($last_name) || empty($election_id)) {
+            $_SESSION['flash_error'] = "Voter ID, First Name, Last Name, and Election are required.";
             redirect(PROOT . 'admin/voters' . ($id ? '/edit/' . $id : '/add'));
         }
 
-        // Validation: Unique Identity ID and Email within the same election
+        // Fetch election settings
+        $stmt = $conn->prepare("SELECT * FROM election WHERE uuid = ?");
+        $stmt->execute([$election_id]);
+        $election = $stmt->fetch();
+        if (!$election) {
+            $_SESSION['flash_error'] = "Invalid election.";
+            redirect(PROOT . 'admin/voters' . ($id ? '/edit/' . $id : '/add'));
+        }
+
+        if ($election['allow_email_login'] && empty($email)) {
+            $_SESSION['flash_error'] = "Email is required for this election's login settings.";
+            redirect(PROOT . 'admin/voters' . ($id ? '/edit/' . $id : '/add'));
+        }
+        if ($election['allow_sms_login'] && empty($phone)) {
+            $_SESSION['flash_error'] = "Phone number is required for this election's login settings.";
+            redirect(PROOT . 'admin/voters' . ($id ? '/edit/' . $id : '/add'));
+        }
+
+        // Validation: Unique Identity ID, Email, and Phone within the same election
         if ($id) {
-            $stmt = $conn->prepare("SELECT * FROM voters WHERE (voter_id = ? OR email = ?) AND election_uuid = ? AND uuid != ?");
-            $stmt->execute([$voter_id, $email, $election_id, $id]);
+            $stmt = $conn->prepare("SELECT * FROM voters WHERE (voter_id = ? OR (email != '' AND email = ?) OR (phone != '' AND phone = ?)) AND election_uuid = ? AND uuid != ?");
+            $stmt->execute([$voter_id, $email, $phone, $election_id, $id]);
         } else {
-            $stmt = $conn->prepare("SELECT * FROM voters WHERE (voter_id = ? OR email = ?) AND election_uuid = ?");
-            $stmt->execute([$voter_id, $email, $election_id]);
+            $stmt = $conn->prepare("SELECT * FROM voters WHERE (voter_id = ? OR (email != '' AND email = ?) OR (phone != '' AND phone = ?)) AND election_uuid = ?");
+            $stmt->execute([$voter_id, $email, $phone, $election_id]);
         }
         
         $duplicate = $stmt->fetch();
         if ($duplicate) {
-            $msg = ($duplicate['voter_id'] == $voter_id) ? "Identity ID '$voter_id' is already registered for this election." : "Email '$email' is already registered for this election.";
+            if ($duplicate['voter_id'] == $voter_id) {
+                $msg = "Identity ID '$voter_id' is already registered for this election.";
+            } elseif ($duplicate['email'] == $email && !empty($email)) {
+                $msg = "Email '$email' is already registered for this election.";
+            } else {
+                $msg = "Phone '$phone' is already registered for this election.";
+            }
             $_SESSION['flash_error'] = $msg;
             redirect(PROOT . 'admin/voters' . ($id ? '/edit/' . $id : '/add'));
         }
 
         if ($id) {
-            $query = "UPDATE voters SET voter_id = ?, first_name = ?, last_name = ?, gender = ?, email = ?, election_uuid = ? WHERE uuid = ?";
-            $conn->prepare($query)->execute([$voter_id, $first_name, $last_name, $gender, $email, $election_id, $id]);
+            $query = "UPDATE voters SET voter_id = ?, first_name = ?, last_name = ?, gender = ?, email = ?, phone = ?, election_uuid = ? WHERE uuid = ?";
+            $conn->prepare($query)->execute([$voter_id, $first_name, $last_name, $gender, $email, $phone, $election_id, $id]);
             $_SESSION['flash_success'] = "Voter updated successfully.";
         } else {
             // Generate password
@@ -785,8 +834,8 @@ class AdminController {
             $hashed = password_hash($password, PASSWORD_DEFAULT);
             
             $new_uuid = guidv4();
-            $query = "INSERT INTO voters (uuid, voter_id, password, first_name, last_name, gender, email, election_uuid) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-            $conn->prepare($query)->execute([$new_uuid, $voter_id, $hashed, $first_name, $last_name, $gender, $email, $election_id]);
+            $query = "INSERT INTO voters (uuid, voter_id, password, first_name, last_name, gender, email, phone, election_uuid) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            $conn->prepare($query)->execute([$new_uuid, $voter_id, $hashed, $first_name, $last_name, $gender, $email, $phone, $election_id]);
             
             $_SESSION['flash_success'] = "Voter added successfully. Password is: $password";
         }

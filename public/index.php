@@ -45,6 +45,24 @@ $router->all('/signin', function() use ($twig) {
     $controller->login();
 });
 
+$router->post('/auth/check-id', function() use ($twig) {
+    require_once __DIR__ . '/../app/Controllers/VoterController.php';
+    $controller = new \App\Controllers\VoterController($twig);
+    $controller->checkVoterId();
+});
+
+$router->post('/auth/send-otp', function() use ($twig) {
+    require_once __DIR__ . '/../app/Controllers/VoterController.php';
+    $controller = new \App\Controllers\VoterController($twig);
+    $controller->sendOtp();
+});
+
+$router->post('/auth/verify-otp', function() use ($twig) {
+    require_once __DIR__ . '/../app/Controllers/VoterController.php';
+    $controller = new \App\Controllers\VoterController($twig);
+    $controller->verifyOtp();
+});
+
 $router->get('/auth/logout', function() use ($twig) {
     require_once __DIR__ . '/../app/Controllers/VoterController.php';
     $controller = new \App\Controllers\VoterController($twig);
@@ -227,6 +245,12 @@ $router->mount('/admin', function() use ($router, $twig) {
         require_once __DIR__ . '/../app/Controllers/AdminController.php';
         $controller = new \App\Controllers\AdminController($twig);
         $controller->getPositionsByElection($id);
+    });
+
+    $router->get('/api/election-login-settings/([a-zA-Z0-9\-]+)', function($id) use ($twig) {
+        require_once __DIR__ . '/../app/Controllers/AdminController.php';
+        $controller = new \App\Controllers\AdminController($twig);
+        $controller->getElectionLoginSettings($id);
     });
 
     // Voter Management

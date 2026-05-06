@@ -27,119 +27,53 @@ class VoterController
         $login_issue = urlencode($login_issue_text);
         $displayErrors = '';
 
+        // Handle legacy form submission if still used, or redirect to dynamic page
         if (isset($_POST['submitVoter'])) {
             if (!isset($_POST['csrf_token']) || !verify_csrf_token($_POST['csrf_token'])) {
-                $displayErrors = "Invalid request token. Please refresh and try again.";
-            } elseif (empty($_POST['voter_id']) || empty($_POST['voter_password'])) {
-                $displayErrors = "Invalid Details";
+                $displayErrors = "Invalid request token.";
             } else {
-                if (isset($_SESSION['crAdmin'])) {
-                    $displayErrors = "Oops... admin is working on some background checks please come back later ...";
-                } else {
-                    $query = "
-                        SELECT v.*, e.title as election_title, e.organized_by, e.starts_at, e.ends_at, e.status as election_status, e.uuid as election_uuid 
-                        FROM voters v 
-                        INNER JOIN election e
-                        ON e.uuid = v.election_uuid
-                        WHERE v.voter_id = ?
-                    ";
-                    $statement = $conn->prepare($query);
-                    $statement->execute([$_POST['voter_id']]);
-                    $result_voterLogin = $statement->fetchAll();
+                $voter_id = sanitize($_POST['voter_id']);
+                $password = $_POST['voter_password'];
 
-                    if ($statement->rowCount() > 0) {
-                        foreach ($result_voterLogin as $row) {
-                            if ($row['election_status'] == 1) {
-                                $now = date('Y-m-d H:i:s');
-                                if ($now < $row['starts_at']) {
-                                    $displayErrors = "This election has not started yet. Access will be granted on " . date('F j, Y, g:i a', strtotime($row['starts_at'])) . ".";
-                                } elseif ($now > $row['ends_at']) {
-                                    $displayErrors = "Access Denied: This election ended on " . date('F j, Y, g:i a', strtotime($row['ends_at'])) . ".";
-                                } else {
-                                    // Check if already voted
-                                    $checkVoted = $conn->prepare("SELECT COUNT(*) FROM voter_participation WHERE voter_id = ? AND election_uuid = ?");
-                                    $checkVoted->execute([$row['uuid'], $row['election_uuid']]);
-                                    if ($checkVoted->fetchColumn() > 0) {
-                                        $displayErrors = "Access Denied: You have already cast your vote in this election.";
-                                    } elseif (!password_verify($_POST['voter_password'], $row['password'])) {
-                                        $displayErrors = "Invalid Voter Details";
-                                    } else {
-                                        $current_ip = $details->ip ?? ($_SERVER['REMOTE_ADDR'] ?? 'Unknown IP');
-                                        $login_issue_text = "Someone logged in with my account, on this IP: " . $current_ip;
-                                        $login_issue = urlencode($login_issue_text);
+                $query = "
+                    SELECT v.*, e.status as election_status, e.starts_at, e.ends_at, e.allow_email_login, e.allow_pin_login
+                    FROM voters v 
+                    INNER JOIN election e ON e.uuid = v.election_uuid
+                    WHERE v.voter_id = ?
+                ";
+                $stmt = $conn->prepare($query);
+                $stmt->execute([$voter_id]);
+                $voter = $stmt->fetch();
 
-                                        $to = $row["email"];
-                                        $subject = 'Security Alert: New Login on Puubu';
+                if ($voter && password_verify($password, $voter['password'])) {
+                    // Check election timing and status
+                    if ($voter['election_status'] == 1) {
+                        $now = date('Y-m-d H:i:s');
+                        if ($now >= $voter['starts_at'] && $now <= $voter['ends_at']) {
+                             // Check if already voted
+                            $checkVoted = $conn->prepare("SELECT COUNT(*) FROM voter_participation WHERE voter_id = ? AND election_uuid = ?");
+                            $checkVoted->execute([$voter['uuid'], $voter['election_uuid']]);
+                            if ($checkVoted->fetchColumn() == 0) {
+                                // Proceed to complete login
+                                $unique_vld_id = guidv4();
+                                $conn->prepare("INSERT INTO voter_security_logs (uuid, voter_id, location) VALUES (?, ?, ?)")
+                                     ->execute([$unique_vld_id, $voter['uuid'], $location]);
 
-                                        $city = $details->city ?? 'Unknown City';
-                                        $region = $details->region ?? 'Unknown Region';
-                                        $country = $details->country ?? 'Unknown Country';
-                                        $ip = $details->ip ?? 'Unknown IP';
-                                        $device_location = "{$city}, {$region}, {$country} ({$ip})";
-
-                                        $body = "
-                                        <div style='font-family: sans-serif; max-width: 600px; margin: 0 auto; border: 1px solid #e2e8f0; border-radius: 12px; overflow: hidden;'>
-                                            <div style='background: #1d3d37; padding: 24px; text-align: center;'>
-                                                <h2 style='color: #dcf3b0; margin: 0;'>New Login Detected</h2>
-                                            </div>
-                                            <div style='padding: 32px; color: #4a5568; line-height: 1.6;'>
-                                                <p>Hello <strong>" . ucwords($row['first_name']) . "</strong>,</p>
-                                                <p>We detected a new login to your Puubu account. To ensure your account is secure, we wanted to let you know the details:</p>
-                                                
-                                                <div style='background: #f8fafc; padding: 16px; border-radius: 8px; margin: 24px 0;'>
-                                                    <table style='width: 100%; border-collapse: collapse;'>
-                                                        <tr><td style='padding: 4px 0; color: #718096; width: 100px;'>Location:</td><td style='padding: 4px 0; font-weight: 600;'>$device_location</td></tr>
-                                                        <tr><td style='padding: 4px 0; color: #718096;'>Time:</td><td style='padding: 4px 0; font-weight: 600;'>" . date('F j, Y, g:i a') . "</td></tr>
-                                                    </table>
-                                                </div>
-
-                                                <p>If this was you, you can safely ignore this email. If you don't recognize this activity, please secure your account immediately by contacting our support team.</p>
-                                                
-                                                <div style='text-align: center; margin-top: 32px;'>
-                                                    <a href='https://wa.me/+233240445410/?text=$login_issue' style='background: #1d3d37; color: white; padding: 12px 24px; text-decoration: none; border-radius: 8px; font-weight: bold; display: inline-block;'>Secure My Account</a>
-                                                </div>
-                                            </div>
-                                            <div style='background: #f8fafc; padding: 16px; text-align: center; font-size: 12px; color: #a0aec0; border-top: 1px solid #e2e8f0;'>
-                                                &copy; " . date('Y') . " Puubu Group. All rights reserved.
-                                            </div>
-                                        </div>";
-
-                                        try {
-                                            $mailSent = send_email($to, $subject, $body);
-                                            if (!$mailSent) {
-                                                // Log the failure but allow login to proceed or show error?
-                                                // For security alerts, we should probably proceed but maybe show a warning.
-                                            }
-
-                                            $unique_vld_id = guidv4();
-                                            $election_logs_query = "
-                                                INSERT INTO voter_security_logs (uuid, voter_id, location) 
-                                                VALUES (?, ?, ?)
-                                            ";
-                                            $statement = $conn->prepare($election_logs_query);
-                                            $election_logs_result = $statement->execute([$unique_vld_id, $row['uuid'], $location]);
-
-                                            if ($election_logs_result) {
-                                                $_SESSION['voter_accessed'] = $row['uuid'];
-                                                $_SESSION['voter_login_details_id'] = $unique_vld_id;
-
-                                                $log_message = "voter ['" . ucwords($row["first_name"] . ' ' . $row["last_name"]) . "'], loggedin, location ('" . $location . "')!";
-                                                add_to_log($log_message, $row["uuid"], 'user');
-
-                                                redirect(PROOT . 'votingon');
-                                            }
-                                        } catch (\Exception $e) {
-                                            $displayErrors = "Login failed: " . $e->getMessage();
-                                        }
-                                    }
-                                }
+                                $_SESSION['voter_accessed'] = $voter['uuid'];
+                                $_SESSION['voter_login_details_id'] = $unique_vld_id;
+                                add_to_log("voter logged in, location ('$location')!", $voter["uuid"], 'user');
+                                redirect(PROOT . 'votingon');
                             } else {
-                                $displayErrors = "Sorry, the election is either not started or it has ended.";
+                                $displayErrors = "You have already cast your vote.";
                             }
+                        } else {
+                            $displayErrors = "Election is not currently active.";
                         }
                     } else {
-                        $displayErrors = "Invalid Voter Details";
+                        $displayErrors = "Election is not active.";
                     }
+                } else {
+                    $displayErrors = "Invalid Voter Details";
                 }
             }
         }
@@ -148,6 +82,143 @@ class VoterController
             'displayErrors' => $displayErrors,
             'login_issue' => $login_issue
         ]);
+    }
+
+    public function checkVoterId() {
+        global $conn;
+        $voter_id = sanitize($_POST['voter_id'] ?? '');
+        
+        if (empty($voter_id)) {
+            $this->jsonResponse(['status' => 'error', 'message' => 'Please enter your Voter ID']);
+        }
+
+        $query = "
+            SELECT v.*, e.allow_email_login, e.allow_sms_login, e.allow_pin_login, e.status as election_status, e.starts_at, e.ends_at
+            FROM voters v 
+            INNER JOIN election e ON e.uuid = v.election_uuid
+            WHERE v.voter_id = ?
+        ";
+        $stmt = $conn->prepare($query);
+        $stmt->execute([$voter_id]);
+        $voter = $stmt->fetch();
+
+        if (!$voter) {
+            $this->jsonResponse(['status' => 'error', 'message' => 'Identity ID not found']);
+        }
+
+        if ($voter['election_status'] != 1) {
+            $this->jsonResponse(['status' => 'error', 'message' => 'The election is not active at this time.']);
+        }
+
+        $now = date('Y-m-d H:i:s');
+        if ($now < $voter['starts_at']) {
+            $this->jsonResponse(['status' => 'error', 'message' => 'This election has not started yet.']);
+        } elseif ($now > $voter['ends_at']) {
+            $this->jsonResponse(['status' => 'error', 'message' => 'This election has already ended.']);
+        }
+
+        // Check if already voted
+        $checkVoted = $conn->prepare("SELECT COUNT(*) FROM voter_participation WHERE voter_id = ? AND election_uuid = ?");
+        $checkVoted->execute([$voter['uuid'], $voter['election_uuid']]);
+        if ($checkVoted->fetchColumn() > 0) {
+            $this->jsonResponse(['status' => 'error', 'message' => 'You have already cast your vote.']);
+        }
+
+        $phone_masked = '';
+        if ($voter['phone']) {
+            $len = strlen($voter['phone']);
+            $phone_masked = substr($voter['phone'], 0, 4) . str_repeat('*', $len - 6) . substr($voter['phone'], -2);
+        }
+
+        $this->jsonResponse([
+            'status' => 'success',
+            'voter_uuid' => $voter['uuid'],
+            'settings' => [
+                'email' => (int)$voter['allow_email_login'],
+                'sms' => (int)$voter['allow_sms_login'],
+                'pin' => (int)$voter['allow_pin_login']
+            ],
+            'phone_masked' => $phone_masked
+        ]);
+    }
+
+    public function sendOtp() {
+        global $conn;
+        $voter_uuid = $_POST['voter_uuid'] ?? '';
+        
+        $stmt = $conn->prepare("SELECT * FROM voters WHERE uuid = ?");
+        $stmt->execute([$voter_uuid]);
+        $voter = $stmt->fetch();
+
+        if (!$voter || empty($voter['phone'])) {
+            $this->jsonResponse(['status' => 'error', 'message' => 'Voter or phone number not found.']);
+        }
+
+        $otp = (string)rand(100000, 999999);
+        $expires = date('Y-m-d H:i:s', strtotime('+10 minutes'));
+
+        $stmt = $conn->prepare("UPDATE voters SET otp_code = ?, otp_expires_at = ? WHERE uuid = ?");
+        $stmt->execute([$otp, $expires, $voter_uuid]);
+
+        $this->mockSendSms($voter['phone'], "Your Puubu voting OTP is: $otp. Expires in 10 minutes.");
+
+        $this->jsonResponse(['status' => 'success', 'message' => 'OTP sent to your phone.']);
+    }
+
+    public function verifyOtp() {
+        global $conn;
+        $voter_uuid = $_POST['voter_uuid'] ?? '';
+        $otp = $_POST['otp_code'] ?? '';
+
+        $stmt = $conn->prepare("SELECT * FROM voters WHERE uuid = ?");
+        $stmt->execute([$voter_uuid]);
+        $voter = $stmt->fetch();
+
+        if (!$voter || $voter['otp_code'] !== $otp) {
+            $this->jsonResponse(['status' => 'error', 'message' => 'Invalid OTP code.']);
+        }
+
+        if (strtotime($voter['otp_expires_at']) < time()) {
+            $this->jsonResponse(['status' => 'error', 'message' => 'OTP code has expired.']);
+        }
+
+        // Clear OTP and Login
+        $stmt = $conn->prepare("UPDATE voters SET otp_code = NULL, otp_expires_at = NULL WHERE uuid = ?");
+        $stmt->execute([$voter_uuid]);
+
+        $this->completeLogin($voter);
+    }
+
+    private function completeLogin($voter) {
+        global $conn, $location;
+        
+        $unique_vld_id = guidv4();
+        $stmt = $conn->prepare("INSERT INTO voter_security_logs (uuid, voter_id, location) VALUES (?, ?, ?)");
+        $stmt->execute([$unique_vld_id, $voter['uuid'], $location]);
+
+        $_SESSION['voter_accessed'] = $voter['uuid'];
+        $_SESSION['voter_login_details_id'] = $unique_vld_id;
+
+        $log_message = "voter ['" . ucwords($voter["first_name"] . ' ' . $voter["last_name"]) . "'], loggedin via alternative method, location ('" . $location . "')!";
+        add_to_log($log_message, $voter["uuid"], 'user');
+
+        $this->jsonResponse(['status' => 'success', 'redirect' => PROOT . 'votingon']);
+    }
+
+    private function mockSendSms($phone, $message) {
+        $logFile = __DIR__ . '/../../scratch/sms_mock.log';
+        $logDir = dirname($logFile);
+        if (!is_dir($logDir)) {
+            mkdir($logDir, 0777, true);
+        }
+        $log = "[" . date('Y-m-d H:i:s') . "] SMS to $phone: $message" . PHP_EOL;
+        file_put_contents($logFile, $log, FILE_APPEND);
+    }
+
+    private function jsonResponse($data) {
+        header('Content-Type: application/json');
+        echo json_encode($data);
+        exit;
     }
 
     public function dashboard()

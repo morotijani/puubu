@@ -105,11 +105,18 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-md-6">
+                                    <div class="col-md-6" id="email_field_wrapper">
                                         <label class="form-label small fw-bold text-uppercase tracking-wider">Email Address</label>
                                         <div class="input-group">
                                             <span class="input-group-text bg-light border-0"><span class="material-symbols-outlined fs-6 text-muted">alternate_email</span></span>
-                                            <input type="email" class="form-control form-control-lg bg-light border-0" name="email" value="{{ voter.email }}" placeholder="e.g. john@example.com" required>
+                                            <input type="email" class="form-control form-control-lg bg-light border-0" name="email" id="voter_email" value="{{ voter.email }}" placeholder="e.g. john@example.com">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6" id="phone_field_wrapper">
+                                        <label class="form-label small fw-bold text-uppercase tracking-wider">Phone Number</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text bg-light border-0"><span class="material-symbols-outlined fs-6 text-muted">phone</span></span>
+                                            <input type="text" class="form-control form-control-lg bg-light border-0" name="phone" id="voter_phone" value="{{ voter.phone }}" placeholder="e.g. +233240000000">
                                         </div>
                                     </div>
                                 </div>
@@ -223,5 +230,41 @@
             $('#genderFemale').closest('.card-check').addClass('active');
         }
     }
+
+    $(document).ready(function() {
+        const electionSelect = $('select[name="election_uuid"]');
+        const emailInput = $('#voter_email');
+        const phoneInput = $('#voter_phone');
+
+        function updateFieldRequirements() {
+            const uuid = electionSelect.val();
+            if (!uuid) return;
+
+            $.get('{{ PROOT }}admin/api/election-login-settings/' + uuid, function(settings) {
+                // Remove existing markers
+                $('#email_field_wrapper label .text-danger').remove();
+                $('#phone_field_wrapper label .text-danger').remove();
+
+                // Email requirement
+                if (settings.allow_email_login == 1) {
+                    emailInput.prop('required', true);
+                    $('#email_field_wrapper label').append(' <span class="text-danger small">*</span>');
+                } else {
+                    emailInput.prop('required', false);
+                }
+
+                // Phone requirement
+                if (settings.allow_sms_login == 1) {
+                    phoneInput.prop('required', true);
+                    $('#phone_field_wrapper label').append(' <span class="text-danger small">*</span>');
+                } else {
+                    phoneInput.prop('required', false);
+                }
+            });
+        }
+
+        electionSelect.on('change', updateFieldRequirements);
+        if (electionSelect.val()) updateFieldRequirements();
+    });
 </script>
 {% endblock %}

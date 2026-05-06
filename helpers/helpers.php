@@ -339,7 +339,7 @@ function goBack() {
 		global $conn;
 		
 		// Check for 2FA status
-		$query2fa = "SELECT is_2fa_enabled, google_auth_secret FROM puubu_admin WHERE admin_id = :admin_id";
+		$query2fa = "SELECT is_2fa_enabled, google_auth_secret FROM admins WHERE uuid = :admin_id";
 		$stmt2fa = $conn->prepare($query2fa);
 		$stmt2fa->execute([':admin_id' => $admin_id]);
 		$adminData = $stmt2fa->fetch();
@@ -348,7 +348,7 @@ function goBack() {
 			':last_login' => date("Y-m-d H:i:s"),
 			':id' => $admin_id
 		);
-		$query = "UPDATE puubu_admin SET last_login = :last_login WHERE id = :id";
+		$query = "UPDATE admins SET last_login = :last_login WHERE uuid = :id";
 		$statement = $conn->prepare($query);
 		$result = $statement->execute($data);
 		
@@ -392,33 +392,31 @@ function goBack() {
 		$output = '';
 
 		$query = "
-			SELECT * FROM puubu_admin 
-			WHERE trash = :trash 
+			SELECT * FROM admins 
+			WHERE uuid = :uuid AND trash = :trash 
 			LIMIT 1
 		";
 		$statement = $conn->prepare($query);
-		$statement->execute([':trash' => 0]);
-		$result = $statement->fetchAll();
+		$statement->execute([':uuid' => $admin_id, ':trash' => 0]);
+		$admin_row = $statement->fetch();
 
-		foreach ($result as $admin_row) {
-			if ($admin_row['admin_id'] == $admin_id) {
+		if ($admin_row) {
 				$output = '
 					<h6>First Name</h6>
-				    <p class="lead text-info">'.ucwords($admin_row["cfname"]).'</p>
+				    <p class="lead text-info">'.ucwords($admin_row["first_name"]).'</p>
 				    <br>
 					<h6>Last Name</h6>
-				    <p class="lead text-info">'.ucwords($admin_row["clname"]).'</p>
+				    <p class="lead text-info">'.ucwords($admin_row["last_name"]).'</p>
 				    <br>
 				    <h6>Email</h6>
-				    <p class="lead text-info">'.$admin_row["cemail"].'</p>
+				    <p class="lead text-info">'.$admin_row["email"].'</p>
 				    <br>
 				    <h6>Joined Date</h6>
-				    <p class="lead text-info">'.pretty_date($admin_row["joined_date"]).'</p>
+				    <p class="lead text-info">'.pretty_date($admin_row["created_at"]).'</p>
 				    <br>
 				    <h6>Last Login</h6>
 				    <p class="lead text-info">'.pretty_date($admin_row["last_login"]).'</p>
 				';
-			}
 		}
 		return $output;
 	}
@@ -569,13 +567,13 @@ function goBack() {
 	function add_to_log($message, $person, $type) {
 		global $conn;
 
-		$log_id = guidv4();
+		$uuid = guidv4();
 		$sql = "
-			INSERT INTO `activity_logs`(`log_id`, `log_message`, `user_uuid`, `log_type`) 
+			INSERT INTO `activity_logs`(`uuid`, `log_message`, `user_uuid`, `log_type`) 
 			VALUES (?, ?, ?, ?)
 		";
 		$statement = $conn->prepare($sql);
-		$result = $statement->execute([$log_id, $message, $person, $type]);
+		$result = $statement->execute([$uuid, $message, $person, $type]);
 
 		if ($result) {
 			return true;
@@ -595,8 +593,8 @@ function goBack() {
 
 		$sql = "
 			SELECT * FROM activity_logs 
-			-- INNER JOIN puubu_admin 
-			-- ON puubu_admin.admin_id = activity_logs.user_uuid
+			-- INNER JOIN admins 
+			-- ON admins.uuid = activity_logs.user_uuid
 		$where 
 			ORDER BY activity_logs.createdAt DESC
 			LIMIT 10
@@ -645,13 +643,13 @@ function count_logs($admin) {
 
     $where = '';
     // if (!admin_has_permission()) {
-    //     $where = ' WHERE puubu_admin.admin_id = "' . $admin . '" AND CAST(activity_logs.createdAt AS date) = "' . $today . '" ';
+    //     $where = ' WHERE admins.uuid = "' . $admin . '" AND CAST(activity_logs.createdAt AS date) = "' . $today . '" ';
     // }
 
     $sql = "
         SELECT * FROM activity_logs 
-        -- INNER JOIN puubu_admin 
-        -- ON puubu_admin.admin_id = activity_logs.user_uuid
+        -- INNER JOIN admins 
+        -- ON admins.uuid = activity_logs.user_uuid
         $where 
         -- ORDER BY activity_logs.createdAt DESC
     ";

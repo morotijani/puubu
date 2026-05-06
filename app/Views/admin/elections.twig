@@ -122,6 +122,33 @@
                             <input type="text" class="form-control form-control-lg bg-light border-0" name="organized_by" id="organized_by" value="{{ edit_election.organized_by }}" placeholder="e.g. Electoral Commission" required>
                         </div>
 
+                        <div class="mb-4">
+                            <label class="form-label small fw-bold text-uppercase tracking-wider mb-3">Voter Login Options</label>
+                            <div class="bg-light p-3 rounded-4 border">
+                                <div class="form-check mb-3">
+                                    <input class="form-check-input" type="checkbox" name="allow_email_login" id="allow_email" value="1" {{ edit_election.allow_email_login ? 'checked' : (edit_election ? '' : 'checked') }}>
+                                    <label class="form-check-label small fw-semibold" for="allow_email">
+                                        Allow Email Login
+                                        <span class="text-muted extra-small d-block fw-normal">Voters use Email & Password. Best for users with email access.</span>
+                                    </label>
+                                </div>
+                                <div class="form-check mb-3">
+                                    <input class="form-check-input" type="checkbox" name="allow_sms_login" id="allow_sms" value="1" {{ edit_election.allow_sms_login ? 'checked' : '' }}>
+                                    <label class="form-check-label small fw-semibold" for="allow_sms">
+                                        Allow SMS OTP Login
+                                        <span class="text-muted extra-small d-block fw-normal">Voters use Phone & SMS OTP. Ideal for mobile users.</span>
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="allow_pin_login" id="allow_pin" value="1" {{ edit_election.allow_pin_login ? 'checked' : '' }}>
+                                    <label class="form-check-label small fw-semibold" for="allow_pin">
+                                        Allow PIN / Offline Login
+                                        <span class="text-muted extra-small d-block fw-normal">Voters use Voter ID & PIN only. Best for elderly voters.</span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
                         <button type="submit" class="btn btn-indigo w-100 py-3 fw-bold">
                             {{ edit_election ? 'Update Session' : 'Initiate Deployment' }}
                         </button>

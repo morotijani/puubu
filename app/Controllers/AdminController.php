@@ -1402,7 +1402,7 @@ class AdminController {
         $stmt = $conn->prepare("
             SELECT v.first_name, v.last_name, v.email, 
                    vsl.location, vsl.login_at, vsl.logout_at,
-                   IF(vsl.status = 1, 'Active', 'Closed') as session_status
+                   IF(vsl.voter_login_details_status = 1, 'Active', 'Closed') as session_status
             FROM voter_security_logs vsl
             JOIN voters v ON vsl.voter_id = v.uuid
             WHERE v.election_uuid = ?

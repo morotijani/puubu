@@ -718,7 +718,7 @@ class AdminController {
         
         if ($role === 'super_admin') {
             $query = "
-                SELECT v.*, e.title, e.organized_by, e.status as election_status 
+                SELECT v.*, e.title, e.organized_by, e.status as election_status, e.allow_direct_link 
                 FROM voters v
                 INNER JOIN election e ON v.election_uuid = e.uuid
                 ORDER BY v.id DESC
@@ -727,7 +727,7 @@ class AdminController {
             $stmt->execute();
         } else {
             $query = "
-                SELECT v.*, e.title, e.organized_by, e.status as election_status 
+                SELECT v.*, e.title, e.organized_by, e.status as election_status, e.allow_direct_link 
                 FROM voters v
                 INNER JOIN election e ON v.election_uuid = e.uuid
                 WHERE e.organizer_id = ?
@@ -1415,7 +1415,7 @@ class AdminController {
             FROM voted_for vf
             JOIN voters v ON vf.voter_id = v.uuid
             JOIN positions p ON vf.position_id = p.position_id
-            WHERE vf.election_id = ?
+            WHERE vf.election_uuid = ?
             ORDER BY vf.voted_datetime DESC
         ");
         $stmt->execute([$election_id]);

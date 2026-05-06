@@ -417,7 +417,7 @@ class VoterController
 
                     // Record Individual Vote
                     $vfid = guidv4();
-                    $stmt = $conn->prepare("INSERT INTO voted_for (for_id, voter_id, election_id, position_id, candidate_id, voted_location, voted_ip, trash) VALUES (?, ?, ?, ?, ?, ?, ?, 0)");
+                    $stmt = $conn->prepare("INSERT INTO voted_for (for_id, voter_id, election_uuid, position_id, candidate_id, voted_location, voted_ip, trash) VALUES (?, ?, ?, ?, ?, ?, ?, 0)");
                     $stmt->execute([$vfid, $voter_uuid, $election_uuid, $position_id, $contestant_id, $location, $voted_ip]);
 
                 } elseif (isset($_POST["onecont{$i}"]) && !empty($_POST["onecont{$i}"])) {
@@ -436,7 +436,7 @@ class VoterController
                         // Record Individual Vote
                         $vfid = guidv4();
                         $choice_val = ($choice === 'yes') ? $contestant_id : 'rejected_' . $contestant_id;
-                        $stmt = $conn->prepare("INSERT INTO voted_for (for_id, voter_id, election_id, position_id, candidate_id, voted_location, voted_ip, trash) VALUES (?, ?, ?, ?, ?, ?, ?, 0)");
+                        $stmt = $conn->prepare("INSERT INTO voted_for (for_id, voter_id, election_uuid, position_id, candidate_id, voted_location, voted_ip, trash) VALUES (?, ?, ?, ?, ?, ?, ?, 0)");
                         $stmt->execute([$vfid, $voter_uuid, $election_uuid, $position_id, $choice_val, $location, $voted_ip]);
                     }
                 } else {
@@ -446,7 +446,7 @@ class VoterController
 
                     // Record Skip
                     $vfid = guidv4();
-                    $stmt = $conn->prepare("INSERT INTO voted_for (for_id, voter_id, election_id, position_id, candidate_id, voted_location, voted_ip, trash) VALUES (?, ?, ?, ?, ?, ?, ?, 0)");
+                    $stmt = $conn->prepare("INSERT INTO voted_for (for_id, voter_id, election_uuid, position_id, candidate_id, voted_location, voted_ip, trash) VALUES (?, ?, ?, ?, ?, ?, ?, 0)");
                     $stmt->execute([$vfid, $voter_uuid, $election_uuid, $position_id, 'skipped', $location, $voted_ip]);
                 }
             }

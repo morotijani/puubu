@@ -1,5 +1,5 @@
 RewriteEngine On
-RewriteBase /puubu/
+RewriteBase /kokuromotie/
 
 # Prevent directory listing
 Options -Indexes
@@ -12,5 +12,5 @@ RewriteCond %{REQUEST_FILENAME} -f
 RewriteRule ^ - [L]
 
 # Everything else goes to public/
-RewriteCond %{REQUEST_URI} !^/puubu/public/
+RewriteCond %{REQUEST_URI} !^/kokuromotie/public/
 RewriteRule ^(.*)$ public/index.php [L]

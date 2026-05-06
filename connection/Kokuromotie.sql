@@ -18,7 +18,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Database: `puubu`
+-- Database: `Kokuromotie`
 --
 
 -- --------------------------------------------------------
@@ -105,10 +105,10 @@ INSERT INTO `positions` (`id`, `position_id`, `position_name`, `election_id`, `p
 -- --------------------------------------------------------
 
 --
--- Table structure for table `puubu_admin`
+-- Table structure for table `Kokuromotie_admin`
 --
 
-CREATE TABLE `puubu_admin` (
+CREATE TABLE `Kokuromotie_admin` (
   `id` bigint(20) NOT NULL,
   `admin_id` varchar(100) DEFAULT NULL,
   `cfname` varchar(100) NOT NULL,
@@ -121,22 +121,22 @@ CREATE TABLE `puubu_admin` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `puubu_admin`
+-- Dumping data for table `Kokuromotie_admin`
 --
 
-INSERT INTO `puubu_admin` (`id`, `admin_id`, `cfname`, `clname`, `cemail`, `ckey`, `joined_date`, `last_login`, `trash`) VALUES
-(1, 'c454b2bf-9b1e-409a-8b0d-d84ab82cf22d', 'mohammed', 'inuwas', 'inuwa@puubu.com', '$2y$10$w7Ka7PeLjrctcyXL1G1.XOFvdGa9AVDt7SfzZLS27efg/E6l33GN2', '2020-02-21 21:01:31', '2025-09-16 18:50:21', 0);
+INSERT INTO `Kokuromotie_admin` (`id`, `admin_id`, `cfname`, `clname`, `cemail`, `ckey`, `joined_date`, `last_login`, `trash`) VALUES
+(1, 'c454b2bf-9b1e-409a-8b0d-d84ab82cf22d', 'mohammed', 'inuwas', 'inuwa@Kokuromotie.com', '$2y$10$w7Ka7PeLjrctcyXL1G1.XOFvdGa9AVDt7SfzZLS27efg/E6l33GN2', '2020-02-21 21:01:31', '2025-09-16 18:50:21', 0);
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `puubu_election_logs`
+-- Table structure for table `Kokuromotie_election_logs`
 --
 
-CREATE TABLE `puubu_election_logs` (
-  `puubu_election_logs_id` int(11) NOT NULL,
+CREATE TABLE `Kokuromotie_election_logs` (
+  `Kokuromotie_election_logs_id` int(11) NOT NULL,
   `election_logs_election_id` int(11) DEFAULT NULL,
-  `puubu_election_logs_datetime` datetime DEFAULT current_timestamp(),
+  `Kokuromotie_election_logs_datetime` datetime DEFAULT current_timestamp(),
   `election_logs_description` text NOT NULL,
   `election_logs_page` varchar(500) DEFAULT NULL,
   `election_logs_referrer` varchar(500) DEFAULT NULL
@@ -145,10 +145,10 @@ CREATE TABLE `puubu_election_logs` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `puubu_logs`
+-- Table structure for table `Kokuromotie_logs`
 --
 
-CREATE TABLE `puubu_logs` (
+CREATE TABLE `Kokuromotie_logs` (
   `id` bigint(20) NOT NULL,
   `log_id` varchar(300) DEFAULT NULL,
   `log_message` text DEFAULT NULL,
@@ -161,10 +161,10 @@ CREATE TABLE `puubu_logs` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `puubu_logs`
+-- Dumping data for table `Kokuromotie_logs`
 --
 
-INSERT INTO `puubu_logs` (`id`, `log_id`, `log_message`, `log_person`, `log_type`, `log_seen`, `createdAt`, `updatedAt`, `log_status`) VALUES
+INSERT INTO `Kokuromotie_logs` (`id`, `log_id`, `log_message`, `log_person`, `log_type`, `log_seen`, `createdAt`, `updatedAt`, `log_status`) VALUES
 (1, '351495cf-bfdd-4aa8-9c93-422fc2c1e406', 'logged into the system', 'c454b2bf-9b1e-409a-8b0d-d84ab82cf22d', 'admin', 1, '2025-09-16 06:34:08', '2025-09-16 18:38:18', 0),
 (2, 'c54fc628-0bab-49f3-ba41-9d4c27560fc9', 'new election added!', 'c454b2bf-9b1e-409a-8b0d-d84ab82cf22d', 'admin', 1, '2025-09-16 06:36:17', '2025-09-16 18:41:36', 0),
 (3, 'dd3a396a-c921-4dda-b2ad-000bfe0ce1c3', 'updated election [\'9fc34fa8-ce76-4fc8-9ee4-e79caba5bee5\']!', 'c454b2bf-9b1e-409a-8b0d-d84ab82cf22d', 'admin', 1, '2025-09-16 06:39:32', '2025-09-16 18:42:00', 0),
@@ -447,21 +447,21 @@ ALTER TABLE `positions`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indexes for table `puubu_admin`
+-- Indexes for table `Kokuromotie_admin`
 --
-ALTER TABLE `puubu_admin`
+ALTER TABLE `Kokuromotie_admin`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indexes for table `puubu_election_logs`
+-- Indexes for table `Kokuromotie_election_logs`
 --
-ALTER TABLE `puubu_election_logs`
-  ADD PRIMARY KEY (`puubu_election_logs_id`);
+ALTER TABLE `Kokuromotie_election_logs`
+  ADD PRIMARY KEY (`Kokuromotie_election_logs_id`);
 
 --
--- Indexes for table `puubu_logs`
+-- Indexes for table `Kokuromotie_logs`
 --
-ALTER TABLE `puubu_logs`
+ALTER TABLE `Kokuromotie_logs`
   ADD PRIMARY KEY (`id`),
   ADD KEY `createdAt` (`createdAt`),
   ADD KEY `log_status` (`log_status`),
@@ -526,21 +526,21 @@ ALTER TABLE `positions`
   MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
--- AUTO_INCREMENT for table `puubu_admin`
+-- AUTO_INCREMENT for table `Kokuromotie_admin`
 --
-ALTER TABLE `puubu_admin`
+ALTER TABLE `Kokuromotie_admin`
   MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
--- AUTO_INCREMENT for table `puubu_election_logs`
+-- AUTO_INCREMENT for table `Kokuromotie_election_logs`
 --
-ALTER TABLE `puubu_election_logs`
-  MODIFY `puubu_election_logs_id` int(11) NOT NULL AUTO_INCREMENT;
+ALTER TABLE `Kokuromotie_election_logs`
+  MODIFY `Kokuromotie_election_logs_id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT for table `puubu_logs`
+-- AUTO_INCREMENT for table `Kokuromotie_logs`
 --
-ALTER TABLE `puubu_logs`
+ALTER TABLE `Kokuromotie_logs`
   MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=68;
 
 --
@@ -577,3 +577,4 @@ COMMIT;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+

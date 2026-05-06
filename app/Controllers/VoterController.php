@@ -166,7 +166,7 @@ class VoterController
         $stmt = $conn->prepare("UPDATE voters SET otp_code = ?, otp_expires_at = ? WHERE uuid = ?");
         $stmt->execute([$otp, $expires, $voter_uuid]);
 
-        $this->mockSendSms($voter['phone'], "Your Puubu voting OTP is: $otp. Expires in 10 minutes.");
+        $this->mockSendSms($voter['phone'], "Your Kokuromotie voting OTP is: $otp. Expires in 10 minutes.");
 
         $this->jsonResponse(['status' => 'success', 'message' => 'OTP sent to your phone.']);
     }
@@ -528,7 +528,7 @@ class VoterController
                     <p style="margin-top: 32px; font-size: 14px;">Thank you for exercising your right to vote. Your participation helps strengthen our digital democracy.</p>
                 </div>
                 <div style="background: #f8fafc; padding: 16px; text-align: center; font-size: 12px; color: #a0aec0; border-top: 1px solid #e2e8f0;">
-                    &copy; ' . date('Y') . ' Puubu Group. All rights reserved.
+                    &copy; ' . date('Y') . ' Kokuromotie Group. All rights reserved.
                 </div>
             </div>';
 
@@ -577,4 +577,5 @@ class VoterController
         redirect(PROOT . 'signin');
     }
 }
+
 

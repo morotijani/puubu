@@ -156,7 +156,7 @@ class AdminController {
                  ->execute([$secret, $admin_data['uuid']]);
         }
 
-        $qrCodeUrl = GoogleQrUrl::generate($admin_data['email'], $secret, 'Puubu E-Voting');
+        $qrCodeUrl = GoogleQrUrl::generate($admin_data['email'], $secret, 'Kokuromotie E-Voting');
         
         $errorsMsg = '';
         if (isset($_POST['activate2fa'])) {
@@ -1207,7 +1207,7 @@ class AdminController {
             'total_votes_cast' => $total_votes_cast,
             'total_voters' => $total_voters,
             'results' => $results,
-            'DOCUMENT_ROOT' => $_SERVER['DOCUMENT_ROOT'] . '/puubu'
+            'DOCUMENT_ROOT' => $_SERVER['DOCUMENT_ROOT'] . '/Kokuromotie'
         ]);
 
         $options = new \Dompdf\Options();
@@ -1435,3 +1435,4 @@ class AdminController {
         exit;
     }
 }
+

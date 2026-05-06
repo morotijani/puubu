@@ -1,6 +1,6 @@
 <?php
 /**
- * Puubu Micro-Framework Entry Point
+ * Kokuromotie Micro-Framework Entry Point
  */
 
 require_once __DIR__ . '/../connection/conn.php';
@@ -408,3 +408,4 @@ $router->run();
 // Clear flash messages after execution
 if (isset($_SESSION['flash_success'])) unset($_SESSION['flash_success']);
 if (isset($_SESSION['flash_error'])) unset($_SESSION['flash_error']);
+

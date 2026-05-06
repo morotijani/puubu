@@ -142,7 +142,7 @@ function sms_otp($msg, $phone) {
 		$mail = new PHPMailer(true);
 		try {
 	        $from = MAIL_EMAIL;
-	        $from_name = 'Puubu Group';
+	        $from_name = 'Kokuromotie Group';
 
 	        $mail->IsSMTP();
 	        $mail->SMTPAuth = true;
@@ -679,3 +679,4 @@ function verify_csrf_token($token) {
 }
 
 ?>
+

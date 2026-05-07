@@ -947,7 +947,7 @@ class AdminController {
             $password_verify = $_POST['security_pin'] ?? '';
 
             // Security check (2FA fallback to password)
-            if (!password_verify($password_verify, $admin_data['ckey'])) {
+            if (!password_verify($password_verify, $admin_data['password'])) {
                 $_SESSION['flash_error'] = "Security verification failed. Incorrect password.";
                 redirect(PROOT . 'admin/voters/import');
             }
@@ -989,10 +989,14 @@ class AdminController {
                     $string = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKMNOPQRSTUVWXYZ0123456789';
                     $raw_pass = substr(str_shuffle($string), 0, 8);
                     $hashed = password_hash($raw_pass, PASSWORD_DEFAULT);
-                    
                     $new_uuid = guidv4();
-                    $query = "INSERT INTO voters (uuid, voter_id, password, first_name, last_name, gender, email, election_uuid) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-                    $conn->prepare($query)->execute([$new_uuid, $voter_id, $hashed, $first_name, $last_name, $gender, $email, $election_id]);
+                    $voting_token = guidv4();
+                    
+                    // If voter_id is numeric and no separate phone, use voter_id as phone
+                    $phone = (is_numeric(str_replace(['+', ' ', '(', ')', '-'], '', $voter_id))) ? $voter_id : '';
+                    
+                    $query = "INSERT INTO voters (uuid, voter_id, password, first_name, last_name, gender, email, phone, election_uuid, voting_token) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                    $conn->prepare($query)->execute([$new_uuid, $voter_id, $hashed, $first_name, $last_name, $gender, $email, $phone, $election_id, $voting_token]);
                     $imported++;
                 }
                 $conn->commit();

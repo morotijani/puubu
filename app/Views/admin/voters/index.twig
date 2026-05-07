@@ -100,23 +100,27 @@
                                     </div>
                                 </td>
                                 <td class="text-end pe-4">
-                                    <div class="d-flex justify-content-end gap-2">
-                                        {% if voter.election_status == 0 %}
+                                        <div class="d-flex justify-content-end gap-2">
                                             {% if voter.allow_direct_link %}
                                                 <button type="button" class="btn btn-light btn-sm px-2 btn-copy-link" data-token="{{ voter.voting_token }}" title="Copy Link">
                                                     <span class="material-symbols-outlined fs-6">link</span>
                                                 </button>
+                                                <button type="button" class="btn btn-whatsapp btn-sm px-2" onclick="sendWhatsApp('{{ voter.phone ?: voter.voter_id }}', '{{ voter.voting_token }}', '{{ voter.first_name }} {{ voter.last_name }}', '{{ voter.title }}')" title="Send WhatsApp">
+                                                    <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" style="width: 16px; height: 16px;">
+                                                </button>
                                             {% endif %}
-                                            <a href="{{ PROOT }}admin/voters/edit/{{ voter.uuid }}" class="btn btn-light btn-sm px-2">
-                                                <span class="material-symbols-outlined fs-6">edit</span>
-                                            </a>
-                                            <a href="{{ PROOT }}admin/voters/delete/{{ voter.uuid }}" class="btn btn-light btn-sm px-2 text-danger" onclick="return confirm('Delete voter?')">
-                                                <span class="material-symbols-outlined fs-6">delete</span>
-                                            </a>
-                                        {% else %}
-                                            <span class="badge bg-light text-muted border px-3">Session Locked</span>
-                                        {% endif %}
-                                    </div>
+
+                                            {% if voter.election_status == 0 %}
+                                                <a href="{{ PROOT }}admin/voters/edit/{{ voter.uuid }}" class="btn btn-light btn-sm px-2">
+                                                    <span class="material-symbols-outlined fs-6">edit</span>
+                                                </a>
+                                                <a href="{{ PROOT }}admin/voters/delete/{{ voter.uuid }}" class="btn btn-light btn-sm px-2 text-danger" onclick="return confirm('Delete voter?')">
+                                                    <span class="material-symbols-outlined fs-6">delete</span>
+                                                </a>
+                                            {% else %}
+                                                <span class="badge bg-light text-muted border extra-small px-2 d-flex align-items-center"><span class="material-symbols-outlined fs-6 me-1">lock</span> Locked</span>
+                                            {% endif %}
+                                        </div>
                                 </td>
                             </tr>
                         {% else %}
@@ -232,14 +236,36 @@
     .extra-small { font-size: 0.75rem; }
     .fw-mono { font-family: 'JetBrains Mono', 'Fira Code', monospace; }
     .btn-light:hover { background: var(--admin-bg); border-color: #cbd5e1; color: var(--admin-primary); }
+    .btn-whatsapp { background: #25D366; color: white; border: none; }
+    .btn-whatsapp:hover { background: #128C7E; color: white; }
 </style>
 {% endblock %}
 
 {% block scripts %}
 <script>
+    const PROOT = "{{ PROOT }}";
+
     function toggleWipeElection(show) {
         const select = document.getElementById('wipeElectionSelect');
         if (select) select.style.display = show ? 'block' : 'none';
+    }
+
+    function sendWhatsApp(phone, token, name, electionTitle) {
+        // Clean phone number
+        let cleanPhone = phone.replace(/[^0-9+]/g, '');
+        // If it starts with 0 and no +, assume GH (+233)
+        if (cleanPhone.startsWith('0') && !cleanPhone.startsWith('+')) {
+            cleanPhone = '233' + cleanPhone.substring(1);
+        } else if (!cleanPhone.startsWith('+')) {
+            // If no +, just send as is
+        } else {
+            cleanPhone = cleanPhone.replace('+', '');
+        }
+
+        const link = window.location.origin + PROOT + 'v/' + token;
+        const message = `🗳️ *KOKUROMOTIE POWER*\n\nHello *${name}*! Your participation in the *${electionTitle}* is highly valued. To make voting easy for you, we have generated a secure direct link.\n\nPlease click the secure link below to cast your vote:\n\n🔗 ${link}\n\nYour vote is private and secure. Thank you!`;
+        const encoded = encodeURIComponent(message);
+        window.open(`https://wa.me/${cleanPhone}?text=${encoded}`, '_blank');
     }
 
     $(document).ready(function() {
@@ -296,4 +322,3 @@
     });
 </script>
 {% endblock %}
-

@@ -677,6 +677,3 @@ function verify_csrf_token($token) {
     }
     return false;
 }
-
-?>
-

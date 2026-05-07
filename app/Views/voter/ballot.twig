@@ -607,15 +607,15 @@
         updateUI();
 
         // Countdown Timer
-        {% if started_election > 0 %}
-            var countDownDate = {{ voter.ends_at|date('U') }} * 1000;
+        {% if remaining_seconds > 0 %}
+            var distance = {{ remaining_seconds }};
             var x = setInterval(function() {
-                var now = Date.now();
-                var distance = countDownDate - now;
-                var days = Math.floor(distance / (1000 * 60 * 60 * 24));
-                var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-                var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-                var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+                distance--;
+                
+                var days = Math.floor(distance / (60 * 60 * 24));
+                var hours = Math.floor((distance % (60 * 60 * 24)) / (60 * 60));
+                var minutes = Math.floor((distance % (60 * 60)) / 60);
+                var seconds = Math.floor(distance % 60);
 
                 document.getElementById('countDT').innerHTML = 
                     '<span class="material-symbols-outlined fs-6 me-1">schedule</span> ' + 

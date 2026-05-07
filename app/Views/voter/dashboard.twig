@@ -554,9 +554,8 @@
 {% block scripts %}
 <script type="text/javascript">
     $(document).ready(function() {
-        {% if started_election > 0 %}
-            var targetTime = {{ not_started_yet ? voter.starts_at|date('U') : voter.ends_at|date('U') }} * 1000;
-            var countDownDate = targetTime;
+        {% if remaining_seconds > 0 %}
+            var distance = {{ remaining_seconds }};
             
             // Check initial state
             {% if has_ended %}
@@ -565,13 +564,12 @@
             {% endif %}
 
             var x = setInterval(function() {
-                var now = Date.now();
-                var distance = countDownDate - now;
+                distance--;
                 
-                var days = Math.floor(distance / (1000 * 60 * 60 * 24));
-                var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-                var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-                var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+                var days = Math.floor(distance / (60 * 60 * 24));
+                var hours = Math.floor((distance % (60 * 60 * 24)) / (60 * 60));
+                var minutes = Math.floor((distance % (60 * 60)) / 60);
+                var seconds = Math.floor(distance % 60);
 
                 if (document.getElementById('countDT')) {
                     document.getElementById('countDT').innerHTML = (days > 0 ? days + "d " : "") + hours + "h " + minutes + "m " + seconds + "s";

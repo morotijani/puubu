@@ -304,13 +304,20 @@ class VoterController
         $has_ended = ($voter_row['election_status'] == 2 || $now > $voter_row['ends_at']);
         $not_started_yet = ($voter_row['election_status'] == 1 && $now < $voter_row['starts_at']);
 
+        $remaining_seconds = 0;
+        if ($voter_row['election_status'] == 1) {
+            $target_time = $not_started_yet ? strtotime($voter_row['starts_at']) : strtotime($voter_row['ends_at']);
+            $remaining_seconds = max(0, $target_time - time());
+        }
+
         echo $this->twig->render('voter/dashboard.twig', [
             'voter' => $voter_row,
             'started_election' => $started_election,
             'has_voted' => $has_voted,
             'has_started' => $has_started,
             'has_ended' => $has_ended,
-            'not_started_yet' => $not_started_yet
+            'not_started_yet' => $not_started_yet,
+            'remaining_seconds' => $remaining_seconds
         ]);
     }
 
@@ -371,11 +378,14 @@ class VoterController
             ];
         }
 
+        $remaining_seconds = max(0, strtotime($voter_row['ends_at']) - time());
+
         echo $this->twig->render('voter/ballot.twig', [
             'voter' => $voter_row,
             'ballot' => $ballotData,
             'started_election' => $started_election,
-            'electionUuid' => $electionUuid
+            'electionUuid' => $electionUuid,
+            'remaining_seconds' => $remaining_seconds
         ]);
     }
 

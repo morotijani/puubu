@@ -1458,5 +1458,50 @@ class AdminController {
         fclose($output);
         exit;
     }
+
+    public function exportVoterLinks($election_id) {
+        global $conn;
+        
+        $stmt = $conn->prepare("
+            SELECT v.first_name, v.last_name, v.voter_id, v.phone, v.email, v.voting_token, e.title
+            FROM voters v
+            INNER JOIN election e ON v.election_uuid = e.uuid
+            WHERE v.election_uuid = ?
+            ORDER BY v.last_name ASC
+        ");
+        $stmt->execute([$election_id]);
+        $voters = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        if (empty($voters)) {
+            $_SESSION['flash_error'] = "No voters found for this election.";
+            redirect(PROOT . 'admin/voters');
+        }
+
+        $filename = "voter-links-" . $election_id . ".csv";
+        header('Content-Type: text/csv');
+        header('Content-Disposition: attachment; filename="' . $filename . '"');
+        
+        $output = fopen('php://output', 'w');
+        fputcsv($output, ['First Name', 'Last Name', 'Voter ID', 'Phone', 'Email', 'Election', 'Direct Voting Link']);
+        
+        // Build base URL for voting
+        $protocol = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http");
+        $baseUrl = $protocol . "://$_SERVER[HTTP_HOST]" . PROOT . "v/";
+
+        foreach ($voters as $row) {
+            $link = $baseUrl . $row['voting_token'];
+            fputcsv($output, [
+                $row['first_name'],
+                $row['last_name'],
+                $row['voter_id'],
+                $row['phone'],
+                $row['email'],
+                $row['title'],
+                $link
+            ]);
+        }
+        fclose($output);
+        exit;
+    }
 }
 

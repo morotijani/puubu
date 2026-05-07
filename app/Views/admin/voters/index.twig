@@ -54,8 +54,8 @@
                                 <input type="checkbox" class="form-check-input" id="selectAll">
                             </th>
                             <th>Identity & Contact</th>
-                            <th>Registry ID</th>
-                            <th>Target Election</th>
+                            <th class="hide-mobile">Registry ID</th>
+                            <th class="hide-mobile">Target Election</th>
                             <th class="text-end pe-4">Management</th>
                         </tr>
                     </thead>
@@ -90,10 +90,10 @@
                                         </div>
                                     </div>
                                 </td>
-                                <td>
+                                <td class="hide-mobile">
                                     <span class="badge bg-light text-primary border fw-bold">{{ voter.voter_id }}</span>
                                 </td>
-                                <td class="text-muted small">
+                                <td class="text-muted small hide-mobile">
                                     <div class="d-flex align-items-center">
                                         <span class="material-symbols-outlined me-1 fs-6">event_note</span>
                                         {{ voter.title }}
@@ -238,6 +238,26 @@
     .btn-light:hover { background: var(--admin-bg); border-color: #cbd5e1; color: var(--admin-primary); }
     .btn-whatsapp { background: #25D366; color: white; border: none; }
     .btn-whatsapp:hover { background: #128C7E; color: white; }
+    
+    /* Mobile Responsiveness Improvements */
+    .table-container {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+    
+    @media (max-width: 768px) {
+        .hide-mobile {
+            display: none !important;
+        }
+        .table thead th, .table tbody td {
+            padding: 1rem !important;
+        }
+        .stat-icon {
+            width: 32px !important;
+            height: 32px !important;
+            font-size: 0.7rem !important;
+        }
+    }
 </style>
 {% endblock %}
 

@@ -180,6 +180,9 @@ class AdminController {
 
     public function elections() {
         global $conn, $admin_data;
+        if (!cadminIsLoggedIn() || empty($admin_data)) {
+            cadminLoginErrorRedirect();
+        }
         $admin_id = $admin_data['uuid'];
         $role = $admin_data['role'] ?? 'organizer';
         
@@ -213,6 +216,9 @@ class AdminController {
 
     public function electionStore() {
         global $conn, $admin_data;
+        if (!cadminIsLoggedIn() || empty($admin_data)) {
+            cadminLoginErrorRedirect();
+        }
         $admin_id = $admin_data['uuid'] ?? null;
         
         if (!isset($_POST['csrf_token']) || !verify_csrf_token($_POST['csrf_token'])) {
@@ -370,6 +376,9 @@ class AdminController {
 
     public function electionDelete($id) {
         global $conn, $admin_data;
+        if (!cadminIsLoggedIn() || empty($admin_data)) {
+            cadminLoginErrorRedirect();
+        }
         $admin_id = $admin_data['uuid'] ?? null;
         $role = $admin_data['role'] ?? 'organizer';
         
@@ -394,6 +403,9 @@ class AdminController {
 
     public function positions() {
         global $conn, $admin_data;
+        if (!cadminIsLoggedIn() || empty($admin_data)) {
+            cadminLoginErrorRedirect();
+        }
         $admin_id = $admin_data['uuid'];
         $role = $admin_data['role'] ?? 'organizer';
         
@@ -434,6 +446,9 @@ class AdminController {
 
     public function positionStore() {
         global $conn, $admin_data;
+        if (!cadminIsLoggedIn() || empty($admin_data)) {
+            cadminLoginErrorRedirect();
+        }
         $admin_id = $admin_data['uuid'] ?? null;
         
         if (!isset($_POST['csrf_token']) || !verify_csrf_token($_POST['csrf_token'])) {
@@ -482,6 +497,9 @@ class AdminController {
 
     public function positionDelete($id) {
         global $conn, $admin_id, $admin_data;
+        if (!cadminIsLoggedIn() || empty($admin_data)) {
+            cadminLoginErrorRedirect();
+        }
         $role = $admin_data['role'] ?? 'organizer';
         
         // Security: Ensure position is for a draft election before deleting
@@ -506,6 +524,9 @@ class AdminController {
 
     public function contestants() {
         global $conn, $admin_data;
+        if (!cadminIsLoggedIn() || empty($admin_data)) {
+            cadminLoginErrorRedirect();
+        }
         $admin_id = $admin_data['uuid'];
         $role = $admin_data['role'] ?? 'organizer';
         
@@ -552,6 +573,9 @@ class AdminController {
 
     public function contestantForm($id = null) {
         global $conn, $admin_data;
+        if (!cadminIsLoggedIn() || empty($admin_data)) {
+            cadminLoginErrorRedirect();
+        }
         $admin_id = $admin_data['uuid'];
         $role = $admin_data['role'] ?? 'organizer';
         
@@ -587,6 +611,9 @@ class AdminController {
 
     public function contestantStore() {
         global $conn, $admin_data;
+        if (!cadminIsLoggedIn() || empty($admin_data)) {
+            cadminLoginErrorRedirect();
+        }
         $admin_id = $admin_data['uuid'] ?? null;
         
         if (!isset($_POST['csrf_token']) || !verify_csrf_token($_POST['csrf_token'])) {
@@ -683,6 +710,9 @@ class AdminController {
 
     public function contestantArchive() {
         global $conn, $admin_data;
+        if (!cadminIsLoggedIn() || empty($admin_data)) {
+            cadminLoginErrorRedirect();
+        }
         $admin_id = $admin_data['uuid'];
         $role = $admin_data['role'] ?? 'organizer';
         
@@ -718,6 +748,9 @@ class AdminController {
 
     public function contestantToggleDelete($id, $status) {
         global $conn;
+        if (!cadminIsLoggedIn()) {
+            cadminLoginErrorRedirect();
+        }
         $conn->prepare("UPDATE contestants SET is_deleted = ? WHERE uuid = ?")->execute([$status, $id]);
         $_SESSION['flash_success'] = ($status == 'yes') ? "Contestant moved to archive." : "Contestant restored.";
         redirect(PROOT . 'admin/contestants' . ($status == 'no' ? '/archive' : ''));
@@ -725,6 +758,9 @@ class AdminController {
 
     public function voters() {
         global $conn, $admin_data;
+        if (!cadminIsLoggedIn() || empty($admin_data)) {
+            cadminLoginErrorRedirect();
+        }
         $admin_id = $admin_data['uuid'] ?? null;
 
         // Ensure all voters have a token for direct link access
@@ -775,6 +811,9 @@ class AdminController {
 
     public function voterForm($id = null) {
         global $conn, $admin_data;
+        if (!cadminIsLoggedIn() || empty($admin_data)) {
+            cadminLoginErrorRedirect();
+        }
         $admin_id = $admin_data['uuid'];
         $role = $admin_data['role'] ?? 'organizer';
         
@@ -802,6 +841,9 @@ class AdminController {
 
     public function voterStore() {
         global $conn, $admin_data;
+        if (!cadminIsLoggedIn() || empty($admin_data)) {
+            cadminLoginErrorRedirect();
+        }
         $admin_id = $admin_data['uuid'] ?? null;
         
         if (!isset($_POST['csrf_token']) || !verify_csrf_token($_POST['csrf_token'])) {
@@ -886,6 +928,9 @@ class AdminController {
 
     public function voterDelete($id) {
         global $conn;
+        if (!cadminIsLoggedIn()) {
+            cadminLoginErrorRedirect();
+        }
         $conn->prepare("DELETE FROM voters WHERE uuid = ?")->execute([$id]);
         $_SESSION['flash_success'] = "Voter deleted.";
         redirect(PROOT . 'admin/voters');
@@ -893,6 +938,9 @@ class AdminController {
 
     public function voterBulkDelete() {
         global $conn;
+        if (!cadminIsLoggedIn()) {
+            cadminLoginErrorRedirect();
+        }
         if (isset($_POST['voter_ids']) && is_array($_POST['voter_ids'])) {
             $placeholders = implode(',', array_fill(0, count($_POST['voter_ids']), '?'));
             $conn->prepare("DELETE FROM voters WHERE uuid IN ($placeholders)")->execute($_POST['voter_ids']);
@@ -903,6 +951,9 @@ class AdminController {
 
     public function voterTruncate() {
         global $conn, $admin_data;
+        if (!cadminIsLoggedIn() || empty($admin_data)) {
+            cadminLoginErrorRedirect();
+        }
         $admin_id = $admin_data['uuid'];
         
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -934,6 +985,9 @@ class AdminController {
 
     public function voterImport() {
         global $conn, $admin_data;
+        if (!cadminIsLoggedIn() || empty($admin_data)) {
+            cadminLoginErrorRedirect();
+        }
         $admin_id = $admin_data['uuid'];
         $role = $admin_data['role'] ?? 'organizer';
 
@@ -1028,6 +1082,9 @@ class AdminController {
 
     public function voterDuplicates() {
         global $conn, $admin_data;
+        if (!cadminIsLoggedIn() || empty($admin_data)) {
+            cadminLoginErrorRedirect();
+        }
         $admin_id = $admin_data['uuid'];
         $role = $admin_data['role'] ?? 'organizer';
         
@@ -1086,6 +1143,9 @@ class AdminController {
 
     public function reports($election_id) {
         global $conn, $admin_data;
+        if (!cadminIsLoggedIn() || empty($admin_data)) {
+            cadminLoginErrorRedirect();
+        }
         $admin_id = $admin_data['uuid'];
         $role = $admin_data['role'] ?? 'organizer';
         
@@ -1109,7 +1169,10 @@ class AdminController {
     }
 
     public function getReportData($election_id) {
-        global $conn;
+        global $conn, $admin_data;
+        if (!cadminIsLoggedIn() || empty($admin_data)) {
+            cadminLoginErrorRedirect();
+        }
         
         // 1. Overall stats
         $stmt = $conn->prepare("SELECT COUNT(*) FROM voter_participation WHERE election_uuid = ?");
@@ -1154,6 +1217,9 @@ class AdminController {
 
     public function endElection($election_id) {
         global $conn, $admin_id, $admin_data;
+        if (!cadminIsLoggedIn() || empty($admin_data)) {
+            cadminLoginErrorRedirect();
+        }
         $role = $admin_data['role'] ?? 'organizer';
         
         if ($role === 'super_admin') {
@@ -1175,6 +1241,9 @@ class AdminController {
 
     public function downloadReport($election_id) {
         global $conn, $admin_data;
+        if (!cadminIsLoggedIn() || empty($admin_data)) {
+            cadminLoginErrorRedirect();
+        }
         $admin_id = $admin_data['uuid'];
         $role = $admin_data['role'] ?? 'organizer';
         
@@ -1250,13 +1319,20 @@ class AdminController {
 
     public function settings() {
         global $admin_data;
+        if (!cadminIsLoggedIn() || empty($admin_data)) {
+            cadminLoginErrorRedirect();
+        }
         echo $this->twig->render('admin/settings.twig', [
             'admin' => $admin_data
         ]);
     }
 
     public function profileUpdate() {
-        global $conn, $admin_id;
+        global $conn, $admin_data;
+        if (!cadminIsLoggedIn() || empty($admin_data)) {
+            cadminLoginErrorRedirect();
+        }
+        $admin_id = $admin_data['uuid'] ?? null;
         
         if (!isset($_POST['csrf_token']) || !verify_csrf_token($_POST['csrf_token'])) {
             $_SESSION['flash_error'] = "Invalid CSRF token.";
@@ -1283,6 +1359,9 @@ class AdminController {
 
     public function passwordUpdate() {
         global $conn, $admin_data;
+        if (!cadminIsLoggedIn() || empty($admin_data)) {
+            cadminLoginErrorRedirect();
+        }
         $admin_id = $admin_data['uuid'] ?? null;
         
         if (!isset($_POST['csrf_token']) || !verify_csrf_token($_POST['csrf_token'])) {
@@ -1320,6 +1399,9 @@ class AdminController {
     }
     public function organizers() {
         global $conn, $admin_data;
+        if (!cadminIsLoggedIn() || empty($admin_data)) {
+            cadminLoginErrorRedirect();
+        }
         if (($admin_data['role'] ?? 'organizer') !== 'super_admin') {
             $_SESSION['flash_error'] = "Access Denied.";
             redirect(PROOT . 'admin');
@@ -1336,6 +1418,9 @@ class AdminController {
 
     public function organizerStore() {
         global $conn, $admin_data;
+        if (!cadminIsLoggedIn() || empty($admin_data)) {
+            cadminLoginErrorRedirect();
+        }
         $admin_id = $admin_data['uuid'] ?? null;
         if (($admin_data['role'] ?? 'organizer') !== 'super_admin') {
             $_SESSION['flash_error'] = "Access Denied.";
@@ -1372,7 +1457,10 @@ class AdminController {
     }
 
     public function exportVoterParticipation($election_id) {
-        global $conn;
+        global $conn, $admin_data;
+        if (!cadminIsLoggedIn() || empty($admin_data)) {
+            cadminLoginErrorRedirect();
+        }
         
         $stmt = $conn->prepare("
             SELECT v.first_name, v.last_name, v.email, v.voter_id, 
@@ -1401,7 +1489,10 @@ class AdminController {
     }
 
     public function exportSecurityLogs($election_id) {
-        global $conn;
+        global $conn, $admin_data;
+        if (!cadminIsLoggedIn() || empty($admin_data)) {
+            cadminLoginErrorRedirect();
+        }
         
         $stmt = $conn->prepare("
             SELECT v.first_name, v.last_name, v.email, 
@@ -1430,7 +1521,10 @@ class AdminController {
     }
 
     public function exportBallots($election_id) {
-        global $conn;
+        global $conn, $admin_data;
+        if (!cadminIsLoggedIn() || empty($admin_data)) {
+            cadminLoginErrorRedirect();
+        }
         
         $stmt = $conn->prepare("
             SELECT v.first_name as voter_fname, v.last_name as voter_lname, 
@@ -1460,7 +1554,10 @@ class AdminController {
     }
 
     public function exportVoterLinks($election_id) {
-        global $conn;
+        global $conn, $admin_data;
+        if (!cadminIsLoggedIn() || empty($admin_data)) {
+            cadminLoginErrorRedirect();
+        }
         
         $stmt = $conn->prepare("
             SELECT v.first_name, v.last_name, v.voter_id, v.phone, v.email, v.voting_token, e.title

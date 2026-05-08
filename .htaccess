@@ -4,11 +4,9 @@ RewriteBase /kokuromotie/
 # Prevent directory listing
 Options -Indexes
 
-# Explicitly skip rewriting for asset folders
-RewriteRule ^(dist|media|assets|vendor)/ - [L]
-
-# Skip for existing files (but not directories, so we can rewrite the root)
-RewriteCond %{REQUEST_FILENAME} -f
+# Allow existing files and folders to be served directly
+RewriteCond %{REQUEST_FILENAME} -f [OR]
+RewriteCond %{REQUEST_FILENAME} -d
 RewriteRule ^ - [L]
 
 # Everything else goes to public/

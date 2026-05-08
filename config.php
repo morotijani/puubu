@@ -2,8 +2,8 @@
 
 	define('BASEURL', __DIR__ . '/');
 	
-	define('PROOT', '/Kokuromotie/');
-	define('ADROOT', '/Kokuromotie/172.06.84.0/');
+	define('PROOT', '/kokuromotie/');
+	define('ADROOT', '/kokuromotie/172.06.84.0/');
 
 	// Load the environment variables from the .env file
     define('RECAPTCHA_SITE_KEY_PUBLIC', $_ENV['RECAPTCHA_SITE_KEY_PUBLIC']);

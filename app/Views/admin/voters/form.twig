@@ -5,64 +5,72 @@
 {% block title %}{{ voter ? 'Edit' : 'Register' }} Identity • Kokuromotie Admin{% endblock %}
 
 {% block content %}
-    <div class="page-header d-flex flex-column flex-md-row justify-content-between align-items-md-center">
+    <div class="page-header d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-5">
         <div>
-            <h1>{{ voter ? 'Edit' : 'Register' }} Identity</h1>
-            <p>Maintain the identity database for electoral eligibility.</p>
+            <h1 class="fw-bold mb-1">{{ voter ? 'Refine Identity' : 'Register Identity' }}</h1>
+            <p class="text-muted mb-0">Electoral registrar management terminal.</p>
         </div>
-        <div class="d-flex gap-2 mt-3 mt-md-0">
-            <a href="{{ PROOT }}admin/voters" class="btn btn-light shadow-sm">
-                <span class="material-symbols-outlined fs-6">arrow_back</span> Back to Registrar
+        <div class="mt-3 mt-md-0">
+            <a href="{{ PROOT }}admin/voters" class="btn btn-light shadow-sm d-flex align-items-center gap-2">
+                <span class="material-symbols-outlined fs-6">arrow_back</span> Return to Registrar
             </a>
         </div>
     </div>
 
     <div class="row justify-content-center">
         <div class="col-12">
-            <div class="card border-0 shadow-sm overflow-hidden rounded-4">
+            <div class="card border-0 shadow-lg overflow-hidden rounded-5">
                 <div class="card-body p-0">
                     <div class="row g-0">
-                        <!-- Sidebar Info -->
-                        <div class="col-lg-4 sidebar-brand-area p-5 text-white d-none d-lg-flex flex-column">
-                            <div class="mb-5">
-                                <span class="material-symbols-outlined fs-1 opacity-50 mb-3">badge</span>
-                                <h4 class="fw-bold">Electoral Identity</h4>
-                                <p class="small opacity-75">Ensure all data matches official institutional records to prevent voting disputes.</p>
-                            </div>
+                        <!-- Left Panel: Information & Context -->
+                        <div class="col-lg-4 bg-primary p-5 text-white d-none d-lg-flex flex-column justify-content-between">
+                            <div>
+                                <div class="d-flex align-items-center mb-5">
+                                    <span class="material-symbols-outlined fs-1 text-accent me-3">badge</span>
+                                    <h4 class="fw-bold mb-0">Identity Vault</h4>
+                                </div>
 
-                            <div class="d-flex align-items-start mb-4">
-                                <div class="bg-white bg-opacity-20 rounded-circle p-2 me-3">
-                                    <span class="material-symbols-outlined fs-5">lock_person</span>
-                                </div>
-                                <div>
-                                    <h6 class="fw-bold mb-1">Secure Access</h6>
-                                    <p class="extra-small mb-0 opacity-75">Passwords are generated automatically and hashed for security.</p>
-                                </div>
-                            </div>
-
-                            <div class="d-flex align-items-start mb-4">
-                                <div class="bg-white bg-opacity-20 rounded-circle p-2 me-3">
-                                    <span class="material-symbols-outlined fs-5">mail</span>
-                                </div>
-                                <div>
-                                    <h6 class="fw-bold mb-1">Verification</h6>
-                                    <p class="extra-small mb-0 opacity-75">Notifications will be sent to the registered email address.</p>
+                                <div class="d-flex flex-column gap-4">
+                                    <div class="d-flex gap-3 align-items-start">
+                                        <div class="step-chip"><span class="material-symbols-outlined fs-6">fingerprint</span></div>
+                                        <div>
+                                            <h6 class="fw-bold mb-1">Unique Registrar</h6>
+                                            <p class="extra-small text-white-50 mb-0">Every voter is assigned a unique UUID and cryptographic token for ballot security.</p>
+                                        </div>
+                                    </div>
+                                    <div class="d-flex gap-3 align-items-start">
+                                        <div class="step-chip"><span class="material-symbols-outlined fs-6">shield_lock</span></div>
+                                        <div>
+                                            <h6 class="fw-bold mb-1">Auth Protocols</h6>
+                                            <p class="extra-small text-white-50 mb-0">Validation requirements (Email/SMS) are dynamically enforced based on election settings.</p>
+                                        </div>
+                                    </div>
+                                    <div class="d-flex gap-3 align-items-start">
+                                        <div class="step-chip"><span class="material-symbols-outlined fs-6">sync</span></div>
+                                        <div>
+                                            <h6 class="fw-bold mb-1">Live Sync</h6>
+                                            <p class="extra-small text-white-50 mb-0">Profiles updated here reflect instantly across the live voting cluster.</p>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                             
-                            <div class="mt-auto pt-5">
-                                <div class="p-3 bg-white bg-opacity-10 rounded-4 border border-white border-opacity-10">
-                                    <p class="extra-small mb-0 opacity-75 italic">"Fairness begins with a clean and accurate voter registrar."</p>
+                            <div class="mt-5 pt-5 border-top border-white border-opacity-10">
+                                <div class="p-4 rounded-4" style="background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.1);">
+                                    <p class="extra-small mb-0 text-white italic fw-medium" style="opacity: 0.9;">"Ensuring electoral integrity through precise biographical record management."</p>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- Form Section -->
+                        <!-- Right Panel: Registration Form -->
                         <div class="col-lg-8 p-4 p-md-5 bg-white">
-                            <div class="d-flex align-items-center justify-content-between mb-4">
-                                <h5 class="fw-bold mb-0 text-dark">{{ voter ? 'Update Profile' : 'New Registration' }}</h5>
-                                <span class="badge {{ voter ? 'bg-warning-subtle text-warning' : 'bg-success-subtle text-success' }} px-3 py-2 rounded-pill">
-                                    {{ voter ? 'Edit Mode' : 'Creation Mode' }}
+                            <div class="d-flex align-items-center justify-content-between mb-5">
+                                <h5 class="fw-bold mb-0 text-dark d-flex align-items-center gap-2">
+                                    <span class="material-symbols-outlined text-primary">edit_note</span>
+                                    {{ voter ? 'Modify Existing Profile' : 'New Identity Entry' }}
+                                </h5>
+                                <span class="badge {{ voter ? 'bg-warning-subtle text-warning' : 'bg-success-subtle text-success' }} px-4 py-2 rounded-pill fw-bold" style="font-size: 0.65rem; letter-spacing: 0.05em;">
+                                    {{ voter ? 'EDIT PROTOCOL' : 'CREATION PROTOCOL' }}
                                 </span>
                             </div>
 
@@ -72,71 +80,83 @@
                                     <input type="hidden" name="uuid" value="{{ voter.uuid }}">
                                 {% endif %}
 
-                                <div class="col-12 mt-2">
-                                    <h5 class="fw-bold mb-3 d-flex align-items-center">
-                                        <span class="material-symbols-outlined me-2 text-primary">person</span> Personal Information
-                                    </h5>
-                                </div>
-                                
-                                <div class="row g-4 mb-4">
-                                    <div class="col-md-6">
-                                        <label class="form-label premium-label">First Name</label>
-                                        <input type="text" class="form-control" name="first_name" value="{{ voter.first_name }}" placeholder="Legal first name" required>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <label class="form-label premium-label">Last Name</label>
-                                        <input type="text" class="form-control" name="last_name" value="{{ voter.last_name }}" placeholder="Legal surname" required>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <label class="form-label premium-label">Identity Gender</label>
-                                        <select class="form-select" name="gender" required>
-                                            <option value="">Select gender...</option>
-                                            <option value="male" {{ (not voter or voter.gender == 'male') ? 'selected' : '' }}>Male</option>
-                                            <option value="female" {{ voter.gender == 'female' ? 'selected' : '' }}>Female</option>
-                                        </select>
-                                    </div>
-                                    <div class="col-md-6" id="email_field_wrapper">
-                                        <label class="form-label premium-label">Email Address</label>
-                                        <input type="email" class="form-control" name="email" id="voter_email" value="{{ voter.email }}" placeholder="e.g. john@example.com">
-                                    </div>
-                                    <div class="col-md-6" id="phone_field_wrapper">
-                                        <label class="form-label premium-label">Phone Number</label>
-                                        <input type="text" class="form-control" name="phone" id="voter_phone" value="{{ voter.phone }}" placeholder="e.g. +233240000000">
+                                <!-- Personal Identity Block -->
+                                <div class="mb-5">
+                                    <label class="premium-label mb-4 text-primary d-block">BIOGRAPHICAL PARAMETERS</label>
+                                    <div class="row g-4">
+                                        <div class="col-md-6">
+                                            <label class="form-label premium-label fs-xs">Legal First Name</label>
+                                            <input type="text" class="form-control" name="first_name" value="{{ voter.first_name }}" placeholder="Enter first name" required>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label premium-label fs-xs">Legal Last Name</label>
+                                            <input type="text" class="form-control" name="last_name" value="{{ voter.last_name }}" placeholder="Enter surname" required>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label premium-label fs-xs">Biographical Gender</label>
+                                            <select class="form-select" name="gender" required>
+                                                <option value="">Select gender...</option>
+                                                <option value="male" {{ (not voter or voter.gender == 'male') ? 'selected' : '' }}>Male</option>
+                                                <option value="female" {{ voter.gender == 'female' ? 'selected' : '' }}>Female</option>
+                                            </select>
+                                        </div>
                                     </div>
                                 </div>
 
-                                <div class="col-12 mt-5">
-                                    <h5 class="fw-bold mb-3 d-flex align-items-center">
-                                        <span class="material-symbols-outlined me-2 text-primary">assignment_ind</span> Institutional Data
-                                    </h5>
-                                </div>
-
-                                <div class="row g-4 mb-5">
-                                    <div class="col-md-6">
-                                        <label class="form-label premium-label">Identity ID / Student ID</label>
-                                        <input type="text" class="form-control fw-mono" name="voter_id" value="{{ voter.voter_id }}" placeholder="e.g. PUC-2024-001" required>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <label class="form-label premium-label">Assign to Election</label>
-                                        <select class="form-select" name="election_uuid" required>
-                                            <option value="">Select Election...</option>
-                                            {% for election in elections %}
-                                                <option value="{{ election.uuid }}" {{ voter.election_uuid == election.uuid ? 'selected' : '' }}>
-                                                    {{ election.title }}
-                                                </option>
-                                            {% endfor %}
-                                        </select>
+                                <!-- Contact & Auth Block -->
+                                <div class="mb-5">
+                                    <label class="premium-label mb-4 text-primary d-block">COMMUNICATION & SECURITY</label>
+                                    <div class="row g-4">
+                                        <div class="col-md-6" id="email_field_wrapper">
+                                            <label class="form-label premium-label fs-xs">Primary Email Address</label>
+                                            <input type="email" class="form-control" name="email" id="voter_email" value="{{ voter.email }}" placeholder="e.g. name@domain.com">
+                                        </div>
+                                        <div class="col-md-6" id="phone_field_wrapper">
+                                            <label class="form-label premium-label fs-xs">Active Phone Number</label>
+                                            <input type="text" class="form-control" name="phone" id="voter_phone" value="{{ voter.phone }}" placeholder="e.g. +232 00 000000">
+                                        </div>
                                     </div>
                                 </div>
 
-                                <div class="d-flex flex-column flex-md-row gap-3 pt-3">
-                                    <button type="submit" class="btn btn-indigo btn-lg px-5 fw-bold shadow-sm d-flex align-items-center justify-content-center">
-                                        <span class="material-symbols-outlined me-2">{{ voter ? 'save' : 'person_add' }}</span>
-                                        {{ voter ? 'Update Identity' : 'Register Identity' }}
+                                <!-- Electoral Mapping Block -->
+                                <div class="mb-5 p-4 rounded-4 bg-light border-0">
+                                    <label class="premium-label mb-4 text-primary d-block">ELECTORAL ASSIGNMENT</label>
+                                    <div class="row g-4">
+                                        <div class="col-md-6">
+                                            <label class="form-label premium-label fs-xs">Unique Identity ID (Voter ID)</label>
+                                            <input type="text" class="form-control" name="voter_id" value="{{ voter.voter_id }}" placeholder="Institutional ID Number" required>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label premium-label fs-xs">Assigned Election Cluster</label>
+                                            <select class="form-select" name="election_uuid" id="election_select" required>
+                                                <option value="">Map to election...</option>
+                                                {% for election in elections %}
+                                                    <option value="{{ election.uuid }}" {{ (voter.election_uuid == election.uuid) ? 'selected' : '' }} 
+                                                        data-email="{{ election.allow_email_login }}" 
+                                                        data-sms="{{ election.allow_sms_login }}"
+                                                        data-pin="{{ election.allow_pin_login }}"
+                                                        data-link="{{ election.allow_direct_link }}">
+                                                        {{ election.title }}
+                                                    </option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+                                    </div>
+                                    
+                                    <div id="auth_requirements_info" class="mt-4 extra-small text-muted d-none">
+                                        <div class="d-flex gap-3 align-items-center p-3 rounded-3 bg-white border border-opacity-50">
+                                            <span class="material-symbols-outlined fs-6 text-primary">verified_user</span>
+                                            <span id="requirements_text"></span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="d-flex justify-content-end gap-3 mt-5">
+                                    <a href="{{ PROOT }}admin/voters" class="btn btn-light px-5 py-3 fw-bold rounded-4 shadow-sm">Cancel</a>
+                                    <button type="submit" class="btn btn-primary px-5 py-3 fw-bold rounded-4 shadow-sm d-flex align-items-center gap-2">
+                                        <span class="material-symbols-outlined fs-5">save</span>
+                                        {{ voter ? 'Update Identity' : 'Finalize Registration' }}
                                     </button>
-                                    <a href="{{ PROOT }}admin/voters" class="btn btn-light btn-lg px-4 text-muted fw-bold d-flex align-items-center justify-content-center">
-                                        Discard Changes
-                                    </a>
                                 </div>
                             </form>
                         </div>
@@ -149,114 +169,75 @@
 
 {% block styles %}
 <style>
-    .sidebar-brand-area {
-        background: var(--admin-primary);
-        color: white;
-    }
-    .text-indigo { color: var(--admin-secondary); }
-    .btn-indigo { background: var(--admin-primary); color: white; border: none; }
-    .btn-indigo:hover { background: var(--admin-primary-hover); color: white; }
-    .fw-mono { font-family: 'JetBrains Mono', 'Fira Code', monospace; }
-    .extra-small { font-size: 0.7rem; }
-    .italic { font-style: italic; }
-    .tracking-wider { letter-spacing: 0.05em; }
-    
-    .section-label {
-        font-size: 0.75rem;
-        font-weight: 800;
-        color: var(--admin-text-muted);
-        text-transform: uppercase;
-        letter-spacing: 0.1em;
+    .step-chip {
+        width: 32px;
+        height: 32px;
+        background: rgba(220, 243, 176, 0.15);
+        color: var(--admin-accent);
+        border-radius: 10px;
         display: flex;
         align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
     }
-    .section-label::after {
-        content: '';
-        flex: 1;
-        height: 1px;
-        background: var(--admin-border-light);
-        margin-left: 1rem;
-    }
-
-    .card-check {
-        transition: all 0.2s ease;
-        background: #f8fafc;
-        border-color: transparent !important;
-        cursor: pointer;
-    }
-    .card-check:hover {
-        background: #f1f5f9;
-    }
-    .card-check.active {
-        background: var(--admin-accent-subtle);
+    .form-control:focus, .form-select:focus {
         border-color: var(--admin-primary) !important;
-        color: var(--admin-primary);
-        box-shadow: 0 4px 12px rgba(29, 61, 55, 0.1);
+        box-shadow: 0 0 0 4px rgba(29, 61, 55, 0.05) !important;
     }
-    .cursor-pointer { cursor: pointer; }
-    
-    .form-control-lg, .form-select {
-        font-size: 0.95rem;
-        border-radius: 0.75rem;
-    }
-    .input-group-text {
-        padding-right: 0.5rem;
-        border-radius: 0.75rem 0 0 0.75rem;
-    }
-    .input-group > .form-control {
-        border-radius: 0 0.75rem 0.75rem 0;
-    }
+    .fs-xs { font-size: 0.7rem !important; }
+    .bg-primary { background: #1d3d37 !important; }
 </style>
 {% endblock %}
 
 {% block scripts %}
 <script>
-    function selectGender(gender) {
-        $('.card-check').removeClass('active');
-        if (gender === 'male') {
-            $('#genderMale').prop('checked', true);
-            $('#genderMale').closest('.card-check').addClass('active');
-        } else {
-            $('#genderFemale').prop('checked', true);
-            $('#genderFemale').closest('.card-check').addClass('active');
+    document.addEventListener('DOMContentLoaded', function() {
+        const electionSelect = document.getElementById('election_select');
+        const requirementsInfo = document.getElementById('auth_requirements_info');
+        const requirementsText = document.getElementById('requirements_text');
+        
+        const emailWrapper = document.getElementById('email_field_wrapper');
+        const phoneWrapper = document.getElementById('phone_field_wrapper');
+        
+        const emailInput = document.getElementById('voter_email');
+        const phoneInput = document.getElementById('voter_phone');
+
+        function updateRequirements() {
+            const selectedOption = electionSelect.options[electionSelect.selectedIndex];
+            if (!selectedOption || !selectedOption.value) {
+                requirementsInfo.classList.add('d-none');
+                return;
+            }
+
+            const isEmail = selectedOption.getAttribute('data-email') == '1';
+            const isSms = selectedOption.getAttribute('data-sms') == '1';
+            const isPin = selectedOption.getAttribute('data-pin') == '1';
+            const isLink = selectedOption.getAttribute('data-link') == '1';
+
+            let reqs = [];
+            if (isEmail) {
+                reqs.push("Email (Required)");
+                emailInput.required = true;
+            } else {
+                emailInput.required = false;
+            }
+
+            if (isSms) {
+                reqs.push("Phone (Required)");
+                phoneInput.required = true;
+            } else {
+                phoneInput.required = false;
+            }
+
+            if (isPin) reqs.push("System PIN");
+            if (isLink) reqs.push("Direct Link Enabled");
+
+            requirementsText.innerHTML = "<strong>Auth Protocol:</strong> " + reqs.join(" • ");
+            requirementsInfo.classList.remove('d-none');
         }
-    }
 
-    $(document).ready(function() {
-        const electionSelect = $('select[name="election_uuid"]');
-        const emailInput = $('#voter_email');
-        const phoneInput = $('#voter_phone');
-
-        function updateFieldRequirements() {
-            const uuid = electionSelect.val();
-            if (!uuid) return;
-
-            $.get('{{ PROOT }}admin/api/election-login-settings/' + uuid, function(settings) {
-                // Remove existing markers
-                $('#email_field_wrapper label .text-danger').remove();
-                $('#phone_field_wrapper label .text-danger').remove();
-
-                // Email requirement
-                if (settings.allow_email_login == 1) {
-                    emailInput.prop('required', true);
-                    $('#email_field_wrapper label').append(' <span class="text-danger small">*</span>');
-                } else {
-                    emailInput.prop('required', false);
-                }
-
-                // Phone requirement
-                if (settings.allow_sms_login == 1) {
-                    phoneInput.prop('required', true);
-                    $('#phone_field_wrapper label').append(' <span class="text-danger small">*</span>');
-                } else {
-                    phoneInput.prop('required', false);
-                }
-            });
-        }
-
-        electionSelect.on('change', updateFieldRequirements);
-        if (electionSelect.val()) updateFieldRequirements();
+        electionSelect.addEventListener('change', updateRequirements);
+        updateRequirements(); // Run once on load
     });
 </script>
 {% endblock %}
-

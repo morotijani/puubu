@@ -97,14 +97,55 @@
                                 </p>
                             </div>
                         </div>
-                        <a href="{{ PROOT }}admin/setup-2fa" class="btn btn-white shadow-sm border px-4 fw-bold small">
-                            Configure
-                        </a>
+                        {% if admin.is_2fa_enabled %}
+                            <div class="d-flex align-items-center gap-2">
+                                <div class="btn btn-white shadow-sm border px-3 fw-bold small text-success" style="cursor: default;">
+                                    <span class="material-symbols-outlined fs-6 align-middle">verified</span> Active
+                                </div>
+                                <form action="{{ PROOT }}admin/disable-2fa" method="POST" id="disable2faForm">
+                                    {{ csrf_field()|raw }}
+                                    <button type="button" class="btn btn-link text-danger p-0 small fw-bold text-decoration-none" onclick="confirmDisable2FA()">
+                                        Deactivate
+                                    </button>
+                                </form>
+                            </div>
+                        {% else %}
+                            <a href="{{ PROOT }}admin/setup-2fa" class="btn btn-white shadow-sm border px-4 fw-bold small">
+                                Configure
+                            </a>
+                        {% endif %}
                     </div>
                 </div>
             </div>
         </div>
     </div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    function confirmDisable2FA() {
+        Swal.fire({
+            title: 'Deactivate MFA?',
+            html: 'This will reduce your account security. You will no longer be prompted for a 2FA code during login.',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, Deactivate',
+            cancelButtonText: 'Keep Secure',
+            customClass: {
+                popup: 'premium-swal-popup',
+                title: 'premium-swal-title',
+                htmlContainer: 'premium-swal-html',
+                confirmButton: 'btn btn-danger premium-swal-confirm',
+                cancelButton: 'btn premium-swal-cancel'
+            },
+            buttonsStyling: false
+        }).then((result) => {
+            if (result.isConfirmed) {
+                document.getElementById('disable2faForm').submit();
+            }
+        });
+    }
+</script>
 {% endblock %}
 
 {% block styles %}

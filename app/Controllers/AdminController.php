@@ -708,6 +708,35 @@ class AdminController {
         exit;
     }
 
+    public function getAvailableBallotNumbers($election_uuid, $position_id) {
+        global $conn;
+        $contestant_uuid = $_GET['contestant_uuid'] ?? null;
+        
+        // Get already taken numbers for this position in this election
+        $query = "SELECT contestant_ballot_number FROM contestants WHERE election_uuid = ? AND position_id = ? AND is_deleted = 'no'";
+        $params = [$election_uuid, $position_id];
+        
+        if ($contestant_uuid) {
+            $query .= " AND uuid != ?";
+            $params[] = $contestant_uuid;
+        }
+        
+        $stmt = $conn->prepare($query);
+        $stmt->execute($params);
+        $taken = $stmt->fetchAll(PDO::FETCH_COLUMN);
+        
+        $available = [];
+        for ($i = 1; $i <= 30; $i++) {
+            if (!in_array($i, $taken)) {
+                $available[] = $i;
+            }
+        }
+        
+        header('Content-Type: application/json');
+        echo json_encode($available);
+        exit;
+    }
+
     public function contestantArchive() {
         global $conn, $admin_data;
         if (!cadminIsLoggedIn() || empty($admin_data)) {
@@ -1708,6 +1737,31 @@ class AdminController {
         }
 
         echo $this->twig->render('admin/help.twig');
+    }
+
+    public function disable2FA() {
+        global $conn, $admin_data;
+        if (!cadminIsLoggedIn() || empty($admin_data)) {
+            cadminLoginErrorRedirect();
+        }
+
+        if (!isset($_POST['csrf_token']) || !verify_csrf_token($_POST['csrf_token'])) {
+            $_SESSION['flash_error'] = "Invalid CSRF token.";
+            redirect(PROOT . 'admin/settings');
+        }
+
+        $admin_id = $admin_data['uuid'];
+        $stmt = $conn->prepare("UPDATE admins SET google_auth_secret = NULL, is_2fa_enabled = 0 WHERE uuid = ?");
+        $result = $stmt->execute([$admin_id]);
+
+        if ($result) {
+            add_to_log("Disabled Multi-Factor Authentication", $admin_id, 'admin');
+            $_SESSION['flash_success'] = "Multi-Factor Authentication has been disabled.";
+        } else {
+            $_SESSION['flash_error'] = "Failed to disable MFA.";
+        }
+
+        redirect(PROOT . 'admin/settings');
     }
 }
 

@@ -2,24 +2,26 @@
 
 {% set active_page = 'contestants' %}
 
-{% block title %}{{ contestant ? 'Edit' : 'Add' }} Contestant • Kokuromotie Admin{% endblock %}
+{% block title %}{{ contestant ? 'Refine' : 'Register' }} Candidate • Kokuromotie Admin{% endblock %}
 
 {% block content %}
-    <div class="page-header d-flex align-items-center mb-5">
-        <a href="{{ PROOT }}admin/contestants" class="btn btn-light btn-sm me-3 px-2 shadow-sm">
-            <span class="material-symbols-outlined fs-5">arrow_back</span>
-        </a>
+    <div class="page-header d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-5">
         <div>
-            <h1>{{ contestant ? 'Candidate Profile Editor' : 'Register New Candidate' }}</h1>
-            <p>{{ contestant ? 'Modify campaign parameters for' : 'Deploy a new candidate profile for' }} the upcoming session.</p>
+            <h1 class="fw-bold mb-1">{{ contestant ? 'Candidate Intelligence Editor' : 'Candidate Registration' }}</h1>
+            <p class="text-muted mb-0">Deploy campaign parameters and biographical data for the ballot.</p>
+        </div>
+        <div class="mt-3 mt-md-0">
+            <a href="{{ PROOT }}admin/contestants" class="btn btn-light shadow-sm d-flex align-items-center gap-2">
+                <span class="material-symbols-outlined fs-6">arrow_back</span> Return to Hub
+            </a>
         </div>
     </div>
 
     <div class="row justify-content-center">
-        <div class="col-xl-11">
-            <div class="card border-0 shadow-sm overflow-hidden">
+        <div class="col-12">
+            <div class="card border-0 shadow-lg overflow-hidden rounded-5">
                 <div class="card-body p-0">
-                    <form action="{{ PROOT }}admin/contestants/store" method="POST" enctype="multipart/form-data">
+                    <form action="{{ PROOT }}admin/contestants/store" method="POST" enctype="multipart/form-data" id="contestantForm">
                         {{ csrf_field()|raw }}
                         {% if contestant %}
                             <input type="hidden" name="uuid" value="{{ contestant.uuid }}">
@@ -27,50 +29,75 @@
                         {% endif %}
 
                         <div class="row g-0">
-                            <!-- Profile Sidebar -->
-                            <div class="col-lg-4 border-end bg-light bg-opacity-50">
-                                <div class="p-5 text-center">
-                                    <h6 class="premium-label mb-4">Candidate Identity</h6>
-                                    
-                                    <div class="mb-4">
-                                        <div class="position-relative d-inline-block">
-                                            <div class="profile-preview-wrapper shadow-lg rounded-circle border border-4 border-white overflow-hidden" style="width: 180px; height: 180px;">
-                                                <img id="profilePreview" src="{{ contestant.profile_image ? PROOT ~ 'media/uploadedprofile/' ~ contestant.profile_image : 'https://ui-avatars.com/api/?name=' ~ (contestant ? contestant.first_name ~ '+' ~ contestant.last_name : 'Candidate') ~ '&background=064e3b&color=fff&size=200' }}" class="w-100 h-100 object-fit-cover">
+                            <!-- Left Sidebar: Candidate Identity -->
+                            <div class="col-lg-4 bg-primary p-5 text-white d-flex flex-column">
+                                <div class="text-center mb-5">
+                                    <h6 class="premium-label mb-4 text-accent">BALLOT PORTRAIT</h6>
+                                    <div class="position-relative d-inline-block">
+                                        <div class="profile-preview-wrapper shadow-lg rounded-circle border border-4 border-white border-opacity-10 overflow-hidden bg-white bg-opacity-5" style="width: 200px; height: 200px;">
+                                            <img id="profilePreview" src="{{ contestant.profile_image ? PROOT ~ 'media/uploadedprofile/' ~ contestant.profile_image : 'https://ui-avatars.com/api/?name=' ~ (contestant ? contestant.first_name ~ '+' ~ contestant.last_name : 'Candidate') ~ '&background=064e3b&color=fff&size=200' }}" class="w-100 h-100 object-fit-cover">
+                                        </div>
+                                        <label for="profile_image" class="btn btn-accent btn-sm rounded-circle position-absolute bottom-0 end-0 p-2 shadow-lg d-flex align-items-center justify-content-center" style="width: 48px; height: 48px;">
+                                            <span class="material-symbols-outlined fs-4">photo_camera</span>
+                                        </label>
+                                    </div>
+                                    <input type="file" class="d-none" name="profile_image" id="profile_image" accept="image/*">
+                                    <p class="extra-small text-white-50 mt-4 px-3">High-resolution portraits ensure maximum candidate visibility on digital ballots.</p>
+                                </div>
+
+                                <div class="mt-4">
+                                    <h6 class="premium-label mb-4 text-accent">DATA INTEGRITY</h6>
+                                    <div class="d-flex flex-column gap-4">
+                                        <div class="d-flex gap-3 align-items-start">
+                                            <div class="step-chip"><span class="material-symbols-outlined fs-6">badge</span></div>
+                                            <div>
+                                                <h6 class="fw-bold mb-1">Legal Nomenclature</h6>
+                                                <p class="extra-small text-white-50 mb-0">Use official names as they should appear on the finalized ballot sheet.</p>
                                             </div>
-                                            <label for="profile_image" class="btn btn-primary btn-sm rounded-circle position-absolute bottom-0 end-0 p-2 shadow-lg" style="width: 40px; height: 40px;">
-                                                <span class="material-symbols-outlined fs-5">photo_camera</span>
-                                            </label>
+                                        </div>
+                                        <div class="d-flex gap-3 align-items-start">
+                                            <div class="step-chip"><span class="material-symbols-outlined fs-6">format_list_numbered</span></div>
+                                            <div>
+                                                <h6 class="fw-bold mb-1">Ballot Intelligence</h6>
+                                                <p class="extra-small text-white-50 mb-0">The ballot number determines the candidate's position in the voting sequence.</p>
+                                            </div>
                                         </div>
                                     </div>
+                                </div>
 
-                                    <input type="file" class="d-none" name="profile_image" id="profile_image" accept="image/*">
-                                    <div class="px-4">
-                                        <p class="extra-small text-muted mb-0 mt-3">Upload a high-resolution portrait for the digital ballot. Supported: JPG, PNG, WebP.</p>
+                                <div class="mt-auto pt-5 border-top border-white border-opacity-10">
+                                    <div class="p-4 rounded-4" style="background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.1);">
+                                        <p class="extra-small mb-0 text-white italic fw-medium" style="opacity: 0.9;">"Candidate profiling requires absolute precision for a fair electoral session."</p>
                                     </div>
                                 </div>
                             </div>
 
-                            <!-- Form Content -->
-                            <div class="col-lg-8">
-                                <div class="p-5">
-                                    <div class="row g-4">
-                                        <div class="col-12">
-                                            <h5 class="fw-bold mb-3 d-flex align-items-center">
-                                                <span class="material-symbols-outlined me-2 text-primary">badge</span> Biographical Parameters
-                                            </h5>
-                                        </div>
-                                        
-                                        <div class="col-md-6">
-                                            <label class="form-label">First Name</label>
-                                            <input type="text" class="form-control" name="first_name" value="{{ contestant.first_name }}" placeholder="Legal first name" required>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <label class="form-label">Last Name</label>
-                                            <input type="text" class="form-control" name="last_name" value="{{ contestant.last_name }}" placeholder="Legal surname" required>
-                                        </div>
+                            <!-- Right Content: Information Terminal -->
+                            <div class="col-lg-8 p-4 p-md-5 bg-white">
+                                <div class="d-flex align-items-center justify-content-between mb-5">
+                                    <h5 class="fw-bold mb-0 text-dark d-flex align-items-center gap-2">
+                                        <span class="material-symbols-outlined text-primary">person_add</span>
+                                        {{ contestant ? 'Refine Candidate Hub' : 'Register Candidate Profile' }}
+                                    </h5>
+                                    <span class="badge {{ contestant ? 'bg-warning-subtle text-warning' : 'bg-success-subtle text-success' }} px-4 py-2 rounded-pill fw-bold" style="font-size: 0.65rem; letter-spacing: 0.05em;">
+                                        {{ contestant ? 'REFINEMENT MODE' : 'DEPLOYMENT MODE' }}
+                                    </span>
+                                </div>
 
+                                <!-- Biographical Section -->
+                                <div class="mb-5">
+                                    <label class="premium-label mb-4 text-primary d-block">BIOGRAPHICAL PARAMETERS</label>
+                                    <div class="row g-4">
                                         <div class="col-md-6">
-                                            <label class="form-label">Identity Gender</label>
+                                            <label class="form-label premium-label fs-xs">Legal First Name</label>
+                                            <input type="text" class="form-control" name="first_name" value="{{ contestant.first_name }}" placeholder="Enter first name" required>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label premium-label fs-xs">Legal Last Name</label>
+                                            <input type="text" class="form-control" name="last_name" value="{{ contestant.last_name }}" placeholder="Enter surname" required>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label premium-label fs-xs">Identity Gender</label>
                                             <select class="form-select" name="gender" required>
                                                 <option value="">Select gender...</option>
                                                 <option value="male" {{ contestant.gender == 'male' ? 'selected' : '' }}>Male</option>
@@ -78,20 +105,25 @@
                                             </select>
                                         </div>
                                         <div class="col-md-6">
-                                            <label class="form-label">Ballot Intelligence ID</label>
-                                            <input type="text" class="form-control" name="contestant_ballot_number" value="{{ contestant.contestant_ballot_number }}" placeholder="e.g. 01" required>
+                                            <label class="form-label premium-label fs-xs">Ballot Number (Position on Sheet)</label>
+                                            <select class="form-select fw-bold" name="contestant_ballot_number" id="ballotSelect" required {{ not contestant ? 'disabled' : '' }}>
+                                                <option value="">Select slot...</option>
+                                                {% if contestant %}
+                                                    <option value="{{ contestant.contestant_ballot_number }}" selected>{{ contestant.contestant_ballot_number }} (Current)</option>
+                                                {% endif %}
+                                            </select>
                                         </div>
+                                    </div>
+                                </div>
 
-                                        <div class="col-12 mt-5">
-                                            <h5 class="fw-bold mb-3 d-flex align-items-center">
-                                                <span class="material-symbols-outlined me-2 text-primary">assignment_ind</span> Deployment Matrix
-                                            </h5>
-                                        </div>
-
+                                <!-- Deployment Matrix Section -->
+                                <div class="mb-5 p-4 rounded-4 bg-light border-0">
+                                    <label class="premium-label mb-4 text-primary d-block">DEPLOYMENT MATRIX</label>
+                                    <div class="row g-4">
                                         <div class="col-md-6">
-                                            <label class="form-label">Electoral Session</label>
+                                            <label class="form-label premium-label fs-xs">Electoral Session Cluster</label>
                                             <select class="form-select" name="sel_election" id="electionSelect" required>
-                                                <option value="">Choose session...</option>
+                                                <option value="">Map to session...</option>
                                                 {% for election in elections %}
                                                     <option value="{{ election.uuid }}" {{ contestant.election_uuid == election.uuid ? 'selected' : '' }}>
                                                         {{ election.title }}
@@ -100,24 +132,29 @@
                                             </select>
                                         </div>
                                         <div class="col-md-6">
-                                            <label class="form-label">Contesting Office</label>
-                                            <select class="form-select" name="position_id" id="positionSelect" required>
-                                                <option value="">Choose office...</option>
-                                                {% for pos in positions %}
-                                                    <option value="{{ pos.position_id }}" {{ contestant.position_id == pos.position_id ? 'selected' : '' }}>
-                                                        {{ pos.position_name }}
+                                            <label class="form-label premium-label fs-xs">Assigned Position</label>
+                                            <select class="form-select" name="position_id" id="positionSelect" required {{ not contestant ? 'disabled' : '' }}>
+                                                <option value="">Map to position...</option>
+                                                {% for position in positions %}
+                                                    <option value="{{ position.position_id }}" {{ contestant.position_id == position.position_id ? 'selected' : '' }}>
+                                                        {{ position.position_name }}
                                                     </option>
                                                 {% endfor %}
                                             </select>
                                         </div>
                                     </div>
-
-                                    <div class="mt-5 pt-4 d-flex gap-3">
-                                        <button type="submit" class="btn btn-primary px-5 py-3">
-                                            {{ contestant ? 'Apply Modifications' : 'Initialize Registration' }}
-                                        </button>
-                                        <a href="{{ PROOT }}admin/contestants" class="btn btn-light px-4 py-3">Discard</a>
+                                    <div id="loader" class="mt-3 text-primary extra-small d-none animate__animated animate__fadeIn">
+                                        <div class="spinner-border spinner-border-sm me-2" role="status"></div>
+                                        Syncing electoral parameters...
                                     </div>
+                                </div>
+
+                                <div class="d-flex justify-content-end gap-3 mt-5">
+                                    <a href="{{ PROOT }}admin/contestants" class="btn btn-light px-5 py-3 fw-bold rounded-4 shadow-sm">Cancel</a>
+                                    <button type="submit" class="btn btn-primary px-5 py-3 fw-bold rounded-4 shadow-sm d-flex align-items-center gap-2">
+                                        <span class="material-symbols-outlined fs-5">rocket_launch</span>
+                                        {{ contestant ? 'Update Candidate Profile' : 'Finalize Registration' }}
+                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -130,47 +167,119 @@
 
 {% block styles %}
 <style>
-    .extra-small { font-size: 0.75rem; }
-    .btn-white { background: #fff; }
-    .btn-white:hover { background: #f8fafc; color: var(--admin-primary); }
-    .object-fit-cover { object-fit: cover; }
-    .tracking-wider { letter-spacing: 0.05em; }
+    .bg-primary { background: #1d3d37 !important; }
+    .step-chip {
+        width: 32px;
+        height: 32px;
+        background: rgba(220, 243, 176, 0.15);
+        color: var(--admin-accent);
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+    }
+    .fs-xs { font-size: 0.7rem !important; }
+    .form-control:focus, .form-select:focus {
+        border-color: var(--admin-primary) !important;
+        box-shadow: 0 0 0 4px rgba(29, 61, 55, 0.05) !important;
+    }
 </style>
 {% endblock %}
 
 {% block scripts %}
 <script>
-$(document).ready(function() {
-    // Dynamic Position Loading
-    $('#electionSelect').on('change', function() {
-        var electionId = $(this).val();
-        if (electionId) {
-            $.ajax({
-                url: '{{ PROOT }}admin/api/positions/' + electionId,
-                type: 'GET',
-                success: function(data) {
-                    var $posSelect = $('#positionSelect');
-                    $posSelect.empty().append('<option value="">Select Position</option>');
-                    $.each(data, function(i, pos) {
-                        $posSelect.append($('<option>', {
-                            value: pos.position_id,
-                            text: pos.position_name
-                        }));
-                    });
-                }
-            });
-        }
-    });
+    document.addEventListener('DOMContentLoaded', function() {
+        const profileImage = document.getElementById('profile_image');
+        const profilePreview = document.getElementById('profilePreview');
+        const electionSelect = document.getElementById('electionSelect');
+        const positionSelect = document.getElementById('positionSelect');
+        const loader = document.getElementById('loader');
 
-    // Image Preview
-    $('#profile_image').on('change', function() {
-        var reader = new FileReader();
-        reader.onload = function(e) {
-            $('#profilePreview').attr('src', e.target.result);
-        }
-        reader.readAsDataURL(this.files[0]);
+        profileImage.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    profilePreview.src = event.target.result;
+                }
+                reader.readAsDataURL(file);
+            }
+        });
+
+        electionSelect.addEventListener('change', function() {
+            const electionUuid = this.value;
+            positionSelect.disabled = true;
+            ballotSelect.disabled = true;
+            ballotSelect.innerHTML = '<option value="">Select slot...</option>';
+
+            if (electionUuid) {
+                loader.classList.remove('d-none');
+                positionSelect.innerHTML = '<option value="">Loading positions...</option>';
+                
+                fetch('{{ PROOT }}admin/api/positions/' + electionUuid)
+                    .then(response => response.json())
+                    .then(data => {
+                        loader.classList.add('d-none');
+                        positionSelect.disabled = false;
+                        positionSelect.innerHTML = '<option value="">Map to position...</option>';
+                        data.forEach(pos => {
+                            const option = document.createElement('option');
+                            option.value = pos.position_id;
+                            option.textContent = pos.position_name;
+                            positionSelect.appendChild(option);
+                        });
+                    })
+                    .catch(error => {
+                        console.error('Error fetching positions:', error);
+                        loader.classList.add('d-none');
+                        positionSelect.innerHTML = '<option value="">Error loading positions</option>';
+                    });
+            } else {
+                positionSelect.innerHTML = '<option value="">Map to position...</option>';
+            }
+        });
+
+        positionSelect.addEventListener('change', function() {
+            const electionUuid = electionSelect.value;
+            const positionId = this.value;
+            
+            if (electionUuid && positionId) {
+                loader.classList.remove('d-none');
+                ballotSelect.disabled = true;
+                ballotSelect.innerHTML = '<option value="">Loading slots...</option>';
+
+                const contestantUuid = '{{ contestant.uuid ?? "" }}';
+                fetch('{{ PROOT }}admin/api/ballot-numbers/' + electionUuid + '/' + positionId + (contestantUuid ? '?contestant_uuid=' + contestantUuid : ''))
+                    .then(response => response.json())
+                    .then(data => {
+                        loader.classList.add('d-none');
+                        ballotSelect.disabled = false;
+                        ballotSelect.innerHTML = '<option value="">Select slot...</option>';
+                        
+                        data.forEach(num => {
+                            const option = document.createElement('option');
+                            option.value = num;
+                            option.textContent = 'Ballot Slot #' + num;
+                            ballotSelect.appendChild(option);
+                        });
+
+                        // If editing and current position matches, re-select current ballot number
+                        {% if contestant %}
+                            if (electionUuid === '{{ contestant.election_uuid }}' && positionId === '{{ contestant.position_id }}') {
+                                ballotSelect.value = '{{ contestant.contestant_ballot_number }}';
+                            }
+                        {% endif %}
+                    })
+                    .catch(error => {
+                        console.error('Error fetching ballot numbers:', error);
+                        loader.classList.add('d-none');
+                    });
+            } else {
+                ballotSelect.disabled = true;
+                ballotSelect.innerHTML = '<option value="">Select slot...</option>';
+            }
+        });
     });
-});
 </script>
 {% endblock %}
-

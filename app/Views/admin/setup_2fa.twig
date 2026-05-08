@@ -1,87 +1,133 @@
 {% extends "admin/layout.twig" %}
 
-{% block title %}Setup 2FA • Kokuromotie Admin{% endblock %}
+{% block title %}Cryptographic Setup • Kokuromotie Security{% endblock %}
 
 {% block content %}
-<div class="row justify-content-center mt-5">
-    <div class="col-12 col-md-8 col-xl-6">
-        <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
-            <div class="card-body p-5 text-center">
-                <div class="mb-4">
-                    <div class="security-shield-animated mx-auto mb-4">
-                        <div class="shield-orb"></div>
-                        <span class="material-symbols-outlined text-primary display-4 position-relative">shield_lock</span>
-                    </div>
-                </div>
-                
-                <h2 class="fw-bold mb-3">Cryptographic Protection</h2>
-                <p class="text-muted small mb-5 px-lg-5">Secure your administrator profile by adding a secondary cryptographic layer. Synchronize your authenticator with the cluster below.</p>
-
-                <div class="mb-5 d-inline-block p-4 bg-white border rounded-4 shadow-sm" style="border-style: dashed !important; border-width: 2px !important;">
-                    <img src="{{ qrCodeUrl }}" alt="QR Code" class="img-fluid" style="width: 220px; filter: contrast(1.1);">
-                </div>
-
-                {% if errorsMsg %}
-                    <div class="alert alert-danger py-2 small mb-4 border-0 bg-danger bg-opacity-10 text-danger rounded-3">
-                        <span class="material-symbols-outlined fs-6 align-middle me-1">error</span> {{ errorsMsg }}
-                    </div>
-                {% endif %}
-
-                <form method="POST" class="mx-auto" style="max-width: 320px;">
-                    {{ csrf_field()|raw }}
-                    <div class="mb-4">
-                        <label class="form-label premium-label">6-Digit Verification Code</label>
-                        <input type="text" name="otp_code" class="form-control form-control-lg text-center fw-bold fs-3 bg-light border-0 py-3" placeholder="000 000" maxlength="6" required style="letter-spacing: 0.5rem;">
+<div class="row justify-content-center mt-5 mb-5">
+    <div class="col-12 col-md-10 col-xl-8">
+        <div class="card border-0 shadow-lg rounded-5 overflow-hidden bg-white">
+            <div class="row g-0">
+                <!-- Left Side: Information & Branding -->
+                <div class="col-lg-5 bg-primary p-5 d-flex flex-column justify-content-between text-white">
+                    <div>
+                        <div class="d-flex align-items-center mb-4">
+                            <span class="material-symbols-outlined fs-1 text-accent me-3">shield_person</span>
+                            <h2 class="h4 fw-bold mb-0">Security Shield</h2>
+                        </div>
+                        <h3 class="fw-bold mb-3">Multi-Factor Authentication</h3>
+                        <p class="text-white-50 small mb-5">Protect your administrative authority by adding a secondary cryptographic verification layer to your account profile.</p>
+                        
+                        <div class="d-flex flex-column gap-4">
+                            <div class="d-flex gap-3">
+                                <div class="step-number">1</div>
+                                <div>
+                                    <h6 class="fw-bold mb-1">Initialize App</h6>
+                                    <p class="extra-small text-white-50 mb-0">Open Google Authenticator or Authy on your mobile device.</p>
+                                </div>
+                            </div>
+                            <div class="d-flex gap-3">
+                                <div class="step-number">2</div>
+                                <div>
+                                    <h6 class="fw-bold mb-1">Synchronize Cluster</h6>
+                                    <p class="extra-small text-white-50 mb-0">Scan the high-contrast QR code to establish a secure handshake.</p>
+                                </div>
+                            </div>
+                            <div class="d-flex gap-3">
+                                <div class="step-number">3</div>
+                                <div>
+                                    <h6 class="fw-bold mb-1">Activate Profile</h6>
+                                    <p class="extra-small text-white-50 mb-0">Enter the generated 6-digit temporal key to finalize setup.</p>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                     
-                    <button type="submit" name="activate2fa" class="btn btn-primary w-100 py-3 fw-bold rounded-3 shadow-sm d-flex align-items-center justify-content-center gap-2">
-                        <span class="material-symbols-outlined fs-5">verified</span>
-                        Activate Security Shield
-                    </button>
-                    
-                    <div class="mt-4">
-                        <a href="{{ PROOT }}admin/settings" class="text-muted small fw-bold text-decoration-none d-flex align-items-center justify-content-center gap-1 opacity-75">
-                            <span class="material-symbols-outlined fs-6">cancel</span> Abort Setup
-                        </a>
+                    <div class="mt-5 p-3 rounded-4" style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);">
+                        <p class="extra-small text-white-50 mb-0 d-flex align-items-center gap-2">
+                            <span class="material-symbols-outlined fs-6 text-accent">info</span>
+                            Setup once to protect your credentials globally.
+                        </p>
                     </div>
-                </form>
-            </div>
-            <div class="card-footer bg-light bg-opacity-50 border-0 p-4 text-start">
-                <h6 class="fw-bold small mb-2 text-uppercase tracking-wider d-flex align-items-center gap-2">
-                    <span class="material-symbols-outlined fs-6 text-primary">info</span>
-                    Protocol Instructions
-                </h6>
-                <ol class="small text-muted mb-0 ps-3">
-                    <li class="mb-1">Initialize Google Authenticator or Microsoft Authenticator.</li>
-                    <li class="mb-1">Scan the high-contrast QR code generated above.</li>
-                    <li>Synchronize the temporal 6-digit code to activate the shield.</li>
-                </ol>
+                </div>
+
+                <!-- Right Side: Interaction -->
+                <div class="col-lg-7 p-5 text-center bg-light bg-opacity-10">
+                    <div class="mb-5">
+                        <div class="qr-container p-3 d-inline-block bg-white rounded-5 shadow-sm border animate__animated animate__fadeIn">
+                            <img src="{{ qrCodeUrl }}" alt="QR Code" class="img-fluid rounded-4" style="width: 240px;">
+                        </div>
+                    </div>
+
+                    <div class="mx-auto" style="max-width: 360px;">
+                        {% if errorsMsg %}
+                            <div class="alert alert-danger py-2 small mb-4 border-0 bg-danger bg-opacity-10 text-danger rounded-3 animate__animated animate__shakeX">
+                                <span class="material-symbols-outlined fs-6 align-middle me-1">error</span> {{ errorsMsg }}
+                            </div>
+                        {% endif %}
+
+                        <form method="POST">
+                            {{ csrf_field()|raw }}
+                            <div class="mb-4">
+                                <label class="form-label premium-label text-start d-block mb-3">Verification Terminal</label>
+                                <div class="otp-input-wrapper">
+                                    <input type="text" name="otp_code" class="form-control form-control-lg otp-input" placeholder="000 000" maxlength="6" required autofocus autocomplete="off">
+                                </div>
+                            </div>
+                            
+                            <button type="submit" name="activate2fa" class="btn btn-primary w-100 py-3 fw-bold rounded-4 shadow-sm d-flex align-items-center justify-content-center gap-2 mb-4">
+                                <span class="material-symbols-outlined fs-5">lock_open</span>
+                                Activate Shield Profile
+                            </button>
+                            
+                            <a href="{{ PROOT }}admin/settings" class="btn btn-link text-muted small fw-bold text-decoration-none d-flex align-items-center justify-content-center gap-2 opacity-75 hover-opacity-100">
+                                <span class="material-symbols-outlined fs-6">arrow_back</span> Return to Settings
+                            </a>
+                        </form>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 </div>
 
 <style>
-    .security-shield-animated {
-        position: relative;
-        display: inline-block;
+    .step-number {
+        width: 32px;
+        height: 32px;
+        background: var(--admin-accent);
+        color: var(--admin-primary);
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 800;
+        font-size: 0.875rem;
+        flex-shrink: 0;
     }
-    .shield-orb {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        width: 100px;
-        height: 100px;
-        background: rgba(29, 61, 55, 0.1);
-        border-radius: 50%;
-        animation: pulse-orb 2s infinite;
+    .qr-container {
+        transition: all 0.3s ease;
     }
-    @keyframes pulse-orb {
-        0% { transform: translate(-50%, -50%) scale(0.8); opacity: 0.5; }
-        50% { transform: translate(-50%, -50%) scale(1.2); opacity: 0.2; }
-        100% { transform: translate(-50%, -50%) scale(0.8); opacity: 0.5; }
+    .qr-container:hover {
+        transform: scale(1.02);
+        box-shadow: 0 20px 40px rgba(0,0,0,0.1) !important;
+    }
+    .otp-input {
+        text-align: center;
+        font-weight: 800;
+        font-size: 2.25rem !important;
+        letter-spacing: 0.5rem;
+        background: #fff !important;
+        border: 2px solid #eef2f7 !important;
+        border-radius: 1.25rem !important;
+        padding: 1.25rem !important;
+        transition: all 0.3s ease !important;
+    }
+    .otp-input:focus {
+        border-color: var(--admin-primary) !important;
+        box-shadow: 0 0 0 4px rgba(29, 61, 55, 0.05) !important;
+    }
+    .hover-opacity-100:hover {
+        opacity: 1 !important;
     }
 </style>
 {% endblock %}
-

@@ -253,6 +253,12 @@ $router->mount('/admin', function() use ($router, $twig) {
         $controller->getPositionsByElection($id);
     });
 
+    $router->get('/api/ballot-numbers/([a-zA-Z0-9\-]+)/([a-zA-Z0-9\-]+)', function($e_id, $p_id) use ($twig) {
+        require_once __DIR__ . '/../app/Controllers/AdminController.php';
+        $controller = new \App\Controllers\AdminController($twig);
+        $controller->getAvailableBallotNumbers($e_id, $p_id);
+    });
+
     $router->get('/api/election-login-settings/([a-zA-Z0-9\-]+)', function($id) use ($twig) {
         require_once __DIR__ . '/../app/Controllers/AdminController.php';
         $controller = new \App\Controllers\AdminController($twig);
@@ -429,6 +435,12 @@ $router->mount('/admin', function() use ($router, $twig) {
         require_once __DIR__ . '/../app/Controllers/AdminController.php';
         $controller = new \App\Controllers\AdminController($twig);
         $controller->passwordUpdate();
+    });
+
+    $router->post('/disable-2fa', function() use ($twig) {
+        require_once __DIR__ . '/../app/Controllers/AdminController.php';
+        $controller = new \App\Controllers\AdminController($twig);
+        $controller->disable2FA();
     });
 });
 

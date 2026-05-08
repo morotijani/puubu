@@ -1,0 +1,163 @@
+{% extends "admin/layout.twig" %}
+
+{% set active_page = 'logs' %}
+
+{% block title %}System Audit Logs • Kokuromotie{% endblock %}
+
+{% block content %}
+    <div class="page-header d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-5">
+        <div>
+            <h1 class="fw-bold mb-1">System Audit Logs</h1>
+            <p class="text-muted mb-0">Complete historical record of all administrative and electoral activities.</p>
+        </div>
+        <div class="d-flex gap-2 mt-3 mt-md-0">
+            <div class="dropdown">
+                <button class="btn btn-accent shadow-sm dropdown-toggle d-flex align-items-center gap-2" type="button" data-bs-toggle="dropdown">
+                    <span class="material-symbols-outlined fs-6">download</span> Export Intelligence
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end shadow-lg border-0 py-2 dropdown-menu-premium" style="min-width: 320px;">
+                    <li class="px-3 py-2">
+                        <form action="{{ PROOT }}admin/logs/export" method="GET">
+                            <span class="premium-label mb-2">DATE RANGE EXPORT</span>
+                            <div class="row g-2 mb-3">
+                                <div class="col-6">
+                                    <input type="date" name="start_date" class="form-control" placeholder="Start Date">
+                                </div>
+                                <div class="col-6">
+                                    <input type="date" name="end_date" class="form-control" placeholder="End Date">
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-accent btn-sm w-100 fw-bold rounded-3">Execute Filtered Export</button>
+                        </form>
+                    </li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item py-2 d-flex align-items-center" href="{{ PROOT }}admin/logs/export"><span class="material-symbols-outlined me-2 text-accent-alt fs-6">database</span> Export All History</a></li>
+                </ul>
+            </div>
+
+            {% if admin.role == 'super_admin' %}
+            <div class="dropdown">
+                <button class="btn btn-premium-dark shadow-sm dropdown-toggle d-flex align-items-center gap-2" type="button" data-bs-toggle="dropdown" style="background: rgba(220, 53, 69, 0.1); color: #ff4d4d; border: 1px solid rgba(220, 53, 69, 0.2);">
+                    <span class="material-symbols-outlined fs-6">delete_sweep</span> Purge Registry
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end shadow-lg border-0 py-2 dropdown-menu-premium" style="min-width: 280px;">
+                    <li class="px-3 py-2">
+                        <span class="premium-label mb-1" style="color: #ff4d4d !important;">CRITICAL ACTIONS</span>
+                    </li>
+                    <li>
+                        <form action="{{ PROOT }}admin/logs/clear" method="POST" id="clearLogsForm">
+                            {{ csrf_field()|raw }}
+                            <input type="hidden" name="clear_scope" id="clear_scope_input">
+                            <button type="button" class="dropdown-item py-2 d-flex align-items-center text-danger" onclick="confirmClear('30_days')">
+                                <span class="material-symbols-outlined me-2 fs-6">history</span> Clear > 30 Days Old
+                            </button>
+                            <button type="button" class="dropdown-item py-2 d-flex align-items-center text-danger" onclick="confirmClear('90_days')">
+                                <span class="material-symbols-outlined me-2 fs-6">calendar_month</span> Clear > 90 Days Old
+                            </button>
+                            <li><hr class="dropdown-divider"></li>
+                            <button type="button" class="dropdown-item py-2 d-flex align-items-center fw-bold text-danger" onclick="confirmClear('all')">
+                                <span class="material-symbols-outlined me-2 fs-6">warning</span> PURGE ENTIRE LOG
+                            </button>
+                        </form>
+                    </li>
+                </ul>
+            </div>
+            {% endif %}
+
+            <button class="btn btn-light" onclick="location.reload()">
+                <span class="material-symbols-outlined fs-6">refresh</span>
+            </button>
+        </div>
+    </div>
+
+    <div class="card border-0 shadow-sm overflow-hidden" style="border-radius: 1.5rem;">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="bg-light">
+                    <tr>
+                        <th class="ps-4 py-3 text-uppercase fs-xs fw-bold text-muted" style="letter-spacing: 0.1em;">Timestamp</th>
+                        <th class="py-3 text-uppercase fs-xs fw-bold text-muted" style="letter-spacing: 0.1em;">Administrator</th>
+                        <th class="py-3 text-uppercase fs-xs fw-bold text-muted" style="letter-spacing: 0.1em;">Activity</th>
+                        <th class="py-3 text-uppercase fs-xs fw-bold text-muted text-center" style="letter-spacing: 0.1em;">Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for log in logs %}
+                        <tr>
+                            <td class="ps-4">
+                                <div class="d-flex flex-column">
+                                    <span class="fw-bold text-dark">{{ log.createdAt|date("M d, Y") }}</span>
+                                    <span class="text-muted small">{{ log.createdAt|date("h:i A") }}</span>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <div class="avatar-sm bg-primary-subtle text-primary rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 36px; height: 36px;">
+                                        <span class="material-symbols-outlined fs-5">person</span>
+                                    </div>
+                                    <div class="d-flex flex-column">
+                                        <span class="fw-bold text-dark">{{ log.first_name }} {{ log.last_name }}</span>
+                                        <span class="text-muted small">{{ log.admin_email }}</span>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <span class="material-symbols-outlined text-muted me-2 fs-5">history_edu</span>
+                                    <span class="text-dark fw-medium">{{ log.log_message }}</span>
+                                </div>
+                            </td>
+                            <td class="text-center">
+                                <span class="badge bg-success-subtle text-success px-3 py-2 rounded-pill fw-bold" style="font-size: 0.65rem;">SUCCESS</span>
+                            </td>
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <td colspan="4" class="text-center py-5 text-muted">
+                                <span class="material-symbols-outlined fs-1 mb-2">database_off</span>
+                                <p class="mb-0">No system logs found in the registry.</p>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    function confirmClear(scope) {
+        let msg = "Are you sure you want to clear these logs?";
+        if (scope === 'all') msg = "CRITICAL: This will permanently delete ALL activity logs. This cannot be undone!";
+        
+        Swal.fire({
+            title: 'Confirm Purge',
+            html: msg,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, Purge Now',
+            cancelButtonText: 'Cancel Action',
+            customClass: {
+                popup: 'premium-swal-popup',
+                title: 'premium-swal-title',
+                htmlContainer: 'premium-swal-html',
+                confirmButton: 'btn btn-danger premium-swal-confirm',
+                cancelButton: 'btn premium-swal-cancel'
+            },
+            buttonsStyling: false,
+            showClass: {
+                popup: 'animate__animated animate__zoomIn animate__faster'
+            },
+            hideClass: {
+                popup: 'animate__animated animate__zoomOut animate__faster'
+            }
+        }).then((result) => {
+            if (result.isConfirmed) {
+                document.getElementById('clear_scope_input').value = scope;
+                document.getElementById('clearLogsForm').submit();
+            }
+        });
+    }
+</script>
+{% endblock %}

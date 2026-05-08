@@ -33,51 +33,80 @@
     {% block styles %}{% endblock %}
 </head>
 <body>
+    <!-- Mobile Header -->
+    <header class="mobile-header d-lg-none">
+        <div class="d-flex align-items-center justify-content-between p-3 bg-sidebar shadow-sm">
+            <a class="navbar-brand m-0" href="{{ PROOT }}admin" style="font-size: 1.25rem;">
+                <span class="material-symbols-outlined me-2 fs-3">how_to_vote</span> KOKURO<span>MOTIE</span>
+            </a>
+            <button class="btn btn-link text-white p-0" id="mobileMenuToggle">
+                <span class="material-symbols-outlined fs-1">menu</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- Sidebar Overlay for Mobile -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
     <!-- Sidebar -->
-    <aside class="aside">
-        <a class="navbar-brand" href="{{ PROOT }}admin">
-            <span class="material-symbols-outlined me-2 fs-2">how_to_vote</span> KOKURO<span>MOTIE</span>
-        </a>
+    <aside class="aside" id="sidebar">
+        <div class="d-flex align-items-center justify-content-between mb-5">
+            <a class="navbar-brand m-0" href="{{ PROOT }}admin" style="font-size: 1.2rem; gap: 8px;">
+                <span class="material-symbols-outlined fs-2">how_to_vote</span> 
+                <span class="brand-text">KOKURO<span>MOTIE</span></span>
+            </a>
+            <button class="btn btn-link p-0 d-none d-lg-flex" id="sidebarToggle" style="color: var(--admin-accent); border: none; outline: none; box-shadow: none; min-width: 32px;">
+                <span class="material-symbols-outlined fs-2" id="toggleIcon">menu_open</span>
+            </button>
+        </div>
         
         <nav class="navbar-vertical">
             <div class="sidebar-heading">Electoral Intelligence</div>
             <a class="nav-link {% if active_page == 'dashboard' %}active{% endif %}" href="{{ PROOT }}admin">
-                <span class="material-symbols-outlined">analytics</span> Dashboard
+                <span class="material-symbols-outlined">analytics</span> <span class="nav-text">Dashboard</span>
             </a>
             <a class="nav-link {% if active_page == 'elections' %}active{% endif %}" href="{{ PROOT }}admin/elections">
-                <span class="material-symbols-outlined">event_note</span> Elections
+                <span class="material-symbols-outlined">event_note</span> <span class="nav-text">Elections</span>
             </a>
             
             <div class="sidebar-heading">Registry Management</div>
             <a class="nav-link {% if active_page == 'voters' %}active{% endif %}" href="{{ PROOT }}admin/voters">
-                <span class="material-symbols-outlined">badge</span> Voters Registrar
+                <span class="material-symbols-outlined">badge</span> <span class="nav-text">Voters Registrar</span>
             </a>
             <a class="nav-link {% if active_page == 'positions' %}active{% endif %}" href="{{ PROOT }}admin/positions">
-                <span class="material-symbols-outlined">account_tree</span> Positions
+                <span class="material-symbols-outlined">account_tree</span> <span class="nav-text">Positions</span>
             </a>
             <a class="nav-link {% if active_page == 'contestants' %}active{% endif %}" href="{{ PROOT }}admin/contestants">
-                <span class="material-symbols-outlined">person_pin</span> Contestants
+                <span class="material-symbols-outlined">person_pin</span> <span class="nav-text">Contestants</span>
+            </a>
+
+            <div class="sidebar-heading">Intelligence Audit</div>
+            <a class="nav-link {% if active_page == 'logs' %}active{% endif %}" href="{{ PROOT }}admin/logs">
+                <span class="material-symbols-outlined">history_edu</span> <span class="nav-text">System Logs</span>
             </a>
             
             {% if admin.role == 'super_admin' %}
             <div class="sidebar-heading">System Core</div>
             <a class="nav-link {% if active_page == 'organizers' %}active{% endif %}" href="{{ PROOT }}admin/organizers">
-                <span class="material-symbols-outlined">admin_panel_settings</span> Organizers
+                <span class="material-symbols-outlined">admin_panel_settings</span> <span class="nav-text">Organizers</span>
             </a>
             {% endif %}
 
             <div class="sidebar-heading">Profile</div>
+            <a class="nav-link {% if active_page == 'help' %}active{% endif %}" href="{{ PROOT }}admin/help">
+                <span class="material-symbols-outlined">help_center</span> <span class="nav-text">Help Center</span>
+            </a>
             <a class="nav-link {% if active_page == 'settings' %}active{% endif %}" href="{{ PROOT }}admin/settings">
-                <span class="material-symbols-outlined">settings_suggest</span> Settings
+                <span class="material-symbols-outlined">settings_suggest</span> <span class="nav-text">Settings</span>
             </a>
             <a class="nav-link" href="{{ PROOT }}admin/auth/logout">
-                <span class="material-symbols-outlined">logout</span> Sign out
+                <span class="material-symbols-outlined">logout</span> <span class="nav-text">Sign out</span>
             </a>
         </nav>
     </aside>
 
     <!-- Main Content -->
-    <main class="main">
+    <main class="main" id="mainContent">
         {% block content %}{% endblock %}
     </main>
 
@@ -114,6 +143,46 @@
                     title: '{{ session.flash_error }}'
                 });
             {% endif %}
+
+            // Sidebar Toggle Logic
+            const sidebar = document.getElementById('sidebar');
+            const mainContent = document.getElementById('mainContent');
+            const sidebarToggle = document.getElementById('sidebarToggle');
+            const toggleIcon = document.getElementById('toggleIcon');
+            const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+            const sidebarOverlay = document.getElementById('sidebarOverlay');
+
+            // Load preferred state
+            const isCollapsed = localStorage.getItem('sidebarCollapsed') === 'true';
+            if (isCollapsed && window.innerWidth > 992) {
+                if(sidebar) sidebar.classList.add('collapsed');
+                if(mainContent) mainContent.classList.add('sidebar-collapsed');
+                if(toggleIcon) toggleIcon.textContent = 'menu';
+            }
+
+            if(sidebarToggle) {
+                sidebarToggle.addEventListener('click', () => {
+                    const nowCollapsed = sidebar.classList.toggle('collapsed');
+                    mainContent.classList.toggle('sidebar-collapsed');
+                    if(toggleIcon) toggleIcon.textContent = nowCollapsed ? 'menu' : 'menu_open';
+                    localStorage.setItem('sidebarCollapsed', nowCollapsed);
+                });
+            }
+
+            // Mobile Logic
+            if(mobileMenuToggle) {
+                mobileMenuToggle.addEventListener('click', () => {
+                    sidebar.classList.add('mobile-show');
+                    sidebarOverlay.classList.add('show');
+                });
+            }
+
+            if(sidebarOverlay) {
+                sidebarOverlay.addEventListener('click', () => {
+                    sidebar.classList.remove('mobile-show');
+                    sidebarOverlay.classList.remove('show');
+                });
+            }
         });
     </script>
     {% block scripts %}{% endblock %}

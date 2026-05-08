@@ -7,9 +7,10 @@
 {% block styles %}
 <style>
     :root {
-        --admin-primary: #4f46e5;
-        --admin-primary-rgb: 79, 70, 229;
-        --shadow-2xl: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        --admin-primary: #1d3d37;
+        --admin-primary-rgb: 29, 61, 55;
+        --admin-accent: #dcf3b0;
+        --shadow-2xl: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
     }
 
     /* Modal Step Transitions */
@@ -100,18 +101,56 @@
         background: #fff;
         border-color: #cbd5e1;
     }
+
+    /* Premium Dropdown Styles */
+    .dropdown-menu-premium {
+        background: rgba(29, 61, 55, 0.98) !important;
+        backdrop-filter: blur(20px) !important;
+        -webkit-backdrop-filter: blur(20px) !important;
+        border: 1px solid rgba(220, 243, 176, 0.15) !important;
+        border-radius: 1.25rem !important;
+        padding: 0.75rem !important;
+        min-width: 260px !important;
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5) !important;
+    }
+    .dropdown-menu-premium .dropdown-item {
+        color: rgba(255, 255, 255, 0.8) !important;
+        border-radius: 0.8rem !important;
+        padding: 0.8rem 1rem !important;
+        font-weight: 500 !important;
+        transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
+        margin-bottom: 2px !important;
+    }
+    .dropdown-menu-premium .dropdown-item:last-child {
+        margin-bottom: 0 !important;
+    }
+    .dropdown-menu-premium .dropdown-item:hover {
+        background: rgba(220, 243, 176, 0.1) !important;
+        color: var(--admin-accent) !important;
+        transform: translateX(5px) !important;
+    }
+    .dropdown-menu-premium .dropdown-item .material-symbols-outlined {
+        font-size: 1.25rem !important;
+        transition: transform 0.25s ease !important;
+    }
+    .dropdown-menu-premium .dropdown-item:hover .material-symbols-outlined {
+        transform: scale(1.1) !important;
+    }
+    .text-accent {
+        color: var(--admin-accent) !important;
+    }
+    .btn-premium-dark:hover {
+        background: #162e2a !important;
+        border-color: rgba(220, 243, 176, 0.4) !important;
+        transform: translateY(-2px);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.3) !important;
+    }
 </style>
 {% endblock %}
 
 {% block content %}
     <div class="page-header d-flex flex-column flex-md-row justify-content-between align-items-md-center">
         <div>
-            <nav aria-label="breadcrumb">
-                <ol class="breadcrumb mb-2">
-                    <li class="breadcrumb-item"><a href="{{ PROOT }}admin">Intelligence</a></li>
-                    <li class="breadcrumb-item active">Live Reports</li>
-                </ol>
-            </nav>
             <h1>{{ election.title }} • Results</h1>
             <p>Mission Authority: {{ election.organized_by }}</p>
         </div>
@@ -123,14 +162,14 @@
             {% endif %}
             {% if election.status == 2 %}
                 <div class="dropdown">
-                    <button class="btn btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown">
-                        <span class="material-symbols-outlined fs-6">download</span> Export Intelligence
+                    <button class="btn btn-premium-dark dropdown-toggle shadow-sm d-flex align-items-center gap-2" type="button" data-bs-toggle="dropdown" style="background: var(--admin-primary); color: #fff; border: 1px solid rgba(220, 243, 176, 0.2); border-radius: 1rem; padding: 0.6rem 1.25rem; font-weight: 600; transition: all 0.3s ease;">
+                        <span class="material-symbols-outlined fs-5 text-accent">download</span> Export Intelligence
                     </button>
-                    <ul class="dropdown-menu dropdown-menu-end shadow-lg border-0 py-2">
-                        <li><a class="dropdown-item py-2 d-flex align-items-center" href="{{ PROOT }}admin/reports/download/{{ election.uuid }}"><span class="material-symbols-outlined me-2 text-muted fs-6">picture_as_pdf</span> Official PDF Report</a></li>
-                        <li><a class="dropdown-item py-2 d-flex align-items-center" href="{{ PROOT }}admin/reports/export/voters/{{ election.uuid }}"><span class="material-symbols-outlined me-2 text-muted fs-6">group</span> Participation Data (CSV)</a></li>
-                        <li><a class="dropdown-item py-2 d-flex align-items-center" href="{{ PROOT }}admin/reports/export/logs/{{ election.uuid }}"><span class="material-symbols-outlined me-2 text-muted fs-6">history_edu</span> Security Audit Logs</a></li>
-                        <li><a class="dropdown-item py-2 d-flex align-items-center" href="{{ PROOT }}admin/reports/export/ballots/{{ election.uuid }}"><span class="material-symbols-outlined me-2 text-muted fs-6">ballot</span> Individual Ballots</a></li>
+                    <ul class="dropdown-menu dropdown-menu-end shadow-2xl border-0 py-2 dropdown-menu-premium">
+                        <li><a class="dropdown-item py-2 d-flex align-items-center" href="{{ PROOT }}admin/reports/download/{{ election.uuid }}"><span class="material-symbols-outlined me-2 text-accent fs-6">picture_as_pdf</span> Official PDF Report</a></li>
+                        <li><a class="dropdown-item py-2 d-flex align-items-center" href="{{ PROOT }}admin/reports/export/voters/{{ election.uuid }}"><span class="material-symbols-outlined me-2 text-accent fs-6">group</span> Participation Data (CSV)</a></li>
+                        <li><a class="dropdown-item py-2 d-flex align-items-center" href="{{ PROOT }}admin/reports/export/logs/{{ election.uuid }}"><span class="material-symbols-outlined me-2 text-accent fs-6">history_edu</span> Security Audit Logs</a></li>
+                        <li><a class="dropdown-item py-2 d-flex align-items-center" href="{{ PROOT }}admin/reports/export/ballots/{{ election.uuid }}"><span class="material-symbols-outlined me-2 text-accent fs-6">ballot</span> Individual Ballots</a></li>
                     </ul>
                 </div>
             {% endif %}

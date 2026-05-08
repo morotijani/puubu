@@ -1600,5 +1600,114 @@ class AdminController {
         fclose($output);
         exit;
     }
+
+    public function logs() {
+        global $conn, $admin_data;
+        if (!cadminIsLoggedIn() || empty($admin_data)) {
+            cadminLoginErrorRedirect();
+        }
+
+        $stmt = $conn->prepare("
+            SELECT al.*, a.first_name, a.last_name, a.email as admin_email
+            FROM activity_logs al
+            LEFT JOIN admins a ON al.user_uuid = a.uuid
+            ORDER BY al.createdAt DESC
+            LIMIT 500
+        ");
+        $stmt->execute();
+        $logs = $stmt->fetchAll();
+
+        echo $this->twig->render('admin/logs.twig', [
+            'logs' => $logs
+        ]);
+    }
+
+    public function clearLogs() {
+        global $conn, $admin_data;
+        if (!cadminIsLoggedIn() || ($admin_data['role'] ?? '') !== 'super_admin') {
+            $_SESSION['flash_error'] = "Access Denied.";
+            redirect(PROOT . 'admin/logs');
+        }
+
+        if (!isset($_POST['csrf_token']) || !verify_csrf_token($_POST['csrf_token'])) {
+            $_SESSION['flash_error'] = "Invalid CSRF token.";
+            redirect(PROOT . 'admin/logs');
+        }
+
+        $scope = $_POST['clear_scope'] ?? '30_days';
+        $admin_id = $admin_data['uuid'];
+
+        if ($scope === 'all') {
+            $conn->exec("TRUNCATE TABLE activity_logs");
+            add_to_log("Cleared all activity logs", $admin_id, 'admin');
+        } elseif ($scope === '30_days') {
+            $stmt = $conn->prepare("DELETE FROM activity_logs WHERE createdAt < DATE_SUB(NOW(), INTERVAL 30 DAY)");
+            $stmt->execute();
+            add_to_log("Cleared logs older than 30 days", $admin_id, 'admin');
+        } elseif ($scope === '90_days') {
+            $stmt = $conn->prepare("DELETE FROM activity_logs WHERE createdAt < DATE_SUB(NOW(), INTERVAL 90 DAY)");
+            $stmt->execute();
+            add_to_log("Cleared logs older than 90 days", $admin_id, 'admin');
+        }
+
+        $_SESSION['flash_success'] = "Logs cleared successfully for scope: " . str_replace('_', ' ', $scope);
+        redirect(PROOT . 'admin/logs');
+    }
+
+    public function exportLogs() {
+        global $conn, $admin_data;
+        if (!cadminIsLoggedIn() || empty($admin_data)) {
+            cadminLoginErrorRedirect();
+        }
+
+        $start = $_GET['start_date'] ?? null;
+        $end = $_GET['end_date'] ?? null;
+
+        $query = "
+            SELECT al.*, a.first_name, a.last_name, a.email 
+            FROM activity_logs al 
+            LEFT JOIN admins a ON al.user_uuid = a.uuid 
+        ";
+        $params = [];
+
+        if ($start && $end) {
+            $query .= " WHERE al.createdAt BETWEEN ? AND ? ";
+            $params = [$start . ' 00:00:00', $end . ' 23:59:59'];
+        }
+
+        $query .= " ORDER BY al.createdAt DESC ";
+        $stmt = $conn->prepare($query);
+        $stmt->execute($params);
+        $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        $filename = "system-logs-" . date('Y-m-d') . ".csv";
+        header('Content-Type: text/csv');
+        header('Content-Disposition: attachment; filename="' . $filename . '"');
+
+        $output = fopen('php://output', 'w');
+        fputcsv($output, ['ID', 'Message', 'Type', 'Admin Name', 'Admin Email', 'Timestamp']);
+
+        foreach ($data as $row) {
+            fputcsv($output, [
+                $row['uuid'],
+                $row['log_message'],
+                $row['log_type'],
+                $row['first_name'] . ' ' . $row['last_name'],
+                $row['email'],
+                $row['createdAt']
+            ]);
+        }
+        fclose($output);
+        exit;
+    }
+
+    public function help() {
+        global $admin_data;
+        if (!cadminIsLoggedIn() || empty($admin_data)) {
+            cadminLoginErrorRedirect();
+        }
+
+        echo $this->twig->render('admin/help.twig');
+    }
 }
 

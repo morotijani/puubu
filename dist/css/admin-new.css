@@ -48,30 +48,123 @@ input, button, select, textarea, .form-control, ::placeholder {
     font-family: 'Outfit', sans-serif !important;
 }
 
-/* Sidebar Styling - Professional & Dominant */
-.aside {
-    width: 280px;
-    background-color: var(--admin-sidebar-bg);
-    min-height: 100vh;
-    position: fixed;
-    left: 0;
-    top: 0;
-    z-index: 1000;
-    padding: 2rem 1.25rem;
-    display: flex;
-    flex-direction: column;
-    box-shadow: 4px 0 24px rgba(0, 0, 0, 0.05);
-}
-
 .navbar-brand {
     color: var(--admin-accent) !important;
     font-size: 1.75rem;
     font-weight: 800;
     letter-spacing: -0.04em;
-    padding-bottom: 3rem;
+    padding-bottom: 0; /* Changed from 3rem to handle layout in d-flex */
     text-decoration: none;
     display: flex;
     align-items: center;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+.text-accent {
+    color: var(--admin-accent) !important;
+}
+
+.brand-text {
+    transition: opacity 0.3s ease, width 0.3s ease;
+    display: inline-block;
+    vertical-align: middle;
+}
+
+#sidebarToggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    transition: all 0.3s ease;
+    background: rgba(220, 243, 176, 0.05);
+}
+
+#sidebarToggle:hover {
+    background: rgba(220, 243, 176, 0.15);
+    transform: scale(1.05);
+}
+
+.aside.collapsed #sidebarToggle {
+    margin: 0 auto;
+}
+
+/* Sidebar Styling - Professional & Dominant */
+.aside {
+    width: 280px;
+    background-color: var(--admin-sidebar-bg);
+    height: 100vh; /* Changed from min-height */
+    position: fixed;
+    left: 0;
+    top: 0;
+    z-index: 1050;
+    padding: 2rem 0.75rem;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 4px 0 24px rgba(0, 0, 0, 0.05);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow-x: hidden;
+    overflow-y: auto; /* Enable scrolling */
+}
+
+/* Custom Slim Scrollbar for Sidebar */
+.aside::-webkit-scrollbar {
+    width: 4px;
+}
+
+.aside::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.aside::-webkit-scrollbar-thumb {
+    background: rgba(220, 243, 176, 0.1);
+    border-radius: 10px;
+}
+
+.aside::-webkit-scrollbar-thumb:hover {
+    background: rgba(220, 243, 176, 0.3);
+}
+
+/* Collapsed Sidebar State */
+.aside.collapsed {
+    width: 85px;
+    padding: 1.5rem 0.5rem;
+}
+
+.aside.collapsed .mb-5 {
+    flex-direction: column-reverse !important;
+    gap: 1.5rem !important;
+    margin-bottom: 2rem !important;
+}
+
+.aside.collapsed .brand-text,
+.aside.collapsed .nav-text,
+.aside.collapsed .sidebar-heading {
+    display: none !important;
+}
+
+.aside.collapsed .navbar-brand {
+    justify-content: center;
+    padding: 0;
+    margin: 0 !important;
+}
+
+.aside.collapsed .navbar-brand span.material-symbols-outlined {
+    margin: 0 !important;
+    font-size: 2.25rem;
+}
+
+.aside.collapsed .nav-link {
+    justify-content: center;
+    padding: 1rem 0;
+}
+
+.aside.collapsed .nav-link span.material-symbols-outlined {
+    margin: 0 !important;
+    font-size: 1.5rem;
 }
 
 .navbar-brand span {
@@ -80,6 +173,7 @@ input, button, select, textarea, .form-control, ::placeholder {
 
 .navbar-vertical {
     flex: 1;
+    margin-bottom: 3rem; /* Added padding at bottom for scroll breathing room */
 }
 
 .navbar-vertical .nav-link {
@@ -133,6 +227,87 @@ input, button, select, textarea, .form-control, ::placeholder {
     padding: 3rem 4rem;
     width: calc(100% - 280px);
     min-height: 100vh;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.main.sidebar-collapsed {
+    margin-left: 85px;
+    width: calc(100% - 85px);
+}
+
+/* Mobile Responsive Adjustments */
+.mobile-header {
+    background: var(--admin-sidebar-bg);
+    position: sticky;
+    top: 0;
+    z-index: 1060;
+}
+
+.bg-sidebar {
+    background: var(--admin-sidebar-bg);
+}
+
+.sidebar-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(4px);
+    z-index: 1040;
+    display: none;
+    transition: opacity 0.3s ease;
+}
+
+.sidebar-overlay.show {
+    display: block;
+}
+
+@media (max-width: 991.98px) {
+    .aside {
+        left: -280px;
+        width: 280px !important;
+        padding: 2rem 1.25rem !important;
+    }
+    
+    .aside.mobile-show {
+        left: 0;
+    }
+
+    /* Force show text elements on mobile regardless of collapsed state */
+    .aside.mobile-show .brand-text,
+    .aside.mobile-show .nav-text,
+    .aside.mobile-show .sidebar-heading {
+        display: block !important;
+        opacity: 1 !important;
+        width: auto !important;
+    }
+
+    .aside.mobile-show .mb-5 {
+        flex-direction: row !important;
+        gap: 0 !important;
+        justify-content: space-between !important;
+    }
+
+    .aside.mobile-show .navbar-brand {
+        justify-content: flex-start !important;
+    }
+
+    .aside.mobile-show .nav-link {
+        justify-content: flex-start !important;
+        padding: 0.875rem 1.25rem !important;
+    }
+
+    .aside.mobile-show .nav-link span.material-symbols-outlined {
+        margin-right: 1rem !important;
+    }
+    
+    .main {
+        margin-left: 0 !important;
+        width: 100% !important;
+        padding: 2rem 1.5rem;
+    }
 }
 
 /* Premium Cards */
@@ -532,4 +707,116 @@ input, button, select, textarea, .form-control, ::placeholder {
     .main { margin-left: 80px; width: calc(100% - 80px); padding: 2rem; }
     .navbar-vertical .nav-link { justify-content: center; padding: 1rem; }
     .navbar-vertical .nav-link .material-symbols-outlined { margin-right: 0; }
+}
+
+/* Premium Dropdown Styles */
+.dropdown-menu-premium {
+    background: #1d3d37 !important; /* Deep Forest Green */
+    border: 1px solid rgba(220, 243, 176, 0.1) !important;
+    border-radius: 1.25rem !important;
+    padding: 1rem !important;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5) !important;
+    backdrop-filter: blur(12px) !important;
+    margin-top: 0.5rem !important;
+    z-index: 2000;
+}
+
+.dropdown-menu-premium .dropdown-item {
+    color: rgba(255, 255, 255, 0.8) !important;
+    border-radius: 0.75rem !important;
+    padding: 0.75rem 1rem !important;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    font-weight: 500 !important;
+}
+
+.dropdown-menu-premium .dropdown-item:hover {
+    background: rgba(220, 243, 176, 0.1) !important;
+    color: var(--admin-accent) !important;
+    transform: translateX(5px);
+}
+
+.dropdown-menu-premium .dropdown-item.text-danger:hover {
+    background: rgba(220, 53, 69, 0.15) !important;
+    color: #ff4d4d !important;
+}
+
+.dropdown-menu-premium .premium-label {
+    color: var(--admin-accent) !important;
+    font-size: 0.7rem !important;
+    font-weight: 800 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.15em !important;
+    display: block !important;
+    margin-bottom: 0.75rem !important;
+    opacity: 0.8 !important;
+}
+
+.dropdown-menu-premium .form-control {
+    background: rgba(255, 255, 255, 0.05) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    color: #fff !important;
+    border-radius: 0.75rem !important;
+    font-size: 0.875rem !important;
+    padding: 0.5rem 0.75rem !important;
+}
+
+.dropdown-menu-premium .form-control:focus {
+    background: rgba(255, 255, 255, 0.1) !important;
+    border-color: var(--admin-accent) !important;
+    box-shadow: 0 0 0 3px rgba(220, 243, 176, 0.1) !important;
+}
+
+.dropdown-divider {
+    border-top: 1px solid rgba(255, 255, 255, 0.1) !important;
+    margin: 0.75rem 0 !important;
+}
+
+.text-accent-alt {
+    color: var(--admin-accent) !important;
+}
+
+/* SweetAlert2 Premium Customizations */
+.premium-swal-popup {
+    border-radius: 2rem !important;
+    background: #1d3d37 !important;
+    border: 1px solid rgba(220, 243, 176, 0.1) !important;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5) !important;
+    padding: 2rem !important;
+}
+
+.premium-swal-title {
+    color: #fff !important;
+    font-weight: 800 !important;
+    letter-spacing: -0.03em !important;
+    font-size: 1.75rem !important;
+}
+
+.premium-swal-html {
+    color: rgba(255, 255, 255, 0.6) !important;
+    font-size: 1rem !important;
+    line-height: 1.6 !important;
+}
+
+.premium-swal-confirm {
+    border-radius: 1rem !important;
+    padding: 0.875rem 2rem !important;
+    font-weight: 700 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.05em !important;
+    box-shadow: 0 4px 15px rgba(220, 53, 69, 0.3) !important;
+}
+
+.premium-swal-cancel {
+    border-radius: 1rem !important;
+    padding: 0.875rem 2rem !important;
+    font-weight: 700 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.05em !important;
+    background: rgba(255, 255, 255, 0.05) !important;
+    color: #fff !important;
+}
+
+.swal2-icon.swal2-warning {
+    border-color: #ffc107 !important;
+    color: #ffc107 !important;
 }

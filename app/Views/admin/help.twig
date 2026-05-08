@@ -1,0 +1,207 @@
+{% extends "admin/layout.twig" %}
+
+{% set active_page = 'help' %}
+
+{% block title %}Knowledge Center • Kokuromotie Documentation{% endblock %}
+
+{% block content %}
+    <div class="page-header mb-5">
+        <h1 class="fw-bold mb-1">Knowledge Center</h1>
+        <p class="text-muted">Master the Kokuromotie Electoral Intelligence platform.</p>
+    </div>
+
+    <div class="row g-4">
+        <!-- Sidebar Navigation for Help -->
+        <div class="col-lg-3">
+            <div class="card border-0 shadow-sm sticky-top" style="top: 2rem; border-radius: 1.25rem;">
+                <div class="card-body p-4">
+                    <h6 class="text-uppercase fs-xs fw-bold text-muted mb-4" style="letter-spacing: 0.1em;">Documentation</h6>
+                    <nav class="nav flex-column gap-2" id="help-nav">
+                        <a class="nav-link text-dark fw-medium p-0 active" href="#getting-started">Getting Started</a>
+                        <a class="nav-link text-muted fw-medium p-0" href="#election-management">Election Management</a>
+                        <a class="nav-link text-muted fw-medium p-0" href="#registry">Voter Registry</a>
+                        <a class="nav-link text-muted fw-medium p-0" href="#contestants">Contestants & Positions</a>
+                        <a class="nav-link text-muted fw-medium p-0" href="#analytics">Analytics & Reports</a>
+                        <a class="nav-link text-muted fw-medium p-0" href="#security">Security & Audit</a>
+                    </nav>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content Section -->
+        <div class="col-lg-9">
+            <!-- Getting Started -->
+            <section id="getting-started" class="mb-5">
+                <div class="card border-0 shadow-sm p-4" style="border-radius: 1.5rem;">
+                    <div class="d-flex align-items-center mb-4">
+                        <div class="bg-primary-subtle p-3 rounded-4 me-3">
+                            <span class="material-symbols-outlined text-primary fs-2">rocket_launch</span>
+                        </div>
+                        <h2 class="h3 fw-bold mb-0">Getting Started</h2>
+                    </div>
+                    <p class="text-muted fs-5 mb-4">Welcome to Kokuromotie. This platform is designed for high-integrity electoral management.</p>
+                    <div class="row g-4">
+                        <div class="col-md-6">
+                            <div class="p-3 bg-light rounded-4 h-100">
+                                <h4 class="h6 fw-bold text-primary mb-2">The Workflow</h4>
+                                <p class="small text-muted mb-0">1. Create Election → 2. Setup Positions → 3. Add Contestants → 4. Upload Voters → 5. Go Live.</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="p-3 bg-light rounded-4 h-100">
+                                <h4 class="h6 fw-bold text-primary mb-2">Dashboard Overview</h4>
+                                <p class="small text-muted mb-0">Real-time participation metrics, geographic distribution, and live voting tallies.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Election Management -->
+            <section id="election-management" class="mb-5">
+                <div class="card border-0 shadow-sm p-4" style="border-radius: 1.5rem;">
+                    <div class="d-flex align-items-center mb-4">
+                        <div class="bg-accent-subtle p-3 rounded-4 me-3">
+                            <span class="material-symbols-outlined text-accent-alt fs-2">event_note</span>
+                        </div>
+                        <h2 class="h3 fw-bold mb-0">Election Management</h2>
+                    </div>
+                    <div class="mb-4">
+                        <h5 class="fw-bold">Creating an Election</h5>
+                        <p class="text-muted">Define the title, description, and timeline. You can set specific start and end times. Elections can be in three states:</p>
+                        <ul class="text-muted">
+                            <li><strong class="text-primary">Draft:</strong> Pre-configuration phase. Voters cannot access.</li>
+                            <li><strong class="text-success">Ongoing:</strong> Live voting phase.</li>
+                            <li><strong class="text-danger">Completed:</strong> Voting finished. Results finalized.</li>
+                        </ul>
+                    </div>
+
+                    <div class="mb-0">
+                        <h5 class="fw-bold">Voter Authentication Matrix</h5>
+                        <p class="text-muted">Configure how voters access the ballot. You can enable multiple modes simultaneously:</p>
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <div class="p-3 border rounded-4">
+                                    <h6 class="fw-bold mb-1"><span class="material-symbols-outlined fs-6 align-middle me-1">mail</span> Email Login</h6>
+                                    <p class="small text-muted mb-0">Voters receive a secure OTP via their registered email address.</p>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="p-3 border rounded-4">
+                                    <h6 class="fw-bold mb-1"><span class="material-symbols-outlined fs-6 align-middle me-1">sms</span> SMS Login</h6>
+                                    <p class="small text-muted mb-0">Voters receive a 6-digit verification code via text message (Twilio integration required).</p>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="p-3 border rounded-4">
+                                    <h6 class="fw-bold mb-1"><span class="material-symbols-outlined fs-6 align-middle me-1">pin</span> PIN Login</h6>
+                                    <p class="small text-muted mb-0">Voters use their private System PIN generated during registration.</p>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="p-3 border rounded-4">
+                                    <h6 class="fw-bold mb-1"><span class="material-symbols-outlined fs-6 align-middle me-1">link</span> Direct Link</h6>
+                                    <p class="small text-muted mb-0">High-convenience, one-click access via unique, encrypted URLs (Recommended for WhatsApp/SMS sharing).</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Voter Registry -->
+            <section id="registry" class="mb-5">
+                <div class="card border-0 shadow-sm p-4" style="border-radius: 1.5rem;">
+                    <div class="d-flex align-items-center mb-4">
+                        <div class="bg-indigo-subtle p-3 rounded-4 me-3">
+                            <span class="material-symbols-outlined text-indigo fs-2">badge</span>
+                        </div>
+                        <h2 class="h3 fw-bold mb-0">Voter Registry</h2>
+                    </div>
+                    <div class="row g-4">
+                        <div class="col-md-12">
+                            <h5 class="fw-bold">Mass Import (CSV)</h5>
+                            <p class="text-muted">Upload thousands of voters instantly using a CSV file. The system automatically handles duplicate detection and generates unique voting tokens for each registrant.</p>
+                        </div>
+                        <div class="col-md-12">
+                            <h5 class="fw-bold">Direct Voting Links</h5>
+                            <p class="text-muted">Administrators can export a list of direct, one-click voting links to be shared via SMS or WhatsApp, simplifying the login process for voters.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Contestants & Positions -->
+            <section id="contestants" class="mb-5">
+                <div class="card border-0 shadow-sm p-4" style="border-radius: 1.5rem;">
+                    <div class="d-flex align-items-center mb-4">
+                        <div class="bg-warning-subtle p-3 rounded-4 me-3">
+                            <span class="material-symbols-outlined text-warning fs-2">person_pin</span>
+                        </div>
+                        <h2 class="h3 fw-bold mb-0">Contestants & Positions</h2>
+                    </div>
+                    <p class="text-muted">Structure your election by creating organizational levels (Positions) and assigning candidates (Contestants) to them.</p>
+                    <div class="alert alert-info border-0 shadow-none rounded-4 d-flex align-items-center">
+                        <span class="material-symbols-outlined me-3">info</span>
+                        <div class="small">Voters can only select one candidate per position unless configured otherwise in the system settings.</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Analytics & Reports -->
+            <section id="analytics" class="mb-5">
+                <div class="card border-0 shadow-sm p-4" style="border-radius: 1.5rem;">
+                    <div class="d-flex align-items-center mb-4">
+                        <div class="bg-success-subtle p-3 rounded-4 me-3">
+                            <span class="material-symbols-outlined text-success fs-2">analytics</span>
+                        </div>
+                        <h2 class="h3 fw-bold mb-0">Analytics & Reports</h2>
+                    </div>
+                    <div class="mb-4">
+                        <h5 class="fw-bold">Live Election Reports</h5>
+                        <p class="text-muted">Real-time data visualization of the ongoing election. Includes total participation percentages and selection tallies.</p>
+                    </div>
+                    <div class="mb-0">
+                        <h5 class="fw-bold">Export Intelligence</h5>
+                        <p class="text-muted">Export detailed CSV reports for voter participation, security audits, and final ballot tallies. These files are optimized for Microsoft Excel.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Security & Audit -->
+            <section id="security" class="mb-5">
+                <div class="card border-0 shadow-sm p-4" style="border-radius: 1.5rem; background: #fdfdfd;">
+                    <div class="d-flex align-items-center mb-4">
+                        <div class="bg-danger-subtle p-3 rounded-4 me-3">
+                            <span class="material-symbols-outlined text-danger fs-2">security</span>
+                        </div>
+                        <h2 class="h3 fw-bold mb-0">Security & Audit</h2>
+                    </div>
+                    <div class="mb-4">
+                        <h5 class="fw-bold">Two-Factor Authentication (2FA)</h5>
+                        <p class="text-muted">Administrators are required to use Google Authenticator for login verification, ensuring only authorized personnel access the command center.</p>
+                    </div>
+                    <div class="mb-0">
+                        <h5 class="fw-bold">Activity Registry (Logs)</h5>
+                        <p class="text-muted">Every action within the system—from creating an election to purging records—is logged with a timestamp and the administrator's identity for full accountability.</p>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+{% endblock %}
+
+{% block styles %}
+<style>
+    .nav-link.active {
+        color: var(--admin-primary) !important;
+        border-left: 3px solid var(--admin-primary);
+        padding-left: 1rem !important;
+        margin-left: -1rem;
+    }
+    .bg-indigo-subtle { background: rgba(99, 102, 241, 0.1); }
+    .text-indigo { color: #6366f1; }
+    .bg-warning-subtle { background: rgba(255, 193, 7, 0.1); }
+    section { scroll-margin-top: 2rem; }
+</style>
+{% endblock %}

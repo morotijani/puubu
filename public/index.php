@@ -382,6 +382,30 @@ $router->mount('/admin', function() use ($router, $twig) {
         $controller->organizers();
     });
 
+    $router->get('/logs', function() use ($twig) {
+        require_once __DIR__ . '/../app/Controllers/AdminController.php';
+        $controller = new \App\Controllers\AdminController($twig);
+        $controller->logs();
+    });
+
+    $router->get('/help', function() use ($twig) {
+        require_once __DIR__ . '/../app/Controllers/AdminController.php';
+        $controller = new \App\Controllers\AdminController($twig);
+        $controller->help();
+    });
+
+    $router->post('/logs/clear', function() use ($twig) {
+        require_once __DIR__ . '/../app/Controllers/AdminController.php';
+        $controller = new \App\Controllers\AdminController($twig);
+        $controller->clearLogs();
+    });
+
+    $router->get('/logs/export', function() use ($twig) {
+        require_once __DIR__ . '/../app/Controllers/AdminController.php';
+        $controller = new \App\Controllers\AdminController($twig);
+        $controller->exportLogs();
+    });
+
     $router->post('/organizers/store', function() use ($twig) {
         require_once __DIR__ . '/../app/Controllers/AdminController.php';
         $controller = new \App\Controllers\AdminController($twig);

@@ -1,0 +1,130 @@
+<!-- Duplicate Audit Modal -->
+<div class="modal fade" id="duplicateAuditModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg rounded-4">
+            <div class="modal-header border-0 pt-4 px-4">
+                <h5 class="fw-bold mb-0">Identify Duplicates</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body p-4">
+                <p class="text-muted small">Select the scope of the duplication audit.</p>
+                <form action="{{ PROOT }}admin/voters/duplicates" method="GET">
+                    <div class="mb-4">
+                        <label class="form-label small fw-bold text-uppercase">Target Election</label>
+                        <select class="form-select bg-light border-0 shadow-none" name="election_uuid">
+                            <option value="">Audit All Elections</option>
+                            {% for election in elections %}
+                                <option value="{{ election.uuid }}">{{ election.title }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-dark w-100 fw-bold py-2 shadow-sm">Start Audit</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Wipe Registry Modal -->
+<div class="modal fade" id="wipeRegistryModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-2xl rounded-4">
+            <div class="modal-header border-0 pt-4 px-4 pb-0">
+                <h5 class="fw-bold mb-0">Wipe Registry Database</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body p-4">
+                <div class="d-flex align-items-center p-3 mb-4 rounded-4" style="background: #fff5f5; border: 1px solid #fee2e2;">
+                    <div class="stat-icon-sm bg-danger text-white rounded-circle me-3 flex-shrink-0">
+                        <span class="material-symbols-outlined fs-5">warning</span>
+                    </div>
+                    <div>
+                        <div class="fw-bold text-danger small">Irreversible Operation</div>
+                        <div class="text-muted" style="font-size: 0.75rem;">Voter records and credentials will be permanently erased.</div>
+                    </div>
+                </div>
+
+                <form action="{{ PROOT }}admin/voters/truncate" method="POST">
+                    {{ csrf_field()|raw }}
+                    
+                    <div class="mb-4">
+                        <label class="premium-label mb-3">SELECTION SCOPE</label>
+                        <div class="d-flex flex-column gap-2">
+                            <label class="d-flex align-items-center p-3 rounded-4 border cursor-pointer transition-all wipe-option-card">
+                                <input type="radio" name="wipe_scope" id="wipeElection" value="election" checked onchange="toggleWipeElection(true)" class="form-check-input me-3">
+                                <div>
+                                    <div class="fw-bold small text-dark">Specific Election Registry</div>
+                                    <div class="text-muted small">Target only voters in a selected election</div>
+                                </div>
+                            </label>
+                            <label class="d-flex align-items-center p-3 rounded-4 border cursor-pointer transition-all wipe-option-card">
+                                <input type="radio" name="wipe_scope" id="wipeAll" value="all" onchange="toggleWipeElection(false)" class="form-check-input me-3">
+                                <div>
+                                    <div class="fw-bold small text-danger">Entire Registry (Global Wipe)</div>
+                                    <div class="text-muted small">Clear all identities across all elections</div>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div id="wipeElectionSelect" class="mb-4">
+                        <label class="premium-label mb-2">TARGET ELECTION</label>
+                        <select class="form-select border-0 bg-light p-3 rounded-4 shadow-none fw-bold small" name="election_uuid">
+                            <option value="">Select Election Registry...</option>
+                            {% for election in elections %}
+                                <option value="{{ election.uuid }}">{{ election.title }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="d-grid gap-2 mt-2">
+                        <button type="submit" class="btn btn-danger btn-lg py-3 fw-bold rounded-4 border-0 shadow-sm" style="background: #dc3545;" onclick="return confirm('FINAL CONFIRMATION: This will permanently delete the selected data. Proceed?')">
+                            Confirm and Erase Data
+                        </button>
+                        <button type="button" class="btn btn-link text-muted fw-semibold text-decoration-none py-2" data-bs-dismiss="modal">
+                            Keep Data & Exit
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Export Links Modal -->
+<div class="modal fade" id="exportLinksModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg rounded-4">
+            <div class="modal-header border-0 pt-4 px-4">
+                <h5 class="fw-bold mb-0">Export Voting Links</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body p-4">
+                <p class="text-muted small">Select an election to export voters and their direct voting links.</p>
+                <form id="exportLinksForm" onsubmit="event.preventDefault(); window.location.href = '{{ PROOT }}admin/voters/export/links/' + this.election_uuid.value;">
+                    <div class="mb-4">
+                        <label class="form-label small fw-bold text-uppercase">Target Election</label>
+                        <select class="form-select bg-light border-0 shadow-none" name="election_uuid" required>
+                            <option value="">Select Election...</option>
+                            {% for election in elections %}
+                                <option value="{{ election.uuid }}">{{ election.title }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-dark w-100 fw-bold py-2 shadow-sm">Download CSV</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function toggleWipeElection(show) {
+        const select = document.getElementById('wipeElectionSelect');
+        if (select) select.style.display = show ? 'block' : 'none';
+    }
+</script>

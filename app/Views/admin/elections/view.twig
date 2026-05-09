@@ -1,0 +1,378 @@
+{% extends "admin/layout.twig" %}
+
+{% set active_page = 'elections' %}
+
+{% block title %}Election Intelligence • {{ election.title }}{% endblock %}
+
+{% block content %}
+    <div class="page-header d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-5">
+        <div class="d-flex align-items-center">
+            <div class="stat-icon-lg bg-primary text-accent rounded-circle me-4 shadow-lg animate__animated animate__zoomIn">
+                <span class="material-symbols-outlined fs-1">analytics</span>
+            </div>
+            <div>
+                <h1 class="fw-800 mb-1">{{ election.title }}</h1>
+                <div class="d-flex align-items-center gap-3">
+                    <span class="badge {% if election.status == 1 %}badge-success{% elseif election.status == 2 %}bg-secondary{% else %}badge-warning{% endif %} px-4 py-2 rounded-pill fw-bold" style="font-size: 0.65rem; letter-spacing: 0.05em;">
+                        {% if election.status == 1 %}SESSION ACTIVE{% elseif election.status == 2 %}SESSION CONCLUDED{% else %}DRAFT SESSION{% endif %}
+                    </span>
+                    <span class="text-muted small d-flex align-items-center">
+                        <span class="material-symbols-outlined fs-6 me-1 text-primary">fingerprint</span>
+                        {{ election.uuid }}
+                    </span>
+                </div>
+            </div>
+        </div>
+        <div class="d-flex gap-2 mt-4 mt-md-0">
+            <a href="{{ PROOT }}admin/elections" class="btn btn-light shadow-sm d-flex align-items-center gap-2 px-4 py-2 rounded-pill fw-bold small">
+                <span class="material-symbols-outlined fs-6">arrow_back</span> Hub
+            </a>
+            {% if election.status == 1 or election.status == 2 %}
+                <a href="{{ PROOT }}admin/reports/{{ election.uuid }}" class="btn btn-primary shadow-sm d-flex align-items-center gap-2 px-4 py-2 rounded-pill fw-bold small">
+                    <span class="material-symbols-outlined fs-6">monitoring</span> Live Intelligence
+                </a>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="row g-4 mb-5">
+        <!-- Quick Intelligence Cards -->
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm rounded-5 p-4 bg-white h-100">
+                <div class="d-flex align-items-center justify-content-between mb-3">
+                    <div class="stat-icon-sm bg-primary-subtle text-primary rounded-circle">
+                        <span class="material-symbols-outlined fs-5">groups</span>
+                    </div>
+                    <span class="text-muted extra-small fw-bold">REGISTRAR</span>
+                </div>
+                <h2 class="fw-800 mb-1">{{ stats.total_voters }}</h2>
+                <p class="text-muted small mb-0">Total Registered Identities</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm rounded-5 p-4 bg-white h-100">
+                <div class="d-flex align-items-center justify-content-between mb-3">
+                    <div class="stat-icon-sm bg-success-subtle text-success rounded-circle">
+                        <span class="material-symbols-outlined fs-5">how_to_vote</span>
+                    </div>
+                    <span class="text-muted extra-small fw-bold">PARTICIPATION</span>
+                </div>
+                <h2 class="fw-800 mb-1">{{ stats.total_votes }}</h2>
+                <div class="progress rounded-pill mb-2" style="height: 6px; background: #f1f5f9;">
+                    <div class="progress-bar bg-success rounded-pill" role="progressbar" style="width: {{ stats.participation_rate }}%"></div>
+                </div>
+                <p class="text-muted small mb-0">{{ stats.participation_rate }}% Turnout Rate</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm rounded-5 p-4 bg-white h-100">
+                <div class="d-flex align-items-center justify-content-between mb-3">
+                    <div class="stat-icon-sm bg-info-subtle text-info rounded-circle">
+                        <span class="material-symbols-outlined fs-5">account_tree</span>
+                    </div>
+                    <span class="text-muted extra-small fw-bold">ARCHITECTURE</span>
+                </div>
+                <h2 class="fw-800 mb-1">{{ positions|length }}</h2>
+                <p class="text-muted small mb-0">Active Balloted Positions</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <!-- Parameters & Timeline -->
+        <div class="col-xl-4">
+            <div class="card border-0 shadow-sm rounded-5 overflow-hidden mb-4">
+                <div class="card-header bg-white border-0 p-4 pb-0">
+                    <h6 class="fw-800 text-dark mb-0 d-flex align-items-center">
+                        <span class="material-symbols-outlined text-primary me-2">settings_suggest</span>
+                        Core Parameters
+                    </h6>
+                </div>
+                <div class="card-body p-4">
+                    <div class="mb-4">
+                        <label class="premium-label">ORGANIZING ENTITY</label>
+                        <div class="p-3 bg-light rounded-4 border-0 d-flex align-items-center">
+                            <div class="stat-icon-xs bg-white shadow-sm rounded-circle text-primary me-3">
+                                <span class="material-symbols-outlined fs-6">corporate_fare</span>
+                            </div>
+                            <div>
+                                <div class="fw-bold text-dark small">{{ election.organized_by }}</div>
+                                <div class="text-muted extra-small">Managed by {{ election.org_fname }} {{ election.org_lname }}</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="premium-label">TEMPORAL BOUNDARIES</label>
+                        <div class="d-flex flex-column gap-2">
+                            <div class="p-3 bg-light rounded-4 border-0 d-flex align-items-center">
+                                <span class="material-symbols-outlined text-success me-3 fs-5">play_circle</span>
+                                <div>
+                                    <div class="extra-small text-muted">Activation Date</div>
+                                    <div class="fw-bold text-dark small">{{ election.starts_at ? election.starts_at|date('M d, Y • H:i') : 'TBD' }}</div>
+                                </div>
+                            </div>
+                            <div class="p-3 bg-light rounded-4 border-0 d-flex align-items-center">
+                                <span class="material-symbols-outlined text-danger me-3 fs-5">stop_circle</span>
+                                <div>
+                                    <div class="extra-small text-muted">Termination Date</div>
+                                    <div class="fw-bold text-dark small">{{ election.ends_at ? election.ends_at|date('M d, Y • H:i') : 'TBD' }}</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-0">
+                        <label class="premium-label">AUTH PROTOCOLS</label>
+                        <div class="d-flex flex-wrap gap-2">
+                            {% if election.allow_email_login %}<span class="badge bg-primary-subtle text-primary rounded-pill px-3 py-2 fw-bold extra-small">EMAIL AUTH</span>{% endif %}
+                            {% if election.allow_sms_login %}<span class="badge bg-info-subtle text-info rounded-pill px-3 py-2 fw-bold extra-small">SMS OTP</span>{% endif %}
+                            {% if election.allow_pin_login %}<span class="badge bg-dark-subtle text-dark rounded-pill px-3 py-2 fw-bold extra-small">PIN SYSTEM</span>{% endif %}
+                            {% if election.allow_direct_link %}<span class="badge bg-success-subtle text-success rounded-pill px-3 py-2 fw-bold extra-small">DIRECT LINK</span>{% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card border-0 shadow-sm rounded-5 overflow-hidden border-start border-primary border-4">
+                <div class="card-body p-4 text-center">
+                    <div class="bg-primary-subtle text-primary d-inline-flex align-items-center justify-content-center rounded-circle mb-3" style="width: 50px; height: 50px;">
+                        <span class="material-symbols-outlined">description</span>
+                    </div>
+                    <h6 class="fw-bold mb-1">Official Ballot Paper</h6>
+                    <p class="text-muted extra-small mb-3">Generate the official cryptographic ballot for physical voting sessions.</p>
+                    <a href="#" class="btn btn-primary w-100 rounded-pill fw-bold small py-2">
+                        <span class="material-symbols-outlined fs-6 me-1">picture_as_pdf</span> Export Ballot PDF
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Positions & Candidates Architecture -->
+        <div class="col-xl-8">
+            <!-- Ballot Card -->
+            <div class="card border-0 shadow-sm rounded-5 overflow-hidden mb-4">
+                <div class="card-header bg-white border-0 p-4 pb-0 d-flex justify-content-between align-items-center">
+                    <h6 class="fw-800 text-dark mb-0 d-flex align-items-center">
+                        <span class="material-symbols-outlined text-primary me-2">list_alt</span>
+                        Ballot Architecture
+                    </h6>
+                    <span class="text-muted extra-small fw-bold">{{ positions|length }} Positions Defined</span>
+                </div>
+                <div class="card-body p-4">
+                    {% if positions %}
+                        <div class="accordion accordion-premium" id="positionsAccordion">
+                            {% for pos in positions %}
+                                <div class="accordion-item border-0 mb-3 rounded-4 overflow-hidden shadow-sm">
+                                    <h2 class="accordion-header">
+                                        <button class="accordion-button {% if not loop.first %}collapsed{% endif %} p-4 bg-white" type="button" data-bs-toggle="collapse" data-bs-target="#pos-{{ pos.position_id }}">
+                                            <div class="d-flex align-items-center justify-content-between w-100 pe-4">
+                                                <div class="d-flex align-items-center">
+                                                    <div class="stat-icon-sm bg-primary text-accent rounded-4 me-3">
+                                                        <span class="material-symbols-outlined fs-5">person_outline</span>
+                                                    </div>
+                                                    <div>
+                                                        <div class="fw-800 text-dark small text-uppercase">{{ pos.position_name }}</div>
+                                                        <div class="text-muted extra-small">{{ pos.candidates|length }} Candidates registered</div>
+                                                    </div>
+                                                </div>
+                                                <span class="badge bg-light text-dark rounded-pill px-3 py-1 fw-bold extra-small">
+                                                    RESTRICTION: {{ pos.gender_restriction|upper }}
+                                                </span>
+                                            </div>
+                                        </button>
+                                    </h2>
+                                    <div id="pos-{{ pos.position_id }}" class="accordion-collapse collapse {% if loop.first %}show{% endif %}" data-bs-parent="#positionsAccordion">
+                                        <div class="accordion-body bg-light bg-opacity-50 p-4">
+                                            <div class="row g-3">
+                                                {% for candidate in pos.candidates %}
+                                                    <div class="col-md-6">
+                                                        <div class="card border-0 shadow-sm rounded-4 p-3 bg-white h-100">
+                                                            <div class="d-flex align-items-center">
+                                                                <div class="avatar-sm rounded-circle bg-primary text-accent me-3 fw-bold">
+                                                                    {{ candidate.contestant_ballot_number }}
+                                                                </div>
+                                                                <div>
+                                                                    <div class="fw-bold text-dark small">{{ candidate.first_name }} {{ candidate.last_name }}</div>
+                                                                    <div class="text-muted extra-small">Ballot Slot #{{ candidate.contestant_ballot_number }}</div>
+                                                                </div>
+                                                                <div class="ms-auto">
+                                                                    <a href="{{ PROOT }}admin/contestants/edit/{{ candidate.uuid }}?return_to_election={{ election.uuid }}" class="btn btn-light btn-sm rounded-circle p-2">
+                                                                        <span class="material-symbols-outlined fs-6">edit</span>
+                                                                    </a>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                {% else %}
+                                                    <div class="col-12 text-center py-4 text-muted">
+                                                        <span class="material-symbols-outlined opacity-25">person_off</span>
+                                                        <p class="extra-small mb-0">No candidates have been registered for this position.</p>
+                                                    </div>
+                                                {% endfor %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div class="text-center py-5">
+                            <span class="material-symbols-outlined fs-1 text-muted opacity-25">layers_clear</span>
+                            <h6 class="mt-3 text-muted">No positions defined yet.</h6>
+                            <a href="{{ PROOT }}admin/positions" class="btn btn-primary btn-sm rounded-pill px-4 mt-2">Add First Position</a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Voter Registrar Card -->
+            <div class="card border-0 shadow-sm rounded-5 overflow-hidden mb-5">
+                <div class="card-header bg-white border-0 p-4 pb-0 d-flex justify-content-between align-items-center flex-wrap gap-3">
+                    <h6 class="fw-800 text-dark mb-0 d-flex align-items-center">
+                        <span class="material-symbols-outlined text-primary me-2">groups</span>
+                        Voter Intelligence Registry
+                    </h6>
+                    <div class="d-flex gap-2">
+                        <div class="search-terminal-mini bg-light rounded-pill border d-flex align-items-center px-3 py-1" style="max-width: 180px;">
+                            <span class="material-symbols-outlined fs-6 text-muted me-2">search</span>
+                            <input type="text" class="form-control bg-transparent border-0 shadow-none p-0 fw-bold extra-small" id="voterSearch" placeholder="Filter identities...">
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive" style="max-height: 600px; overflow-y: auto;">
+                        <table class="table table-hover align-middle mb-0" id="votersTable">
+                            <thead class="bg-light sticky-top" style="z-index: 10;">
+                                <tr>
+                                    <th class="ps-4 py-3 extra-small fw-bold text-muted border-0">IDENTIFICATION</th>
+                                    <th class="py-3 extra-small fw-bold text-muted border-0">VOTER IDENTITY</th>
+                                    <th class="py-3 extra-small fw-bold text-muted border-0">GENDER</th>
+                                    <th class="py-3 extra-small fw-bold text-muted border-0">PARTICIPATION</th>
+                                    <th class="pe-4 py-3 text-end extra-small fw-bold text-muted border-0">ACTION</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for voter in voters %}
+                                    <tr class="voter-row">
+                                        <td class="ps-4">
+                                            <div class="fw-mono text-primary small">{{ voter.voter_id }}</div>
+                                        </td>
+                                        <td>
+                                            <div class="fw-bold text-dark small">{{ voter.first_name }} {{ voter.last_name }}</div>
+                                            <div class="text-muted extra-small">{{ voter.email }}</div>
+                                        </td>
+                                        <td>
+                                            <span class="badge bg-light text-dark rounded-pill px-3 py-1 fw-bold extra-small text-uppercase">
+                                                {{ voter.gender }}
+                                            </span>
+                                        </td>
+                                        <td>
+                                            {% if voter.participation_uuid %}
+                                                <span class="badge badge-success px-3 py-1 rounded-pill fw-bold extra-small d-inline-flex align-items-center">
+                                                    <span class="material-symbols-outlined fs-6 me-1">verified</span> VOTED
+                                                </span>
+                                            {% else %}
+                                                <span class="badge bg-warning-subtle text-warning px-3 py-1 rounded-pill fw-bold extra-small d-inline-flex align-items-center">
+                                                    <span class="material-symbols-outlined fs-6 me-1">pending</span> PENDING
+                                                </span>
+                                            {% endif %}
+                                        </td>
+                                        <td class="pe-4 text-end">
+                                            <a href="{{ PROOT }}admin/voters/edit/{{ voter.uuid }}?return_to_election={{ election.uuid }}" class="btn btn-light btn-sm rounded-circle p-2">
+                                                <span class="material-symbols-outlined fs-6">edit</span>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                {% else %}
+                                    <tr>
+                                        <td colspan="5" class="text-center py-5">
+                                            <span class="material-symbols-outlined fs-1 text-muted opacity-25">person_off</span>
+                                            <h6 class="mt-3 text-muted">No voters registered for this session.</h6>
+                                            <a href="{{ PROOT }}admin/voters/add" class="btn btn-primary btn-sm rounded-pill px-4 mt-2">Register Voter</a>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block styles %}
+<style>
+    .stat-icon-lg {
+        width: 80px;
+        height: 80px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .accordion-premium .accordion-item {
+        border: 1px solid var(--admin-border) !important;
+        background: #fff;
+    }
+    .accordion-premium .accordion-button:not(.collapsed) {
+        background: #fff;
+        color: var(--admin-primary);
+        box-shadow: none;
+    }
+    .accordion-premium .accordion-button:after {
+        background-image: none;
+        content: '\e5cf';
+        font-family: 'Material Symbols Outlined';
+        font-size: 1.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: transform 0.3s ease;
+    }
+    .accordion-premium .accordion-button:not(.collapsed):after {
+        transform: rotate(180deg);
+    }
+    .avatar-sm {
+        width: 42px;
+        height: 42px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.9rem;
+    }
+    .badge-success { background: #dcf3b0; color: #1d3d37; }
+    .bg-primary-subtle { background: rgba(29, 61, 55, 0.08) !important; }
+    .bg-success-subtle { background: rgba(25, 135, 84, 0.08) !important; }
+    .bg-info-subtle { background: rgba(13, 110, 253, 0.08) !important; }
+    .bg-warning-subtle { background: rgba(255, 193, 7, 0.08) !important; }
+    .bg-dark-subtle { background: rgba(33, 37, 41, 0.08) !important; }
+    .text-accent { color: var(--admin-accent) !important; }
+    .fw-800 { font-weight: 800; }
+    .extra-small { font-size: 0.7rem; }
+    .cursor-pointer { cursor: pointer; }
+    .transition-all { transition: all 0.3s ease; }
+    .search-terminal-mini {
+        transition: all 0.2s ease;
+    }
+    .search-terminal-mini:focus-within {
+        border-color: var(--admin-primary) !important;
+        background: #fff !important;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        max-width: 220px !important;
+    }
+</style>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    $(document).ready(function() {
+        $('#voterSearch').on('keyup', function() {
+            var value = $(this).val().toLowerCase();
+            $("#votersTable tbody tr").filter(function() {
+                $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+            });
+        });
+    });
+</script>
+{% endblock %}

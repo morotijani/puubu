@@ -2,92 +2,128 @@
 
 {% set active_page = 'voters' %}
 
-{% block title %}Import Identities • Kokuromotie Admin{% endblock %}
+{% block title %}Bulk Import Identities • Kokuromotie Admin{% endblock %}
 
 {% block content %}
-    <div class="page-header d-flex flex-column flex-md-row justify-content-between align-items-md-center">
+    <div class="page-header d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-5">
         <div>
-            <h1>Import Identities</h1>
-            <p>Bulk register voters using a secure CSV file.</p>
+            <h1 class="fw-bold mb-1">Bulk Registry Import</h1>
+            <p class="text-muted mb-0">Electoral registrar high-speed ingestion terminal.</p>
         </div>
-        <div class="d-flex gap-2 mt-3 mt-md-0">
-            <a href="{{ PROOT }}admin/voters" class="btn btn-light shadow-sm">
-                <span class="material-symbols-outlined fs-6">arrow_back</span> Back to Registrar
+        <div class="mt-3 mt-md-0">
+            <a href="{{ PROOT }}admin/voters" class="btn btn-light shadow-sm d-flex align-items-center gap-2 px-4 py-2 rounded-pill fw-bold small">
+                <span class="material-symbols-outlined fs-6">arrow_back</span> Return to Registrar
             </a>
         </div>
     </div>
 
     <div class="row justify-content-center">
         <div class="col-12">
-            <div class="card border-0 shadow-sm overflow-hidden rounded-4">
+            <div class="card border-0 shadow-lg overflow-hidden rounded-5">
                 <div class="card-body p-0">
                     <div class="row g-0">
-                        <!-- Sidebar Info -->
-                        <div class="col-lg-4 sidebar-brand-area p-5 text-white d-none d-lg-block">
-                            <div class="mb-5">
-                                <span class="material-symbols-outlined fs-1 opacity-50 mb-3">upload_file</span>
-                                <h4 class="fw-bold">CSV Guidelines</h4>
-                                <p class="small opacity-75">Follow these rules to ensure a successful import process.</p>
-                            </div>
+                        <!-- Left Panel: Guidelines & Intelligence -->
+                        <div class="col-lg-4 bg-primary p-5 text-white d-none d-lg-flex flex-column justify-content-between">
+                            <div>
+                                <div class="d-flex align-items-center mb-5">
+                                    <span class="material-symbols-outlined fs-1 text-accent me-3">database</span>
+                                    <h4 class="fw-bold mb-0">Import Intel</h4>
+                                </div>
 
-                            <div class="mb-4">
-                                <h6 class="fw-bold small text-uppercase opacity-50 mb-3">Column Order</h6>
-                                <ol class="ps-3 extra-small opacity-75">
-                                    <li class="mb-2">Identity ID / Student ID</li>
-                                    <li class="mb-2">First Name</li>
-                                    <li class="mb-2">Last Name</li>
-                                    <li class="mb-2">Email Address</li>
-                                    <li class="mb-2">Gender (male/female)</li>
-                                </ol>
+                                <div class="d-flex flex-column gap-4">
+                                    <div class="d-flex gap-3 align-items-start">
+                                        <div class="step-chip"><span class="material-symbols-outlined fs-6">view_column</span></div>
+                                        <div>
+                                            <h6 class="fw-bold mb-1">Structural Integrity</h6>
+                                            <p class="extra-small text-white-50 mb-0">Ensure columns follow the mandatory sequence: <span class="text-accent fw-bold">ID, First Name, Last Name, Email, Gender.</span></p>
+                                        </div>
+                                    </div>
+                                    <div class="d-flex gap-3 align-items-start">
+                                        <div class="step-chip"><span class="material-symbols-outlined fs-6">auto_fix</span></div>
+                                        <div>
+                                            <h6 class="fw-bold mb-1">Auto-Generation</h6>
+                                            <p class="extra-small text-white-50 mb-0">The system will automatically synthesize secure credentials for every successfully ingested record.</p>
+                                        </div>
+                                    </div>
+                                    <div class="d-flex gap-3 align-items-start">
+                                        <div class="step-chip"><span class="material-symbols-outlined fs-6">security_update_good</span></div>
+                                        <div>
+                                            <h6 class="fw-bold mb-1">Validation Layer</h6>
+                                            <p class="extra-small text-white-50 mb-0">Admin authorization is required to execute the final ingestion into the identity vault.</p>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-
-                            <div class="p-3 bg-white bg-opacity-10 rounded-4 border border-white border-opacity-10 mb-4">
-                                <h6 class="fw-bold small mb-1">Notice</h6>
-                                <p class="extra-small mb-0 opacity-75">Passwords will be automatically generated and must be distributed to voters manually or via email.</p>
+                            
+                            <div class="mt-5 pt-5 border-top border-white border-opacity-10">
+                                <a href="#" class="btn btn-outline-accent btn-sm w-100 fw-bold rounded-pill py-2 border-opacity-25 mb-4">
+                                    <span class="material-symbols-outlined fs-6 me-2">download</span> Download Sample Template
+                                </a>
+                                <div class="p-4 rounded-4" style="background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.1);">
+                                    <p class="extra-small mb-0 text-white italic fw-medium text-center" style="opacity: 0.9;">"High-speed identity provisioning for large-scale democratic sessions."</p>
+                                </div>
                             </div>
-
-                            <a href="#" class="btn btn-outline-light btn-sm w-100 fw-bold border-opacity-25 mt-4">
-                                Download Sample CSV
-                            </a>
                         </div>
 
-                        <!-- Form Section -->
+                        <!-- Right Panel: Import Terminal -->
                         <div class="col-lg-8 p-4 p-md-5 bg-white">
-                            <form action="{{ PROOT }}admin/voters/import" method="POST" enctype="multipart/form-data">
+                            <div class="d-flex align-items-center justify-content-between mb-5">
+                                <h5 class="fw-bold mb-0 text-dark d-flex align-items-center gap-2">
+                                    <span class="material-symbols-outlined text-primary">upload_file</span>
+                                    Registry Ingestion Terminal
+                                </h5>
+                                <span class="badge bg-primary-subtle text-primary px-4 py-2 rounded-pill fw-bold" style="font-size: 0.65rem; letter-spacing: 0.05em;">
+                                    BULK PROTOCOL
+                                </span>
+                            </div>
+
+                            <form action="{{ PROOT }}admin/voters/import" method="POST" enctype="multipart/form-data" id="importForm">
                                 {{ csrf_field()|raw }}
 
                                 <div class="mb-5">
-                                    <label class="form-label premium-label mb-1">1. Target Election</label>
-                                    <p class="text-muted extra-small mb-3">Select which election these identities should be registered for.</p>
-                                    <select class="form-select" name="election_uuid" required>
-                                        <option value="">Select Election...</option>
-                                        {% for election in elections %}
-                                            <option value="{{ election.uuid }}">{{ election.title }}</option>
-                                        {% endfor %}
-                                    </select>
+                                    <label class="premium-label mb-3 text-primary d-block">1. GEOGRAPHICAL & ELECTION PARAMETERS</label>
+                                    <div class="input-group input-group-pill bg-light border p-1">
+                                        <span class="input-group-text bg-transparent border-0 pe-0">
+                                            <span class="material-symbols-outlined fs-6 text-muted">how_to_vote</span>
+                                        </span>
+                                        <select class="form-select bg-transparent border-0 shadow-none py-2 ps-3 fw-bold small" name="election_uuid" required>
+                                            <option value="">Select target election context...</option>
+                                            {% for election in elections %}
+                                                <option value="{{ election.uuid }}">{{ election.title }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
                                 </div>
 
                                 <div class="mb-5">
-                                    <label class="form-label premium-label mb-1">2. Upload File</label>
-                                    <div class="upload-zone p-5 border-2 border-dashed rounded-4 text-center cursor-pointer bg-light mb-2" onclick="document.getElementById('csvFile').click()">
-                                        <span class="material-symbols-outlined fs-1 text-muted mb-2">csv</span>
-                                        <h6 class="fw-bold text-dark mb-1">Click to upload or drag and drop</h6>
-                                        <p class="text-muted small mb-0">Supported format: .csv only</p>
+                                    <label class="premium-label mb-3 text-primary d-block">2. CRYPTOGRAPHIC DATA SOURCE</label>
+                                    <div class="upload-zone p-5 border-2 border-dashed rounded-4 text-center cursor-pointer bg-light mb-2 transition-all" onclick="document.getElementById('csvFile').click()" style="border-color: #e2e8f0 !important;">
+                                        <div class="bg-white d-inline-flex align-items-center justify-content-center rounded-circle shadow-sm mb-3" style="width: 64px; height: 64px;">
+                                            <span class="material-symbols-outlined fs-1 text-primary">csv</span>
+                                        </div>
+                                        <h6 class="fw-bold text-dark mb-1">Authorize File Upload</h6>
+                                        <p class="text-muted small mb-0">Drag your secure CSV record here or <span class="text-primary fw-bold">browse workstation</span></p>
                                         <input type="file" id="csvFile" name="csv_file" class="d-none" accept=".csv" required onchange="updateFileName(this)">
                                     </div>
-                                    <div id="fileName" class="text-primary small fw-bold text-center"></div>
+                                    <div id="fileName" class="text-primary small fw-bold text-center mt-2 animate__animated animate__fadeIn"></div>
                                 </div>
 
-                                <div class="mb-5 p-4 bg-warning-subtle rounded-4 border border-warning border-opacity-10">
-                                    <label class="form-label premium-label text-warning mb-1">3. Security Verification</label>
-                                    <p class="text-dark extra-small mb-3 fw-bold">This is a sensitive operation. Enter your administrator password to proceed.</p>
-                                    <input type="password" class="form-control" name="security_pin" placeholder="Enter Password" required>
+                                <div class="mb-5">
+                                    <label class="premium-label mb-3 text-primary d-block">3. SECURITY AUTHORIZATION</label>
+                                    <div class="p-4 rounded-4" style="background: #fff5f5; border: 1px solid #fee2e2;">
+                                        <div class="d-flex align-items-center mb-3">
+                                            <span class="material-symbols-outlined text-danger me-2 fs-5">shield_lock</span>
+                                            <div class="fw-bold text-danger small">Administrative Validation Required</div>
+                                        </div>
+                                        <input type="password" class="form-control border-0 bg-white p-3 rounded-4 shadow-sm fw-bold small" name="security_pin" placeholder="Enter Administrator Password" required>
+                                    </div>
                                 </div>
 
-                                <div class="d-grid">
-                                    <button type="submit" class="btn btn-indigo btn-lg fw-bold shadow-sm py-3">
-                                        Confirm and Process Import
+                                <div class="d-grid gap-2">
+                                    <button type="submit" class="btn btn-primary btn-lg py-3 fw-800 rounded-pill shadow-lg border-0" style="background: var(--admin-primary);">
+                                        Execute Ingestion Protocol <span class="material-symbols-outlined ms-2 fs-5">bolt</span>
                                     </button>
+                                    <p class="text-center text-muted mt-3 mb-0" style="font-size: 0.65rem;">By executing, you confirm that all records adhere to the electoral data policy.</p>
                                 </div>
                             </form>
                         </div>
@@ -100,18 +136,31 @@
 
 {% block styles %}
 <style>
-    .sidebar-brand-area { background: var(--admin-primary); color: white; }
-    .text-indigo { color: var(--admin-primary); }
-    .btn-indigo { background: var(--admin-primary); color: white; border: none; }
-    .btn-indigo:hover { background: var(--admin-primary-hover); color: white; }
-    .extra-small { font-size: 0.7rem; }
-    .tracking-wider { letter-spacing: 0.05em; }
-    
-    .border-dashed { border-style: dashed !important; }
-    .upload-zone { transition: all 0.2s ease; border-color: var(--admin-border) !important; }
-    .upload-zone:hover { background: #f1f5f9 !important; border-color: var(--admin-primary) !important; }
-    
-    .form-select-lg { font-size: 1rem; border-radius: 0.75rem; }
+    .step-chip {
+        width: 32px;
+        height: 32px;
+        background: rgba(255, 255, 255, 0.15);
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+    }
+    .upload-zone:hover {
+        background: #f1f5f9 !important;
+        border-color: var(--admin-primary) !important;
+        transform: translateY(-2px);
+    }
+    .btn-outline-accent {
+        color: var(--admin-accent);
+        border-color: rgba(220, 243, 176, 0.3);
+    }
+    .btn-outline-accent:hover {
+        background: var(--admin-accent);
+        color: var(--admin-primary);
+        border-color: var(--admin-accent);
+    }
+    .extra-small { font-size: 0.75rem; line-height: 1.5; }
 </style>
 {% endblock %}
 
@@ -120,7 +169,12 @@
     function updateFileName(input) {
         const fileName = input.files[0]?.name;
         if (fileName) {
-            document.getElementById('fileName').innerText = 'Selected: ' + fileName;
+            document.getElementById('fileName').innerHTML = `
+                <div class="d-inline-flex align-items-center gap-2 p-2 px-3 bg-primary-subtle text-primary rounded-pill border">
+                    <span class="material-symbols-outlined fs-6">check_circle</span>
+                    <span>Ready for Ingestion: <strong>${fileName}</strong></span>
+                </div>
+            `;
         }
     }
 </script>

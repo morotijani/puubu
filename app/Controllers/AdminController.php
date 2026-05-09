@@ -187,10 +187,10 @@ class AdminController {
         $role = $admin_data['role'] ?? 'organizer';
         
         if ($role === 'super_admin') {
-            $stmt = $conn->prepare("SELECT * FROM election ORDER BY uuid DESC");
+            $stmt = $conn->prepare("SELECT e.*, a.first_name as org_fname, a.last_name as org_lname FROM election e LEFT JOIN admins a ON e.organizer_id = a.uuid WHERE e.is_deleted = 0 ORDER BY e.uuid DESC");
             $stmt->execute();
         } else {
-            $stmt = $conn->prepare("SELECT * FROM election WHERE organizer_id = ? ORDER BY uuid DESC");
+            $stmt = $conn->prepare("SELECT e.*, a.first_name as org_fname, a.last_name as org_lname FROM election e LEFT JOIN admins a ON e.organizer_id = a.uuid WHERE e.organizer_id = ? AND e.is_deleted = 0 ORDER BY e.uuid DESC");
             $stmt->execute([$admin_id]);
         }
         $elections = $stmt->fetchAll();
@@ -211,6 +211,68 @@ class AdminController {
         echo $this->twig->render('admin/elections.twig', [
             'elections' => $elections,
             'edit_election' => $edit_election
+        ]);
+    }
+
+    public function electionView($id) {
+        global $conn, $admin_data;
+        if (!cadminIsLoggedIn() || empty($admin_data)) {
+            cadminLoginErrorRedirect();
+        }
+        $admin_id = $admin_data['uuid'];
+        $role = $admin_data['role'] ?? 'organizer';
+
+        // 1. Fetch Election Details
+        $stmt = $conn->prepare("SELECT e.*, a.first_name as org_fname, a.last_name as org_lname 
+                               FROM election e 
+                               LEFT JOIN admins a ON e.organizer_id = a.uuid 
+                               WHERE e.uuid = ?");
+        $stmt->execute([$id]);
+        $election = $stmt->fetch();
+
+        if (!$election || ($role !== 'super_admin' && $election['organizer_id'] !== $admin_id)) {
+            $_SESSION['flash_error'] = "Invalid election or access denied.";
+            redirect(PROOT . 'admin/elections');
+        }
+
+        // 2. Fetch Positions and Candidates
+        $stmt = $conn->prepare("SELECT * FROM positions WHERE election_uuid = ? ORDER BY position_name ASC");
+        $stmt->execute([$id]);
+        $positions = $stmt->fetchAll();
+
+        foreach ($positions as &$pos) {
+            $stmtC = $conn->prepare("SELECT * FROM contestants WHERE position_id = ? AND is_deleted = 'no' ORDER BY contestant_ballot_number ASC");
+            $stmtC->execute([$pos['position_id']]);
+            $pos['candidates'] = $stmtC->fetchAll();
+        }
+
+        // 3. Fetch Voters with Participation Status
+        $stmtV = $conn->prepare("
+            SELECT v.*, vp.uuid as participation_uuid
+            FROM voters v 
+            LEFT JOIN voter_participation vp ON v.uuid = vp.voter_id AND vp.election_uuid = ?
+            WHERE v.election_uuid = ?
+            ORDER BY v.last_name ASC
+        ");
+        $stmtV->execute([$id, $id]);
+        $voters = $stmtV->fetchAll();
+
+        $total_voters = count($voters);
+
+        // 4. Fetch Participation Stats
+        $stmtP = $conn->prepare("SELECT COUNT(*) FROM voter_participation WHERE election_uuid = ?");
+        $stmtP->execute([$id]);
+        $total_votes = $stmtP->fetchColumn();
+
+        echo $this->twig->render('admin/elections/view.twig', [
+            'election' => $election,
+            'positions' => $positions,
+            'voters' => $voters,
+            'stats' => [
+                'total_voters' => $total_voters,
+                'total_votes' => $total_votes,
+                'participation_rate' => $total_voters > 0 ? round(($total_votes / $total_voters) * 100, 1) : 0
+            ]
         ]);
     }
 
@@ -530,29 +592,63 @@ class AdminController {
         $admin_id = $admin_data['uuid'];
         $role = $admin_data['role'] ?? 'organizer';
         
-        if ($role === 'super_admin') {
-            $query = "
-                SELECT c.*, p.position_name, e.title, e.organized_by, e.status 
-                FROM contestants c
-                INNER JOIN positions p ON c.position_id = p.position_id
-                INNER JOIN election e ON c.election_uuid = e.uuid
-                WHERE c.is_deleted = 'no'
-                ORDER BY c.uuid DESC
-            ";
-            $stmt = $conn->prepare($query);
-            $stmt->execute();
-        } else {
-            $query = "
-                SELECT c.*, p.position_name, e.title, e.organized_by, e.status 
-                FROM contestants c
-                INNER JOIN positions p ON c.position_id = p.position_id
-                INNER JOIN election e ON c.election_uuid = e.uuid
-                WHERE c.is_deleted = 'no' AND e.organizer_id = ?
-                ORDER BY c.uuid DESC
-            ";
-            $stmt = $conn->prepare($query);
-            $stmt->execute([$admin_id]);
+        // Pagination & Filter Parameters
+        $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+        $limit = 15;
+        $offset = ($page - 1) * $limit;
+        
+        $election_id = $_GET['election'] ?? 'all';
+        $search = $_GET['search'] ?? '';
+        
+        $whereClauses = ["c.is_deleted = 'no'"];
+        $params = [];
+        
+        if ($role !== 'super_admin') {
+            $whereClauses[] = "e.organizer_id = ?";
+            $params[] = $admin_id;
         }
+        
+        if ($election_id !== 'all') {
+            $whereClauses[] = "c.election_uuid = ?";
+            $params[] = $election_id;
+        }
+        
+        if (!empty($search)) {
+            $whereClauses[] = "(c.first_name LIKE ? OR c.last_name LIKE ? OR p.position_name LIKE ? OR e.title LIKE ?)";
+            $searchParam = "%$search%";
+            $params[] = $searchParam;
+            $params[] = $searchParam;
+            $params[] = $searchParam;
+            $params[] = $searchParam;
+        }
+        
+        $whereSql = "WHERE " . implode(" AND ", $whereClauses);
+        
+        // Get Total Count for Pagination
+        $countQuery = "
+            SELECT COUNT(*) 
+            FROM contestants c
+            INNER JOIN positions p ON c.position_id = p.position_id
+            INNER JOIN election e ON c.election_uuid = e.uuid
+            $whereSql
+        ";
+        $stmtCount = $conn->prepare($countQuery);
+        $stmtCount->execute($params);
+        $totalItems = $stmtCount->fetchColumn();
+        $totalPages = ceil($totalItems / $limit);
+        
+        // Fetch Paginated Data
+        $query = "
+            SELECT c.*, p.position_name, e.title, e.organized_by, e.status 
+            FROM contestants c
+            INNER JOIN positions p ON c.position_id = p.position_id
+            INNER JOIN election e ON c.election_uuid = e.uuid
+            $whereSql
+            ORDER BY c.uuid DESC
+            LIMIT $limit OFFSET $offset
+        ";
+        $stmt = $conn->prepare($query);
+        $stmt->execute($params);
         $contestants = $stmt->fetchAll();
 
         // Fetch all elections for the filter
@@ -567,7 +663,15 @@ class AdminController {
 
         echo $this->twig->render('admin/contestants/index.twig', [
             'contestants' => $contestants,
-            'elections' => $elections
+            'elections' => $elections,
+            'pagination' => [
+                'currentPage' => $page,
+                'totalPages' => $totalPages,
+                'totalItems' => $totalItems,
+                'limit' => $limit,
+                'election' => $election_id,
+                'search' => $search
+            ]
         ]);
     }
 
@@ -579,8 +683,7 @@ class AdminController {
         $admin_id = $admin_data['uuid'];
         $role = $admin_data['role'] ?? 'organizer';
         
-        $contestant = null;
-        $positions = [];
+        $return_to_election = $_GET['return_to_election'] ?? null;
         if ($id) {
             $stmt = $conn->prepare("SELECT * FROM contestants WHERE uuid = ?");
             $stmt->execute([$id]);
@@ -605,7 +708,8 @@ class AdminController {
         echo $this->twig->render('admin/contestants/form.twig', [
             'contestant' => $contestant,
             'elections' => $elections,
-            'positions' => $positions
+            'positions' => $positions,
+            'return_to_election' => $return_to_election
         ]);
     }
 
@@ -651,6 +755,9 @@ class AdminController {
             }
         }
 
+        $return_to_election = $_POST['return_to_election'] ?? null;
+        $redirect_query = $return_to_election ? "?return_to_election=$return_to_election" : "";
+
         if (isset($_FILES['profile_image']) && $_FILES['profile_image']['error'] == 0) {
             $ext = pathinfo($_FILES['profile_image']['name'], PATHINFO_EXTENSION);
             $profile_img = uniqid('', true) . '.' . $ext;
@@ -679,6 +786,9 @@ class AdminController {
             $_SESSION['flash_success'] = "Contestant added successfully.";
         }
 
+        if ($return_to_election) {
+            redirect(PROOT . "admin/elections/view/$return_to_election");
+        }
         redirect(PROOT . 'admin/contestants');
     }
 
@@ -791,36 +901,67 @@ class AdminController {
             cadminLoginErrorRedirect();
         }
         $admin_id = $admin_data['uuid'] ?? null;
-
-        // Ensure all voters have a token for direct link access
-        $stmtTokens = $conn->query("SELECT uuid FROM voters WHERE voting_token IS NULL OR voting_token = ''");
-        $voters_without_token = $stmtTokens->fetchAll();
-        foreach ($voters_without_token as $v) {
-            $conn->prepare("UPDATE voters SET voting_token = ? WHERE uuid = ?")->execute([guidv4(), $v['uuid']]);
-        }
-        
         $role = $admin_data['role'] ?? 'organizer';
+
+        // Pagination & Filter Parameters
+        $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+        $limit = 25;
+        $offset = ($page - 1) * $limit;
         
-        if ($role === 'super_admin') {
-            $query = "
-                SELECT v.*, e.title, e.organized_by, e.status as election_status, e.allow_direct_link 
-                FROM voters v
-                INNER JOIN election e ON v.election_uuid = e.uuid
-                ORDER BY v.id DESC
-            ";
-            $stmt = $conn->prepare($query);
-            $stmt->execute();
-        } else {
-            $query = "
-                SELECT v.*, e.title, e.organized_by, e.status as election_status, e.allow_direct_link 
-                FROM voters v
-                INNER JOIN election e ON v.election_uuid = e.uuid
-                WHERE e.organizer_id = ?
-                ORDER BY v.id DESC
-            ";
-            $stmt = $conn->prepare($query);
-            $stmt->execute([$admin_id]);
+        $election_id = $_GET['election'] ?? 'all';
+        $search = $_GET['search'] ?? '';
+
+        // Ensure all voters have a token for direct link access (do this for the whole table or just the view? Better to do it once in a while or on demand)
+        // For performance, we'll only do it for voters without token in the background or small batches if needed.
+        
+        $whereClauses = ["1=1"];
+        $params = [];
+        
+        if ($role !== 'super_admin') {
+            $whereClauses[] = "e.organizer_id = ?";
+            $params[] = $admin_id;
         }
+        
+        if ($election_id !== 'all') {
+            $whereClauses[] = "v.election_uuid = ?";
+            $params[] = $election_id;
+        }
+        
+        if (!empty($search)) {
+            $whereClauses[] = "(v.first_name LIKE ? OR v.last_name LIKE ? OR v.voter_id LIKE ? OR v.email LIKE ? OR v.phone LIKE ?)";
+            $searchParam = "%$search%";
+            $params[] = $searchParam;
+            $params[] = $searchParam;
+            $params[] = $searchParam;
+            $params[] = $searchParam;
+            $params[] = $searchParam;
+        }
+        
+        $whereSql = "WHERE " . implode(" AND ", $whereClauses);
+
+        // Get Total Count
+        $countQuery = "
+            SELECT COUNT(*) 
+            FROM voters v
+            INNER JOIN election e ON v.election_uuid = e.uuid
+            $whereSql
+        ";
+        $stmtCount = $conn->prepare($countQuery);
+        $stmtCount->execute($params);
+        $totalItems = $stmtCount->fetchColumn();
+        $totalPages = ceil($totalItems / $limit);
+
+        // Fetch Paginated Data
+        $query = "
+            SELECT v.*, e.title, e.organized_by, e.status as election_status, e.allow_direct_link 
+            FROM voters v
+            INNER JOIN election e ON v.election_uuid = e.uuid
+            $whereSql
+            ORDER BY v.id DESC
+            LIMIT $limit OFFSET $offset
+        ";
+        $stmt = $conn->prepare($query);
+        $stmt->execute($params);
         $voters = $stmt->fetchAll();
 
         if ($role === 'super_admin') {
@@ -834,7 +975,15 @@ class AdminController {
 
         echo $this->twig->render('admin/voters/index.twig', [
             'voters' => $voters,
-            'elections' => $elections
+            'elections' => $elections,
+            'pagination' => [
+                'currentPage' => $page,
+                'totalPages' => $totalPages,
+                'totalItems' => $totalItems,
+                'limit' => $limit,
+                'election' => $election_id,
+                'search' => $search
+            ]
         ]);
     }
 
@@ -846,6 +995,7 @@ class AdminController {
         $admin_id = $admin_data['uuid'];
         $role = $admin_data['role'] ?? 'organizer';
         
+        $return_to_election = $_GET['return_to_election'] ?? null;
         $voter = null;
         if ($id) {
             $stmt = $conn->prepare("SELECT * FROM voters WHERE uuid = ?");
@@ -864,7 +1014,8 @@ class AdminController {
 
         echo $this->twig->render('admin/voters/form.twig', [
             'voter' => $voter,
-            'elections' => $elections
+            'elections' => $elections,
+            'return_to_election' => $return_to_election
         ]);
     }
 
@@ -952,6 +1103,10 @@ class AdminController {
             $_SESSION['flash_success'] = "Voter added successfully. Password is: $password";
         }
 
+        $return_to_election = $_POST['return_to_election'] ?? null;
+        if ($return_to_election) {
+            redirect(PROOT . "admin/elections/view/$return_to_election");
+        }
         redirect(PROOT . 'admin/voters');
     }
 

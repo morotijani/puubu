@@ -365,7 +365,7 @@ class VoterController
                 WHERE position_id = ? 
                 AND election_uuid = ? 
                 AND is_deleted = 'no' 
-                ORDER BY contestant_ballot_number ASC
+                ORDER BY CAST(contestant_ballot_number AS UNSIGNED) ASC
             ";
             $stmt = $conn->prepare($contQuery);
             $stmt->execute([$pos['position_id'], $electionUuid]);

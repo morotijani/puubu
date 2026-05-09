@@ -1,0 +1,372 @@
+{% extends "admin/layout.twig" %}
+
+{% set active_page = 'voters' %}
+
+{% block title %}Voters Registrar • Kokuromotie{% endblock %}
+
+{% block content %}
+    <div class="page-header d-flex flex-column flex-md-row justify-content-between align-items-md-center">
+        <div>
+            <h1>Voters Registrar</h1>
+            <p>Maintain the identity database for electoral eligibility.</p>
+        </div>
+        <div class="d-flex gap-2 mt-3 mt-md-0">
+            <div class="dropdown">
+                <button class="btn btn-light dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                    <span class="material-symbols-outlined fs-6">construction</span> Registry Tools
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end shadow-lg border-0 py-2">
+                    <li><a class="dropdown-item py-2 d-flex align-items-center" href="#" data-bs-toggle="modal" data-bs-target="#duplicateAuditModal"><span class="material-symbols-outlined me-2 text-muted fs-6">layers</span> Identify Duplicates</a></li>
+                    <li><a class="dropdown-item py-2 d-flex align-items-center" href="{{ PROOT }}admin/voters/import"><span class="material-symbols-outlined me-2 text-muted fs-6">upload_file</span> Import Identities (CSV)</a></li>
+                    <li><a class="dropdown-item py-2 d-flex align-items-center" href="#" data-bs-toggle="modal" data-bs-target="#exportLinksModal"><span class="material-symbols-outlined me-2 text-muted fs-6">link</span> Export Voting Links</a></li>
+                    <li><hr class="dropdown-divider mx-3"></li>
+                    <li><a class="dropdown-item py-2 text-danger d-flex align-items-center" href="#" data-bs-toggle="modal" data-bs-target="#wipeRegistryModal"><span class="material-symbols-outlined me-2 fs-6">warning</span> Wipe Registry</a></li>
+                </ul>
+            </div>
+            <a href="{{ PROOT }}admin/voters/add" class="btn btn-primary shadow-sm">
+                <span class="material-symbols-outlined fs-6">person_add</span> Register Voter
+            </a>
+        </div>
+    </div>
+
+    <!-- Voters Registry -->
+    <div class="card border-0 shadow-sm overflow-hidden">
+        <div class="card-header border-0 pb-3">
+            <div class="row align-items-center g-3 w-100">
+                <div class="col-md-auto">
+                    <h5 class="fw-bold mb-0">Identity Registry</h5>
+                </div>
+                <div class="col-md-4 ms-md-auto">
+                    <div class="input-group">
+                        <span class="input-group-text bg-light border-0"><span class="material-symbols-outlined fs-6 text-muted">search</span></span>
+                        <input type="text" id="voterSearch" class="form-control bg-light border-0" placeholder="Search identities...">
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <form action="{{ PROOT }}admin/voters/bulk-delete" method="POST" id="bulkDeleteForm">
+            {{ csrf_field()|raw }}
+            <div class="table-container">
+                <table class="table align-middle" id="votersTable">
+                    <thead>
+                        <tr>
+                            <th style="width: 50px;" class="ps-4">
+                                <input type="checkbox" class="form-check-input" id="selectAll">
+                            </th>
+                            <th>Identity & Contact</th>
+                            <th class="hide-mobile">Registry ID</th>
+                            <th class="hide-mobile">Target Election</th>
+                            <th class="text-end pe-4">Management</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for voter in voters %}
+                            <tr>
+                                <td class="ps-4">
+                                    <input type="checkbox" name="voter_ids[]" value="{{ voter.uuid }}" class="form-check-input voter-checkbox">
+                                </td>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <div class="stat-icon me-3 bg-indigo-subtle text-indigo rounded-circle" style="width: 42px; height: 42px; font-size: 0.875rem;">
+                                            {{ voter.first_name|slice(0, 1) }}{{ voter.last_name|slice(0, 1) }}
+                                        </div>
+                                        <div>
+                                            <div class="fw-bold text-dark">{{ voter.first_name }} {{ voter.last_name }}</div>
+                                            <div class="d-flex align-items-center flex-wrap">
+                                                {% if voter.email %}
+                                                    <div class="text-muted extra-small me-2 d-flex align-items-center">
+                                                        <span class="material-symbols-outlined fs-6 me-1">alternate_email</span> {{ voter.email }}
+                                                    </div>
+                                                {% endif %}
+                                                {% if voter.phone %}
+                                                    <div class="text-muted extra-small me-2 d-flex align-items-center">
+                                                        <span class="material-symbols-outlined fs-6 me-1">phone</span> {{ voter.phone }}
+                                                    </div>
+                                                {% endif %}
+                                                <span class="badge {{ voter.gender == 'male' ? 'bg-primary-subtle text-primary' : 'bg-danger-subtle text-danger' }} extra-small px-2 py-0" style="font-size: 9px;">
+                                                    {{ voter.gender|upper }}
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="hide-mobile">
+                                    <span class="badge bg-light text-primary border fw-bold">{{ voter.voter_id }}</span>
+                                </td>
+                                <td class="text-muted small hide-mobile">
+                                    <div class="d-flex align-items-center">
+                                        <span class="material-symbols-outlined me-1 fs-6">event_note</span>
+                                        {{ voter.title }}
+                                    </div>
+                                </td>
+                                <td class="text-end pe-4">
+                                        <div class="d-flex justify-content-end gap-2">
+                                            {% if voter.allow_direct_link %}
+                                                <button type="button" class="btn btn-light btn-sm px-2 btn-copy-link" data-token="{{ voter.voting_token }}" title="Copy Link">
+                                                    <span class="material-symbols-outlined fs-6">link</span>
+                                                </button>
+                                                <button type="button" class="btn btn-whatsapp btn-sm px-2" onclick="sendWhatsApp('{{ voter.phone ?: voter.voter_id }}', '{{ voter.voting_token }}', '{{ voter.first_name }} {{ voter.last_name }}', '{{ voter.title }}')" title="Send WhatsApp">
+                                                    <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" style="width: 16px; height: 16px;">
+                                                </button>
+                                            {% endif %}
+
+                                            {% if voter.election_status == 0 %}
+                                                <a href="{{ PROOT }}admin/voters/edit/{{ voter.uuid }}" class="btn btn-light btn-sm px-2">
+                                                    <span class="material-symbols-outlined fs-6">edit</span>
+                                                </a>
+                                                <a href="{{ PROOT }}admin/voters/delete/{{ voter.uuid }}" class="btn btn-light btn-sm px-2 text-danger" onclick="return confirm('Delete voter?')">
+                                                    <span class="material-symbols-outlined fs-6">delete</span>
+                                                </a>
+                                            {% else %}
+                                                <span class="badge bg-light text-muted border extra-small px-2 d-flex align-items-center"><span class="material-symbols-outlined fs-6 me-1">lock</span> Locked</span>
+                                            {% endif %}
+                                        </div>
+                                </td>
+                            </tr>
+                        {% else %}
+                            <tr>
+                                <td colspan="5" class="text-center py-5 text-muted">
+                                    <span class="material-symbols-outlined fs-1 opacity-25">group_off</span>
+                                    <p class="mt-2">No identities found in the registrar.</p>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Bulk Actions Footer -->
+            <div class="card-footer bg-light bg-opacity-50 border-top-0 py-3 px-4" id="bulkActions" style="display: none;">
+                <div class="d-flex align-items-center justify-content-between">
+                    <div class="d-flex align-items-center">
+                        <span class="badge bg-indigo rounded-pill me-2" id="selectedCount">0</span>
+                        <span class="small text-muted fw-medium">Identities selected for action</span>
+                    </div>
+                    <button type="submit" class="btn btn-sm btn-danger px-4 fw-bold shadow-sm d-flex align-items-center" onclick="return confirm('Delete selected identities from the registry?')">
+                        Delete Selected <span class="material-symbols-outlined ms-1 fs-6">delete</span>
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <!-- Duplicate Audit Modal -->
+    <div class="modal fade" id="duplicateAuditModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow-lg rounded-4">
+                <div class="modal-header border-0 pt-4 px-4">
+                    <h5 class="fw-bold mb-0">Identify Duplicates</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <p class="text-muted small">Select the scope of the duplication audit.</p>
+                    <form action="{{ PROOT }}admin/voters/duplicates" method="GET">
+                        <div class="mb-4">
+                            <label class="form-label small fw-bold text-uppercase">Target Election</label>
+                            <select class="form-select bg-light border-0 shadow-none" name="election_uuid">
+                                <option value="">Audit All Elections</option>
+                                {% for election in elections %}
+                                    <option value="{{ election.uuid }}">{{ election.title }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-dark w-100 fw-bold py-2 shadow-sm">Start Audit</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Wipe Registry Modal -->
+    <div class="modal fade" id="wipeRegistryModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow-lg rounded-4">
+                <div class="modal-header border-0 pt-4 px-4">
+                    <h5 class="fw-bold mb-0 text-danger">Wipe Registry</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <div class="alert alert-danger border-0 rounded-4 mb-4">
+                        <div class="d-flex">
+                            <span class="material-symbols-outlined me-2">report</span>
+                            <div class="small fw-bold">This action is irreversible. All selected voter records and their login credentials will be permanently erased.</div>
+                        </div>
+                    </div>
+
+                    <form action="{{ PROOT }}admin/voters/truncate" method="POST">
+                        {{ csrf_field()|raw }}
+                        <div class="mb-4">
+                            <label class="form-label small fw-bold text-uppercase">Wipe Scope</label>
+                            <div class="d-flex flex-column gap-2">
+                                <div class="form-check p-3 bg-light rounded-3 border-0">
+                                    <input class="form-check-input ms-0 me-3" type="radio" name="wipe_scope" id="wipeElection" value="election" checked onchange="toggleWipeElection(true)">
+                                    <label class="form-check-label fw-bold small text-dark" for="wipeElection">Specific Election</label>
+                                </div>
+                                <div class="form-check p-3 bg-light rounded-3 border-0">
+                                    <input class="form-check-input ms-0 me-3" type="radio" name="wipe_scope" id="wipeAll" value="all" onchange="toggleWipeElection(false)">
+                                    <label class="form-check-label fw-bold small text-danger" for="wipeAll">Entire Registry (Global Wipe)</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="wipeElectionSelect" class="mb-4">
+                            <label class="form-label small fw-bold text-uppercase">Select Election</label>
+                            <select class="form-select bg-light border-0 shadow-none" name="election_uuid">
+                                <option value="">Select Election...</option>
+                                {% for election in elections %}
+                                    <option value="{{ election.uuid }}">{{ election.title }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="mt-4">
+                            <button type="submit" class="btn btn-danger w-100 fw-bold py-2 shadow-sm" onclick="return confirm('FINAL WARNING: Proceed with wiping data?')">
+                                Confirm Wipe
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Export Links Modal -->
+    <div class="modal fade" id="exportLinksModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow-lg rounded-4">
+                <div class="modal-header border-0 pt-4 px-4">
+                    <h5 class="fw-bold mb-0">Export Voting Links</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <p class="text-muted small">Select an election to export voters and their direct voting links.</p>
+                    <form id="exportLinksForm" onsubmit="event.preventDefault(); window.location.href = '{{ PROOT }}admin/voters/export/links/' + this.election_uuid.value;">
+                        <div class="mb-4">
+                            <label class="form-label small fw-bold text-uppercase">Target Election</label>
+                            <select class="form-select bg-light border-0 shadow-none" name="election_uuid" required>
+                                <option value="">Select Election...</option>
+                                {% for election in elections %}
+                                    <option value="{{ election.uuid }}">{{ election.title }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-dark w-100 fw-bold py-2 shadow-sm">Download CSV</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block styles %}
+<style>
+    .extra-small { font-size: 0.75rem; }
+    .fw-mono { font-family: 'JetBrains Mono', 'Fira Code', monospace; }
+    .btn-light:hover { background: var(--admin-bg); border-color: #cbd5e1; color: var(--admin-primary); }
+    .btn-whatsapp { background: #25D366; color: white; border: none; }
+    .btn-whatsapp:hover { background: #128C7E; color: white; }
+    
+    /* Mobile Responsiveness Improvements */
+    .table-container {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+    
+    @media (max-width: 768px) {
+        .hide-mobile {
+            display: none !important;
+        }
+        .table thead th, .table tbody td {
+            padding: 1rem !important;
+        }
+        .stat-icon {
+            width: 32px !important;
+            height: 32px !important;
+            font-size: 0.7rem !important;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    const PROOT = "{{ PROOT }}";
+
+    function toggleWipeElection(show) {
+        const select = document.getElementById('wipeElectionSelect');
+        if (select) select.style.display = show ? 'block' : 'none';
+    }
+
+    function sendWhatsApp(phone, token, name, electionTitle) {
+        // Clean phone number
+        let cleanPhone = phone.replace(/[^0-9+]/g, '');
+        // If it starts with 0 and no +, assume GH (+233)
+        if (cleanPhone.startsWith('0') && !cleanPhone.startsWith('+')) {
+            cleanPhone = '233' + cleanPhone.substring(1);
+        } else if (!cleanPhone.startsWith('+')) {
+            // If no +, just send as is
+        } else {
+            cleanPhone = cleanPhone.replace('+', '');
+        }
+
+        const link = window.location.origin + PROOT + 'v/' + token;
+        const message = `🗳️ *KOKUROMOTIE POWER*\n\nHello *${name}*! Your participation in the *${electionTitle}* is highly valued. To make voting easy for you, we have generated a secure direct link.\n\nPlease click the secure link below to cast your vote:\n\n🔗 ${link}\n\nYour vote is private and secure. Thank you!`;
+        const encoded = encodeURIComponent(message);
+        window.open(`https://wa.me/${cleanPhone}?text=${encoded}`, '_blank');
+    }
+
+    $(document).ready(function() {
+        // Search Functionality
+        $("#voterSearch").on("keyup", function() {
+            var value = $(this).val().toLowerCase();
+            $("#votersTable tbody tr").filter(function() {
+                $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+            });
+        });
+
+        // Bulk Selection
+        $('#selectAll').on('change', function() {
+            $('.voter-checkbox').prop('checked', $(this).prop('checked'));
+            updateBulkStatus();
+        });
+
+        $(document).on('change', '.voter-checkbox', function() {
+            updateBulkStatus();
+        });
+
+        function updateBulkStatus() {
+            var count = $('.voter-checkbox:checked').length;
+            $('#selectedCount').text(count);
+            if (count > 0) {
+                $('#bulkActions').slideDown(200);
+            } else {
+                $('#bulkActions').slideUp(200);
+            }
+        }
+
+        // Copy Link Functionality
+        $('.btn-copy-link').on('click', function() {
+            const token = $(this).data('token');
+            const url = window.location.origin + '{{ PROOT }}v/' + token;
+            
+            const tempInput = document.createElement('input');
+            tempInput.value = url;
+            document.body.appendChild(tempInput);
+            tempInput.select();
+            document.execCommand('copy');
+            document.body.removeChild(tempInput);
+            
+            const btn = $(this);
+            const originalIcon = btn.find('.material-symbols-outlined').text();
+            btn.find('.material-symbols-outlined').text('check');
+            btn.addClass('text-success');
+            
+            setTimeout(() => {
+                btn.find('.material-symbols-outlined').text(originalIcon);
+                btn.removeClass('text-success');
+            }, 2000);
+        });
+    });
+</script>
+{% endblock %}

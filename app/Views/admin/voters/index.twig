@@ -5,130 +5,169 @@
 {% block title %}Voters Registrar • Kokuromotie{% endblock %}
 
 {% block content %}
-    <div class="page-header d-flex flex-column flex-md-row justify-content-between align-items-md-center">
+    <div class="page-header d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-5">
         <div>
-            <h1>Voters Registrar</h1>
-            <p>Maintain the identity database for electoral eligibility.</p>
+            <h1 class="fw-bold mb-1">Voters Registrar</h1>
+            <p class="text-muted mb-0">Maintain the identity database for electoral eligibility.</p>
         </div>
         <div class="d-flex gap-2 mt-3 mt-md-0">
             <div class="dropdown">
-                <button class="btn btn-light dropdown-toggle" type="button" data-bs-toggle="dropdown">
-                    <span class="material-symbols-outlined fs-6">construction</span> Registry Tools
+                <button class="btn btn-premium-dark dropdown-toggle shadow-sm d-flex align-items-center gap-2" type="button" data-bs-toggle="dropdown" style="background: var(--admin-primary); color: #fff; border: 1px solid rgba(220, 243, 176, 0.2); border-radius: 1rem; padding: 0.6rem 1.25rem; font-weight: 600; transition: all 0.3s ease;">
+                    <span class="material-symbols-outlined text-accent fs-5" style="font-family: 'Material Symbols Outlined' !important; color: var(--admin-accent) !important;">construction</span> Registry Tools
                 </button>
-                <ul class="dropdown-menu dropdown-menu-end shadow-lg border-0 py-2">
-                    <li><a class="dropdown-item py-2 d-flex align-items-center" href="#" data-bs-toggle="modal" data-bs-target="#duplicateAuditModal"><span class="material-symbols-outlined me-2 text-muted fs-6">layers</span> Identify Duplicates</a></li>
-                    <li><a class="dropdown-item py-2 d-flex align-items-center" href="{{ PROOT }}admin/voters/import"><span class="material-symbols-outlined me-2 text-muted fs-6">upload_file</span> Import Identities (CSV)</a></li>
-                    <li><a class="dropdown-item py-2 d-flex align-items-center" href="#" data-bs-toggle="modal" data-bs-target="#exportLinksModal"><span class="material-symbols-outlined me-2 text-muted fs-6">link</span> Export Voting Links</a></li>
-                    <li><hr class="dropdown-divider mx-3"></li>
-                    <li><a class="dropdown-item py-2 text-danger d-flex align-items-center" href="#" data-bs-toggle="modal" data-bs-target="#wipeRegistryModal"><span class="material-symbols-outlined me-2 fs-6">warning</span> Wipe Registry</a></li>
+                <ul class="dropdown-menu dropdown-menu-end shadow-2xl border-0 py-2 dropdown-menu-premium rounded-4">
+                    <li class="px-3 py-2"><span class="premium-label mb-0" style="color: var(--admin-accent) !important;">AUDIT & INTELLIGENCE</span></li>
+                    <li><a class="dropdown-item py-2 d-flex align-items-center" href="#" data-bs-toggle="modal" data-bs-target="#duplicateAuditModal">
+                        <span class="material-symbols-outlined me-2 text-accent fs-6" style="font-family: 'Material Symbols Outlined' !important; color: var(--admin-accent) !important;">layers</span> Identify Duplicates
+                    </a></li>
+                    <li><a class="dropdown-item py-2 d-flex align-items-center" href="{{ PROOT }}admin/voters/import">
+                        <span class="material-symbols-outlined me-2 text-accent fs-6" style="font-family: 'Material Symbols Outlined' !important; color: var(--admin-accent) !important;">upload_file</span> Import Identities (CSV)
+                    </a></li>
+                    <li><a class="dropdown-item py-2 d-flex align-items-center" href="#" data-bs-toggle="modal" data-bs-target="#exportLinksModal">
+                        <span class="material-symbols-outlined me-2 text-accent fs-6" style="font-family: 'Material Symbols Outlined' !important; color: var(--admin-accent) !important;">link</span> Export Voting Links
+                    </a></li>
+                    <li><hr class="dropdown-divider mx-3 opacity-10"></li>
+                    <li class="px-3 py-2"><span class="premium-label mb-0 text-danger" style="color: #ff4d4d !important; letter-spacing: 0.15em !important;">CRITICAL ACTIONS</span></li>
+                    <li><a class="dropdown-item py-2 text-danger d-flex align-items-center" href="#" data-bs-toggle="modal" data-bs-target="#wipeRegistryModal">
+                        <span class="material-symbols-outlined me-2 text-accent fs-6" style="font-family: 'Material Symbols Outlined' !important; color: var(--admin-accent) !important;">warning</span> Wipe Registry
+                    </a></li>
                 </ul>
             </div>
-            <a href="{{ PROOT }}admin/voters/add" class="btn btn-primary shadow-sm">
+            <a href="{{ PROOT }}admin/voters/add" class="btn btn-primary shadow-sm d-flex align-items-center gap-2 px-4">
                 <span class="material-symbols-outlined fs-6">person_add</span> Register Voter
             </a>
         </div>
     </div>
 
-    <!-- Voters Registry -->
-    <div class="card border-0 shadow-sm overflow-hidden">
-        <div class="card-header border-0 pb-3">
-            <div class="row align-items-center g-3 w-100">
-                <div class="col-md-auto">
-                    <h5 class="fw-bold mb-0">Identity Registry</h5>
-                </div>
-                <div class="col-md-4 ms-md-auto">
-                    <div class="input-group">
-                        <span class="input-group-text bg-light border-0"><span class="material-symbols-outlined fs-6 text-muted">search</span></span>
-                        <input type="text" id="voterSearch" class="form-control bg-light border-0" placeholder="Search identities...">
+    <!-- Identity Command Center -->
+    <div class="card border-0 shadow-sm rounded-4 overflow-hidden mb-5">
+        <div class="card-header bg-white p-4 border-0">
+            <form action="{{ PROOT }}admin/voters" method="GET" id="filterForm">
+                <div class="d-flex flex-wrap align-items-center gap-3">
+                    <!-- Stats Section -->
+                    <div class="d-flex align-items-center gap-2 pe-4 border-end">
+                        <span class="material-symbols-outlined text-dark fs-5">groups</span>
+                        <span class="fw-bold text-dark small">{{ pagination.totalItems }} Total</span>
+                    </div>
+                    
+                    <!-- Filter Section -->
+                    <div class="flex-grow-1" style="max-width: 300px;">
+                        <div class="input-group input-group-pill bg-light">
+                            <span class="input-group-text bg-transparent border-0 pe-0">
+                                <span class="material-symbols-outlined fs-6 text-muted">filter_list</span>
+                            </span>
+                            <select name="election" class="form-select bg-transparent border-0 small shadow-none py-2" onchange="this.form.submit()">
+                                <option value="all">All Electoral Sessions</option>
+                                {% for election in elections %}
+                                    <option value="{{ election.uuid }}" {{ pagination.election == election.uuid ? 'selected' : '' }}>{{ election.title }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <!-- Search Section -->
+                    <div class="flex-grow-1" style="max-width: 400px;">
+                        <div class="input-group input-group-pill bg-light">
+                            <span class="input-group-text bg-transparent border-0 pe-0">
+                                <span class="material-symbols-outlined fs-6 text-muted">search</span>
+                            </span>
+                            <input type="text" name="search" class="form-control bg-transparent border-0 small shadow-none py-2" placeholder="Search name, ID, or email..." value="{{ pagination.search }}">
+                        </div>
+                    </div>
+
+                    <!-- Action Section -->
+                    <div class="ms-auto">
+                        <button type="submit" class="btn btn-primary-brand px-4 py-2 rounded-pill fw-bold small">Search</button>
+                        {% if pagination.search or pagination.election != 'all' %}
+                            <a href="{{ PROOT }}admin/voters" class="btn btn-link btn-sm text-decoration-none text-muted ms-2">Reset</a>
+                        {% endif %}
                     </div>
                 </div>
-            </div>
+            </form>
         </div>
-        
+    </div>
+
+    <!-- Voters Registry -->
+    <div class="card border-0 shadow-sm overflow-hidden rounded-4">
         <form action="{{ PROOT }}admin/voters/bulk-delete" method="POST" id="bulkDeleteForm">
             {{ csrf_field()|raw }}
             <div class="table-container">
-                <table class="table align-middle" id="votersTable">
+                <table class="table align-middle mb-0">
                     <thead>
                         <tr>
-                            <th style="width: 50px;" class="ps-4">
-                                <input type="checkbox" class="form-check-input" id="selectAll">
+                            <th style="width: 60px;" class="ps-4">
+                                <div class="form-check custom-checkbox">
+                                    <input type="checkbox" class="form-check-input" id="selectAll">
+                                </div>
                             </th>
-                            <th>Identity & Contact</th>
-                            <th class="hide-mobile">Registry ID</th>
-                            <th class="hide-mobile">Target Election</th>
-                            <th class="text-end pe-4">Management</th>
+                            <th class="py-3">Identity & Contact</th>
+                            <th class="py-3">Registry ID</th>
+                            <th class="py-3">Electoral Assignment</th>
+                            <th class="text-end pe-4 py-3">Management</th>
                         </tr>
                     </thead>
                     <tbody>
                         {% for voter in voters %}
                             <tr>
                                 <td class="ps-4">
-                                    <input type="checkbox" name="voter_ids[]" value="{{ voter.uuid }}" class="form-check-input voter-checkbox">
+                                    <div class="form-check custom-checkbox">
+                                        <input type="checkbox" name="voter_ids[]" value="{{ voter.uuid }}" class="form-check-input voter-checkbox">
+                                    </div>
                                 </td>
                                 <td>
                                     <div class="d-flex align-items-center">
-                                        <div class="stat-icon me-3 bg-indigo-subtle text-indigo rounded-circle" style="width: 42px; height: 42px; font-size: 0.875rem;">
+                                        <div class="avatar-sm me-3 bg-primary-subtle text-primary rounded-circle fw-bold">
                                             {{ voter.first_name|slice(0, 1) }}{{ voter.last_name|slice(0, 1) }}
                                         </div>
                                         <div>
-                                            <div class="fw-bold text-dark">{{ voter.first_name }} {{ voter.last_name }}</div>
-                                            <div class="d-flex align-items-center flex-wrap">
+                                            <div class="fw-bold text-dark fs-6">{{ voter.first_name }} {{ voter.last_name }}</div>
+                                            <div class="d-flex align-items-center flex-wrap gap-2 mt-1">
                                                 {% if voter.email %}
-                                                    <div class="text-muted extra-small me-2 d-flex align-items-center">
-                                                        <span class="material-symbols-outlined fs-6 me-1">alternate_email</span> {{ voter.email }}
-                                                    </div>
+                                                    <span class="text-muted extra-small d-flex align-items-center"><span class="material-symbols-outlined fs-6 me-1 opacity-50">alternate_email</span> {{ voter.email }}</span>
                                                 {% endif %}
                                                 {% if voter.phone %}
-                                                    <div class="text-muted extra-small me-2 d-flex align-items-center">
-                                                        <span class="material-symbols-outlined fs-6 me-1">phone</span> {{ voter.phone }}
-                                                    </div>
+                                                    <span class="text-muted extra-small d-flex align-items-center"><span class="material-symbols-outlined fs-6 me-1 opacity-50">phone</span> {{ voter.phone }}</span>
                                                 {% endif %}
-                                                <span class="badge {{ voter.gender == 'male' ? 'bg-primary-subtle text-primary' : 'bg-danger-subtle text-danger' }} extra-small px-2 py-0" style="font-size: 9px;">
+                                                <span class="badge bg-light text-dark extra-small border-0 px-2 py-1 rounded-pill" style="font-size: 9px; background: rgba(0,0,0,0.03) !important;">
                                                     {{ voter.gender|upper }}
                                                 </span>
                                             </div>
                                         </div>
                                     </div>
                                 </td>
-                                <td class="hide-mobile">
-                                    <span class="badge bg-light text-primary border fw-bold">{{ voter.voter_id }}</span>
+                                <td>
+                                    <div class="d-flex align-items-center gap-3">
+                                        <span class="material-symbols-outlined fs-5 text-primary opacity-50">fingerprint</span>
+                                        <div class="id-token bg-light border px-3 py-1 rounded-pill">
+                                            <span class="fw-mono fw-bold text-dark fs-6">{{ voter.voter_id }}</span>
+                                        </div>
+                                    </div>
                                 </td>
-                                <td class="text-muted small hide-mobile">
-                                    <div class="d-flex align-items-center">
-                                        <span class="material-symbols-outlined me-1 fs-6">event_note</span>
+                                <td>
+                                    <div class="text-dark fw-medium small d-flex align-items-center">
+                                        <span class="material-symbols-outlined me-2 fs-6 text-primary opacity-75">how_to_reg</span>
                                         {{ voter.title }}
                                     </div>
                                 </td>
                                 <td class="text-end pe-4">
-                                        <div class="d-flex justify-content-end gap-2">
-                                            {% if voter.allow_direct_link %}
-                                                <button type="button" class="btn btn-light btn-sm px-2 btn-copy-link" data-token="{{ voter.voting_token }}" title="Copy Link">
-                                                    <span class="material-symbols-outlined fs-6">link</span>
-                                                </button>
-                                                <button type="button" class="btn btn-whatsapp btn-sm px-2" onclick="sendWhatsApp('{{ voter.phone ?: voter.voter_id }}', '{{ voter.voting_token }}', '{{ voter.first_name }} {{ voter.last_name }}', '{{ voter.title }}')" title="Send WhatsApp">
-                                                    <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" style="width: 16px; height: 16px;">
-                                                </button>
-                                            {% endif %}
-
-                                            {% if voter.election_status == 0 %}
-                                                <a href="{{ PROOT }}admin/voters/edit/{{ voter.uuid }}" class="btn btn-light btn-sm px-2">
-                                                    <span class="material-symbols-outlined fs-6">edit</span>
-                                                </a>
-                                                <a href="{{ PROOT }}admin/voters/delete/{{ voter.uuid }}" class="btn btn-light btn-sm px-2 text-danger" onclick="return confirm('Delete voter?')">
-                                                    <span class="material-symbols-outlined fs-6">delete</span>
-                                                </a>
-                                            {% else %}
-                                                <span class="badge bg-light text-muted border extra-small px-2 d-flex align-items-center"><span class="material-symbols-outlined fs-6 me-1">lock</span> Locked</span>
-                                            {% endif %}
-                                        </div>
+                                    <div class="d-flex justify-content-end gap-2">
+                                        <a href="{{ PROOT }}admin/voters/edit/{{ voter.uuid }}" class="btn btn-light btn-sm px-2 shadow-sm" title="Edit Identity">
+                                            <span class="material-symbols-outlined fs-6">edit</span>
+                                        </a>
+                                        <button type="button" class="btn btn-light btn-sm px-2 text-danger shadow-sm" onclick="confirmDeleteVoter('{{ voter.uuid }}')" title="Delete Identity">
+                                            <span class="material-symbols-outlined fs-6">delete</span>
+                                        </button>
+                                    </div>
                                 </td>
                             </tr>
                         {% else %}
                             <tr>
                                 <td colspan="5" class="text-center py-5 text-muted">
-                                    <span class="material-symbols-outlined fs-1 opacity-25">group_off</span>
-                                    <p class="mt-2">No identities found in the registrar.</p>
+                                    <div class="py-4">
+                                        <span class="material-symbols-outlined fs-1 opacity-10">person_search</span>
+                                        <p class="mt-3 mb-0 fw-medium">No identities found in the current cluster.</p>
+                                        <p class="extra-small opacity-50">Try adjusting your filters or adding a new record.</p>
+                                    </div>
                                 </td>
                             </tr>
                         {% endfor %}
@@ -137,236 +176,303 @@
             </div>
 
             <!-- Bulk Actions Footer -->
-            <div class="card-footer bg-light bg-opacity-50 border-top-0 py-3 px-4" id="bulkActions" style="display: none;">
-                <div class="d-flex align-items-center justify-content-between">
-                    <div class="d-flex align-items-center">
-                        <span class="badge bg-indigo rounded-pill me-2" id="selectedCount">0</span>
-                        <span class="small text-muted fw-medium">Identities selected for action</span>
+            <div id="bulkActionsBar" class="p-3 bg-light bg-opacity-50 border-top d-none animate__animated animate__fadeInUp">
+                <div class="d-flex align-items-center justify-content-between px-2">
+                    <div class="small fw-bold text-dark">
+                        <span id="selectedCount">0</span> Identities Selected
                     </div>
-                    <button type="submit" class="btn btn-sm btn-danger px-4 fw-bold shadow-sm d-flex align-items-center" onclick="return confirm('Delete selected identities from the registry?')">
-                        Delete Selected <span class="material-symbols-outlined ms-1 fs-6">delete</span>
-                    </button>
+                    <div class="d-flex gap-2">
+                        <button type="button" id="bulkDeleteBtn" class="btn btn-danger btn-sm px-4 rounded-3 d-flex align-items-center gap-2 shadow-sm">
+                            <span class="material-symbols-outlined fs-6">delete_sweep</span> Delete Selected
+                        </button>
+                        <button type="button" id="cancelBulk" class="btn btn-light btn-sm px-3 rounded-3">Cancel</button>
+                    </div>
                 </div>
             </div>
         </form>
-    </div>
 
-    <!-- Duplicate Audit Modal -->
-    <div class="modal fade" id="duplicateAuditModal" tabindex="-1">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content border-0 shadow-lg rounded-4">
-                <div class="modal-header border-0 pt-4 px-4">
-                    <h5 class="fw-bold mb-0">Identify Duplicates</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        <!-- Pagination Footer -->
+        {% if pagination.totalPages > 1 %}
+            <div class="card-footer bg-white border-0 py-4 px-4 d-flex justify-content-between align-items-center border-top">
+                <div class="text-muted small">
+                    Showing <span class="fw-bold text-dark">{{ ((pagination.currentPage - 1) * pagination.limit) + 1 }}</span> to 
+                    <span class="fw-bold text-dark">{{ min(pagination.currentPage * pagination.limit, pagination.totalItems) }}</span> of 
+                    <span class="fw-bold text-dark">{{ pagination.totalItems }}</span> identities
                 </div>
-                <div class="modal-body p-4">
-                    <p class="text-muted small">Select the scope of the duplication audit.</p>
-                    <form action="{{ PROOT }}admin/voters/duplicates" method="GET">
-                        <div class="mb-4">
-                            <label class="form-label small fw-bold text-uppercase">Target Election</label>
-                            <select class="form-select bg-light border-0 shadow-none" name="election_uuid">
-                                <option value="">Audit All Elections</option>
-                                {% for election in elections %}
-                                    <option value="{{ election.uuid }}">{{ election.title }}</option>
-                                {% endfor %}
-                            </select>
-                        </div>
-                        <button type="submit" class="btn btn-dark w-100 fw-bold py-2 shadow-sm">Start Audit</button>
-                    </form>
-                </div>
+                
+                <nav>
+                    <ul class="pagination pagination-premium mb-0 gap-2">
+                        {# Previous Button #}
+                        <li class="page-item {{ pagination.currentPage == 1 ? 'disabled' : '' }}">
+                            <a class="page-link shadow-sm" href="{{ PROOT }}admin/voters?page={{ pagination.currentPage - 1 }}&election={{ pagination.election }}&search={{ pagination.search }}">
+                                <span class="material-symbols-outlined fs-5">chevron_left</span>
+                            </a>
+                        </li>
+
+                        {# First Page #}
+                        <li class="page-item {{ pagination.currentPage == 1 ? 'active' : '' }}">
+                            <a class="page-link shadow-sm" href="{{ PROOT }}admin/voters?page=1&election={{ pagination.election }}&search={{ pagination.search }}">1</a>
+                        </li>
+
+                        {# Ellipsis and Page Range #}
+                        {% set adjacents = 2 %}
+                        {% if pagination.currentPage > (adjacents + 2) %}
+                            <li class="page-item disabled"><span class="page-link border-0 bg-transparent">...</span></li>
+                        {% endif %}
+
+                        {% set range_start = max(2, pagination.currentPage - adjacents) %}
+                        {% set range_end = min(pagination.totalPages - 1, pagination.currentPage + adjacents) %}
+                        
+                        {% if range_start <= range_end %}
+                            {% for i in range(range_start, range_end) %}
+                                <li class="page-item {{ i == pagination.currentPage ? 'active' : '' }}">
+                                    <a class="page-link shadow-sm" href="{{ PROOT }}admin/voters?page={{ i }}&election={{ pagination.election }}&search={{ pagination.search }}">{{ i }}</a>
+                                </li>
+                            {% endfor %}
+                        {% endif %}
+
+                        {% if pagination.currentPage < (pagination.totalPages - adjacents - 1) %}
+                            <li class="page-item disabled"><span class="page-link border-0 bg-transparent">...</span></li>
+                        {% endif %}
+
+                        {# Last Page #}
+                        {% if pagination.totalPages > 1 %}
+                            <li class="page-item {{ pagination.currentPage == pagination.totalPages ? 'active' : '' }}">
+                                <a class="page-link shadow-sm" href="{{ PROOT }}admin/voters?page={{ pagination.totalPages }}&election={{ pagination.election }}&search={{ pagination.search }}">{{ pagination.totalPages }}</a>
+                            </li>
+                        {% endif %}
+
+                        {# Next Button #}
+                        <li class="page-item {{ pagination.currentPage == pagination.totalPages ? 'disabled' : '' }}">
+                            <a class="page-link shadow-sm" href="{{ PROOT }}admin/voters?page={{ pagination.currentPage + 1 }}&election={{ pagination.election }}&search={{ pagination.search }}">
+                                <span class="material-symbols-outlined fs-5">chevron_right</span>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
             </div>
-        </div>
+        {% endif %}
     </div>
 
-    <!-- Wipe Registry Modal -->
-    <div class="modal fade" id="wipeRegistryModal" tabindex="-1">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content border-0 shadow-lg rounded-4">
-                <div class="modal-header border-0 pt-4 px-4">
-                    <h5 class="fw-bold mb-0 text-danger">Wipe Registry</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body p-4">
-                    <div class="alert alert-danger border-0 rounded-4 mb-4">
-                        <div class="d-flex">
-                            <span class="material-symbols-outlined me-2">report</span>
-                            <div class="small fw-bold">This action is irreversible. All selected voter records and their login credentials will be permanently erased.</div>
-                        </div>
-                    </div>
-
-                    <form action="{{ PROOT }}admin/voters/truncate" method="POST">
-                        {{ csrf_field()|raw }}
-                        <div class="mb-4">
-                            <label class="form-label small fw-bold text-uppercase">Wipe Scope</label>
-                            <div class="d-flex flex-column gap-2">
-                                <div class="form-check p-3 bg-light rounded-3 border-0">
-                                    <input class="form-check-input ms-0 me-3" type="radio" name="wipe_scope" id="wipeElection" value="election" checked onchange="toggleWipeElection(true)">
-                                    <label class="form-check-label fw-bold small text-dark" for="wipeElection">Specific Election</label>
-                                </div>
-                                <div class="form-check p-3 bg-light rounded-3 border-0">
-                                    <input class="form-check-input ms-0 me-3" type="radio" name="wipe_scope" id="wipeAll" value="all" onchange="toggleWipeElection(false)">
-                                    <label class="form-check-label fw-bold small text-danger" for="wipeAll">Entire Registry (Global Wipe)</label>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div id="wipeElectionSelect" class="mb-4">
-                            <label class="form-label small fw-bold text-uppercase">Select Election</label>
-                            <select class="form-select bg-light border-0 shadow-none" name="election_uuid">
-                                <option value="">Select Election...</option>
-                                {% for election in elections %}
-                                    <option value="{{ election.uuid }}">{{ election.title }}</option>
-                                {% endfor %}
-                            </select>
-                        </div>
-
-                        <div class="mt-4">
-                            <button type="submit" class="btn btn-danger w-100 fw-bold py-2 shadow-sm" onclick="return confirm('FINAL WARNING: Proceed with wiping data?')">
-                                Confirm Wipe
-                            </button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Export Links Modal -->
-    <div class="modal fade" id="exportLinksModal" tabindex="-1">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content border-0 shadow-lg rounded-4">
-                <div class="modal-header border-0 pt-4 px-4">
-                    <h5 class="fw-bold mb-0">Export Voting Links</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body p-4">
-                    <p class="text-muted small">Select an election to export voters and their direct voting links.</p>
-                    <form id="exportLinksForm" onsubmit="event.preventDefault(); window.location.href = '{{ PROOT }}admin/voters/export/links/' + this.election_uuid.value;">
-                        <div class="mb-4">
-                            <label class="form-label small fw-bold text-uppercase">Target Election</label>
-                            <select class="form-select bg-light border-0 shadow-none" name="election_uuid" required>
-                                <option value="">Select Election...</option>
-                                {% for election in elections %}
-                                    <option value="{{ election.uuid }}">{{ election.title }}</option>
-                                {% endfor %}
-                            </select>
-                        </div>
-                        <button type="submit" class="btn btn-dark w-100 fw-bold py-2 shadow-sm">Download CSV</button>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
+    {# Include the existing modals #}
+    {% include "admin/voters/modals.twig" %}
 {% endblock %}
 
 {% block styles %}
 <style>
-    .extra-small { font-size: 0.75rem; }
-    .fw-mono { font-family: 'JetBrains Mono', 'Fira Code', monospace; }
-    .btn-light:hover { background: var(--admin-bg); border-color: #cbd5e1; color: var(--admin-primary); }
-    .btn-whatsapp { background: #25D366; color: white; border: none; }
-    .btn-whatsapp:hover { background: #128C7E; color: white; }
-    
-    /* Mobile Responsiveness Improvements */
-    .table-container {
-        overflow-x: auto;
-        -webkit-overflow-scrolling: touch;
+    /* Modal Stability Fixes */
+    .modal.fade .modal-dialog {
+        transition: transform 0.2s ease-out !important;
     }
     
-    @media (max-width: 768px) {
-        .hide-mobile {
-            display: none !important;
-        }
-        .table thead th, .table tbody td {
-            padding: 1rem !important;
-        }
-        .stat-icon {
-            width: 32px !important;
-            height: 32px !important;
-            font-size: 0.7rem !important;
-        }
+    /* Prevent layout thrashing during modal activation */
+    body.modal-open {
+        overflow: hidden !important;
+        padding-right: 0 !important;
+    }
+    
+    /* Stabilize main content when modal is active */
+    body.modal-open .main {
+        transition: none !important;
+    }
+
+    .avatar-sm {
+        width: 48px;
+        height: 48px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.9rem;
+        border: 2px solid #fff;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+    }
+    .stat-icon-sm {
+        width: 32px;
+        height: 32px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .stat-icon-xs {
+        width: 24px;
+        height: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .pagination-premium .page-link {
+        width: 42px;
+        height: 42px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 12px !important;
+        border: none;
+        background: #f1f5f9;
+        color: var(--admin-text-main);
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+    .pagination-premium .page-item.active .page-link {
+        background: var(--admin-primary) !important;
+        color: var(--admin-accent) !important;
+        box-shadow: 0 8px 20px rgba(29, 61, 55, 0.25) !important;
+    }
+    .pagination-premium .page-item.disabled .page-link {
+        opacity: 0.5;
+        background: #f8fafc;
+    }
+    .pagination-premium .page-link:hover:not(.disabled) {
+        background: #e2e8f0;
+        transform: translateY(-2px);
+    }
+    .table thead th {
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        font-weight: 700;
+        background: #f8fafc;
+        border-bottom: 1px solid rgba(0,0,0,0.05);
+    }
+    .custom-checkbox .form-check-input {
+        width: 1.25rem;
+        height: 1.25rem;
+        border-radius: 6px;
+        border: 2px solid rgba(0,0,0,0.1);
+        cursor: pointer;
+    }
+    .custom-checkbox .form-check-input:checked {
+        background-color: var(--admin-primary);
+        border-color: var(--admin-primary);
+    }
+    .input-group-pill {
+        border-radius: 50px;
+        padding: 2px 10px;
+    }
+    .input-group-pill .form-control, .input-group-pill .form-select {
+        border-radius: 50px !important;
+    }
+    .id-token {
+        background: rgba(0,0,0,0.02) !important;
+        border: 1px solid rgba(0,0,0,0.05) !important;
+        box-shadow: none !important;
+    }
+    .fw-mono {
+        font-family: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace;
+        letter-spacing: -0.02em;
+    }
+    .btn-primary-brand {
+        background-color: var(--admin-primary) !important;
+        color: var(--admin-accent) !important;
+        border: none !important;
+        transition: all 0.3s ease;
+    }
+    .btn-primary-brand:hover {
+        background-color: var(--admin-primary-hover) !important;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(29, 61, 55, 0.2);
     }
 </style>
 {% endblock %}
 
 {% block scripts %}
 <script>
-    const PROOT = "{{ PROOT }}";
-
-    function toggleWipeElection(show) {
-        const select = document.getElementById('wipeElectionSelect');
-        if (select) select.style.display = show ? 'block' : 'none';
-    }
-
-    function sendWhatsApp(phone, token, name, electionTitle) {
-        // Clean phone number
-        let cleanPhone = phone.replace(/[^0-9+]/g, '');
-        // If it starts with 0 and no +, assume GH (+233)
-        if (cleanPhone.startsWith('0') && !cleanPhone.startsWith('+')) {
-            cleanPhone = '233' + cleanPhone.substring(1);
-        } else if (!cleanPhone.startsWith('+')) {
-            // If no +, just send as is
-        } else {
-            cleanPhone = cleanPhone.replace('+', '');
-        }
-
-        const link = window.location.origin + PROOT + 'v/' + token;
-        const message = `🗳️ *KOKUROMOTIE POWER*\n\nHello *${name}*! Your participation in the *${electionTitle}* is highly valued. To make voting easy for you, we have generated a secure direct link.\n\nPlease click the secure link below to cast your vote:\n\n🔗 ${link}\n\nYour vote is private and secure. Thank you!`;
-        const encoded = encodeURIComponent(message);
-        window.open(`https://wa.me/${cleanPhone}?text=${encoded}`, '_blank');
-    }
-
     $(document).ready(function() {
-        // Search Functionality
-        $("#voterSearch").on("keyup", function() {
-            var value = $(this).val().toLowerCase();
-            $("#votersTable tbody tr").filter(function() {
-                $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
-            });
-        });
+        // Bulk Selection Logic
+        const $selectAll = $("#selectAll");
+        const $voterCheckboxes = $(".voter-checkbox");
+        const $bulkBar = $("#bulkActionsBar");
+        const $count = $("#selectedCount");
 
-        // Bulk Selection
-        $('#selectAll').on('change', function() {
-            $('.voter-checkbox').prop('checked', $(this).prop('checked'));
-            updateBulkStatus();
-        });
-
-        $(document).on('change', '.voter-checkbox', function() {
-            updateBulkStatus();
-        });
-
-        function updateBulkStatus() {
-            var count = $('.voter-checkbox:checked').length;
-            $('#selectedCount').text(count);
-            if (count > 0) {
-                $('#bulkActions').slideDown(200);
+        function updateBulkBar() {
+            const checkedCount = $(".voter-checkbox:checked").length;
+            if (checkedCount > 0) {
+                $count.text(checkedCount);
+                $bulkBar.removeClass("d-none");
             } else {
-                $('#bulkActions').slideUp(200);
+                $bulkBar.addClass("d-none");
             }
         }
 
-        // Copy Link Functionality
-        $('.btn-copy-link').on('click', function() {
-            const token = $(this).data('token');
-            const url = window.location.origin + '{{ PROOT }}v/' + token;
+        $selectAll.on("change", function() {
+            $voterCheckboxes.prop("checked", $(this).prop("checked"));
+            updateBulkBar();
+        });
+
+        $voterCheckboxes.on("change", function() {
+            updateBulkBar();
+            if ($(".voter-checkbox:checked").length === $voterCheckboxes.length) {
+                $selectAll.prop("checked", true);
+            } else {
+                $selectAll.prop("checked", false);
+            }
+        });
+
+        $("#cancelBulk").on("click", function() {
+            $voterCheckboxes.prop("checked", false);
+            $selectAll.prop("checked", false);
+            updateBulkBar();
+        });
+
+        // Fix for modal/dropdown conflict and stability
+        $('.dropdown-item[data-bs-toggle="modal"]').on('click', function() {
+            const target = $(this).data('bs-target');
+            const $modal = $(target);
             
-            const tempInput = document.createElement('input');
-            tempInput.value = url;
-            document.body.appendChild(tempInput);
-            tempInput.select();
-            document.execCommand('copy');
-            document.body.removeChild(tempInput);
-            
-            const btn = $(this);
-            const originalIcon = btn.find('.material-symbols-outlined').text();
-            btn.find('.material-symbols-outlined').text('check');
-            btn.addClass('text-success');
-            
-            setTimeout(() => {
-                btn.find('.material-symbols-outlined').text(originalIcon);
-                btn.removeClass('text-success');
-            }, 2000);
+            // Ensure dropdown is closed before modal opens
+            const $dropdown = $(this).closest('.dropdown');
+            const dropdownBtn = $dropdown.find('.dropdown-toggle')[0];
+            if (window.bootstrap && window.bootstrap.Dropdown) {
+                const ds = window.bootstrap.Dropdown.getInstance(dropdownBtn);
+                if (ds) ds.hide();
+            }
+        });
+
+        $("#bulkDeleteBtn").on("click", function() {
+            Swal.fire({
+                title: 'Bulk Deletion?',
+                text: 'You are about to delete ' + $(".voter-checkbox:checked").length + ' identities. This action is permanent.',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Yes, Delete All',
+                cancelButtonText: 'Cancel',
+                customClass: {
+                    popup: 'premium-swal-popup',
+                    title: 'premium-swal-title',
+                    htmlContainer: 'premium-swal-html',
+                    confirmButton: 'btn btn-danger premium-swal-confirm',
+                    cancelButton: 'btn premium-swal-cancel'
+                },
+                buttonsStyling: false
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $("#bulkDeleteForm").submit();
+                }
+            });
         });
     });
+
+    function confirmDeleteVoter(uuid) {
+        Swal.fire({
+            title: 'Delete Identity?',
+            text: 'This action will permanently remove this record from the registrar.',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, Delete',
+            cancelButtonText: 'Cancel',
+            customClass: {
+                popup: 'premium-swal-popup',
+                title: 'premium-swal-title',
+                htmlContainer: 'premium-swal-html',
+                confirmButton: 'btn btn-danger premium-swal-confirm',
+                cancelButton: 'btn premium-swal-cancel'
+            },
+            buttonsStyling: false
+        }).then((result) => {
+            if (result.isConfirmed) {
+                window.location.href = "{{ PROOT }}admin/voters/delete/" + uuid;
+            }
+        });
+    }
 </script>
 {% endblock %}

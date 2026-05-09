@@ -43,7 +43,9 @@
                                                     <span class="material-symbols-outlined">ballot</span>
                                                 </div>
                                                 <div>
-                                                    <div class="fw-bold fs-6">{{ election.title }}</div>
+                                                    <a href="{{ PROOT }}admin/elections/view/{{ election.uuid }}" class="text-decoration-none">
+                                                        <div class="fw-bold fs-6 text-dark hover-text-primary transition-all">{{ election.title }}</div>
+                                                    </a>
                                                     <div class="text-muted extra-small d-flex align-items-center">
                                                         <span class="material-symbols-outlined me-1 fs-6">corporate_fare</span> {{ election.organized_by }}
                                                         <span class="mx-2 opacity-25">|</span>
@@ -359,13 +361,13 @@
         0%, 100% { opacity: 1; }
         50% { opacity: .5; }
     }
-    .btn-white {
-        background: #fff;
-        color: var(--admin-text-main);
-    }
     .btn-white:hover {
         background: #f8fafc;
         color: var(--admin-primary);
+    }
+    .hover-text-primary:hover {
+        color: var(--admin-primary) !important;
+        transform: translateX(4px);
     }
     .tracking-wider { letter-spacing: 0.05em; }
     .glass-modal {

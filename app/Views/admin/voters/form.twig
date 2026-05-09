@@ -11,8 +11,8 @@
             <p class="text-muted mb-0">Electoral registrar management terminal.</p>
         </div>
         <div class="mt-3 mt-md-0">
-            <a href="{{ PROOT }}admin/voters" class="btn btn-light shadow-sm d-flex align-items-center gap-2">
-                <span class="material-symbols-outlined fs-6">arrow_back</span> Return to Registrar
+            <a href="{{ return_to_election ? PROOT ~ 'admin/elections/view/' ~ return_to_election : PROOT ~ 'admin/voters' }}" class="btn btn-light shadow-sm d-flex align-items-center gap-2">
+                <span class="material-symbols-outlined fs-6">arrow_back</span> Return to {{ return_to_election ? 'Election Hub' : 'Registrar' }}
             </a>
         </div>
     </div>
@@ -79,6 +79,7 @@
                                 {% if voter %}
                                     <input type="hidden" name="uuid" value="{{ voter.uuid }}">
                                 {% endif %}
+                                <input type="hidden" name="return_to_election" value="{{ return_to_election }}">
 
                                 <!-- Personal Identity Block -->
                                 <div class="mb-5">
@@ -152,7 +153,7 @@
                                 </div>
 
                                 <div class="d-flex justify-content-end gap-3 mt-5">
-                                    <a href="{{ PROOT }}admin/voters" class="btn btn-light px-5 py-3 fw-bold rounded-4 shadow-sm">Cancel</a>
+                                    <a href="{{ return_to_election ? PROOT ~ 'admin/elections/view/' ~ return_to_election : PROOT ~ 'admin/voters' }}" class="btn btn-light px-5 py-3 fw-bold rounded-4 shadow-sm">Cancel</a>
                                     <button type="submit" class="btn btn-primary px-5 py-3 fw-bold rounded-4 shadow-sm d-flex align-items-center gap-2">
                                         <span class="material-symbols-outlined fs-5">save</span>
                                         {{ voter ? 'Update Identity' : 'Finalize Registration' }}

@@ -5,10 +5,10 @@
 {% block title %}Contestants Registry • Kokuromotie{% endblock %}
 
 {% block content %}
-    <div class="page-header d-flex flex-column flex-md-row justify-content-between align-items-md-center">
+    <div class="page-header d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-5">
         <div>
-            <h1>Contestants Registry</h1>
-            <p>Manage candidates and their associated electoral campaigns.</p>
+            <h1 class="fw-bold mb-1">Contestants Registry</h1>
+            <p class="text-muted mb-0">Manage candidates and their associated electoral campaigns.</p>
         </div>
         <div class="d-flex gap-2 mt-3 mt-md-0">
             <a href="{{ PROOT }}admin/contestants/archive" class="btn btn-light shadow-sm">
@@ -20,49 +20,73 @@
         </div>
     </div>
 
-    <!-- Contestants Registry -->
-    <div class="card border-0 shadow-sm overflow-hidden">
-        <div class="card-header border-0 pb-3">
-            <div class="row align-items-center g-3 w-100">
-                <div class="col-md-auto">
-                    <h5 class="fw-bold mb-0">Active Candidates</h5>
-                </div>
-                <div class="col-md-3 ms-md-auto">
-                    <select id="electionFilter" class="form-select bg-light border-0">
-                        <option value="all">All Elections</option>
-                        {% for election in elections %}
-                            <option value="{{ election.uuid }}">{{ election.title }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
-                <div class="col-md-4">
-                    <div class="input-group">
-                        <span class="input-group-text bg-light border-0"><span class="material-symbols-outlined fs-6 text-muted">search</span></span>
-                        <input type="text" id="contestantSearch" class="form-control bg-light border-0" placeholder="Search by name, office...">
+    <!-- Contestants Registry Terminal -->
+    <div class="card border-0 shadow-sm rounded-4 overflow-hidden mb-5">
+        <div class="card-header bg-white p-4 border-0">
+            <form action="{{ PROOT }}admin/contestants" method="GET" id="filterForm">
+                <div class="d-flex flex-wrap align-items-center gap-3">
+                    <!-- Stats Section -->
+                    <div class="d-flex align-items-center gap-2 pe-4 border-end">
+                        <span class="material-symbols-outlined text-dark fs-5">groups</span>
+                        <span class="fw-bold text-dark small">{{ pagination.totalItems }} Total</span>
+                    </div>
+                    
+                    <!-- Filter Section -->
+                    <div class="flex-grow-1" style="max-width: 300px;">
+                        <div class="input-group input-group-pill bg-light">
+                            <span class="input-group-text bg-transparent border-0 pe-0">
+                                <span class="material-symbols-outlined fs-6 text-muted">filter_list</span>
+                            </span>
+                            <select name="election" class="form-select bg-transparent border-0 small shadow-none py-2" onchange="this.form.submit()">
+                                <option value="all">All Elections</option>
+                                {% for election in elections %}
+                                    <option value="{{ election.uuid }}" {{ pagination.election == election.uuid ? 'selected' : '' }}>{{ election.title }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <!-- Search Section -->
+                    <div class="flex-grow-1" style="max-width: 400px;">
+                        <div class="input-group input-group-pill bg-light">
+                            <span class="input-group-text bg-transparent border-0 pe-0">
+                                <span class="material-symbols-outlined fs-6 text-muted">search</span>
+                            </span>
+                            <input type="text" name="search" class="form-control bg-transparent border-0 small shadow-none py-2" placeholder="Search name or office..." value="{{ pagination.search }}">
+                        </div>
+                    </div>
+
+                    <!-- Action Section -->
+                    <div class="ms-auto">
+                        <button type="submit" class="btn btn-primary-brand px-4 py-2 rounded-pill fw-bold small">Search</button>
+                        {% if pagination.search or pagination.election != 'all' %}
+                            <a href="{{ PROOT }}admin/contestants" class="btn btn-link btn-sm text-decoration-none text-muted ms-2">Reset</a>
+                        {% endif %}
                     </div>
                 </div>
-            </div>
+            </form>
         </div>
+
         <div class="table-container">
-            <table class="table align-middle" id="contestantsTable">
-                <thead>
+            <table class="table align-middle mb-0">
+                <thead class="bg-light bg-opacity-50">
                     <tr>
-                        <th class="ps-4">Candidate Profile</th>
-                        <th>Ballot No.</th>
-                        <th>Target Office</th>
-                        <th class="text-end pe-4">Management</th>
+                        <th class="ps-4 py-3 text-uppercase fs-xs tracking-wider fw-800 text-muted">Candidate Profile</th>
+                        <th class="py-3 text-uppercase fs-xs tracking-wider fw-800 text-muted">Ballot No.</th>
+                        <th class="py-3 text-uppercase fs-xs tracking-wider fw-800 text-muted">Target Office</th>
+                        <th class="text-end pe-4 py-3 text-uppercase fs-xs tracking-wider fw-800 text-muted">Management</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for cont in contestants %}
-                        <tr class="contestant-row" data-election-id="{{ cont.election_uuid }}">
+                        <tr class="contestant-row">
                             <td class="ps-4">
                                 <div class="d-flex align-items-center">
                                     <div class="position-relative me-3">
                                         {% if cont.profile_image and cont.profile_image != '' %}
-                                            <img class="rounded-circle border shadow-sm" src="{{ PROOT }}media/uploadedprofile/{{ cont.profile_image }}" width="45" height="45" alt="{{ cont.first_name }}" style="object-fit: cover;">
+                                            <img class="rounded-circle border shadow-sm" src="{{ PROOT }}media/uploadedprofile/{{ cont.profile_image }}" width="48" height="48" alt="{{ cont.first_name }}" style="object-fit: cover;">
                                         {% else %}
-                                            <div class="stat-icon bg-primary text-white rounded-circle fw-bold shadow-sm" style="width: 45px; height: 45px; font-size: 0.9rem; border: 2px solid #fff;">
+                                            <div class="avatar-placeholder bg-primary text-white rounded-circle fw-bold shadow-sm" style="width: 48px; height: 48px;">
                                                 {{ cont.first_name|first|upper }}{{ cont.last_name|first|upper }}
                                             </div>
                                         {% endif %}
@@ -71,7 +95,7 @@
                                     <div>
                                         <div class="fw-bold text-dark fs-6">{{ cont.first_name }} {{ cont.last_name }}</div>
                                         <div class="text-muted extra-small d-flex align-items-center">
-                                            <span class="material-symbols-outlined me-1 fs-6">inventory_2</span> {{ cont.title }}
+                                            <span class="material-symbols-outlined me-1 fs-6">event_note</span> {{ cont.title }}
                                         </div>
                                     </div>
                                 </div>
@@ -85,14 +109,14 @@
                             <td class="text-end pe-4">
                                 <div class="d-flex justify-content-end gap-2">
                                     {% if cont.status == 0 %}
-                                        <a href="{{ PROOT }}admin/contestants/edit/{{ cont.uuid }}" class="btn btn-light btn-sm px-2">
+                                        <a href="{{ PROOT }}admin/contestants/edit/{{ cont.uuid }}" class="btn btn-light btn-sm px-2 shadow-sm" title="Edit Profile">
                                             <span class="material-symbols-outlined fs-6">edit</span>
                                         </a>
-                                        <a href="{{ PROOT }}admin/contestants/toggle-delete/{{ cont.uuid }}/yes" class="btn btn-light btn-sm px-2 text-danger" onclick="return confirm('Archive candidate?')">
+                                        <button type="button" class="btn btn-light btn-sm px-2 text-danger shadow-sm" onclick="confirmArchive('{{ cont.uuid }}')" title="Archive Candidate">
                                             <span class="material-symbols-outlined fs-6">archive</span>
-                                        </a>
+                                        </button>
                                     {% else %}
-                                        <span class="badge badge-secondary px-3">Registry Locked</span>
+                                        <span class="badge bg-secondary-subtle text-secondary px-3 py-2 rounded-pill">REGISTRY LOCKED</span>
                                     {% endif %}
                                 </div>
                             </td>
@@ -101,60 +125,178 @@
                         <tr>
                             <td colspan="4" class="text-center py-5 text-muted">
                                 <span class="material-symbols-outlined fs-1 opacity-25">badge</span>
-                                <p class="mt-2">No active candidates found in the registry.</p>
+                                <p class="mt-2 mb-0">No candidates found matching the current criteria.</p>
                             </td>
                         </tr>
                     {% endfor %}
                 </tbody>
             </table>
         </div>
+
+      {# Pagination Footer #}
+    {% if pagination.totalPages > 1 %}
+        <div class="card-footer bg-white border-0 py-4 px-4 d-flex justify-content-between align-items-center border-top">
+            <div class="text-muted small">
+                Showing <span class="fw-bold text-dark">{{ ((pagination.currentPage - 1) * pagination.limit) + 1 }}</span> to 
+                <span class="fw-bold text-dark">{{ min(pagination.currentPage * pagination.limit, pagination.totalItems) }}</span> of 
+                <span class="fw-bold text-dark">{{ pagination.totalItems }}</span> contestants
+            </div>
+            
+            <nav>
+                <ul class="pagination pagination-premium mb-0 gap-2">
+                    {# Previous Button #}
+                    <li class="page-item {{ pagination.currentPage == 1 ? 'disabled' : '' }}">
+                        <a class="page-link shadow-sm" href="{{ PROOT }}admin/contestants?page={{ pagination.currentPage - 1 }}&election={{ pagination.election }}&search={{ pagination.search }}">
+                            <span class="material-symbols-outlined fs-5">chevron_left</span>
+                        </a>
+                    </li>
+
+                    {# First Page #}
+                    <li class="page-item {{ pagination.currentPage == 1 ? 'active' : '' }}">
+                        <a class="page-link shadow-sm" href="{{ PROOT }}admin/contestants?page=1&election={{ pagination.election }}&search={{ pagination.search }}">1</a>
+                    </li>
+
+                    {# Ellipsis and Page Range #}
+                    {% set adjacents = 2 %}
+                    {% if pagination.currentPage > (adjacents + 2) %}
+                        <li class="page-item disabled"><span class="page-link border-0 bg-transparent">...</span></li>
+                    {% endif %}
+
+                    {% set range_start = max(2, pagination.currentPage - adjacents) %}
+                    {% set range_end = min(pagination.totalPages - 1, pagination.currentPage + adjacents) %}
+                    
+                    {% if range_start <= range_end %}
+                        {% for i in range(range_start, range_end) %}
+                            <li class="page-item {{ i == pagination.currentPage ? 'active' : '' }}">
+                                <a class="page-link shadow-sm" href="{{ PROOT }}admin/contestants?page={{ i }}&election={{ pagination.election }}&search={{ pagination.search }}">{{ i }}</a>
+                            </li>
+                        {% endfor %}
+                    {% endif %}
+
+                    {% if pagination.currentPage < (pagination.totalPages - adjacents - 1) %}
+                        <li class="page-item disabled"><span class="page-link border-0 bg-transparent">...</span></li>
+                    {% endif %}
+
+                    {# Last Page #}
+                    {% if pagination.totalPages > 1 %}
+                        <li class="page-item {{ pagination.currentPage == pagination.totalPages ? 'active' : '' }}">
+                            <a class="page-link shadow-sm" href="{{ PROOT }}admin/contestants?page={{ pagination.totalPages }}&election={{ pagination.election }}&search={{ pagination.search }}">{{ pagination.totalPages }}</a>
+                        </li>
+                    {% endif %}
+
+                    {# Next Button #}
+                    <li class="page-item {{ pagination.currentPage == pagination.totalPages ? 'disabled' : '' }}">
+                        <a class="page-link shadow-sm" href="{{ PROOT }}admin/contestants?page={{ pagination.currentPage + 1 }}&election={{ pagination.election }}&search={{ pagination.search }}">
+                            <span class="material-symbols-outlined fs-5">chevron_right</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    {% endif %}
     </div>
 {% endblock %}
 
 {% block styles %}
 <style>
+    .avatar-placeholder {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.9rem;
+        border: 2px solid #fff;
+    }
+    .stat-icon-sm {
+        width: 32px;
+        height: 32px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .pagination-premium .page-link {
+        width: 42px;
+        height: 42px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 12px !important;
+        border: none;
+        background: #f1f5f9;
+        color: var(--admin-text-main);
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+    .pagination-premium .page-item.active .page-link {
+        background: var(--admin-primary) !important;
+        color: var(--admin-accent) !important;
+        box-shadow: 0 8px 20px rgba(29, 61, 55, 0.25) !important;
+    }
+    .pagination-premium .page-item.disabled .page-link {
+        opacity: 0.5;
+        background: #f8fafc;
+    }
+    .pagination-premium .page-link:hover:not(.disabled) {
+        background: #e2e8f0;
+        transform: translateY(-2px);
+    }
+    .table thead th {
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        font-weight: 700;
+        background: #f8fafc;
+        border-bottom: 1px solid rgba(0,0,0,0.05);
+    }
+    .fs-xs { font-size: 0.65rem; }
+    .fw-800 { font-weight: 800; }
+    .tracking-wider { letter-spacing: 0.05em; }
     .extra-small { font-size: 0.75rem; }
-    .btn-white { background: #fff; }
-    .btn-white:hover { background: #f8fafc; color: var(--admin-primary); }
+    
+    .input-group-pill {
+        border-radius: 50px;
+        padding: 2px 10px;
+    }
+    .input-group-pill .form-control, .input-group-pill .form-select {
+        border-radius: 50px !important;
+    }
+
+    .btn-primary-brand {
+        background-color: var(--admin-primary) !important;
+        color: var(--admin-accent) !important;
+        border: none !important;
+        transition: all 0.3s ease;
+    }
+    .btn-primary-brand:hover {
+        background-color: var(--admin-primary-hover) !important;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(29, 61, 55, 0.2);
+    }
 </style>
 {% endblock %}
 
 {% block scripts %}
 <script>
-    $(document).ready(function() {
-        function performFiltering() {
-            var searchTerm = $("#contestantSearch").val().toLowerCase();
-            var electionId = $("#electionFilter").val();
-            var visibleRows = 0;
-
-            $(".contestant-row").each(function() {
-                var $row = $(this);
-                var rowText = $row.text().toLowerCase();
-                var rowElectionId = $row.data("election-id");
-
-                var matchesSearch = rowText.indexOf(searchTerm) > -1;
-                var matchesElection = (electionId === "all" || rowElectionId == electionId);
-
-                if (matchesSearch && matchesElection) {
-                    $row.show();
-                    visibleRows++;
-                } else {
-                    $row.hide();
-                }
-            });
-
-            if (visibleRows === 0 && $(".contestant-row").length > 0) {
-                if ($("#noFilterResults").length === 0) {
-                    $("#contestantsTable tbody").append('<tr id="noFilterResults"><td colspan="4" class="text-center py-5 text-muted">No candidates match your criteria.</td></tr>');
-                }
-            } else {
-                $("#noFilterResults").remove();
+    function confirmArchive(uuid) {
+        Swal.fire({
+            title: 'Archive Candidate?',
+            text: 'This contestant will be moved to the archive and removed from the active registry.',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, Archive',
+            cancelButtonText: 'Cancel',
+            customClass: {
+                popup: 'premium-swal-popup',
+                title: 'premium-swal-title',
+                htmlContainer: 'premium-swal-html',
+                confirmButton: 'btn btn-danger premium-swal-confirm',
+                cancelButton: 'btn premium-swal-cancel'
+            },
+            buttonsStyling: false
+        }).then((result) => {
+            if (result.isConfirmed) {
+                window.location.href = "{{ PROOT }}admin/contestants/toggle-delete/" + uuid + "/yes";
             }
-        }
-
-        $("#contestantSearch").on("keyup", performFiltering);
-        $("#electionFilter").on("change", performFiltering);
-    });
+        });
+    }
 </script>
 {% endblock %}
-

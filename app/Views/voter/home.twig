@@ -50,12 +50,16 @@
     }
 
     .brand-icon-wrapper {
-        width: 42px;
-        height: 42px;
-        background: var(--dark-accent);
-        color: var(--primary-accent);
-        border-radius: 12px;
-        box-shadow: 0 4px 12px rgba(29, 61, 55, 0.15);
+        width: 44px;
+        height: 44px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .brand-logo-img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
     }
 
     .brand-text {
@@ -146,8 +150,8 @@
     <nav class="navbar navbar-expand-lg glass-nav fixed-top py-3">
         <div class="container">
             <a class="navbar-brand d-flex align-items-center text-decoration-none" href="{{ PROOT }}">
-                <div class="brand-icon-wrapper me-2 d-flex align-items-center justify-content-center">
-                    <span class="material-symbols-outlined fs-3">shield_lock</span>
+                <div class="brand-icon-wrapper me-2">
+                    <img src="{{ PROOT }}media/logo.svg" alt="Kokuromotie Logo" class="brand-logo-img">
                 </div>
                 <span class="h4 mb-0 brand-text fw-bold text-uppercase" style="letter-spacing: -1px;">KOKURO<span style="color: #a3e635 !important;">MOTIE</span></span>
             </a>

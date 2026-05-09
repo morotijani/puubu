@@ -28,13 +28,16 @@
     }
 
     .brand-icon {
-        width: 40px;
-        height: 40px;
-        background: var(--dark-accent);
-        border-radius: 12px;
+        width: 42px;
+        height: 42px;
         display: flex;
         align-items: center;
         justify-content: center;
+    }
+    .brand-logo-img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
     }
 
     .nav-user-pill {
@@ -349,9 +352,9 @@
         <div class="container">
             <a class="navbar-brand d-flex align-items-center text-decoration-none" href="{{ PROOT }}votingon">
                 <div class="brand-icon me-2">
-                    <span class="material-symbols-outlined text-white fs-5">inventory_2</span>
+                    <img src="{{ PROOT }}media/logo.svg" alt="Kokuromotie Logo" class="brand-logo-img">
                 </div>
-                <span class="h4 mb-0 brand-text fw-bold">Puu<span class="bu-part">Bu</span></span>
+                <span class="h4 mb-0 brand-text fw-bold text-uppercase" style="letter-spacing: -1px;">KOKURO<span style="color: #a3e635 !important;">MOTIE</span></span>
             </a>
             <div class="ms-auto d-flex align-items-center gap-3">
                 <div class="nav-user-pill d-none d-md-flex">

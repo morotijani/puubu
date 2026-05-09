@@ -1097,8 +1097,8 @@ class AdminController {
             
             $new_uuid = guidv4();
             $voting_token = guidv4();
-            $query = "INSERT INTO voters (uuid, voter_id, password, first_name, last_name, gender, email, phone, election_uuid, voting_token) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-            $conn->prepare($query)->execute([$new_uuid, $voter_id, $hashed, $first_name, $last_name, $gender, $email, $phone, $election_id, $voting_token]);
+            $query = "INSERT INTO voters (uuid, voter_id, password, pin_code, first_name, last_name, gender, email, phone, election_uuid, voting_token) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            $conn->prepare($query)->execute([$new_uuid, $voter_id, $hashed, $password, $first_name, $last_name, $gender, $email, $phone, $election_id, $voting_token]);
             
             $_SESSION['flash_success'] = "Voter added successfully. Password is: $password";
         }
@@ -1742,6 +1742,21 @@ class AdminController {
         if (!cadminIsLoggedIn() || empty($admin_data)) {
             cadminLoginErrorRedirect();
         }
+
+        // Check if election allows direct links
+        $eStmt = $conn->prepare("SELECT title, allow_direct_link FROM election WHERE uuid = ?");
+        $eStmt->execute([$election_id]);
+        $election = $eStmt->fetch();
+
+        if (!$election) {
+            $_SESSION['flash_error'] = "Intelligence Error: Session not found.";
+            redirect(PROOT . 'admin/voters');
+        }
+
+        if (!$election['allow_direct_link']) {
+            $_SESSION['flash_error'] = "Security Violation: Direct Link authentication is disabled for '{$election['title']}'. Export blocked.";
+            redirect(PROOT . 'admin/voters');
+        }
         
         $stmt = $conn->prepare("
             SELECT v.first_name, v.last_name, v.voter_id, v.phone, v.email, v.voting_token, e.title
@@ -1779,6 +1794,62 @@ class AdminController {
                 $row['email'],
                 $row['title'],
                 $link
+            ]);
+        }
+        fclose($output);
+        exit;
+    }
+
+    public function exportVoterCredentials($election_id) {
+        global $conn, $admin_data;
+        if (!cadminIsLoggedIn() || empty($admin_data)) {
+            cadminLoginErrorRedirect();
+        }
+
+        // Check if election allows PIN login
+        $eStmt = $conn->prepare("SELECT title, allow_pin_login FROM election WHERE uuid = ?");
+        $eStmt->execute([$election_id]);
+        $election = $eStmt->fetch();
+
+        if (!$election) {
+            $_SESSION['flash_error'] = "Intelligence Error: Session not found.";
+            redirect(PROOT . 'admin/voters');
+        }
+
+        if (!$election['allow_pin_login']) {
+            $_SESSION['flash_error'] = "Configuration Error: PIN authentication is disabled for '{$election['title']}'. Export blocked.";
+            redirect(PROOT . 'admin/voters');
+        }
+        
+        $stmt = $conn->prepare("
+            SELECT v.first_name, v.last_name, v.voter_id, v.pin_code, e.title
+            FROM voters v
+            INNER JOIN election e ON v.election_uuid = e.uuid
+            WHERE v.election_uuid = ?
+            ORDER BY v.last_name ASC
+        ");
+        $stmt->execute([$election_id]);
+        $voters = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        if (empty($voters)) {
+            $_SESSION['flash_error'] = "No voters found for this election.";
+            redirect(PROOT . 'admin/voters');
+        }
+
+        $filename = "offline-credentials-" . $election_id . ".csv";
+        header('Content-Type: text/csv');
+        header('Content-Disposition: attachment; filename="' . $filename . '"');
+        
+        $output = fopen('php://output', 'w');
+        fputcsv($output, ['First Name', 'Last Name', 'Voter ID', 'Access PIN / Password', 'Election']);
+        
+        foreach ($voters as $row) {
+            fputcsv($output, [
+                $row['first_name'],
+                $row['last_name'],
+                $row['voter_id'],
+                $row['pin_code'] ?: 'N/A (Reset Required)',
+                $row['title']
             ]);
         }
         fclose($output);

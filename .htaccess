@@ -4,9 +4,8 @@ RewriteBase /kokuromotie/
 # Prevent directory listing
 Options -Indexes
 
-# Allow existing files and folders to be served directly
-RewriteCond %{REQUEST_FILENAME} -f [OR]
-RewriteCond %{REQUEST_FILENAME} -d
+# Allow existing files to be served directly
+RewriteCond %{REQUEST_FILENAME} -f
 RewriteRule ^ - [L]
 
 # Everything else goes to public/

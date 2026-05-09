@@ -27,6 +27,27 @@
             <a href="{{ PROOT }}admin/elections" class="btn btn-light shadow-sm d-flex align-items-center gap-2 px-4 py-2 rounded-pill fw-bold small">
                 <span class="material-symbols-outlined fs-6">arrow_back</span> Hub
             </a>
+            
+            {% if election.allow_direct_link or election.allow_pin_login %}
+            <div class="dropdown">
+                <button class="btn btn-light shadow-sm d-flex align-items-center gap-2 px-4 py-2 rounded-pill fw-bold small dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                    <span class="material-symbols-outlined fs-6 text-primary">download</span> Export Intelligence
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end shadow-lg border-0 rounded-4 py-2 mt-2">
+                    {% if election.allow_direct_link %}
+                    <li><a class="dropdown-item py-2 d-flex align-items-center" href="{{ PROOT }}admin/voters/export/links/{{ election.uuid }}">
+                        <span class="material-symbols-outlined me-2 text-primary fs-6">link</span> Export Voting Links
+                    </a></li>
+                    {% endif %}
+                    {% if election.allow_pin_login %}
+                    <li><a class="dropdown-item py-2 d-flex align-items-center" href="{{ PROOT }}admin/voters/export/credentials/{{ election.uuid }}">
+                        <span class="material-symbols-outlined me-2 text-primary fs-6">key</span> Export Offline Credentials
+                    </a></li>
+                    {% endif %}
+                </ul>
+            </div>
+            {% endif %}
+
             {% if election.status == 1 or election.status == 2 %}
                 <a href="{{ PROOT }}admin/reports/{{ election.uuid }}" class="btn btn-primary shadow-sm d-flex align-items-center gap-2 px-4 py-2 rounded-pill fw-bold small">
                     <span class="material-symbols-outlined fs-6">monitoring</span> Live Intelligence

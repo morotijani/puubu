@@ -40,15 +40,17 @@
     }
 
     .brand-logo {
-        width: 60px;
-        height: 60px;
-        background: var(--primary-accent);
-        border-radius: 20px;
+        width: 64px;
+        height: 64px;
         display: flex;
         align-items: center;
         justify-content: center;
         margin: 0 auto 28px;
-        color: var(--dark-accent);
+    }
+    .brand-logo-img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
     }
 
     .premium-input-group {
@@ -206,6 +208,11 @@
         from { transform: translateY(-10px); opacity: 0; }
         to { transform: translateY(0); opacity: 1; }
     }
+    .disabled-link {
+        pointer-events: none;
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
 </style>
 {% endblock %}
 
@@ -220,7 +227,7 @@
         </a>
         <div class="login-card">
             <div class="brand-logo">
-                <span class="material-symbols-outlined fs-2">how_to_vote</span>
+                <img src="{{ PROOT }}media/logo.svg" alt="Kokuromotie Logo" class="brand-logo-img">
             </div>
             <h4 class="fw-bold text-center mb-2">Cast Your Vote</h4>
             <p class="text-muted text-center small mb-5">Secure your identity to proceed to the ballot.</p>
@@ -430,10 +437,14 @@
         // PIN Login
         $('#btn-login-pin').on('click', function() {
             const pin = $('#voter_pin_input').val();
+            const btn = $(this);
             if (!pin) {
                 showError("Please enter your PIN");
                 return;
             }
+
+            btn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm me-2"></span> Authenticating...');
+            $('.btn-back-to-step1').addClass('disabled-link');
 
             // For PIN, we use the traditional form submission to benefit from existing server-side logic
             $('#hidden_voter_id').val($('#voter_id_input').val());
@@ -461,12 +472,14 @@
 
         $('#btn-login-otp').on('click', function() {
             const otp = $('#voter_otp_input').val();
+            const btn = $(this);
             if (otp.length !== 6) {
                 showError("Please enter the 6-digit code");
                 return;
             }
 
-            $(this).prop('disabled', true).html('<span class="spinner-border spinner-border-sm me-2"></span> Verifying...');
+            btn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm me-2"></span> Verifying...');
+            $('.btn-back-to-step1').addClass('disabled-link');
 
             $.post('{{ PROOT }}auth/verify-otp', { 
                 voter_uuid: currentVoterUuid,
@@ -475,7 +488,8 @@
                 if (response.status === 'success') {
                     window.location.href = response.redirect;
                 } else {
-                    $('#btn-login-otp').prop('disabled', false).html('Verify & Sign In <span class="material-symbols-outlined">verified_user</span>');
+                    btn.prop('disabled', false).html('Verify & Sign In <span class="material-symbols-outlined">verified_user</span>');
+                    $('.btn-back-to-step1').removeClass('disabled-link');
                     showError(response.message);
                 }
             });

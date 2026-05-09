@@ -111,11 +111,52 @@
                         <select class="form-select bg-light border-0 shadow-none" name="election_uuid" required>
                             <option value="">Select Election...</option>
                             {% for election in elections %}
-                                <option value="{{ election.uuid }}">{{ election.title }}</option>
+                                {% if election.allow_direct_link %}
+                                    <option value="{{ election.uuid }}">{{ election.title }}</option>
+                                {% endif %}
                             {% endfor %}
                         </select>
                     </div>
                     <button type="submit" class="btn btn-dark w-100 fw-bold py-2 shadow-sm">Download CSV</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Export Offline Credentials Modal -->
+<div class="modal fade" id="exportCredentialsModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg rounded-4">
+            <div class="modal-header border-0 pt-4 px-4">
+                <h5 class="fw-bold mb-0">Export Offline Credentials</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body p-4 pt-2">
+                <div class="p-4 rounded-4 mb-4" style="background: rgba(29, 61, 55, 0.03); border: 1px solid rgba(29, 61, 55, 0.08);">
+                    <div class="d-flex gap-3 align-items-start">
+                        <div class="stat-icon-sm rounded-3 bg-white shadow-sm d-flex align-items-center justify-content-center p-2" style="width: 42px; height: 42px;">
+                            <span class="material-symbols-outlined text-primary fs-5">summarize</span>
+                        </div>
+                        <div>
+                            <h6 class="fw-bold text-dark mb-1 small">Credential Registrar</h6>
+                            <p class="text-muted extra-small mb-0 leading-relaxed">Generate a secure directory of Voter IDs and Access PINs. Optimized for physical ballot distribution and offline session management.</p>
+                        </div>
+                    </div>
+                </div>
+                <form id="exportCredentialsForm" onsubmit="event.preventDefault(); window.location.href = '{{ PROOT }}admin/voters/export/credentials/' + this.election_uuid.value;">
+                    <div class="mb-4">
+                        <label class="form-label small fw-bold text-uppercase">Eligible Election</label>
+                        <select class="form-select bg-light border-0 shadow-none" name="election_uuid" required>
+                            <option value="">Select PIN-Enabled Election...</option>
+                            {% for election in elections %}
+                                {% if election.allow_pin_login %}
+                                    <option value="{{ election.uuid }}">{{ election.title }}</option>
+                                {% endif %}
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100 fw-bold py-2 shadow-sm rounded-pill">Download Registry (CSV)</button>
                 </form>
             </div>
         </div>

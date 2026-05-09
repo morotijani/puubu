@@ -375,6 +375,12 @@ $router->mount('/admin', function() use ($router, $twig) {
         $controller->exportVoterLinks($id);
     });
 
+    $router->get('/voters/export/credentials/([a-zA-Z0-9\-]+)', function($id) use ($twig) {
+        require_once __DIR__ . '/../app/Controllers/AdminController.php';
+        $controller = new \App\Controllers\AdminController($twig);
+        $controller->exportVoterCredentials($id);
+    });
+
     $router->get('/reports/export/ballots/([a-zA-Z0-9\-]+)', function($id) use ($twig) {
         require_once __DIR__ . '/../app/Controllers/AdminController.php';
         $controller = new \App\Controllers\AdminController($twig);

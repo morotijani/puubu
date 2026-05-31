@@ -1,0 +1,13 @@
+Option 3: "Shared Secret" Login (Information they already know)
+You can authenticate them using a combination of personal data that only they (and the organization) would know.
+
+How it works: They log in using a combination of fields, such as: First Name + Last Name + Date of Birth + Membership ID (or last 4 digits of a phone number).
+Pros: Zero friction. No emails, no texts, no physical cards to distribute. They just use information they have memorized.
+Cons: Lower security. If someone else knows their birthdate and membership ID, they could theoretically cast a vote on their behalf.
+
+Option 4: Assisted Kiosk Voting (In-Person)
+If the organization meets physically (e.g., at a community center or church), remote login might not be needed at all.
+
+How it works: You build a "Kiosk Mode" for administrators. The admin verifies the elderly person's identity face-to-face, clicks a button to generate a secure, one-time voting link, and hands the tablet/laptop to the voter to make their selection.
+Pros: Solves the tech-literacy problem entirely.
+Cons: Requires an in-person event, which might defeat the purpose if the election is strictly meant to be remote.

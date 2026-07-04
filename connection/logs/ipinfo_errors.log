@@ -24,3 +24,4 @@
 2026-05-06 23:23:35 - IPinfo error: cURL error 28: Resolving timed out after 5011 milliseconds (see https://curl.haxx.se/libcurl/c/libcurl-errors.html) for https://ipinfo.io
 2026-05-08 18:48:42 - IPinfo error: cURL error 28: Resolving timed out after 5009 milliseconds (see https://curl.haxx.se/libcurl/c/libcurl-errors.html) for https://ipinfo.io
 2026-05-08 21:57:51 - IPinfo error: cURL error 28: Resolving timed out after 5007 milliseconds (see https://curl.haxx.se/libcurl/c/libcurl-errors.html) for https://ipinfo.io
+2026-07-03 02:08:59 - IPinfo error: cURL error 28: Connection timed out after 10547 milliseconds (see https://curl.haxx.se/libcurl/c/libcurl-errors.html) for https://ipinfo.io

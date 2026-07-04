@@ -829,3 +829,126 @@ input, button, select, textarea, .form-control, ::placeholder {
     border-color: #ffc107 !important;
     color: #ffc107 !important;
 }
+
+/* Base Responsive Fixes */
+.table-container {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    width: 100%;
+    display: block;
+    border-radius: 0.5rem;
+}
+
+/* Mobile Optimizations - Core Admin UI */
+@media (max-width: 768px) {
+    html {
+        font-size: 14px; /* Gracefully scale down all rem-based typography */
+    }
+    
+    .card {
+        border-radius: 1rem !important;
+    }
+    
+    .card-body {
+        padding: 1rem !important;
+    }
+    
+    .card-header {
+        padding: 1rem 1rem 0 1rem !important;
+        flex-direction: column;
+        align-items: flex-start !important;
+        gap: 0.5rem;
+    }
+    
+    .stat-card {
+        padding: 1rem !important;
+    }
+    
+    .stat-card h2 {
+        font-size: 1.75rem !important;
+    }
+    
+    .btn {
+        padding: 0.4rem 0.8rem !important;
+        font-size: 0.85rem !important;
+    }
+    
+    .page-header h1 {
+        font-size: 1.75rem !important;
+    }
+    
+    .page-header p {
+        font-size: 0.9rem !important;
+    }
+    
+    /* Contestant Table Mobile Adjustments */
+    .contestant-row img.rounded-circle,
+    .contestant-row .avatar-placeholder {
+        width: 36px !important;
+        height: 36px !important;
+        font-size: 0.85rem !important;
+        line-height: 36px !important;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .contestant-row .fs-6 {
+        font-size: 0.95rem !important;
+        white-space: normal;
+        line-height: 1.2;
+        margin-bottom: 2px;
+    }
+    
+    .contestant-row .extra-small {
+        font-size: 0.75rem !important;
+    }
+    
+    /* Positions Table Mobile Adjustments */
+    .position-row .stat-icon {
+        width: 36px !important;
+        height: 36px !important;
+        font-size: 0.9rem !important;
+    }
+    
+    .position-row .fs-6 {
+        font-size: 0.95rem !important;
+        white-space: normal;
+        line-height: 1.2;
+        margin-bottom: 2px;
+    }
+    
+    .position-row .extra-small {
+        font-size: 0.75rem !important;
+    }
+    
+    .position-row .material-symbols-outlined.fs-6 {
+        font-size: 0.85rem !important;
+    }
+    
+    /* Voters Table Mobile Adjustments */
+    .voter-row .avatar-sm {
+        width: 36px !important;
+        height: 36px !important;
+        line-height: 36px !important;
+        font-size: 0.85rem !important;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .voter-row .fs-6 {
+        font-size: 0.95rem !important;
+        white-space: normal;
+        line-height: 1.2;
+        margin-bottom: 2px;
+    }
+    
+    .voter-row .extra-small {
+        font-size: 0.75rem !important;
+    }
+    
+    .voter-row .material-symbols-outlined.fs-6 {
+        font-size: 0.85rem !important;
+    }
+}

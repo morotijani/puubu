@@ -684,6 +684,9 @@ class AdminController {
         $role = $admin_data['role'] ?? 'organizer';
         
         $return_to_election = $_GET['return_to_election'] ?? null;
+        $contestant = null;
+        $positions = [];
+        
         if ($id) {
             $stmt = $conn->prepare("SELECT * FROM contestants WHERE uuid = ?");
             $stmt->execute([$id]);

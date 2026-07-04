@@ -80,7 +80,7 @@
 
                     <!-- Action Section -->
                     <div class="ms-auto">
-                        <button type="submit" class="btn btn-primary-brand px-4 py-2 rounded-pill fw-bold small">Search</button>
+                        <button type="submit" class="btn btn-primary-brand px-4 py-2 rounded-pill fw-bold small mb-1">Search</button>
                         {% if pagination.search or pagination.election != 'all' %}
                             <a href="{{ PROOT }}admin/voters" class="btn btn-link btn-sm text-decoration-none text-muted ms-2">Reset</a>
                         {% endif %}
@@ -111,7 +111,7 @@
                     </thead>
                     <tbody>
                         {% for voter in voters %}
-                            <tr>
+                            <tr class="voter-row">
                                 <td class="ps-4">
                                     <div class="form-check custom-checkbox">
                                         <input type="checkbox" name="voter_ids[]" value="{{ voter.uuid }}" class="form-check-input voter-checkbox">

@@ -55,37 +55,61 @@ class AdminController {
         $admin_id = $admin_data['uuid'];
         $role = $admin_data['role'] ?? 'organizer';
 
+        $active_context = $_SESSION['admin_active_election'] ?? 'all';
+
         if ($role === 'super_admin') {
-            $statement = $conn->prepare("SELECT * FROM election WHERE status IN (1, 2)");
-            $statement->execute();
+            $ctxQ = $active_context !== 'all' ? " AND uuid = ?" : "";
+            $ctxP = $active_context !== 'all' ? [$active_context] : [];
+
+            $statement = $conn->prepare("SELECT * FROM election WHERE status IN (1, 2) $ctxQ");
+            $statement->execute($ctxP);
             
-            $total_elections = $conn->query("SELECT COUNT(*) FROM election")->fetchColumn();
-            $total_contestants = $conn->query("SELECT COUNT(*) FROM contestants WHERE is_deleted = 'no'")->fetchColumn();
-            $total_positions = $conn->query("SELECT COUNT(*) FROM positions")->fetchColumn();
-            $total_voters = $conn->query("SELECT COUNT(*) FROM voters")->fetchColumn();
+            $stmt = $conn->prepare("SELECT COUNT(*) FROM election WHERE is_deleted = 0 $ctxQ");
+            $stmt->execute($ctxP);
+            $total_elections = $stmt->fetchColumn();
+
+            $ctxCQ = $active_context !== 'all' ? " AND election_uuid = ?" : "";
+            
+            $stmt = $conn->prepare("SELECT COUNT(*) FROM contestants WHERE is_deleted = 'no' $ctxCQ");
+            $stmt->execute($ctxP);
+            $total_contestants = $stmt->fetchColumn();
+
+            $stmt = $conn->prepare("SELECT COUNT(*) FROM positions WHERE 1=1 $ctxCQ");
+            $stmt->execute($ctxP);
+            $total_positions = $stmt->fetchColumn();
+
+            $stmt = $conn->prepare("SELECT COUNT(*) FROM voters WHERE 1=1 $ctxCQ");
+            $stmt->execute($ctxP);
+            $total_voters = $stmt->fetchColumn();
+
             $total_organizers = $conn->query("SELECT COUNT(*) FROM admins WHERE role = 'organizer'")->fetchColumn();
             
             $stmt_orgs = $conn->prepare("SELECT * FROM admins WHERE role = 'organizer' ORDER BY id DESC LIMIT 5");
             $stmt_orgs->execute();
             $recent_organizers = $stmt_orgs->fetchAll();
         } else {
-            $statement = $conn->prepare("SELECT * FROM election WHERE status IN (1, 2) AND organizer_id = ?");
-            $statement->execute([$admin_id]);
+            $ctxQ = $active_context !== 'all' ? " AND uuid = ?" : "";
+            $ctxP = $active_context !== 'all' ? [$admin_id, $active_context] : [$admin_id];
+
+            $statement = $conn->prepare("SELECT * FROM election WHERE status IN (1, 2) AND organizer_id = ? AND is_deleted = 0 $ctxQ");
+            $statement->execute($ctxP);
             
-            $stmt = $conn->prepare("SELECT COUNT(*) FROM election WHERE organizer_id = ?");
-            $stmt->execute([$admin_id]);
+            $stmt = $conn->prepare("SELECT COUNT(*) FROM election WHERE organizer_id = ? AND is_deleted = 0 $ctxQ");
+            $stmt->execute($ctxP);
             $total_elections = $stmt->fetchColumn();
             
-            $stmt = $conn->prepare("SELECT COUNT(c.id) FROM contestants c INNER JOIN election e ON c.election_uuid = e.uuid WHERE c.is_deleted = 'no' AND e.organizer_id = ?");
-            $stmt->execute([$admin_id]);
+            $ctxEQ = $active_context !== 'all' ? " AND e.uuid = ?" : "";
+
+            $stmt = $conn->prepare("SELECT COUNT(c.id) FROM contestants c INNER JOIN election e ON c.election_uuid = e.uuid WHERE c.is_deleted = 'no' AND e.organizer_id = ? AND e.is_deleted = 0 $ctxEQ");
+            $stmt->execute($ctxP);
             $total_contestants = $stmt->fetchColumn();
             
-            $stmt = $conn->prepare("SELECT COUNT(p.id) FROM positions p INNER JOIN election e ON p.election_uuid = e.uuid WHERE e.organizer_id = ?");
-            $stmt->execute([$admin_id]);
+            $stmt = $conn->prepare("SELECT COUNT(p.id) FROM positions p INNER JOIN election e ON p.election_uuid = e.uuid WHERE e.organizer_id = ? AND e.is_deleted = 0 $ctxEQ");
+            $stmt->execute($ctxP);
             $total_positions = $stmt->fetchColumn();
             
-            $stmt = $conn->prepare("SELECT COUNT(v.id) FROM voters v INNER JOIN election e ON v.election_uuid = e.uuid WHERE e.organizer_id = ?");
-            $stmt->execute([$admin_id]);
+            $stmt = $conn->prepare("SELECT COUNT(v.id) FROM voters v INNER JOIN election e ON v.election_uuid = e.uuid WHERE e.organizer_id = ? AND e.is_deleted = 0 $ctxEQ");
+            $stmt->execute($ctxP);
             $total_voters = $stmt->fetchColumn();
         }
 
@@ -471,12 +495,17 @@ class AdminController {
         $admin_id = $admin_data['uuid'];
         $role = $admin_data['role'] ?? 'organizer';
         
+        $active_context = $_SESSION['admin_active_election'] ?? 'all';
+        $ctxQ = $active_context !== 'all' ? " AND e.uuid = ?" : "";
+
         if ($role === 'super_admin') {
-            $stmt = $conn->prepare("SELECT p.*, e.title, e.organized_by, e.status FROM positions p INNER JOIN election e ON p.election_uuid = e.uuid WHERE e.is_deleted = 0 ORDER BY p.position_id DESC");
-            $stmt->execute();
+            $ctxP = $active_context !== 'all' ? [$active_context] : [];
+            $stmt = $conn->prepare("SELECT p.*, e.title, e.organized_by, e.status FROM positions p INNER JOIN election e ON p.election_uuid = e.uuid WHERE e.is_deleted = 0 $ctxQ ORDER BY p.display_order ASC");
+            $stmt->execute($ctxP);
         } else {
-            $stmt = $conn->prepare("SELECT p.*, e.title, e.organized_by, e.status FROM positions p INNER JOIN election e ON p.election_uuid = e.uuid WHERE e.organizer_id = ? AND e.is_deleted = 0 ORDER BY p.position_id DESC");
-            $stmt->execute([$admin_id]);
+            $ctxP = $active_context !== 'all' ? [$admin_id, $active_context] : [$admin_id];
+            $stmt = $conn->prepare("SELECT p.*, e.title, e.organized_by, e.status FROM positions p INNER JOIN election e ON p.election_uuid = e.uuid WHERE e.organizer_id = ? AND e.is_deleted = 0 $ctxQ ORDER BY p.display_order ASC");
+            $stmt->execute($ctxP);
         }
         $positions = $stmt->fetchAll();
 
@@ -498,11 +527,21 @@ class AdminController {
             $edit_position = $stmt->fetch();
         }
 
+        // Fetch taken display orders per election
+        $stmt = $conn->prepare("SELECT election_uuid, display_order FROM positions");
+        $stmt->execute();
+        $taken_orders_raw = $stmt->fetchAll();
+        $taken_orders = [];
+        foreach ($taken_orders_raw as $row) {
+            $taken_orders[$row['election_uuid']][] = (int)$row['display_order'];
+        }
+
         echo $this->twig->render('admin/positions.twig', [
             'positions' => $positions,
             'elections' => $elections,
             'draft_elections' => array_filter($elections, function($e) { return $e['status'] == 0; }),
-            'edit_position' => $edit_position
+            'edit_position' => $edit_position,
+            'taken_orders' => $taken_orders
         ]);
     }
 
@@ -521,6 +560,7 @@ class AdminController {
         $name = sanitize($_POST['position_name']);
         $election_id = sanitize($_POST['election_uuid']);
         $gender_restriction = sanitize($_POST['gender_restriction'] ?? 'all');
+        $display_order = isset($_POST['display_order']) ? (int)$_POST['display_order'] : 0;
         $edit_id = $_POST['edit_id'] ?? null;
 
         if (empty($name) || empty($election_id)) {
@@ -538,16 +578,30 @@ class AdminController {
             redirect(PROOT . 'admin/positions');
         }
 
+        // Validate that display order is unique within the same election
         if ($edit_id) {
-            $stmt = $conn->prepare("UPDATE positions SET position_name = ?, election_uuid = ?, gender_restriction = ? WHERE position_id = ?");
-            $result = $stmt->execute([$name, $election_id, $gender_restriction, $edit_id]);
+            $check = $conn->prepare("SELECT COUNT(*) FROM positions WHERE election_uuid = ? AND display_order = ? AND position_id != ?");
+            $check->execute([$election_id, $display_order, $edit_id]);
+        } else {
+            $check = $conn->prepare("SELECT COUNT(*) FROM positions WHERE election_uuid = ? AND display_order = ?");
+            $check->execute([$election_id, $display_order]);
+        }
+        
+        if ($check->fetchColumn() > 0) {
+            $_SESSION['flash_error'] = "The selected Display Order ($display_order) is already assigned to another position in this election. Please select a unique order number.";
+            redirect(PROOT . 'admin/positions' . ($edit_id ? '?edit=' . $edit_id : ''));
+        }
+
+        if ($edit_id) {
+            $stmt = $conn->prepare("UPDATE positions SET position_name = ?, display_order = ?, election_uuid = ?, gender_restriction = ? WHERE position_id = ?");
+            $result = $stmt->execute([$name, $display_order, $election_id, $gender_restriction, $edit_id]);
             if ($result) {
                 add_to_log("Updated position: $name", $admin_id, 'admin');
                 $_SESSION['flash_success'] = "Position updated successfully.";
             }
         } else {
-            $stmt = $conn->prepare("INSERT INTO positions (position_id, position_name, election_uuid, gender_restriction) VALUES (?, ?, ?, ?)");
-            $result = $stmt->execute([guidv4(), $name, $election_id, $gender_restriction]);
+            $stmt = $conn->prepare("INSERT INTO positions (position_id, position_name, display_order, election_uuid, gender_restriction) VALUES (?, ?, ?, ?, ?)");
+            $result = $stmt->execute([guidv4(), $name, $display_order, $election_id, $gender_restriction]);
             if ($result) {
                 add_to_log("Created position: $name", $admin_id, 'admin');
                 $_SESSION['flash_success'] = "Position created successfully.";
@@ -597,7 +651,8 @@ class AdminController {
         $limit = 15;
         $offset = ($page - 1) * $limit;
         
-        $election_id = $_GET['election'] ?? 'all';
+        $active_context = $_SESSION['admin_active_election'] ?? 'all';
+        $election_id = ($active_context !== 'all') ? $active_context : ($_GET['election'] ?? 'all');
         $search = $_GET['search'] ?? '';
         
         $whereClauses = ["c.is_deleted = 'no'"];
@@ -911,7 +966,8 @@ class AdminController {
         $limit = 25;
         $offset = ($page - 1) * $limit;
         
-        $election_id = $_GET['election'] ?? 'all';
+        $active_context = $_SESSION['admin_active_election'] ?? 'all';
+        $election_id = ($active_context !== 'all') ? $active_context : ($_GET['election'] ?? 'all');
         $search = $_GET['search'] ?? '';
 
         // Ensure all voters have a token for direct link access (do this for the whole table or just the view? Better to do it once in a while or on demand)

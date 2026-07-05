@@ -352,7 +352,7 @@ class VoterController
         $electionUuid = $voter_row['election_uuid'];
 
         // Fetch Positions
-        $posQuery = "SELECT * FROM positions WHERE election_uuid = ?";
+        $posQuery = "SELECT * FROM positions WHERE election_uuid = ? ORDER BY display_order ASC";
         $stmt = $conn->prepare($posQuery);
         $stmt->execute([$electionUuid]);
         $positions = $stmt->fetchAll();

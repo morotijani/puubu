@@ -118,6 +118,37 @@ $router->mount('/admin', function() use ($router, $twig) {
         }
     });
 
+    // Global Admin Context Setup
+    $router->before('GET|POST', '.*', function() use ($twig) {
+        global $conn, $admin_data;
+        if (isset($admin_data) && !empty($admin_data) && cadminIsLoggedIn()) {
+            $role = $admin_data['role'] ?? 'organizer';
+            $admin_id = $admin_data['uuid'];
+            if ($role === 'super_admin') {
+                $stmt = $conn->prepare("SELECT * FROM election WHERE is_deleted = 0 ORDER BY title ASC");
+                $stmt->execute();
+            } else {
+                $stmt = $conn->prepare("SELECT * FROM election WHERE organizer_id = ? AND is_deleted = 0 ORDER BY title ASC");
+                $stmt->execute([$admin_id]);
+            }
+            $sidebar_elections = $stmt->fetchAll();
+            $twig->addGlobal('sidebar_elections', $sidebar_elections);
+            $twig->addGlobal('active_election_context', $_SESSION['admin_active_election'] ?? 'all');
+        }
+    });
+
+    $router->post('/set-election-context', function() {
+        if (!isset($_POST['csrf_token']) || !verify_csrf_token($_POST['csrf_token'])) {
+            header('Content-Type: application/json');
+            echo json_encode(['success' => false, 'message' => 'Invalid session.']);
+            exit;
+        }
+        $_SESSION['admin_active_election'] = $_POST['election_uuid'] ?? 'all';
+        header('Content-Type: application/json');
+        echo json_encode(['success' => true]);
+        exit;
+    });
+
     $router->all('/signin', function() use ($twig) {
         require_once __DIR__ . '/../app/Controllers/AdminController.php';
         $controller = new \App\Controllers\AdminController($twig);

@@ -126,7 +126,7 @@
                                             <select class="form-select" name="sel_election" id="electionSelect" required>
                                                 <option value="">Map to session...</option>
                                                 {% for election in elections %}
-                                                    <option value="{{ election.uuid }}" {{ contestant.election_uuid == election.uuid ? 'selected' : '' }}>
+                                                    <option value="{{ election.uuid }}" {{ (contestant.election_uuid ?? active_election_context) == election.uuid ? 'selected' : '' }}>
                                                         {{ election.title }}
                                                     </option>
                                                 {% endfor %}

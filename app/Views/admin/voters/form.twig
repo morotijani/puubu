@@ -130,9 +130,9 @@
                                         <div class="col-md-6">
                                             <label class="form-label premium-label fs-xs">Assigned Election Cluster</label>
                                             <select class="form-select" name="election_uuid" id="election_select" required>
-                                                <option value="">Map to election...</option>
+                                                <option value="">Map to session...</option>
                                                 {% for election in elections %}
-                                                    <option value="{{ election.uuid }}" {{ (voter.election_uuid == election.uuid) ? 'selected' : '' }} 
+                                                    <option value="{{ election.uuid }}" {{ (voter.election_uuid ?? active_election_context) == election.uuid ? 'selected' : '' }} 
                                                         data-email="{{ election.allow_email_login }}" 
                                                         data-sms="{{ election.allow_sms_login }}"
                                                         data-pin="{{ election.allow_pin_login }}"

@@ -61,6 +61,16 @@
         </div>
         
         <nav class="navbar-vertical">
+            <div class="px-3 mb-4 mt-2">
+                <label class="form-label extra-small text-muted mb-2 text-uppercase fw-bold" style="letter-spacing: 0.5px;">Active Context</label>
+                <select class="form-select form-select-sm bg-dark text-white border-secondary border-opacity-25 shadow-none" id="globalElectionContext" style="font-size: 0.85rem;">
+                    <option value="all" {% if active_election_context == 'all' %}selected{% endif %}>All Elections</option>
+                    {% for el in sidebar_elections %}
+                        <option value="{{ el.uuid }}" {% if active_election_context == el.uuid %}selected{% endif %}>{{ el.title|slice(0, 25) }}{% if el.title|length > 25 %}...{% endif %}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
             <div class="sidebar-heading">Electoral Intelligence</div>
             <a class="nav-link {% if active_page == 'dashboard' %}active{% endif %}" href="{{ PROOT }}admin">
                 <span class="material-symbols-outlined">analytics</span> <span class="nav-text">Dashboard</span>
@@ -112,9 +122,35 @@
 
     <!-- JS -->
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script src="{{ PROOT }}dist/js/vendor.bundle.js"></script>
+    <script src="{{ PROOT }}dist/js/libs.bundle.js"></script>
     <script src="{{ PROOT }}dist/js/index.bundle.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script>
+        $(document).ready(function() {
+            $('#globalElectionContext').on('change', function() {
+                var selectedContext = $(this).val();
+                $.ajax({
+                    url: '{{ PROOT }}admin/set-election-context',
+                    type: 'POST',
+                    data: {
+                        election_uuid: selectedContext,
+                        csrf_token: '{{ csrf_token() }}'
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            window.location.reload();
+                        } else {
+                            Swal.fire('Error', response.message || 'Failed to switch context.', 'error');
+                        }
+                    },
+                    error: function() {
+                        Swal.fire('Error', 'Network error occurred.', 'error');
+                    }
+                });
+            });
+        });
+    </script>
 
     <script>
         const Toast = Swal.mixin({

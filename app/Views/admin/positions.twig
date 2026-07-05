@@ -70,6 +70,10 @@
                                                         <span class="badge {{ pos.gender_restriction == 'all' ? 'bg-light text-muted' : 'bg-indigo-subtle text-indigo' }} extra-small px-2">
                                                             {{ pos.gender_restriction|upper }}
                                                         </span>
+                                                        <span class="mx-2 opacity-25">|</span>
+                                                        <span class="badge bg-light text-dark extra-small px-2 border border-secondary border-opacity-25" title="Display Order">
+                                                            Order: {{ pos.display_order }}
+                                                        </span>
                                                     </div>
                                                 </div>
                                             </div>
@@ -133,14 +137,24 @@
 
                         <div class="mb-4">
                             <label class="form-label">Target Election Session</label>
-                            <select class="form-select" name="election_uuid" required>
+                            <select class="form-select" name="election_uuid" id="election_uuid_select" required>
                                 <option value="">Select Election...</option>
                                 {% for election in draft_elections %}
-                                    <option value="{{ election.uuid }}" {{ edit_position.election_uuid == election.uuid ? 'selected' : '' }}>
+                                    <option value="{{ election.uuid }}" {{ (edit_position.election_uuid ?? active_election_context) == election.uuid ? 'selected' : '' }}>
                                         {{ election.title }}
                                     </option>
                                 {% endfor %}
                             </select>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label class="form-label">Display Order</label>
+                            <select class="form-select" name="display_order" id="display_order_select" required>
+                                {% for i in 1..30 %}
+                                    <option value="{{ i }}" {{ (edit_position.display_order ?? 0) == i ? 'selected' : '' }}>Position Order {{ i }}</option>
+                                {% endfor %}
+                            </select>
+                            <div class="form-text small text-muted mt-2"><span class="material-symbols-outlined fs-6 align-middle">sort</span> Positions with lower numbers (e.g. 1, 2) appear first on the voters' ballot.</div>
                         </div>
 
                         <div class="mb-4">
@@ -209,7 +223,32 @@
 
 {% block scripts %}
 <script>
+    const takenOrders = {{ taken_orders|json_encode|raw }};
+    const currentEditOrder = {{ edit_position.display_order ?? 0 }};
+    
+    function updateDisplayOrderOptions() {
+        const electionId = $('#election_uuid_select').val();
+        const taken = takenOrders[electionId] || [];
+        
+        $('#display_order_select option').each(function() {
+            const val = parseInt($(this).val());
+            if (taken.includes(val) && val !== currentEditOrder) {
+                $(this).attr('disabled', 'disabled').hide();
+            } else {
+                $(this).removeAttr('disabled').show();
+            }
+        });
+        
+        // If the currently selected option is now disabled, reset the selection to the first available
+        if ($('#display_order_select option:selected').is(':disabled') || !$('#display_order_select').val()) {
+            $('#display_order_select').val($('#display_order_select option:not(:disabled):first').val());
+        }
+    }
+
     $(document).ready(function() {
+        $('#election_uuid_select').on('change', updateDisplayOrderOptions);
+        updateDisplayOrderOptions(); // Run on load
+        
         // Combined Filter and Search Logic
         function performFiltering() {
             var searchTerm = $("#positionSearch").val().toLowerCase();

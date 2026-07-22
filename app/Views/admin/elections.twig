@@ -66,7 +66,7 @@
                                         <td class="text-end pe-4">
                                             <div class="d-flex justify-content-end gap-2">
                                                 {% if election.status == 0 %}
-                                                    <button class="btn btn-primary btn-sm px-3 start-btn" data-id="{{ election.uuid }}">
+                                                    <button class="btn btn-primary btn-sm px-3 start-btn" data-id="{{ election.uuid }}" data-bs-toggle="modal" data-bs-target="#startElectionModal" onclick="document.getElementById('startElectionForm').action = '{{ PROOT }}admin/elections/start/{{ election.uuid }}'">
                                                         <span class="material-symbols-outlined fs-6">play_arrow</span> Start
                                                     </button>
                                                     <a href="{{ PROOT }}admin/elections?edit={{ election.uuid }}" class="btn btn-light btn-sm" title="Configure">
@@ -79,7 +79,7 @@
                                                     <a href="{{ PROOT }}admin/reports/{{ election.uuid }}" class="btn btn-primary btn-sm px-4">
                                                         Intelligence
                                                     </a>
-                                                    <button class="btn btn-light btn-sm text-danger stop-btn" data-id="{{ election.uuid }}">
+                                                    <button class="btn btn-light btn-sm text-danger stop-btn" data-id="{{ election.uuid }}" data-bs-toggle="modal" data-bs-target="#stopElectionModal" onclick="document.getElementById('stopElectionForm').action = '{{ PROOT }}admin/elections/stop/{{ election.uuid }}'">
                                                         <span class="material-symbols-outlined fs-6">stop</span> Stop
                                                     </button>
                                                 {% else %}
@@ -589,17 +589,7 @@
             $(this).siblings('.otp-inputs-display').find('.otp-box').removeClass('active');
         });
 
-        $('.start-btn').on('click', function() {
-            var id = $(this).data('id');
-            $('#startElectionForm').attr('action', '{{ PROOT }}admin/elections/start/' + id);
-            $('#startElectionModal').modal('show');
-        });
 
-        $('.stop-btn').on('click', function() {
-            var id = $(this).data('id');
-            $('#stopElectionForm').attr('action', '{{ PROOT }}admin/elections/stop/' + id);
-            $('#stopElectionModal').modal('show');
-        });
 
         $('.delete-btn').on('click', function() {
             var id = $(this).data('id');

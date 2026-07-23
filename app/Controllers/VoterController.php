@@ -351,10 +351,11 @@ class VoterController
 
         $electionUuid = $voter_row['election_uuid'];
 
-        // Fetch Positions
-        $posQuery = "SELECT * FROM positions WHERE election_uuid = ? ORDER BY display_order ASC";
+        // Fetch Positions with Gender Restriction Logic
+        $voterGender = strtolower(trim($voter_row['gender'] ?? ''));
+        $posQuery = "SELECT * FROM positions WHERE election_uuid = ? AND (gender_restriction = 'all' OR gender_restriction = ? OR gender_restriction IS NULL OR gender_restriction = '') ORDER BY display_order ASC";
         $stmt = $conn->prepare($posQuery);
-        $stmt->execute([$electionUuid]);
+        $stmt->execute([$electionUuid, $voterGender]);
         $positions = $stmt->fetchAll();
 
         $ballotData = [];
@@ -427,6 +428,7 @@ class VoterController
             die("Critical Error: Your vote has already been recorded for this election.");
         }
 
+        $voterGender = strtolower(trim($voter_row['gender'] ?? ''));
         $num_positions = intval($_POST['number-of-positions'] ?? 0);
 
         try {
@@ -435,6 +437,20 @@ class VoterController
             for ($i = 0; $i < $num_positions; $i++) {
                 $position_id = sanitize($_POST["name-of-positions{$i}"] ?? '');
                 $voted_ip = $details->ip ?? ($_SERVER['REMOTE_ADDR'] ?? 'Unknown IP');
+
+                // Enforce Gender Restriction at the database level
+                $pStmt = $conn->prepare("SELECT gender_restriction FROM positions WHERE position_id = ? AND election_uuid = ?");
+                $pStmt->execute([$position_id, $election_uuid]);
+                $pRow = $pStmt->fetch();
+                if ($pRow) {
+                    $posRestriction = strtolower(trim($pRow['gender_restriction'] ?? 'all'));
+                    if ($posRestriction !== 'all' && $posRestriction !== '' && $posRestriction !== $voterGender) {
+                        // Tampering detected, unauthorized to vote for this position
+                        continue;
+                    }
+                } else {
+                    continue; // Position doesn't exist or doesn't belong to this election
+                }
 
                 if (isset($_POST["contestant{$i}"]) && !empty($_POST["contestant{$i}"])) {
                     $contestant_id = sanitize($_POST["contestant{$i}"]);
@@ -540,9 +556,16 @@ class VoterController
                 $pos_id = sanitize($_POST["name-of-positions{$i}"] ?? '');
 
                 // Get position name
-                $pStmt = $conn->prepare("SELECT position_name FROM positions WHERE position_id = ?");
+                $pStmt = $conn->prepare("SELECT position_name, gender_restriction FROM positions WHERE position_id = ?");
                 $pStmt->execute([$pos_id]);
-                $pName = $pStmt->fetchColumn();
+                $pRow = $pStmt->fetch();
+                $pName = $pRow['position_name'] ?? 'Unknown Position';
+
+                // Skip output for excluded positions
+                $posRestriction = strtolower(trim($pRow['gender_restriction'] ?? 'all'));
+                if ($posRestriction !== 'all' && $posRestriction !== '' && $posRestriction !== $voterGender) {
+                    continue;
+                }
 
                 $selection = "Abstained";
 

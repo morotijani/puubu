@@ -49,14 +49,18 @@
     .success-card {
         max-width: 550px;
         width: 100%;
-        padding: 4rem 3rem;
+        padding: 2.5rem 1.5rem;
         background: var(--card-bg);
         border: 1px solid rgba(0, 0, 0, 0.05);
-        border-radius: 2.5rem;
+        border-radius: 2rem;
         box-shadow: 0 30px 60px -20px rgba(29, 61, 55, 0.08);
         position: relative;
         z-index: 10;
         animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    @media (min-width: 768px) {
+        .success-card { padding: 4rem 3rem; border-radius: 2.5rem; }
     }
 
     .check-animation {

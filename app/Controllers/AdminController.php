@@ -1012,7 +1012,7 @@ class AdminController {
 
         // Fetch Paginated Data
         $query = "
-            SELECT v.*, e.title, e.organized_by, e.status as election_status, e.allow_direct_link 
+            SELECT v.*, e.title, e.organized_by, e.status as election_status, e.allow_direct_link, e.allow_email_login
             FROM voters v
             INNER JOIN election e ON v.election_uuid = e.uuid
             $whereSql
@@ -1192,6 +1192,178 @@ class AdminController {
         redirect(PROOT . 'admin/voters');
     }
 
+    public function sendVoterEmail($voter_uuid) {
+        global $conn, $admin_data;
+        header('Content-Type: application/json');
+
+        if (!cadminIsLoggedIn() || empty($admin_data)) {
+            echo json_encode(['success' => false, 'message' => 'Unauthorized']);
+            exit;
+        }
+
+        $stmt = $conn->prepare("SELECT v.*, e.title, e.allow_email_login, e.uuid as election_uuid FROM voters v INNER JOIN election e ON v.election_uuid = e.uuid WHERE v.uuid = ?");
+        $stmt->execute([$voter_uuid]);
+        $voter = $stmt->fetch();
+
+        if (!$voter) {
+            echo json_encode(['success' => false, 'message' => 'Voter not found.']);
+            exit;
+        } else if ($voter['allow_email_login'] != 1) {
+            echo json_encode(['success' => false, 'message' => 'Email login is not enabled for this election.']);
+            exit;
+        } else if (empty($voter['email'])) {
+            echo json_encode(['success' => false, 'message' => 'Voter does not have an email address.']);
+            exit;
+        } else {
+            // Regenerate missing pin_code for legacy imported voters
+            if (empty($voter['pin_code'])) {
+                $string = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKMNOPQRSTUVWXYZ0123456789';
+                $new_pin = substr(str_shuffle($string), 0, 8);
+                $new_hashed = password_hash($new_pin, PASSWORD_DEFAULT);
+                $conn->prepare("UPDATE voters SET pin_code = ?, password = ? WHERE uuid = ?")->execute([$new_pin, $new_hashed, $voter['uuid']]);
+                $voter['pin_code'] = $new_pin;
+            }
+
+            $protocol = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http";
+            $domain = $_SERVER['HTTP_HOST'];
+            $login_url = $protocol . "://" . $domain . PROOT . "signin";
+            
+            $subject = "Your Voting Credentials for " . $voter['title'];
+            
+            $body = '
+            <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; border: 1px solid #e2e8f0; border-radius: 12px; overflow: hidden; background: #ffffff;">
+                <div style="background: #1d3d37; padding: 30px 24px; text-align: center;">
+                    <h2 style="color: #dcf3b0; margin: 0; font-size: 24px; letter-spacing: -0.5px;">Your Voting Credentials</h2>
+                </div>
+                <div style="padding: 40px 32px; color: #4a5568; line-height: 1.6;">
+                    <p style="font-size: 16px; margin-top: 0;">Hello <strong>' . ucwords($voter['first_name']) . '</strong>,</p>
+                    <p style="font-size: 16px;">You have been securely registered to participate in the upcoming <strong>' . $voter['title'] . '</strong>.</p>
+                    
+                    <div style="background: #f8fafc; border: 1px solid #e2e8f0; padding: 24px; border-radius: 8px; margin: 32px 0;">
+                        <p style="margin-top: 0; margin-bottom: 16px; font-size: 12px; color: #718096; font-weight: bold; text-transform: uppercase; letter-spacing: 1px;">Secure Access Details</p>
+                        <table style="width: 100%; border-collapse: collapse;">
+                            <tr>
+                                <td style="padding: 8px 0; color: #718096; width: 140px; font-size: 15px;">Voter ID:</td>
+                                <td style="padding: 8px 0; font-weight: 600; font-size: 16px; font-family: monospace; color: #1a202c; letter-spacing: 1px;">' . $voter['voter_id'] . '</td>
+                            </tr>';
+            
+            if (!empty($voter['pin_code'])) {
+                $body .= '
+                            <tr>
+                                <td style="padding: 8px 0; color: #718096; font-size: 15px;">Authentication:</td>
+                                <td style="padding: 8px 0; font-weight: 600; font-size: 16px; font-family: monospace; color: #1a202c; letter-spacing: 1px;">' . $voter['pin_code'] . '</td>
+                            </tr>';
+            }
+            
+            $body .= '
+                        </table>
+                    </div>
+                    
+                    <div style="text-align: center; margin: 40px 0 10px;">
+                        <a href="' . $login_url . '" style="display: inline-block; padding: 14px 32px; background: #dcf3b0; color: #1d3d37; text-decoration: none; border-radius: 50px; font-weight: 700; font-size: 16px; transition: all 0.3s ease; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);">Access Voting Portal</a>
+                    </div>
+                    <p style="text-align: center; font-size: 13px; color: #a0aec0; margin-top: 20px;">Or copy and paste this link securely:<br><a href="' . $login_url . '" style="color: #4a5568; word-break: break-all;">' . $login_url . '</a></p>
+                </div>
+                <div style="background: #f8fafc; padding: 20px; text-align: center; font-size: 13px; color: #a0aec0; border-top: 1px solid #e2e8f0;">
+                    &copy; ' . date('Y') . ' Kokuromotie Group. All rights reserved. <br>This is an automated secure transmission.
+                </div>
+            </div>';
+            
+            try {
+                send_email($voter['email'], $subject, $body);
+                add_to_log("Sent credential email to voter ID: " . $voter['voter_id'], $admin_data['uuid'], 'admin');
+                echo json_encode(['success' => true, 'message' => 'Email sent successfully to ' . $voter['email']]);
+            } catch (Exception $e) {
+                echo json_encode(['success' => false, 'message' => 'Failed to send email. Check mail server settings.']);
+            }
+            exit;
+        }
+    }
+
+    public function voterBulkEmail() {
+        global $conn, $admin_data;
+        header('Content-Type: application/json');
+
+        if (!cadminIsLoggedIn() || empty($admin_data)) {
+            echo json_encode(['success' => false, 'message' => 'Unauthorized']);
+            exit;
+        }
+
+        if (isset($_POST['voter_ids']) && is_array($_POST['voter_ids'])) {
+            $successCount = 0;
+            $failCount = 0;
+
+            $protocol = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http";
+            $domain = $_SERVER['HTTP_HOST'];
+            $login_url = $protocol . "://" . $domain . PROOT . "signin";
+
+            foreach ($_POST['voter_ids'] as $voter_uuid) {
+                $stmt = $conn->prepare("SELECT v.*, e.title, e.allow_email_login, e.uuid as election_uuid FROM voters v INNER JOIN election e ON v.election_uuid = e.uuid WHERE v.uuid = ?");
+                $stmt->execute([$voter_uuid]);
+                $voter = $stmt->fetch();
+
+                if ($voter && $voter['allow_email_login'] == 1 && !empty($voter['email'])) {
+                    if (empty($voter['pin_code'])) {
+                        $string = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKMNOPQRSTUVWXYZ0123456789';
+                        $new_pin = substr(str_shuffle($string), 0, 8);
+                        $new_hashed = password_hash($new_pin, PASSWORD_DEFAULT);
+                        $conn->prepare("UPDATE voters SET pin_code = ?, password = ? WHERE uuid = ?")->execute([$new_pin, $new_hashed, $voter['uuid']]);
+                        $voter['pin_code'] = $new_pin;
+                    }
+
+                    $subject = "Your Voting Credentials for " . $voter['title'];
+                    $body = '
+                    <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; border: 1px solid #e2e8f0; border-radius: 12px; overflow: hidden; background: #ffffff;">
+                        <div style="background: #1d3d37; padding: 30px 24px; text-align: center;">
+                            <h2 style="color: #dcf3b0; margin: 0; font-size: 24px; letter-spacing: -0.5px;">Your Voting Credentials</h2>
+                        </div>
+                        <div style="padding: 40px 32px; color: #4a5568; line-height: 1.6;">
+                            <p style="font-size: 16px; margin-top: 0;">Hello <strong>' . ucwords($voter['first_name']) . '</strong>,</p>
+                            <p style="font-size: 16px;">You have been securely registered to participate in the upcoming <strong>' . $voter['title'] . '</strong>.</p>
+                            
+                            <div style="background: #f8fafc; border: 1px solid #e2e8f0; padding: 24px; border-radius: 8px; margin: 32px 0;">
+                                <p style="margin-top: 0; margin-bottom: 16px; font-size: 12px; color: #718096; font-weight: bold; text-transform: uppercase; letter-spacing: 1px;">Secure Access Details</p>
+                                <table style="width: 100%; border-collapse: collapse;">
+                                    <tr>
+                                        <td style="padding: 8px 0; color: #718096; width: 140px; font-size: 15px;">Voter ID:</td>
+                                        <td style="padding: 8px 0; font-weight: 600; font-size: 16px; font-family: monospace; color: #1a202c; letter-spacing: 1px;">' . $voter['voter_id'] . '</td>
+                                    </tr>
+                                    <tr>
+                                        <td style="padding: 8px 0; color: #718096; font-size: 15px;">Authentication:</td>
+                                        <td style="padding: 8px 0; font-weight: 600; font-size: 16px; font-family: monospace; color: #1a202c; letter-spacing: 1px;">' . $voter['pin_code'] . '</td>
+                                    </tr>
+                                </table>
+                            </div>
+                            
+                            <div style="text-align: center; margin: 40px 0 10px;">
+                                <a href="' . $login_url . '" style="display: inline-block; padding: 14px 32px; background: #dcf3b0; color: #1d3d37; text-decoration: none; border-radius: 50px; font-weight: 700; font-size: 16px; transition: all 0.3s ease; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);">Access Voting Portal</a>
+                            </div>
+                            <p style="text-align: center; font-size: 13px; color: #a0aec0; margin-top: 20px;">Or copy and paste this link securely:<br><a href="' . $login_url . '" style="color: #4a5568; word-break: break-all;">' . $login_url . '</a></p>
+                        </div>
+                        <div style="background: #f8fafc; padding: 20px; text-align: center; font-size: 13px; color: #a0aec0; border-top: 1px solid #e2e8f0;">
+                            &copy; ' . date('Y') . ' Kokuromotie Group. All rights reserved. <br>This is an automated secure transmission.
+                        </div>
+                    </div>';
+                    
+                    try {
+                        send_email($voter['email'], $subject, $body);
+                        add_to_log("Sent credential email to voter ID: " . $voter['voter_id'], $admin_data['uuid'], 'admin');
+                        $successCount++;
+                    } catch (Exception $e) {
+                        $failCount++;
+                    }
+                } else {
+                    $failCount++;
+                }
+            }
+
+            echo json_encode(['success' => true, 'message' => "$successCount emails sent successfully." . ($failCount > 0 ? " $failCount failed or skipped." : "")]);
+        } else {
+            echo json_encode(['success' => false, 'message' => 'No voters selected.']);
+        }
+        exit;
+    }
+
     public function voterTruncate() {
         global $conn, $admin_data;
         if (!cadminIsLoggedIn() || empty($admin_data)) {
@@ -1292,8 +1464,8 @@ class AdminController {
                     // If voter_id is numeric and no separate phone, use voter_id as phone
                     $phone = (is_numeric(str_replace(['+', ' ', '(', ')', '-'], '', $voter_id))) ? $voter_id : '';
                     
-                    $query = "INSERT INTO voters (uuid, voter_id, password, first_name, last_name, gender, email, phone, election_uuid, voting_token) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-                    $conn->prepare($query)->execute([$new_uuid, $voter_id, $hashed, $first_name, $last_name, $gender, $email, $phone, $election_id, $voting_token]);
+                    $query = "INSERT INTO voters (uuid, voter_id, password, pin_code, first_name, last_name, gender, email, phone, election_uuid, voting_token) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                    $conn->prepare($query)->execute([$new_uuid, $voter_id, $hashed, $raw_pass, $first_name, $last_name, $gender, $email, $phone, $election_id, $voting_token]);
                     $imported++;
                 }
                 $conn->commit();

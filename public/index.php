@@ -363,6 +363,18 @@ $router->mount('/admin', function() use ($router, $twig) {
         $controller->voterImport();
     });
 
+    $router->post('/voters/send-email/([a-zA-Z0-9\-]+)', function($id) use ($twig) {
+        require_once __DIR__ . '/../app/Controllers/AdminController.php';
+        $controller = new \App\Controllers\AdminController($twig);
+        $controller->sendVoterEmail($id);
+    });
+
+    $router->post('/voters/bulk-email', function() use ($twig) {
+        require_once __DIR__ . '/../app/Controllers/AdminController.php';
+        $controller = new \App\Controllers\AdminController($twig);
+        $controller->voterBulkEmail();
+    });
+
     $router->get('/voters/duplicates', function() use ($twig) {
         require_once __DIR__ . '/../app/Controllers/AdminController.php';
         $controller = new \App\Controllers\AdminController($twig);

@@ -29,6 +29,9 @@
                     <li><a class="dropdown-item py-2 d-flex align-items-center" href="#" data-bs-toggle="modal" data-bs-target="#exportCredentialsModal">
                         <span class="material-symbols-outlined me-2 text-accent fs-6" style="font-family: 'Material Symbols Outlined' !important; color: var(--admin-accent) !important;">key</span> Export Offline Credentials
                     </a></li>
+                    <li><a class="dropdown-item py-2 d-flex align-items-center" href="#" onclick="bulkEmailVoters(event)">
+                        <span class="material-symbols-outlined me-2 text-accent fs-6" style="font-family: 'Material Symbols Outlined' !important; color: var(--admin-accent) !important;">forward_to_inbox</span> Dispatch Bulk Emails
+                    </a></li>
                     <li><hr class="dropdown-divider mx-3 opacity-10"></li>
                     <li class="px-3 py-2"><span class="premium-label mb-0 text-danger" style="color: #ff4d4d !important; letter-spacing: 0.15em !important;">CRITICAL ACTIONS</span></li>
                     <li><a class="dropdown-item py-2 text-danger d-flex align-items-center" href="#" data-bs-toggle="modal" data-bs-target="#wipeRegistryModal">
@@ -154,6 +157,11 @@
                                 </td>
                                 <td class="text-end pe-4">
                                     <div class="d-flex justify-content-end gap-2">
+                                        {% if voter.allow_email_login == 1 and voter.email %}
+                                            <button type="button" class="btn btn-light btn-sm px-2 shadow-sm text-primary email-voter-btn" data-uuid="{{ voter.uuid }}" title="Send Login Credentials via Email">
+                                                <span class="material-symbols-outlined fs-6">mail</span>
+                                            </button>
+                                        {% endif %}
                                         <a href="{{ PROOT }}admin/voters/edit/{{ voter.uuid }}" class="btn btn-light btn-sm px-2 shadow-sm" title="Edit Identity">
                                             <span class="material-symbols-outlined fs-6">edit</span>
                                         </a>
@@ -474,6 +482,116 @@
         }).then((result) => {
             if (result.isConfirmed) {
                 window.location.href = "{{ PROOT }}admin/voters/delete/" + uuid;
+            }
+        });
+    }
+
+    $(document).ready(function() {
+        // Individual AJAX Email
+        $('.email-voter-btn').on('click', function(e) {
+            e.preventDefault();
+            var uuid = $(this).data('uuid');
+            var btn = $(this);
+            var originalHtml = btn.html();
+            
+            Swal.fire({
+                title: 'Send Credentials?',
+                text: "This will email the login details securely to this voter.",
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonText: 'Yes, Send',
+                cancelButtonText: 'Cancel',
+                customClass: {
+                    popup: 'premium-swal-popup',
+                    title: 'premium-swal-title',
+                    htmlContainer: 'premium-swal-html',
+                    confirmButton: 'btn btn-primary premium-swal-confirm',
+                    cancelButton: 'btn premium-swal-cancel'
+                },
+                buttonsStyling: false
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    btn.html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>').prop('disabled', true);
+                    
+                    $.ajax({
+                        url: '{{ PROOT }}admin/voters/send-email/' + uuid,
+                        type: 'POST',
+                        data: { csrf_token: '{{ csrf_token() }}' },
+                        success: function(response) {
+                            btn.html(originalHtml).prop('disabled', false);
+                            if (response.success) {
+                                Swal.fire({ title: 'Sent!', text: response.message, icon: 'success', timer: 2500, showConfirmButton: false });
+                            } else {
+                                Swal.fire('Error', response.message || 'An error occurred.', 'error');
+                            }
+                        },
+                        error: function() {
+                            btn.html(originalHtml).prop('disabled', false);
+                            Swal.fire('Error', 'Network error occurred.', 'error');
+                        }
+                    });
+                }
+            });
+        });
+    });
+
+    // Bulk AJAX Email
+    function bulkEmailVoters(e) {
+        e.preventDefault();
+        var selected = [];
+        $('.voter-checkbox:checked').each(function() {
+            selected.push($(this).val());
+        });
+
+        if (selected.length === 0) {
+            Swal.fire({ title: 'No Selection', text: 'Please select at least one voter to email.', icon: 'warning', confirmButtonClass: 'btn btn-primary', buttonsStyling: false });
+            return;
+        }
+
+        Swal.fire({
+            title: 'Send Bulk Credentials?',
+            text: "You are about to dispatch login credentials to " + selected.length + " selected voter(s).",
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, Dispatch Emails',
+            cancelButtonText: 'Cancel',
+            customClass: {
+                popup: 'premium-swal-popup',
+                title: 'premium-swal-title',
+                htmlContainer: 'premium-swal-html',
+                confirmButton: 'btn btn-primary premium-swal-confirm',
+                cancelButton: 'btn premium-swal-cancel'
+            },
+            buttonsStyling: false
+        }).then((result) => {
+            if (result.isConfirmed) {
+                Swal.fire({
+                    title: 'Dispatching Emails...',
+                    html: 'Please wait. Do not close this page.',
+                    allowOutsideClick: false,
+                    didOpen: () => {
+                        Swal.showLoading();
+                    }
+                });
+
+                $.ajax({
+                    url: '{{ PROOT }}admin/voters/bulk-email',
+                    type: 'POST',
+                    data: {
+                        voter_ids: selected,
+                        csrf_token: '{{ csrf_token() }}'
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            Swal.fire({ title: 'Complete!', text: response.message, icon: 'success', confirmButtonClass: 'btn btn-primary', buttonsStyling: false });
+                        } else {
+                            Swal.fire({ title: 'Error', text: response.message || 'An error occurred.', icon: 'error', confirmButtonClass: 'btn btn-danger', buttonsStyling: false });
+                        }
+                    },
+                    error: function() {
+                        Swal.fire({ title: 'Error', text: 'Network connection failed.', icon: 'error', confirmButtonClass: 'btn btn-danger', buttonsStyling: false });
+                    }
+                });
             }
         });
     }

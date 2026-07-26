@@ -1,0 +1,3 @@
+[2026-07-26 16:19:27] API Request to 0553477150 | Code: 200 | Response: {"ok":true,"data":{"campaign_id":36051,"sender_id":228,"sender":"Kokuromotie","recipients":1,"segments_per_recipient":1,"total_units":1,"encoding":"gsm","status":"sent"}}
+[2026-07-26 16:48:28] API Request to +233557771416 | Code: 200 | Response: {"ok":true,"data":{"campaign_id":36057,"sender_id":228,"sender":"Kokuromotie","recipients":1,"segments_per_recipient":1,"total_units":1,"encoding":"gsm","status":"sent"}}
+[2026-07-26 16:48:30] API Request to +233553477150 | Code: 200 | Response: {"ok":true,"data":{"campaign_id":36058,"sender_id":228,"sender":"Kokuromotie","recipients":1,"segments_per_recipient":1,"total_units":1,"encoding":"gsm","status":"sent"}}

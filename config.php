@@ -19,6 +19,10 @@
 
     define('ADMIN_ACCESS_TOKEN', $_ENV['ADMIN_ACCESS_TOKEN']);
 
+	// SMS Gateways
+	define('INTEKSMS_API_KEY', $_ENV['INTEKSMS_API_KEY'] ?? '');
+	define('INTEKSMS_SENDER_ID', $_ENV['INTEKSMS_SENDER_ID'] ?? '');
+
 	// Define the idle timeout period (e.g., 5 minutes = 300 seconds)
 	define('IDLE_TIMEOUT', 600); // 600 seconds = 10 minutes
 

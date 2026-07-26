@@ -25,7 +25,7 @@ class VoterController
 
         $login_issue_text = "Problem loggin in to cast my vote. Assist me ASAP!";
         $login_issue = urlencode($login_issue_text);
-        
+
         $flash_error = $_SESSION['flash_error'] ?? null;
         $flash_success = $_SESSION['flash_success'] ?? null;
         unset($_SESSION['flash_error'], $_SESSION['flash_success']);
@@ -55,14 +55,14 @@ class VoterController
                     if ($voter['election_status'] == 1) {
                         $now = date('Y-m-d H:i:s');
                         if ($now >= $voter['starts_at'] && $now <= $voter['ends_at']) {
-                             // Check if already voted
+                            // Check if already voted
                             $checkVoted = $conn->prepare("SELECT COUNT(*) FROM voter_participation WHERE voter_id = ? AND election_uuid = ?");
                             $checkVoted->execute([$voter['uuid'], $voter['election_uuid']]);
                             if ($checkVoted->fetchColumn() == 0) {
                                 // Proceed to complete login
                                 $unique_vld_id = guidv4();
                                 $conn->prepare("INSERT INTO voter_security_logs (uuid, voter_id, location) VALUES (?, ?, ?)")
-                                     ->execute([$unique_vld_id, $voter['uuid'], $location]);
+                                    ->execute([$unique_vld_id, $voter['uuid'], $location]);
 
                                 $_SESSION['voter_accessed'] = $voter['uuid'];
                                 $_SESSION['voter_login_details_id'] = $unique_vld_id;
@@ -90,10 +90,11 @@ class VoterController
         ]);
     }
 
-    public function checkVoterId() {
+    public function checkVoterId()
+    {
         global $conn;
         $voter_id = sanitize($_POST['voter_id'] ?? '');
-        
+
         if (empty($voter_id)) {
             $this->jsonResponse(['status' => 'error', 'message' => 'Please enter your Voter ID']);
         }
@@ -140,18 +141,19 @@ class VoterController
             'status' => 'success',
             'voter_uuid' => $voter['uuid'],
             'settings' => [
-                'email' => (int)$voter['allow_email_login'],
-                'sms' => (int)$voter['allow_sms_login'],
-                'pin' => (int)$voter['allow_pin_login']
+                'email' => (int) $voter['allow_email_login'],
+                'sms' => (int) $voter['allow_sms_login'],
+                'pin' => (int) $voter['allow_pin_login']
             ],
             'phone_masked' => $phone_masked
         ]);
     }
 
-    public function sendOtp() {
+    public function sendOtp()
+    {
         global $conn;
         $voter_uuid = $_POST['voter_uuid'] ?? '';
-        
+
         $stmt = $conn->prepare("SELECT * FROM voters WHERE uuid = ?");
         $stmt->execute([$voter_uuid]);
         $voter = $stmt->fetch();
@@ -160,18 +162,19 @@ class VoterController
             $this->jsonResponse(['status' => 'error', 'message' => 'Voter or phone number not found.']);
         }
 
-        $otp = (string)rand(100000, 999999);
+        $otp = (string) rand(100000, 999999);
         $expires = date('Y-m-d H:i:s', strtotime('+10 minutes'));
 
         $stmt = $conn->prepare("UPDATE voters SET otp_code = ?, otp_expires_at = ? WHERE uuid = ?");
         $stmt->execute([$otp, $expires, $voter_uuid]);
 
-        $this->mockSendSms($voter['phone'], "Your Kokuromotie voting OTP is: $otp. Expires in 10 minutes.");
+        \send_sms($voter['phone'], "Kokuromotie OTP: $otp. Expires in 10mins.");
 
         $this->jsonResponse(['status' => 'success', 'message' => 'OTP sent to your phone.']);
     }
 
-    public function verifyOtp() {
+    public function verifyOtp()
+    {
         global $conn;
         $voter_uuid = $_POST['voter_uuid'] ?? '';
         $otp = $_POST['otp_code'] ?? '';
@@ -195,11 +198,12 @@ class VoterController
         $this->completeLogin($voter);
     }
 
-    public function directLogin($token) {
+    public function directLogin($token)
+    {
         global $conn;
-        
+
         $token = sanitize($token);
-        
+
         $query = "
             SELECT v.*, e.status as election_status, e.starts_at, e.ends_at, e.allow_direct_link
             FROM voters v 
@@ -253,9 +257,10 @@ class VoterController
         $this->completeLogin($voter, true);
     }
 
-    public function completeLogin($voter, $redirect = false) {
+    public function completeLogin($voter, $redirect = false)
+    {
         global $conn, $location;
-        
+
         $unique_vld_id = guidv4();
         $stmt = $conn->prepare("INSERT INTO voter_security_logs (uuid, voter_id, location) VALUES (?, ?, ?)");
         $stmt->execute([$unique_vld_id, $voter['uuid'], $location]);
@@ -273,17 +278,8 @@ class VoterController
         }
     }
 
-    private function mockSendSms($phone, $message) {
-        $logFile = __DIR__ . '/../../scratch/sms_mock.log';
-        $logDir = dirname($logFile);
-        if (!is_dir($logDir)) {
-            mkdir($logDir, 0777, true);
-        }
-        $log = "[" . date('Y-m-d H:i:s') . "] SMS to $phone: $message" . PHP_EOL;
-        file_put_contents($logFile, $log, FILE_APPEND);
-    }
-
-    private function jsonResponse($data) {
+    private function jsonResponse($data)
+    {
         header('Content-Type: application/json');
         echo json_encode($data);
         exit;
@@ -299,7 +295,7 @@ class VoterController
 
         $voter_row = $voter_result[0];
         $now = date('Y-m-d H:i:s');
-        
+
         $has_started = ($voter_row['election_status'] == 1 && $now >= $voter_row['starts_at']);
         $has_ended = ($voter_row['election_status'] == 2 || $now > $voter_row['ends_at']);
         $not_started_yet = ($voter_row['election_status'] == 1 && $now < $voter_row['starts_at']);
@@ -454,11 +450,11 @@ class VoterController
 
                 if (isset($_POST["contestant{$i}"]) && !empty($_POST["contestant{$i}"])) {
                     $contestant_id = sanitize($_POST["contestant{$i}"]);
-                    
+
                     // Safe result recording: Check if row exists, if not, create it
                     $resCheck = $conn->prepare("SELECT id FROM results WHERE contestant_id = ? AND position_id = ? AND election_uuid = ?");
                     $resCheck->execute([$contestant_id, $position_id, $election_uuid]);
-                    
+
                     if ($resCheck->rowCount() == 0) {
                         $stmt = $conn->prepare("INSERT INTO results (uuid, votes_for, votes_against, contestant_id, position_id, election_uuid) VALUES (?, 1, 0, ?, ?, ?)");
                         $stmt->execute([guidv4(), $contestant_id, $position_id, $election_uuid]);
@@ -513,11 +509,11 @@ class VoterController
                     $stmt->execute([$vfid, $voter_uuid, $election_uuid, $position_id, 'skipped', $location, $voted_ip]);
                 }
             }
-                        
-                                    // Mark voter as done
-                                    $vhd_id = guidv4();
-                                    $stmt = $conn->prepare("INSERT INTO voter_participation (uuid, voter_id, election_uuid, status) VALUES (?, ?, ?, 1)");
-                                    $stmt->execute([$vhd_id, $voter_uuid, $election_uuid]);
+
+            // Mark voter as done
+            $vhd_id = guidv4();
+            $stmt = $conn->prepare("INSERT INTO voter_participation (uuid, voter_id, election_uuid, status) VALUES (?, ?, ?, 1)");
+            $stmt->execute([$vhd_id, $voter_uuid, $election_uuid]);
 
             // FETCH ELECTION DETAILS EXPLICITLY FOR RECEIPT
             $eStmt = $conn->prepare("SELECT title, organized_by FROM election WHERE uuid = ?");
@@ -640,7 +636,7 @@ class VoterController
             $stmt = $conn->prepare("UPDATE voter_security_logs SET logout_at = NOW(), voter_login_details_status = 0 WHERE uuid = ?");
             $stmt->execute([$_SESSION['voter_login_details_id']]);
         }
-        
+
         $voter_uuid = $_SESSION['voter_accessed'] ?? 'Unknown';
         add_to_log("voter logged out", $voter_uuid, 'user');
 

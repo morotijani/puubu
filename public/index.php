@@ -375,6 +375,18 @@ $router->mount('/admin', function() use ($router, $twig) {
         $controller->voterBulkEmail();
     });
 
+    $router->post('/voters/send-sms/([a-zA-Z0-9\-]+)', function($id) use ($twig) {
+        require_once __DIR__ . '/../app/Controllers/AdminController.php';
+        $controller = new \App\Controllers\AdminController($twig);
+        $controller->sendVoterSms($id);
+    });
+
+    $router->post('/voters/bulk-sms', function() use ($twig) {
+        require_once __DIR__ . '/../app/Controllers/AdminController.php';
+        $controller = new \App\Controllers\AdminController($twig);
+        $controller->voterBulkSms();
+    });
+
     $router->get('/voters/duplicates', function() use ($twig) {
         require_once __DIR__ . '/../app/Controllers/AdminController.php';
         $controller = new \App\Controllers\AdminController($twig);

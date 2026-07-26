@@ -1270,7 +1270,7 @@ class AdminController {
             </div>';
             
             try {
-                send_email($voter['email'], $subject, $body);
+                \send_email($voter['email'], $subject, $body);
                 add_to_log("Sent credential email to voter ID: " . $voter['voter_id'], $admin_data['uuid'], 'admin');
                 echo json_encode(['success' => true, 'message' => 'Email sent successfully to ' . $voter['email']]);
             } catch (Exception $e) {
@@ -1346,7 +1346,7 @@ class AdminController {
                     </div>';
                     
                     try {
-                        send_email($voter['email'], $subject, $body);
+                        \send_email($voter['email'], $subject, $body);
                         add_to_log("Sent credential email to voter ID: " . $voter['voter_id'], $admin_data['uuid'], 'admin');
                         $successCount++;
                     } catch (Exception $e) {
@@ -1358,6 +1358,123 @@ class AdminController {
             }
 
             echo json_encode(['success' => true, 'message' => "$successCount emails sent successfully." . ($failCount > 0 ? " $failCount failed or skipped." : "")]);
+        } else {
+            echo json_encode(['success' => false, 'message' => 'No voters selected.']);
+        }
+        exit;
+    }
+
+    public function sendVoterSms($voter_uuid) {
+        global $conn, $admin_data;
+        header('Content-Type: application/json');
+        
+        if (!cadminIsLoggedIn() || empty($admin_data)) {
+            echo json_encode(['success' => false, 'message' => 'Unauthorized']);
+            exit;
+        }
+
+        $stmt = $conn->prepare("SELECT v.*, e.title, e.allow_sms_login, e.uuid as election_uuid FROM voters v INNER JOIN election e ON v.election_uuid = e.uuid WHERE v.uuid = ?");
+        $stmt->execute([$voter_uuid]);
+        $voter = $stmt->fetch();
+
+        if (!$voter) {
+            echo json_encode(['success' => false, 'message' => 'Voter not found.']);
+        } else if ($voter['allow_sms_login'] != 1) {
+            echo json_encode(['success' => false, 'message' => 'SMS login is not enabled for this election.']);
+        } else if (empty($voter['phone'])) {
+            echo json_encode(['success' => false, 'message' => 'Voter does not have a phone number.']);
+        } else {
+            if (empty($voter['pin_code'])) {
+                $string = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKMNOPQRSTUVWXYZ0123456789';
+                $new_pin = substr(str_shuffle($string), 0, 8);
+                $new_hashed = password_hash($new_pin, PASSWORD_DEFAULT);
+                $conn->prepare("UPDATE voters SET pin_code = ?, password = ? WHERE uuid = ?")->execute([$new_pin, $new_hashed, $voter['uuid']]);
+                $voter['pin_code'] = $new_pin;
+            }
+
+            $protocol = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http";
+            $domain = $_SERVER['HTTP_HOST'];
+            $login_url = $protocol . "://" . $domain . PROOT . "signin";
+            
+            // Keep strictly under 160 chars
+            $fname = ucfirst(substr($voter['first_name'], 0, 4));
+            $msg = "Hi, {$fname}, below is your voting details\n";
+            $msg .= "ID: {$voter['voter_id']}\n";
+            if (!empty($voter['pin_code'])) $msg .= "PIN: {$voter['pin_code']}\n";
+            $msg .= "LINK: {$login_url}";
+
+            $result = \send_sms($voter['phone'], $msg);
+            
+            if ($result) {
+                add_to_log("Sent credential SMS to voter ID: " . $voter['voter_id'], $admin_data['uuid'], 'admin');
+                echo json_encode(['success' => true, 'message' => 'SMS sent successfully to ' . $voter['phone']]);
+            } else {
+                echo json_encode(['success' => false, 'message' => 'Failed to send SMS. Check API configuration.']);
+            }
+            exit;
+        }
+    }
+
+    public function voterBulkSms() {
+        global $conn, $admin_data;
+        header('Content-Type: application/json');
+
+        if (!cadminIsLoggedIn() || empty($admin_data)) {
+            echo json_encode(['success' => false, 'message' => 'Unauthorized']);
+            exit;
+        }
+
+        $input = json_decode(file_get_contents('php://input'), true);
+        $uuids = $input['voters'] ?? [];
+
+        if (empty($uuids) && isset($_POST['voters'])) {
+            $uuids = $_POST['voters'];
+        }
+
+        if (!empty($uuids) && is_array($uuids)) {
+            $successCount = 0;
+            $failCount = 0;
+            $protocol = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http";
+            $domain = $_SERVER['HTTP_HOST'];
+            $login_url = $protocol . "://" . $domain . PROOT . "signin";
+
+            foreach ($uuids as $voter_uuid) {
+                $stmt = $conn->prepare("SELECT v.*, e.title, e.allow_sms_login, e.uuid as election_uuid FROM voters v INNER JOIN election e ON v.election_uuid = e.uuid WHERE v.uuid = ?");
+                $stmt->execute([$voter_uuid]);
+                $voter = $stmt->fetch();
+
+                if ($voter && $voter['allow_sms_login'] == 1 && !empty($voter['phone'])) {
+                    if (empty($voter['pin_code'])) {
+                        $string = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKMNOPQRSTUVWXYZ0123456789';
+                        $new_pin = substr(str_shuffle($string), 0, 8);
+                        $new_hashed = password_hash($new_pin, PASSWORD_DEFAULT);
+                        $conn->prepare("UPDATE voters SET pin_code = ?, password = ? WHERE uuid = ?")->execute([$new_pin, $new_hashed, $voter['uuid']]);
+                        $voter['pin_code'] = $new_pin;
+                    }
+
+                    $protocol = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http";
+                    $domain = $_SERVER['HTTP_HOST'];
+                    $login_url = $protocol . "://" . $domain . PROOT . "signin";
+
+                    // Keep strictly under 160 chars
+                    $fname = ucfirst(substr($voter['first_name'], 0, 4));
+                    $msg = "Hi, {$fname}, below is your voting details\n";
+                    $msg .= "ID: {$voter['voter_id']}\n";
+                    if (!empty($voter['pin_code'])) $msg .= "PIN: {$voter['pin_code']}\n";
+                    $msg .= "LINK: {$login_url}";
+
+                    if (\send_sms($voter['phone'], $msg)) {
+                        add_to_log("Sent credential SMS to voter ID: " . $voter['voter_id'], $admin_data['uuid'], 'admin');
+                        $successCount++;
+                    } else {
+                        $failCount++;
+                    }
+                } else {
+                    $failCount++;
+                }
+            }
+
+            echo json_encode(['success' => true, 'message' => "$successCount SMS sent successfully." . ($failCount > 0 ? " $failCount failed or skipped." : "")]);
         } else {
             echo json_encode(['success' => false, 'message' => 'No voters selected.']);
         }

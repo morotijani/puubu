@@ -172,6 +172,57 @@ function sms_otp($msg, $phone) {
 	    }
 	}
 
+	function send_sms($phone, $message) {
+        $apiKey = defined('INTEKSMS_API_KEY') ? INTEKSMS_API_KEY : '';
+        $senderId = defined('INTEKSMS_SENDER_ID') ? INTEKSMS_SENDER_ID : 'KOKUROMOTIE';
+
+        if (empty($apiKey)) {
+            // Fallback to local logging if API key is not configured
+            $logFile = dirname(__DIR__) . '/scratch/sms_mock.log';
+            $logDir = dirname($logFile);
+            if (!is_dir($logDir)) {
+                mkdir($logDir, 0777, true);
+            }
+            $log = "[" . date('Y-m-d H:i:s') . "] SMS to $phone: $message\n";
+            file_put_contents($logFile, $log, FILE_APPEND);
+            return true;
+        }
+
+        $url = 'https://inteksms.top/api/v1/messages/send';
+        $payload = json_encode([
+            'sender'     => $senderId,
+            'title'      => 'Kokuromotie',
+            'message'    => $message,
+            'recipients' => [$phone],
+        ]);
+
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $payload);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, [
+            "Authorization: Bearer {$apiKey}",
+            "Content-Type: application/json"
+        ]);
+        curl_setopt($ch, CURLOPT_TIMEOUT, 30);
+        
+        $response = curl_exec($ch);
+        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        curl_close($ch);
+        
+        // Log API response for debugging
+        $logFile = dirname(__DIR__) . '/scratch/sms_api.log';
+        $logDir = dirname($logFile);
+        if (!is_dir($logDir)) {
+            mkdir($logDir, 0777, true);
+        }
+        $log = "[" . date('Y-m-d H:i:s') . "] API Request to $phone | Code: $httpCode | Response: $response\n";
+        file_put_contents($logFile, $log, FILE_APPEND);
+
+        return ($httpCode === 200);
+    }
+
 // Generate UUID VERSION 4
 function guidv4($data = null) {
     // Generate 16 bytes (128 bits) of random data or use the data passed into the function.

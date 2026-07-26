@@ -311,12 +311,14 @@
                 <!-- SMS Input Section -->
                 <div id="sms-input-area" style="display: none;">
                     <div class="text-center mb-4">
-                        <div class="bg-light p-3 rounded-4 mb-3">
-                            <p class="small text-muted mb-1">A secure code will be sent to:</p>
-                            <h5 class="fw-bold mb-0" id="masked-phone"></h5>
+                        <div class="premium-input-group mb-4 text-center">
+                            <div class="p-4" style="background: rgba(220, 243, 176, 0.15); border: 1px solid rgba(220, 243, 176, 0.4); border-radius: 16px;">
+                                <p class="small text-muted mb-2 fw-medium">A secure code will be sent to:</p>
+                                <h5 class="fw-bold mb-0" id="masked-phone" style="color: var(--primary-color); letter-spacing: 1.5px; font-family: monospace; font-size: 1.25rem;"></h5>
+                            </div>
                         </div>
-                        <button type="button" id="btn-send-otp" class="btn btn-dark w-100 rounded-4 py-3 fw-bold">
-                            Send OTP Code
+                        <button type="button" id="btn-send-otp" class="btn-login" style="width: 100%;">
+                            Send OTP Code <span class="material-symbols-outlined">send</span>
                         </button>
                     </div>
 
@@ -462,20 +464,50 @@
         });
 
         // SMS Flow
+        let otpCooldownInterval;
+        
+        function startOtpCooldown(btn, originalText) {
+            let timeLeft = 60;
+            btn.prop('disabled', true);
+            
+            clearInterval(otpCooldownInterval);
+            otpCooldownInterval = setInterval(function() {
+                timeLeft--;
+                if(timeLeft <= 0) {
+                    clearInterval(otpCooldownInterval);
+                    btn.prop('disabled', false).html(originalText);
+                } else {
+                    btn.html('Wait ' + timeLeft + 's');
+                }
+            }, 1000);
+        }
+
         $('#btn-send-otp, #btn-resend-otp').on('click', function() {
             const btn = $(this);
+            const isResend = btn.attr('id') === 'btn-resend-otp';
+            const originalHtml = isResend ? 'Didn\'t get the code? Resend' : 'Send OTP Code <span class="material-symbols-outlined">send</span>';
+            
             btn.prop('disabled', true);
-            if(btn.attr('id') === 'btn-send-otp') btn.html('<span class="spinner-border spinner-border-sm me-2"></span> Sending...');
+            if(!isResend) btn.html('<span class="spinner-border spinner-border-sm me-2"></span> Sending...');
+            else btn.html('Sending...');
 
             $.post('{{ PROOT }}auth/send-otp', { voter_uuid: currentVoterUuid }, function(response) {
-                btn.prop('disabled', false);
                 if (response.status === 'success') {
-                    $('#btn-send-otp').parent().fadeOut(200, function() {
-                        $('#otp-field').fadeIn(200);
-                    });
+                    if(!isResend) {
+                        $('#btn-send-otp').parent().fadeOut(200, function() {
+                            $('#otp-field').fadeIn(200);
+                            startOtpCooldown($('#btn-resend-otp'), 'Didn\'t get the code? Resend');
+                        });
+                    } else {
+                        startOtpCooldown(btn, originalHtml);
+                    }
                 } else {
+                    btn.prop('disabled', false).html(originalHtml);
                     showError(response.message);
                 }
+            }).fail(function() {
+                btn.prop('disabled', false).html(originalHtml);
+                showError("Network Error. Please try again.");
             });
         });
 

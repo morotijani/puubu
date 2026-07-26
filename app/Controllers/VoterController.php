@@ -159,7 +159,16 @@ class VoterController
         $voter = $stmt->fetch();
 
         if (!$voter || empty($voter['phone'])) {
-            $this->jsonResponse(['status' => 'error', 'message' => 'Voter or phone number not found.']);
+            $this->jsonResponse(['status' => 'error', 'message' => 'Invalid voter or missing phone number.']);
+        }
+
+        // Backend Security: Enforce a strict 60-second cooldown to protect SMS credits
+        if (!empty($voter['otp_expires_at'])) {
+            $timeRemaining = strtotime($voter['otp_expires_at']) - time();
+            if ($timeRemaining > 540) { // 600s total expiry - 60s cooldown = 540s
+                $cooldown = $timeRemaining - 540;
+                $this->jsonResponse(['status' => 'error', 'message' => "Please wait $cooldown seconds before requesting a new code."]);
+            }
         }
 
         $otp = (string) rand(100000, 999999);

@@ -1561,7 +1561,8 @@ class AdminController {
                     $first_name = sanitize($data[1]);
                     $last_name = sanitize($data[2]);
                     $email = sanitize($data[3]);
-                    $gender = sanitize($data[4] ?? 'male');
+                    $phone = sanitize($data[4] ?? '');
+                    $gender = sanitize($data[5] ?? 'male');
 
                     // Check for duplicate in this election
                     $stmt = $conn->prepare("SELECT id FROM voters WHERE (voter_id = ? OR email = ?) AND election_uuid = ?");
@@ -1578,9 +1579,10 @@ class AdminController {
                     $new_uuid = guidv4();
                     $voting_token = guidv4();
                     
-                    // If voter_id is numeric and no separate phone, use voter_id as phone
-                    $phone = (is_numeric(str_replace(['+', ' ', '(', ')', '-'], '', $voter_id))) ? $voter_id : '';
-                    
+                    // Fallback: If phone is empty but voter_id is numeric, use voter_id as phone
+                    if (empty($phone) && is_numeric(str_replace(['+', ' ', '(', ')', '-'], '', $voter_id))) {
+                        $phone = $voter_id;
+                    }
                     $query = "INSERT INTO voters (uuid, voter_id, password, pin_code, first_name, last_name, gender, email, phone, election_uuid, voting_token) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
                     $conn->prepare($query)->execute([$new_uuid, $voter_id, $hashed, $raw_pass, $first_name, $last_name, $gender, $email, $phone, $election_id, $voting_token]);
                     $imported++;

@@ -1834,12 +1834,13 @@ class AdminController {
             'total_votes_cast' => $total_votes_cast,
             'total_voters' => $total_voters,
             'results' => $results,
-            'DOCUMENT_ROOT' => $_SERVER['DOCUMENT_ROOT'] . '/Kokuromotie'
+            'DOCUMENT_ROOT' => rtrim(BASEURL, '/')
         ]);
 
         $options = new \Dompdf\Options();
         $options->set('isHtml5ParserEnabled', true);
         $options->set('isRemoteEnabled', true);
+        $options->set('chroot', BASEURL);
 
         $dompdf = new \Dompdf\Dompdf($options);
         $dompdf->loadHtml($html);

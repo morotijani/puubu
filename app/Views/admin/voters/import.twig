@@ -119,11 +119,20 @@
                                     </div>
                                 </div>
 
-                                <div class="d-grid gap-2">
+                                <div class="d-grid gap-2" id="submitBtnContainer">
                                     <button type="submit" class="btn btn-primary btn-lg py-3 fw-800 rounded-pill shadow-lg border-0" style="background: var(--admin-primary);">
                                         Execute Ingestion Protocol <span class="material-symbols-outlined ms-2 fs-5">bolt</span>
                                     </button>
                                     <p class="text-center text-muted mt-3 mb-0" style="font-size: 0.65rem;">By executing, you confirm that all records adhere to the electoral data policy.</p>
+                                </div>
+
+                                <!-- Progress UI (Hidden by default) -->
+                                <div id="progressContainer" class="d-none mt-4 p-4 rounded-4 bg-light border text-center">
+                                    <h6 class="fw-bold mb-3 text-primary" id="importProgressText">Initializing secure ingestion...</h6>
+                                    <div class="progress" style="height: 12px; border-radius: 6px;">
+                                        <div id="importProgressBar" class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 0%; background-color: var(--admin-primary);"></div>
+                                    </div>
+                                    <p class="small text-muted mt-3 mb-0">Please do not close this window or navigate away.</p>
                                 </div>
                             </form>
                         </div>
@@ -165,6 +174,7 @@
 {% endblock %}
 
 {% block scripts %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
 <script>
     function updateFileName(input) {
         const fileName = input.files[0]?.name;
@@ -177,6 +187,109 @@
             `;
         }
     }
+
+    document.getElementById('importForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        const fileInput = document.getElementById('csvFile');
+        const electionUuid = document.querySelector('select[name="election_uuid"]').value;
+        const securityPin = document.querySelector('input[name="security_pin"]').value;
+        const csrfToken = document.querySelector('input[name="csrf_token"]').value;
+
+        if (!fileInput.files.length) {
+            alert('Please select a CSV file.');
+            return;
+        }
+
+        const file = fileInput.files[0];
+        
+        // UI Updates
+        document.getElementById('submitBtnContainer').classList.add('d-none');
+        document.getElementById('progressContainer').classList.remove('d-none');
+        const progressBar = document.getElementById('importProgressBar');
+        const progressText = document.getElementById('importProgressText');
+
+        Papa.parse(file, {
+            header: false,
+            skipEmptyLines: true,
+            complete: async function(results) {
+                let data = results.data;
+                // Basic check to remove header row if present
+                if (data.length > 0 && data[0][0] && data[0][0].toString().toLowerCase().includes('id')) {
+                    data.shift(); 
+                }
+
+                const chunkSize = 50;
+                let totalRows = data.length;
+                let processedRows = 0;
+                let totalImported = 0;
+                let totalErrors = 0;
+
+                progressText.innerText = `Preparing to import ${totalRows} voters...`;
+
+                for (let i = 0; i < totalRows; i += chunkSize) {
+                    const chunk = data.slice(i, i + chunkSize);
+                    
+                    try {
+                        const response = await fetch('{{ PROOT }}admin/voters/import-ajax', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                csrf_token: csrfToken,
+                                election_uuid: electionUuid,
+                                security_pin: securityPin,
+                                chunk: chunk.map(row => ({
+                                    voter_id: row[0],
+                                    first_name: row[1],
+                                    last_name: row[2],
+                                    email: row[3],
+                                    phone: row[4],
+                                    gender: row[5]
+                                }))
+                            })
+                        });
+
+                        const result = await response.json();
+                        
+                        if (!result.success) {
+                            alert('Error during import: ' + result.message);
+                            document.getElementById('submitBtnContainer').classList.remove('d-none');
+                            return;
+                        }
+
+                        totalImported += result.imported || 0;
+                        totalErrors += result.errors || 0;
+
+                    } catch (err) {
+                        console.error(err);
+                        alert('Network error occurred during import.');
+                        document.getElementById('submitBtnContainer').classList.remove('d-none');
+                        return;
+                    }
+
+                    processedRows += chunk.length;
+                    const percent = Math.min(100, Math.round((processedRows / totalRows) * 100));
+                    progressBar.style.width = percent + '%';
+                    progressText.innerText = `Processed ${processedRows} of ${totalRows} voters...`;
+                }
+
+                progressText.innerText = `Import Complete! Successfully imported ${totalImported} voters. Skipped ${totalErrors} duplicates.`;
+                progressBar.classList.replace('progress-bar-animated', 'bg-success');
+                progressBar.style.backgroundColor = ''; 
+                
+                setTimeout(() => {
+                    window.location.href = '{{ PROOT }}admin/voters';
+                }, 2500);
+            },
+            error: function(err) {
+                alert('Error parsing CSV file: ' + err.message);
+                document.getElementById('submitBtnContainer').classList.remove('d-none');
+                document.getElementById('progressContainer').classList.add('d-none');
+            }
+        });
+    });
 </script>
 {% endblock %}
 

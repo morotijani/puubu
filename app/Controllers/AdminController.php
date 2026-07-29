@@ -1555,14 +1555,29 @@ class AdminController {
             $conn->beginTransaction();
             try {
                 while (($data = fgetcsv($handle, 1000, ",")) !== FALSE) {
-                    if (count($data) < 4) continue;
+                    if (count($data) < 3) continue; // Require at least voter_id, first_name, last_name
 
                     $voter_id = sanitize($data[0]);
                     $first_name = sanitize($data[1]);
                     $last_name = sanitize($data[2]);
-                    $email = sanitize($data[3]);
+                    $email = sanitize($data[3] ?? '');
                     $phone = sanitize($data[4] ?? '');
                     $gender = sanitize($data[5] ?? 'male');
+
+                    // Generate dummy email if missing to prevent unique constraint failures/duplicate skips
+                    if (empty($email)) {
+                        $clean_id = strtolower(preg_replace('/[^a-zA-Z0-9]/', '', $voter_id));
+                        $email = "voter_" . $clean_id . "_" . bin2hex(random_bytes(2)) . "@kokuromotie.local";
+                    }
+
+                    // Generate dummy phone if missing
+                    if (empty($phone)) {
+                        if (is_numeric(str_replace(['+', ' ', '(', ')', '-'], '', $voter_id))) {
+                            $phone = $voter_id;
+                        } else {
+                            $phone = "0000000000";
+                        }
+                    }
 
                     // Check for duplicate in this election
                     $stmt = $conn->prepare("SELECT id FROM voters WHERE (voter_id = ? OR email = ?) AND election_uuid = ?");
@@ -1578,11 +1593,6 @@ class AdminController {
                     $hashed = password_hash($raw_pass, PASSWORD_DEFAULT);
                     $new_uuid = guidv4();
                     $voting_token = guidv4();
-                    
-                    // Fallback: If phone is empty but voter_id is numeric, use voter_id as phone
-                    if (empty($phone) && is_numeric(str_replace(['+', ' ', '(', ')', '-'], '', $voter_id))) {
-                        $phone = $voter_id;
-                    }
                     $query = "INSERT INTO voters (uuid, voter_id, password, pin_code, first_name, last_name, gender, email, phone, election_uuid, voting_token) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
                     $conn->prepare($query)->execute([$new_uuid, $voter_id, $hashed, $raw_pass, $first_name, $last_name, $gender, $email, $phone, $election_id, $voting_token]);
                     $imported++;
@@ -1612,6 +1622,114 @@ class AdminController {
         echo $this->twig->render('admin/voters/import.twig', [
             'elections' => $elections
         ]);
+    }
+
+    public function voterImportAjax() {
+        global $conn, $admin_data;
+        header('Content-Type: application/json');
+
+        if (!cadminIsLoggedIn() || empty($admin_data)) {
+            echo json_encode(['success' => false, 'message' => 'Unauthorized access.']);
+            exit;
+        }
+
+        $admin_id = $admin_data['uuid'];
+
+        $raw_data = file_get_contents('php://input');
+        $payload = json_decode($raw_data, true);
+
+        if (!$payload) {
+            echo json_encode(['success' => false, 'message' => 'Invalid JSON payload.']);
+            exit;
+        }
+
+        if (!isset($payload['csrf_token']) || !verify_csrf_token($payload['csrf_token'])) {
+            echo json_encode(['success' => false, 'message' => 'Invalid CSRF token.']);
+            exit;
+        }
+
+        $election_id = $payload['election_uuid'] ?? null;
+        $password_verify = $payload['security_pin'] ?? '';
+        $chunk = $payload['chunk'] ?? [];
+
+        if (!password_verify($password_verify, $admin_data['password'])) {
+            echo json_encode(['success' => false, 'message' => 'Security verification failed. Incorrect password.']);
+            exit;
+        }
+
+        if (!$election_id || empty($chunk)) {
+            echo json_encode(['success' => false, 'message' => 'Invalid election or empty data chunk.']);
+            exit;
+        }
+
+        $imported = 0;
+        $errors = 0;
+
+        $conn->beginTransaction();
+        try {
+            $stmt_check = $conn->prepare("SELECT id FROM voters WHERE (voter_id = ? OR email = ?) AND election_uuid = ?");
+            $stmt_insert = $conn->prepare("INSERT INTO voters (uuid, voter_id, password, pin_code, first_name, last_name, gender, email, phone, election_uuid, voting_token) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+
+            foreach ($chunk as $data) {
+                // Read mapped data
+                $voter_id = sanitize($data['voter_id'] ?? '');
+                $first_name = sanitize($data['first_name'] ?? '');
+                $last_name = sanitize($data['last_name'] ?? '');
+                $email = sanitize($data['email'] ?? '');
+                $phone = sanitize($data['phone'] ?? '');
+                $gender = sanitize($data['gender'] ?? 'male');
+
+                if (empty($voter_id) || empty($first_name) || empty($last_name)) {
+                    continue; // Skip invalid rows
+                }
+
+                // Generate dummy email if missing
+                if (empty($email)) {
+                    $clean_id = strtolower(preg_replace('/[^a-zA-Z0-9]/', '', $voter_id));
+                    $email = "voter_" . $clean_id . "_" . bin2hex(random_bytes(2)) . "@kokuromotie.local";
+                }
+
+                // Generate dummy phone if missing
+                if (empty($phone)) {
+                    if (is_numeric(str_replace(['+', ' ', '(', ')', '-'], '', $voter_id))) {
+                        $phone = $voter_id;
+                    } else {
+                        $phone = "0000000000";
+                    }
+                }
+
+                // Check for duplicate in this election
+                $stmt_check->execute([$voter_id, $email, $election_id]);
+                if ($stmt_check->fetch()) {
+                    $errors++;
+                    continue;
+                }
+
+                // Generate password
+                $string = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKMNOPQRSTUVWXYZ0123456789';
+                $raw_pass = substr(str_shuffle($string), 0, 8);
+                $hashed = password_hash($raw_pass, PASSWORD_DEFAULT);
+                $new_uuid = guidv4();
+                $voting_token = guidv4();
+
+                $stmt_insert->execute([$new_uuid, $voter_id, $hashed, $raw_pass, $first_name, $last_name, $gender, $email, $phone, $election_id, $voting_token]);
+                $imported++;
+            }
+
+            $conn->commit();
+            add_to_log("AJAX Imported $imported voters (Skipped $errors) to election $election_id", $admin_id, 'admin');
+            
+            echo json_encode([
+                'success' => true,
+                'imported' => $imported,
+                'errors' => $errors
+            ]);
+            
+        } catch (\Exception $e) {
+            $conn->rollBack();
+            echo json_encode(['success' => false, 'message' => "Import failed: " . $e->getMessage()]);
+        }
+        exit;
     }
 
     public function voterDuplicates() {

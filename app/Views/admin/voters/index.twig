@@ -109,6 +109,7 @@
                                     <input type="checkbox" class="form-check-input" id="selectAll">
                                 </div>
                             </th>
+                            <th class="py-3" style="width: 50px;">#</th>
                             <th class="py-3">Identity & Contact</th>
                             <th class="py-3">Registry ID</th>
                             <th class="py-3">Electoral Assignment</th>
@@ -123,6 +124,7 @@
                                         <input type="checkbox" name="voter_ids[]" value="{{ voter.uuid }}" class="form-check-input voter-checkbox">
                                     </div>
                                 </td>
+                                <td><span class="badge bg-light text-dark fw-bold border">{{ loop.index }}</span></td>
                                 <td>
                                     <div class="d-flex align-items-center">
                                         <div class="avatar-sm me-3 bg-primary-subtle text-primary rounded-circle fw-bold">
